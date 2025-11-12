@@ -1,0 +1,31 @@
+@startuml ワーカーログイン
+
+' 1
+actor ワーカー as us1
+boundary ログイン画面 as lo1
+control 表示 as co1
+
+boundary SMS認証画面 as sm1
+control 処理 as co2
+
+boundary さがす画面 as sc1
+
+entity 電話番号 as en1
+
+' 2
+co1 -> lo1 : ログイン画面を表示する
+us1 -> lo1 : 電話番号を入力する
+
+lo1 -> co2 : 起動()
+co2 -> en1 : 電話番号を参照する()
+en1 --> co2 
+
+alt 認証コードが間違いの場合
+    co2 -> sm1 : システムは\n「認証コードが間違っています」と表示する
+
+else 認証コードが正しい場合
+    co2 -> sc1 : さがす画面を表示する
+
+
+end
+@enduml
