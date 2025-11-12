@@ -1,0 +1,12 @@
+@startuml 求人のお気に入り設定をする
+
+' 1
+actor ワーカー as wo1
+boundary さがす画面 as sc1
+
+control 表示 as co1
+
+
+
+
+@enduml
