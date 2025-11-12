@@ -1,7 +1,7 @@
 @startuml ワーカーログイン
 
 ' 1
-actor ワーカー as us1
+actor ワーカー as wo1
 boundary ログイン画面 as lo1
 control 表示 as co1
 
@@ -12,7 +12,7 @@ entity ワーカーアカウント as en1
 
 ' 2
 co1 -> lo1 : ログイン画面を表示する
-us1 -> lo1 : 必要情報を入力する
+wo1 -> lo1 : 必要情報を入力する
 
 lo1 -> co2 : 起動()
 co2 -> en1 : ワーカーアカウントを参照する

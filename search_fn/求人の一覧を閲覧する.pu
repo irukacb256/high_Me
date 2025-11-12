@@ -1,0 +1,22 @@
+@startuml 求人の一覧を閲覧する
+
+' 1
+actor ワーカー as wo1
+boundary さがす画面 as sc1
+control 表示 as co1
+
+entity 求人 as en1
+
+' 2
+co1 -> en1 : 求人を参照する
+en1 --> co1 
+
+alt さがす画面に求人がない場合
+    co1 -> sc1 : システムは「求人がありません」と表示する
+
+else さがす画面に求人がある場合
+    co1 -> sc1 : 求人一覧を表示する
+
+end
+
+@enduml
