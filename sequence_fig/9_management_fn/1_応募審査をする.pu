@@ -1,3 +1,6 @@
 @startuml 応募審査をする
 
+actor 運営 as mm1
+
+
 @enduml
