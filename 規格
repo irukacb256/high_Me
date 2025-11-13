@@ -1,9 +1,11 @@
-アクター部分
+シーケンス図の書き方
 
+/*アクター*/
 actor ワーカー as wo1
 actor 店舗 　　as st1
 actor 運営 　　as mm1
 
+/*コントロール*/
 control 表示 as co1
 control 処理 as co2 /etc...
 
