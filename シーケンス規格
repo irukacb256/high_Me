@@ -16,7 +16,7 @@ boundary はたらく画面　 as wk1
 boundary メッセージ画面 as me1
 boundary マイページ画面 as mp1
 
-/*中身画面*/
+/*中身と他画面*/
 boundary n画面 as '自由です'
 　➡ただし一度画面名を決めたらそれに揃える
 

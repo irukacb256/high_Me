@@ -3,6 +3,9 @@
 ' 1
 actor ワーカー as wo1
 
+boundary アカウント作成画面 as acv
+
+
 ' 2
 
 
