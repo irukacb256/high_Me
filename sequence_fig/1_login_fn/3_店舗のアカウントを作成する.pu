@@ -1,3 +1,9 @@
 @startuml 店舗のアカウントを作成する
 
+' 1
+actor 店舗 as st1
+
+
+' 2
+
 @enduml
