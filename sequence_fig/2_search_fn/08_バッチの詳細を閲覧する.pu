@@ -1,3 +1,6 @@
 @startuml バッチの詳細を閲覧する
 
+' 1
+actor ワーカー as wo1
+
 @enduml

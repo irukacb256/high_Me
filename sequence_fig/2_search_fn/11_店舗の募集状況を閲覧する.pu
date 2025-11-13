@@ -1,3 +1,6 @@
 @startuml 店舗の募集状況を閲覧する
 
+' 1
+actor ワーカー as wo1
+
 @enduml
