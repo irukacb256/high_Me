@@ -2,5 +2,10 @@
 
 ' 1
 actor ワーカー as wo1
-boundary マイページ画面 as  
+boundary マイページ画面 as mp1
+control 表示 as co1
+
+boundary アカウント設定画面 as acs1
+control 
+
 @enduml

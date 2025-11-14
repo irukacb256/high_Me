@@ -3,10 +3,13 @@
 ' 1
 actor ワーカー as wo1
 
-boundary アカウント作成画面 as acv
+boundary ワーカーアカウント作成画面 as wav1
+control 表示 as co1
 
+control 処理 as co2
 
+entity ワーカーアカウント as ac1
 ' 2
-
+co1 -> wav1 : 
 
 @enduml

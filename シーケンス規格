@@ -21,15 +21,15 @@ boundary n画面 as '自由です'
 　➡ただし一度画面名を決めたらそれに揃える
 
 /*ワーカー*/
-entity アカウント as ac1
+entity ワーカーアカウント as ac1
 entity 求人　　　 as jb1
 
 /*店舗*/
-entity アカウント as ac2
+entity 店舗アカウント as ac2
 entity 求人　　　 as jb2
 
 /*運営*/
-entity アカウント as ac3
+entity 運営アカウント as ac3
 entity 求人 　　　as jb3
 entity 企業 　　　as cp1
 entity 応募企業　 as ca1

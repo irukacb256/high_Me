@@ -1,3 +1,8 @@
 @startuml ウォレット残高を引き出す
 
+' 1
+actor ワーカー as wo1
+
+boundary マイページ画面 as mp1
+
 @enduml

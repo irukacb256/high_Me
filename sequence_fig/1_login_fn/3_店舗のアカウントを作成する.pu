@@ -3,6 +3,8 @@
 ' 1
 actor 店舗 as st1
 
+boundary 店舗アカウント作成画面 as sav1
+control 表示 as co1
 
 ' 2
 
