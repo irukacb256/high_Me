@@ -2,5 +2,9 @@
 
 actor 運営 as mm1
 
+boundary 応募審査画面 as ap1
+
+entity 応募企業 as ca1
+
 
 @enduml
