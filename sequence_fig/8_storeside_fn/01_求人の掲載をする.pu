@@ -1,3 +1,20 @@
 @startuml 求人の掲載をする
 
+actor 店舗 as st1
+boundary 管理画面 as b1
+control 表示 as co1
+boundary 求人ひな型画面 as b2
+control 表示 as co2
+boundary 求人作成画面 as b3
+control 表示 as co4
+boundary 確認画面 as b4
+
+
+
+
+
+b1   <- co1
+st1  -> b1
+
+
 @enduml
