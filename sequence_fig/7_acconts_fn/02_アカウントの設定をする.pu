@@ -1,3 +1,6 @@
 @startuml アカウントの設定をする
 
+' 1
+actor ワーカー as wo1
+boundary マイページ画面 as  
 @enduml

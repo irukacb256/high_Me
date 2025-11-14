@@ -32,3 +32,4 @@ entity 求人　　　 as jb2
 entity アカウント as ac3
 entity 求人 　　　as jb3
 entity 企業 　　　as cp1
+entity 応募企業　 as ca1
