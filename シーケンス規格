@@ -2,7 +2,7 @@
 
 /*アクター*/
 actor ワーカー as wo1
-actor 店舗 　　as st1
+actor 企業 　　as cp1
 actor 運営 　　as mm1
 
 /*コントロール*/
@@ -31,5 +31,5 @@ entity 求人　　　 as jb2
 /*運営*/
 entity 運営アカウント as ac3
 entity 求人 　　　as jb3
-entity 企業 　　　as cp1
+entity 企業 　　　as cop1
 entity 応募企業　 as ca1

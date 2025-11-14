@@ -8,8 +8,25 @@ control 表示 as co1
 
 control 処理 as co2
 
+boundary 氏名記入画面
+
+boundary 
+
 entity ワーカーアカウント as ac1
 ' 2
-co1 -> wav1 : 
+co1 -> wav1 : システムは画面を表示する
+wo1 -> wav1 : アカウント作成ボタンを押下する
+wav1 -> co2 : 起動()
+
+alt IDが未入力の場合
+    co2 -> wav1 : システムは「IDを入力してください」と表示する
+
+else パスワードが未入力の場合
+    co2 -> wav1 : システムは「パスワードを入力してください」と表示する
+
+else IDとパスワードが入力された場合
+    co2 
+end
+
 
 @enduml

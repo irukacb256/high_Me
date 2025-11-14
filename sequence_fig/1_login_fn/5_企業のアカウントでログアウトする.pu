@@ -1,0 +1,14 @@
+@startuml 企業アカウントログアウト
+
+' モノ
+actor 企業 as cp1
+boundary マイページ画面 as mp1
+control 表示 as co1
+boundary ログイン画面 as log
+
+' 流れ
+co1 -> mp1 : メインメニュー画面を表示する
+cp1 -> mp1 : ログアウトボタンを押下する
+mp1 -> login : ログイン画面を表示する
+
+@enduml

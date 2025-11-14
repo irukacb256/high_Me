@@ -1,0 +1,9 @@
+@startuml 企業のアカウントを作成する
+
+' 1
+actor 企業 as co1
+boundary アカウント作成画面 as acv1
+
+control 表示 as co1
+
+@enduml
