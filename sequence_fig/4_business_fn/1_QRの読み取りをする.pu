@@ -1,3 +1,6 @@
 @startuml QRの読み取りをする
 
+' 1
+actor ワーカー as wo1
+
 @enduml

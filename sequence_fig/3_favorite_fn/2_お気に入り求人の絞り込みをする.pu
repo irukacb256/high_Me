@@ -1,3 +1,6 @@
 @startuml お気に入り求人の絞り込みをする
 
+' 1
+actor ワーカー as wo1
+
 @enduml

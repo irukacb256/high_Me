@@ -1,3 +1,6 @@
 @startuml 仕事をキャンセルする
 
+' 1
+actor ワーカー as wo1
+
 @enduml
