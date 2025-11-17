@@ -1,3 +1,5 @@
-@startuml 店舗の審査をする
+@startuml 応募審査の絞り込みをする
+
+
 
 @enduml
