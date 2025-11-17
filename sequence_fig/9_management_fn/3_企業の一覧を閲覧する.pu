@@ -1,8 +1,8 @@
-@startuml お問い合わせを閲覧する
+@startuml 企業の一覧を閲覧する
 
 ' 1
 actor 運営 as wo1
-boundary 検便一覧画面 as lc1
+boundary 企業一覧画面 as lc1
 control 表示 as co1
 
 entity 企業 as en1
