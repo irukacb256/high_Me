@@ -1,10 +1,26 @@
 @startuml 求人のお気に入り設定をする
 
 ' 1
-actor ワーカー as wo1
-boundary さがす画面 as sc1
+actor    ワーカー    as wo1
+boundary さがす画面  as sc1
+control  表示        as co1
+entity   求人        as jb1
+entity   お気に入り   as fa1
 
+co1 -> jb1 : 求人を参照する
+jb1 --> co1 
 
+co1 -> sc1 : 求人一覧を表示する
 
+wo1 -> sc1 : 「お気に入り」ボタンを押下する
+
+alt お気に入りを解除する場合 
+    sc1 -> sc1 : 「お気に入り」ボタンを\n赤から無色にする
+
+else お気に入り登録する場合
+    sc1 -> fa1 : お気に入り登録する
+    sc1 -> sc1 : 「お気に入り」ボタンを\n無色から赤にする
+
+end
 
 @enduml

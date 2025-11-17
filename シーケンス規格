@@ -23,6 +23,7 @@ boundary n画面 as '自由です'
 /*ワーカー*/
 entity ワーカーアカウント as ac1
 entity 求人　　　 as jb1
+entity お気に入り as fa1
 
 /*店舗*/
 entity 店舗アカウント as ac2
