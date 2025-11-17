@@ -2,5 +2,20 @@
 
 ' 1
 actor ワーカー as wo1
+boundary 求人詳細画面 as jd1
+control 表示 as co1
+entity 求人 as en1
+
+' 2
+co1 -> en1 : 求人を参照する
+en1 --> co1 
+
+alt レビューがない場合
+    co1 -> jd1 : システムは「レビューはありません」\nと表示する
+
+else レビューがある場合
+    co1 -> jd1 : レビューを表示する
+
+end
 
 @enduml
