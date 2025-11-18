@@ -1,11 +1,21 @@
 @startuml 企業のアカウントを作成する
 
 ' 1
-actor 企業 as co1
-boundary メールアドレス登録画面 as acv1
+actor 企業 as cp1
 
+boundary メール登録画面 as acv1
 control 表示 as co1
 
-boundary 
+boundary 登録画面 as mrv1
+
+
+control 処理 as co2
+
+
+
+
+
+
+
 
 @enduml
