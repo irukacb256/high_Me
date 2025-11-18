@@ -2,12 +2,25 @@
 
 ' 1
 actor ワーカー as wo1
-boundary はたらく画面 as 
+boundary はたらく画面 as wk1
 control 表示 as co1
 entity 予定 as en1
-boundary お仕事画面 as 
-boundary チェックイン画面 as
-boundary チェックイン完了画面 as 
+boundary お仕事画面 as wk2
+boundary チェックイン画面 as ch1
+boundary チェックイン完了画面 as cc1
+
+co1 -> en1 : 予定を参照する
+en1 --> co1 
+
+co1 -> wk1 : 今後の予定を表示
+
+wo1 -> wk1 : 応募が確定したお仕事を押下する
+
+wk1 -> wk2 : 表示する
+
+wo1 -> wk2 : 「QR読み込み」ボタンを押下する
+
+wk2 -> ch1 : 表示する
 
 
 

@@ -21,6 +21,7 @@ boundary n画面 as '自由です'
 　➡ただし一度画面名を決めたらそれに揃える
 
 /*ワーカー*/
+さがす画面
 boundary 求人詳細画面     as jd1
 boundary 勤務地選択画面   as wp1
 boundary 都道府県選択画面 as pr1
@@ -30,6 +31,12 @@ boundary 業務確認画面 as bc1
 boundary 質問画面 as qu1
 boundary 申し込み完了画面 as ac1
 boundary 募集状況画面 as rs1
+
+はたらく画面
+boundary お仕事画面 as wk2
+boundary チェックイン画面 as ch1
+boundary チェックイン完了画面 as cc1
+
 
 /*店舗*/
 boundary 応募審査画面  as ap1
@@ -41,7 +48,7 @@ entity 求人　　　 as jb1
 entity お気に入り as fa1
 entity 予定       as  sh1
 
-/*企業*/
+/*店舗*/
 entity 店舗アカウント as ac2
 entity 求人　　　 as jb2
 
