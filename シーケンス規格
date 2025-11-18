@@ -41,7 +41,7 @@ entity 求人　　　 as jb1
 entity お気に入り as fa1
 entity 予定       as  sh1
 
-/*店舗*/
+/*企業*/
 entity 店舗アカウント as ac2
 entity 求人　　　 as jb2
 

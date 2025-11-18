@@ -3,14 +3,40 @@
 ' 1
 actor 企業 as cp1
 
-boundary メール登録画面 as acv1
+boundary 募集サービス画面 as rsv1
 control 表示 as co1
 
-boundary 登録画面 as mrv1
-
+boundary アカウント開設画面 as acv1
+boundary アカウント登録画面 as arv1 
+boundary 事業者登録画面 as mrv1
+boundary 事業者所在地登録画面 as mlv1
+boundary 店舗情報登録画面 as bov1
+boundary 提出書類確認画面 as dcv1
 
 control 処理 as co2
+control 処理 as co3
+control 処理 as co4
+control 処理 as co5
+control 処理 as co6
+control 処理 as co7
 
+entity 企業アカウント as ac2
+
+' 2
+co1 -> rsv1 : 募集サービス画面を表示する
+cp1 -> rsv1 : ユーザーは\n「無料でアカウントを開設」ボタンを\n押下する
+rsv1 -> rsv1 : 画面を表示:meth
+rsv1 -> acv1 : システムはアカウント開設画面を表示する
+cp1 -> acv1 : ユーザーは「求人を掲載したい(事業者の方)ボタンを押下し、\n「上記の各事項に同意する」をチェックしてメールアドレスを入力し\n「求人掲載用アカウント開設」ボタンを押下する
+acv1 -> co2 : 起動()
+
+alt メールアドレスが未入力の場合
+
+else メールアドレスの形式が正しくない場合
+
+else 上記各事項に同意するボタンが押下
+
+end
 
 
 
