@@ -1,17 +1,22 @@
 @startuml QRコードを表示する
 
-actor 店舗 as st1
+actor 店舗 as cp1
 boundary 管理画面 as b1
 control 表示 as co1
-boundary QRコード画面 as b2
 control 処理 as co2
+boundary QRコード画面 as b2
 entity QRデータ as e1
+control 処理 as co3
+boundary QRコード印刷完了画面 as b3
 
 b1   <- co1
-st1  -> b1 :サイドメニューの\n「チェックイン/アウト管理」を押下
+cp1  -> b1 :サイドメニューの\n「チェックイン/アウト管理」を押下
 b1   -> co2 :起動()
 co2  -> e1 :QRデータを参照する()
 co2 <-- e1
 b2  <- co2 :QRコードを表示する
+cp1 -> b2 :「QRコードを印刷する」ボタンを押下
+b2 -> co3 :印刷処理()
+co3 -> b3 :画面を表示する
 
 @enduml
