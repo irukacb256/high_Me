@@ -1,3 +1,3 @@
 @startuml あなたの実績を閲覧する
-
+actor ワーカー as wo1
 @enduml
