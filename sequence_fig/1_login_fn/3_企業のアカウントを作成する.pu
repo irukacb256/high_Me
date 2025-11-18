@@ -2,8 +2,10 @@
 
 ' 1
 actor 企業 as co1
-boundary アカウント作成画面 as acv1
+boundary メールアドレス登録画面 as acv1
 
 control 表示 as co1
+
+boundary 
 
 @enduml
