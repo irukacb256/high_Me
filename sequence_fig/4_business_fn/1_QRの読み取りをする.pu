@@ -2,5 +2,13 @@
 
 ' 1
 actor ワーカー as wo1
+boundary はたらく画面 as 
+control 表示 as co1
+entity 予定 as en1
+boundary お仕事画面 as 
+boundary チェックイン画面 as
+boundary チェックイン完了画面 as 
+
+
 
 @enduml
