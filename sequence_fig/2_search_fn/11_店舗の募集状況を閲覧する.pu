@@ -2,5 +2,25 @@
 
 ' 1
 actor ワーカー as wo1
+boundary 求人詳細画面 as jd1
+control 表示 as co1
+entity 求人 as en1
+boundary 募集状況画面 as rs1
+
+' 2
+co1 -> en1 : 求人を参照する
+en1 --> co1 
+
+co1 -> jd1 : 求人詳細を表示する
+
+wo1 -> jd1 : 「この店舗の募集状況」ボタンを押下する
+
+alt 店舗に募集状況がない場合
+    jd1 -> rs1 : 「公開中の募集はありません」と画面に表示する
+
+else 店舗に募集状況がある場合
+    jd1 -> rs1 : 表示する
+
+end
 
 @enduml
