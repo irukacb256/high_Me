@@ -1,6 +1,0 @@
-@startuml お気に入りの店舗を閲覧する
-
-' 1
-actor ワーカー as wo1
-
-@enduml
