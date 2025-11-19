@@ -7,9 +7,11 @@ boundary ログイン画面 as log1
 control 表示 as co1
 
 boundary ワーカーアカウント作成画面 as wav1
+boundary 本人確認画面 as ivv1
 boundary ワーカー詳細登録画面 as wdv1
 control 処理 as co2
 control 処理 as co3
+control 処理 as co4
 
 entity ワーカーアカウント as ac1
 boundary さがす画面 as sc1
@@ -17,8 +19,8 @@ boundary さがす画面 as sc1
 ' 2
 co1 -> log1 : システムは\n画面を表示する
 wo1 -> log1 : アカウント作成ボタン\nを押下する
-log1 -> wav1 : ワーカーアカウント作成画面に移動する
-
+log1 -> wav1 : ワーカーアカウント作成画面を表示する
+wav1 -> wav1 : 画面を表示:method_GET
 wo1 -> wav1 : ユーザーは電話番号とパスワードを入力し\n「次へ」ボタンを押下する
 wav1 -> co2 : 起動()
 
@@ -38,9 +40,12 @@ else パスワードが未入力の場合
         else 電話番号が重複していない場合
             co2 -> ac1 : 登録する()
             co2 <-- ac1
-            co2 -> wdv1 : システムは\n氏名記入画面に移動する
+            co2 -> ivv1 : システムは\n本人確認画面を表示する
+            wo1 -> ivv1 : ユーザーは\n「本人確認」ボタンを押下する
+            ivv1 -> wdv1 : システムは\nワーカー詳細登録画面を表示する
+            wdv1 -> wdv1 : 画面を表示:method_GET()
             wo1 -> wdv1 : ユーザーは\n氏名、フリガナ、性別、プロフィール画像\n住所、所属、働き方、都道府県、\n通知・位置情報の選択、入力をして「登録」ボタンを押下する
-            wdv1 -> co3 : 起動()    
+            
 
     
 

@@ -1,0 +1,42 @@
+@startuml 企業のアカウントを作成する
+
+' 1
+actor 企業 as cp1
+
+boundary アカウント登録画面 as arv1 
+control 表示 as co1
+control 処理 as co2
+boundary 事業者登録画面 as mrv1
+control 処理 as co3
+boundary 事業者所在地登録画面 as mlv1
+control 処理 as co4
+boundary 店舗情報登録画面 as bov1
+control 処理 as co5
+boundary 提出書類確認画面 as dcv1
+control 処理 as co6
+
+entity 企業アカウント as ac2
+
+' 2
+co1 -> arv1 : システムは画面を表示する
+cp1 -> arv1 : ユーザーはアカウント情報を入力し、\n「アカウントを登録する」ボタンを押下する
+arv1 -> co2 : 起動:method_POST()
+
+alt 氏名が未入力の場合
+    co2 -> arv1 : システムは「氏名が入力されていません」と表示する
+
+else パスワードが未入力の場合
+    co2 -> arv1 : システムは「パスワードが入力されていません」と表示する
+
+else 再入力したパスワードが間違っている場合
+    co2 -> arv1 : システムは「パスワードが間違っています」と表示する
+
+    alt アカウント情報が入力された場合
+        co2 -> 
+
+    else
+
+    end
+
+end
+@enduml
