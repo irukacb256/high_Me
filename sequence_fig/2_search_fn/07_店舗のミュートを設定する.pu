@@ -1,6 +1,0 @@
-@startuml 店舗のミュートを設定する
-
-' 1
-actor ワーカー as wo1
-
-@enduml

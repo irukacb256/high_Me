@@ -1,6 +1,0 @@
-@startuml 求人のシェアをする
-
-' 1
-actor ワーカー as wo1
-
-@enduml
