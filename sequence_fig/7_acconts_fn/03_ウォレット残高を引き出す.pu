@@ -3,6 +3,18 @@
 ' 1
 actor ワーカー as wo1
 
-boundary マイページ画面 as mp1
+boundary マイページ画面 as bo1
+boundary 報酬管理 as bo2
+boundary 報酬確認 as bo3
+boundary 報酬確定 as bo4
+
+control 表示 as co1
+
+entity ワーカーアカウント as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「引き出す」ボタンを押下する
+
+
 
 @enduml

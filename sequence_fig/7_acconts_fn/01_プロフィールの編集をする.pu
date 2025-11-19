@@ -3,7 +3,29 @@
 ' 1
 actor ワーカー as wo1
 
-boundary マイページ画面 as mp1
+boundary マイページ画面 as bo1
+boundary プロフィール画面 as bo2
+
 control 表示 as co1
+control 処理 as co2
+control 登録 as co3
+
+entity ワーカーアカウント as en1
+
+alt ログインしていない場合
+    co1 -> bo1:「アカウント作成」ボタンを表示する
+
+else ログインしている場合
+    co1 -> bo1:表示()
+    wo1 -> bo1:「アイコン」ボタンを押下する
+    bo1 -> co2:起動()
+    co2 -> en1:参照()
+    en1 --> co2
+    co2 -> bo2:表示()
+    wo1 -> bo2:「変更を保存」ボタンを押下する
+    bo2 -> co3:起動()
+    co3 -> en1:登録()
+    co3 -> bo1:表示()
+end
 
 @enduml
