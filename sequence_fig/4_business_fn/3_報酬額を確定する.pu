@@ -1,6 +1,0 @@
-@startuml 報酬額を確定する
-
-' 1
-actor ワーカー as wo1
-
-@enduml

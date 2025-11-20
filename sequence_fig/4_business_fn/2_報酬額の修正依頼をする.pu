@@ -1,6 +1,0 @@
-@startuml 報酬額の修正依頼をする
-
-' 1
-actor ワーカー as wo1
-
-@enduml

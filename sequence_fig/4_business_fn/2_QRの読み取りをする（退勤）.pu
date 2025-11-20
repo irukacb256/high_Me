@@ -1,0 +1,63 @@
+@startuml QRの読み取りをする（退勤）
+
+actor ワーカー as wo1
+boundary QR読み取り画面 as ch2
+boundary QR読み取り後画面 as ch1
+control 表示 as co1
+entity 予定 as en1
+boundary 報酬確定修正依頼画面 as rc1
+boundary 報酬の最終確認画面 as rl1
+boundary 報酬確定画面 as rc2
+
+boundary 修正依頼_流れ確認画面 as mr1
+boundary 修正依頼_業務時間入力画面 as mr2
+boundary 修正依頼_休憩時間入力画面 as mr3
+boundary 修正依頼_理由入力画面 as mr4
+boundary 修正依頼_内容確認画面 as mr5
+
+
+
+entity 修正依頼データ as md1
+
+co1 -> en1 : 参照する
+en1 --> co1
+
+co1 -> ch1 : 「本当にチェックアウトしますか？」と\nメッセージを画面に表示する
+wo1 -> ch1 :ボタンを押下する
+alt 「もどる」ボタンを押下した場合
+    ch1 -> ch2 : 表示する
+else 「OK」ボタンを押下した場合
+
+
+    ch1 -> rc1 : 表示する
+    wo1 -> rc1 :ボタンを押下する
+    alt このまま報酬確定を選択した場合
+        rc1 -> rl1 : 表示する
+        wo1 -> rc1 : 「報酬を受け取る」を選択する
+        rl1 -> rl1 : 確定/キャンセルボタンを表示する
+        alt 「もどる」ボタンを押下した場合
+            rl1 -> rc1 : 表示する
+        else 「確定」ボタンを押下した場合
+            rl1 -> rc2 : 表示する
+        end
+
+    else 残業時間の修正依頼を提出を選択した場合
+    ch1 -> mr1 :表示する
+    wo1 -> mr1 :「次へ」ボタンを押下する
+    mr1 -> mr2 :表示する
+    wo1 -> mr2 :業務時間を入力し、「次へ」ボタンを押下する
+    mr2 -> mr3 :表示する
+    wo1 -> mr3 :休憩時間を入力し、「次へ」ボタンを押下する
+    mr3 -> mr3 :遅刻の理由ポップを表示する
+    wo1 -> mr3 :遅刻、早上がりの理由を押下する
+    mr3 -> mr4 :表示する
+    wo1 -> mr4 :修正依頼の理由を入力し、「次へ」ボタンを押下する
+    mr4 -> mr5 :表示する
+    wo1 -> mr5 :「修正依頼内容を確認しました」にチェックを入れ、\n「修正依頼を送信」を選択する
+
+        
+        
+    end
+
+end
+@enduml
