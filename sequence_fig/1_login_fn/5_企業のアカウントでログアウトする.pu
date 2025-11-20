@@ -7,8 +7,8 @@ control 表示 as co1
 boundary ログイン画面 as log
 
 ' 流れ
-co1 -> mp1 : メインメニュー画面を表示する
+co1 -> mp1 : 管理画面を表示する
 cp1 -> mp1 : ログアウトボタンを押下する
-mp1 -> login : ログイン画面を表示する
+mp1 -> log : ログイン画面を表示する
 
 @enduml
