@@ -1,0 +1,42 @@
+@startuml レビューを投稿する
+
+actor    ワーカー as wo1
+boundary 評価選択画面 as rsc1
+control  表示     as co1
+entity   レビュー as rv1
+boundary レビュー入力画面 as ric1
+boundary 投稿完了画面 as rcc1
+
+co1 -> rv1 : 予定を参照する
+rv1 --> co1 
+
+co1 -> rsc1 : 表示する
+
+wo1 -> rsc1 : 評価を選択し、「次へ」ボタンを押下する
+
+alt 評価が選択されていない
+    rsc1 -> rsc1 : 「評価が選択されていません」と表示する
+else 評価が選択されている
+
+    rsc1 -> ric1 : レビュー入力画面を表示する
+
+    wo1 -> ric1 : レビューを入力し、「投稿する」ボタンを押下する
+
+    alt レビューが未入力または5文字以下
+    ric1 -> ric1 : 「コメントは日本語5文字以上記入してください」と表示する
+    else レビューが5文字以上で入力されている
+
+        ric1 -> co1 : 評価とレビューを渡す
+        co1 -> rv1 : レビューを登録する
+        rv1 --> co1
+
+        co1 -> rcc1 : 投稿完了画面を表示する
+
+        wo1 -> rcc1 : 「OK」ボタンを押下する
+
+        rcc1 -> co1 : 次の画面へ遷移する
+
+    end
+end
+
+@enduml
