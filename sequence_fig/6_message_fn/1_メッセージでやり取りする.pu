@@ -1,3 +1,5 @@
 @startuml メッセージでやり取りする
+' 1
+actor ワーカー as wo1
 
 @enduml
