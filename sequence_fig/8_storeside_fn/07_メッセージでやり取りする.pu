@@ -1,3 +1,14 @@
 @startuml メッセージでやり取りする
 
+actor 店舗 as cp1
+boundary 画面 as b1
+control 表示 as co1
+control 表示 as co2
+boundary 画面 as b2
+control 処理 as co3
+entity ワーカーデータ as e1
+boundary 完了画面 as b3
+
+b1 <- co1 :画面を表示する
+cp1 -> b1 :メッセージを送るワーカーを設定する
 @enduml

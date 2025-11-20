@@ -1,3 +1,18 @@
 @startuml ワーカーのレビューを閲覧する
 
+actor 店舗 as cp1
+boundary 画面 as b1
+control 処理 as co2
+entity レビューデータ as e1
+
+co2 -> e1 :参照()
+co2 <-- e1
+    alt レビューがない場合
+    b1 <- co2 : 「レビューがありません」と画面に表示する
+    else レビューがある場合
+    b1 <- co2 :画面にレビューを表示する
+    end
+    
+
+
 @enduml
