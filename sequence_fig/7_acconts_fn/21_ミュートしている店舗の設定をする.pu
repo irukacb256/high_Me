@@ -1,3 +1,27 @@
 @startuml ミュートしている店舗の設定をする
 
+actor ワーカー as wo1
+
+boundary マイページ画面 as bo1
+boundary ミュート企業一覧画面 as bo2
+
+control 表示 as co1
+control 処理 as co2
+
+entity ワーカーアカウント as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「ミュートにしている店舗」ボタンを押下する
+bo1 -> co2:起動()
+co2 -> en1:参照()
+en1 -> co2
+
+alt ミュートにしている店舗がない場合
+    co2 -> bo2:「ミュートにしている店舗はありません」と表示する
+
+else ミュートにしている店舗がある場合
+    co2 -> bo2:表示()
+
+end
+
 @enduml
