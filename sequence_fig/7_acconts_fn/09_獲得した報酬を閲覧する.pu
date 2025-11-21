@@ -15,7 +15,7 @@ entity 求人 as en2
 
 co1 -> bo1:表示()
 wo1 -> bo1:「獲得した報酬」ボタンを押下する
-bo1 -> co2:起動()
+bo1 -> co2:起動():method=GET()
 co2 -> en1:参照()
 en1 --> co2
 
@@ -26,11 +26,11 @@ else 獲得した報酬がある場合
     co2 -> bo2:表示()
 
     wo1 -> bo2:働いた月のグラフを押下する
-    bo2 -> co2:起動()
+    bo2 -> co2:起動():method=GET()
     co2 -> bo2:表示()
 
     wo1 -> bo2:働いた日付を押下する
-    bo2 -> co3:起動()
+    bo2 -> co3:起動():method=GET()
     co3 -> en2:参照()
     en2 --> co3
     co3 -> bo3:表示()

@@ -17,24 +17,23 @@ entity ワーカーアカウント as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「引き出す」ボタンを押下する
-bo1 -> co2:起動()
+bo1 -> co2:起動()method=GET()
 co2 -> en1:参照()
 en1 --> co2
 co2 -> bo2:表示()
 
 alt ユーザーが「入出金履歴」を押下した場合
   wo1 -> bo2:「入出金履歴」ボタンを押下する
-  bo2 -> co2:起動()
+  bo2 -> co2:起動()method=GET()
   co2 -> bo5:表示()
 
 else  「振り込み申請」ボタンを押下した場合
   wo1 -> bo2:「振り込み申請」ボタンを押下する
-
+  bo2 -> co2:起動():method=GET()
   co2 -> bo3:表示()
-  bo2 -> co2:起動()
   wo1 -> bo3:「申請」ボタンを押下する
-  bo3 -> co3:起動()
-  co3 -> en1:登録()
+  bo3 -> co3:起動():method=POST()
+  co3 -> en1:登録():method=POST()
   co3 -> bo4:表示()
 
   wo1 -> bo4:「OK」ボタンを押下する
