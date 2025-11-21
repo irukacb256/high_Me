@@ -4,11 +4,20 @@ actor 店舗 as cp1
 boundary 画面 as b1
 control 表示 as co1
 control 表示 as co2
-boundary 画面 as b2
+boundary 入力画面 as b2
 control 処理 as co3
-entity ワーカーデータ as e1
+entity ワーカーデータ as en1
 boundary 完了画面 as b3
 
 b1 <- co1 :画面を表示する
-cp1 -> b1 :メッセージを送るワーカーを設定する
+cp1 -> b1 :メッセージを送るワーカーを選択する
+b1 -> co2 :起動する:method=POST()
+
+co2 -> b2 :画面を表示する
+cp1 -> b2 :メッセージを入力し、「送信」ボタンを押下する
+b2 -> co3 :起動()
+co3 -> en1 :送信処理
+co3 <-- en1 
+co3 -> b3 :画面を表示する
+
 @enduml

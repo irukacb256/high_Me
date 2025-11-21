@@ -4,22 +4,21 @@ actor 店舗 as cp1
 boundary 一覧画面 as b1
 control 表示 as co1
 control 絞り込み処理 as co2
-entity ワーカーデータ as e1
+entity ワーカーデータ as en1
 boundary 絞り込み画面 as b2
 
 b1 <- co1 :画面を表示する()
-
 cp1 -> b1 :絞り込み条件を設定し、「検索」ボタンを押下する
-b1 -> co2 :起動()
-co2 -> e1 :参照()
-co2 <-- e1 
-    alt 条件に合致するワーカーがいない場合
-    b1 <- co2 :システムは「ワーカーがいません」と画面に表示する
-    else 条件に合致するわーかーがいる場合
-    co2 -> b2 :画面を表示する
-    end
+b1 -> co2 :起動する:method=POST()
+co2 -> en1 :参照()
+co2 <-- en1 
 
+alt 条件に合致するワーカーがいない場合
+b1 <- co2 :システムは「ワーカーがいません」と画面に表示する
 
+else 条件に合致するワーカーがいる場合
+co2 -> b2 :画面を表示する
 
+end
 
 @enduml

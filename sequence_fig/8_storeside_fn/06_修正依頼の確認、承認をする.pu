@@ -7,25 +7,32 @@ control 表示 as c2
 boundary 拒否理由記入画面 as b2
 boundary 確認画面 as b3
 control 処理 as c3
-entity 情報 as e1
+entity 情報 as en1
 boundary 完了画面 as b4
+
 alt 修正依頼が届いていない場合 
 b1 <- c1 :「修正依頼がありません」と画面に表示する
+
 else 修正依頼が届いている場合
 b1 <- c1 :画面に修正依頼を表示する
+
 end
+
 st1 -> b1 :内容を確認してボタンを押下
+
 alt 「拒否」ボタンを押下した場合
 b1 -> c2 
 c2 -> b2 :画面を表示する()
+
 else 「承認」ボタンを押下した場合
 b1 -> c2 
 c2 -> b3 :画面を表示する
+
 end
+
 st1 -> b3 :チェックボックスにチェックを入れ\n「承認する」ボタンを押下
 b3 -> c3 :承認処理()
-c3 -> e1 :更新()
+c3 -> en1 :更新()
 c3 -> b4 :画面を表示する
-
 
 @enduml
