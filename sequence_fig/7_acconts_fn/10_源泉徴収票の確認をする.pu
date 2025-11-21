@@ -1,0 +1,35 @@
+@startuml 源泉徴収票の確保と印刷をする
+
+actor ワーカー as wo1
+
+boundary マイページ画面 as bo1
+boundary 年選択画面画面 as bo2
+boundary 源泉徴収票画面 as bo3
+boundary 源泉徴収票ファイル as bo4
+
+control 表示 as co1
+control 処理 as co2
+
+entity ワーカーアカウント as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「源泉徴収票の確認と印刷」\nボタンを押下する
+bo1 -> co2:起動()
+co2 -> en1:参照()
+en1 --> co2
+alt 源泉徴収票がない場合
+    co2 -> bo2:何も表示しない
+
+else 源泉徴収票がある場合
+    co2 -> bo2:表示()
+
+    wo1 -> bo2:源泉徴収票の年を選択する
+    bo2 -> co2:起動()
+    co2 -> bo3:表示()
+
+    wo1 -> bo3:源泉徴収票のファイルを押下する
+    bo3 -> co2:起動()
+    co2 -> bo4:表示()
+
+end
+@enduml

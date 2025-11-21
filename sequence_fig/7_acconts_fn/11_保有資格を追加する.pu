@@ -1,3 +1,61 @@
 @startuml 保有資格を追加する
 
+actor ワーカー as wo1
+
+boundary マイページ画面 as bo1
+boundary 保有資格一覧画面 as bo2
+boundary 資格登録画面 as bo3
+boundary 分野選択画面 as bo4
+boundary 写真選択画面 as bo5
+
+control 表示 as co1
+control 処理 as co2
+control 登録 as co3
+
+entity ワーカーアカウント as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「保有資格」ボタンを押下する
+bo1 -> co2:起動()
+co2 -> en1:参照()
+en1 --> co2
+
+alt 登録済みの資格がない場合
+    co2 -> bo2:「登録された資格はありません」と表示する
+
+else 登録済みの資格がある場合
+    co2 -> bo2:表示()
+
+end
+
+wo1 -> bo2:「資格を追加する」ボタンを押下する
+bo2 -> bo3:表示()
+wo1 -> bo3:「登録する資格分野」ボタンを押下する
+bo3 -> bo4:表示()
+wo1 -> bo4:資格の分野を選択する
+bo4 -> bo3:表示()
+wo1 -> bo3:「写真を選択」ボタンを押下する
+bo3 -> bo5:表示()
+wo1 -> bo5:写真を選択する
+bo5 -> bo3:表示()
+
+wo1 -> bo3:チェックボックスにチェックを入れ\n「登録する」ボタンを押下する
+bo3 -> co3:起動()
+alt 資格分野が選択されていない場合
+    co3 -> bo3:「資格分野が選択されていません」と表示する
+
+else 写真が選択されていない場合
+    co3 -> bo3:「写真が選択されていません」と表示する
+
+else チェックがされていない場合
+    co3 -> bo3:「注意事項への同意が必須です」と表示する
+
+else 全て選択されている場合    
+    co3 -> en1:登録()
+    co2 -> en1:参照()
+    en1 --> co2
+    co2 -> bo2:表示()
+
+end
+
 @enduml

@@ -1,3 +1,27 @@
 @startuml あなたの実績を閲覧する
+
 actor ワーカー as wo1
+
+boundary マイページ画面 as bo1
+boundary 実績画面 as bo2
+
+control 表示 as co1
+control 処理 as co2
+
+entity ワーカーアカウント as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「あなたの実績」ボタンを押下する
+bo1 -> co2:起動()
+co2 -> en1:参照()
+en1 --> co2
+
+alt 働いたことがない場合
+    co2 -> bo2:「獲得したEXPはありません」と表示する
+
+else 働いたことがある場合
+    co2 -> bo2:表示()
+
+end
+
 @enduml

@@ -1,3 +1,31 @@
 @startuml お問い合わせをする
 
+actor ワーカー as wo1
+
+boundary マイページ画面 as bo1
+boundary 問い合わせ説明画面 as bo2
+boundary お問い合わせ画面 as bo3
+
+control 表示 as co1
+control 登録 as co2
+
+entity 問い合わせ as en1
+
+co1 -> bo1:表示()
+wo1 -> bo1:「お問い合わせ」ボタンを押下する
+bo1 -> bo2:表示()
+wo1 -> bo2:「お問い合わせフォーム」ボタンを入力する
+bo2 -> bo3:表示()
+
+wo1 -> bo3:メールアドレスとワーカーか事業者か\nと問い合わせ内容を入力し、\n「送信」ボタンを押下する
+bo3 -> co2:起動()
+alt 未入力箇所がある場合
+    co2 -> bo3:「(未入力部分)が入力されていませんと」\n表示する
+
+else 全て入力されている場合
+    co2 -> en1:登録()
+    co2 -> bo1:表示()
+
+end
+
 @enduml

@@ -5,16 +5,40 @@ actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
 boundary 報酬管理 as bo2
+boundary 入出金履歴 as bo5
 boundary 報酬確認 as bo3
 boundary 報酬確定 as bo4
 
 control 表示 as co1
+control 処理 as co2
+control 登録 as co3
 
 entity ワーカーアカウント as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「引き出す」ボタンを押下する
+bo1 -> co2:起動()
+co2 -> en1:参照()
+en1 --> co2
+co2 -> bo2:表示()
 
+alt ユーザーが「入出金履歴」を押下した場合
+  wo1 -> bo2:「入出金履歴」ボタンを押下する
+  bo2 -> co2:起動()
+  co2 -> bo5:表示()
 
+else  「振り込み申請」ボタンを押下した場合
+  wo1 -> bo2:「振り込み申請」ボタンを押下する
+
+  co2 -> bo3:表示()
+  bo2 -> co2:起動()
+  wo1 -> bo3:「申請」ボタンを押下する
+  bo3 -> co3:起動()
+  co3 -> en1:登録()
+  co3 -> bo4:表示()
+
+  wo1 -> bo4:「OK」ボタンを押下する
+  co1 -> bo1:表示()
+end
 
 @enduml
