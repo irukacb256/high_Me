@@ -1,0 +1,10 @@
+@startuml クラス図
+
+skinparam classAttributeIconSize 0
+
+class ユーザー情報 {
+    電話番号
+    パスワード
+}
+
+@enduml
