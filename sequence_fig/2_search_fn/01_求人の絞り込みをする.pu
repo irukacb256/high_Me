@@ -2,12 +2,16 @@
 
 actor    ワーカー    as wo1
 boundary さがす画面  as sc1
-control  表示        as co1
-entity   求人        as jb1
+control 表示         as co1
+control 処理         as co2
 boundary 絞り込み画面 as b1
+control 処理         as co3
 boundary 勤務地選択画面 as wp1
 boundary 都道府県選択画面 as pr1
+control 処理         as co4
 boundary マップ画面       as mp1
+control 処理         as co5
+entity   求人        as jb1
 
 co1 -> jb1 : 求人を参照する
 jb1 --> co1 
@@ -17,33 +21,41 @@ co1 -> sc1 : 求人一覧を表示する
 wo1 -> sc1 : ボタンを押下する
 
 alt 「勤務地選択」ボタンを押下した場合
-    sc1 -> wp1 : 勤務地選択画面を表示する
+    sc1 -> wp1 : 勤務地選択画面を表示する:method_GET()
     alt 「×」ボタンを押下した場合
-        wp1 -> sc1 : 表示する
+        wp1 -> sc1 : 表示する:method_GET()
     else 「変更」ボタンを押下した場合
-        wp1 -> pr1 : 表示する
+        wp1 -> pr1 : 表示する:method_GET()
         wo1 -> pr1 : 都道府県を選択し「OK」ボタンを押下する
-        pr1 -> wp1 : 表示する
+        pr1 -> co4 : 起動():method_POST()
+        co4 -> jb1 : 指定された都道府県の求人を参照する()
+        co4 <-- jb1
+        co4 -> pr1 : 自分が指定した都道府県を表示する
+        
+
 
     else 「マップ」ボタンを押下した場合
-        wp1 -> mp1 : マップ画面を表示する
+        wp1 -> mp1 : マップ画面を表示する:method_GET()
         wo1 -> mp1 : 「この付近を検索」ボタンを押下する
-        mp1 -> jb1 : 求人を参照する
-        jb1 --> co1 
-        co1 -> mp1 : 表示する 
+        mp1 -> co5 : 起動:method_POST()
+        co5 -> jb1 : 求人を参照する
+        jb1 --> co5 
+        co5 -> mp1 : 表示する 
     end
         
 else 「日付」ボタンを押下した場合
-    sc1 -> jb1 : 日付の絞り込みにあった求人を参照する
-    jb1 --> co1 
-    co1 -> sc1 : 表示する
+    sc1 -> co1 : 起動:method_POST()
+    co1 -> jb1 : 日付の絞り込みにあった求人を参照する
+    co1 <-- jb1   
+    co1 -> sc1 : 求人を表示する
 
 else 「絞り込み」ボタンを押下した場合
     sc1 -> b1 : 絞り込み画面を表示する
     wo1 -> b1 : ユーザーは絞り込み条件を設定し\n「絞り込み結果を表示」ボタンを押下する
-    b1 -> jb1 : 絞り込み条件にあった求人一覧を参照する
-    jb1 --> co1
-    co1 -> sc1 : 表示する
+    b1 -> co3 : 起動:method_POST()
+    co3 -> jb1 : 絞り込み条件にあった求人一覧を参照する
+    jb1 --> co3
+    co3 -> sc1 : 表示する
 end
 
 @enduml
