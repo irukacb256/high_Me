@@ -3,6 +3,7 @@
 actor 店舗 as cp1
 boundary 管理画面 as b1
 control 表示 as co1
+entity 店舗 as b1
 control 処理 as co2
 entity QRデータ as en1
 boundary QRコード画面 as b2
