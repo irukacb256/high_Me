@@ -4,23 +4,28 @@
 actor    ワーカー    as wo1
 boundary さがす画面  as sc1
 control  表示        as co1
+control  処理        as co2
 entity   求人        as jb1
 entity   お気に入り   as fa1
 
 co1 -> jb1 : 求人を参照する
-jb1 --> co1 
+jb1 --> co1
 
 co1 -> sc1 : 求人一覧を表示する
 
 wo1 -> sc1 : 「お気に入り」ボタンを押下する
+sc1 -> co2 : 起動:method_POST()
 
-alt お気に入りボタンをもう一度押下した場合 
-    sc1 -> sc1 : 「お気に入り」ボタンを\n赤から無色にする
-    sc1 -> fa1 : お気に入り解除する
+alt お気に入り解除の場合
+    co2 -> fa1 : お気に入りを解除する
+    co2 <-- fa1
+    co2 -> sc1 : 「お気に入り」ボタンを\n赤から無色にする
 
-else お気に入り登録する場合
-    sc1 -> sc1 : 「お気に入り」ボタンを\n無色から赤にする
-    sc1 -> fa1 : お気に入り登録する
+else お気に入り登録の場合
+    co2 -> fa1 : お気に入りを登録する
+    co2 <-- fa1
+    co2 -> sc1 : 「お気に入り」ボタンを\n無色から赤にする
+
 
 end
 

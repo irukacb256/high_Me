@@ -3,11 +3,13 @@
 actor    ワーカー    as wo1
 boundary さがす画面  as sc1
 control  表示        as co1
+control  処理        as co2
 entity   求人        as jb1
 boundary 求人詳細画面 as jd1
 
 co1 -> jb1 : 求人を参照する
-jb1 --> co1 
+jb1 --> co1
+co1 -> sc1 : システムは画面を表示する 
 
 alt 求人がない場合 
     co1 -> sc1 : 「この日の仕事はまだありません」\nと画面に表示する
@@ -18,7 +20,9 @@ else 求人がある場合
 end
 
 wo1 -> sc1 : 画面の求人を押下する
-
-sc1 -> jd1 : 求人詳細画面を表示
+sc1 -> co2 : 起動:method_POST()
+co2 -> jb1 : その求人の詳細を参照する
+co2 <-- jb1
+co2 -> jd1 : 求人詳細画面を表示
 
 @enduml
