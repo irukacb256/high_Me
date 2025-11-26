@@ -11,7 +11,7 @@ control 表示 as co1
 control 処理 as co2
 control 登録 as co3
 
-entity ワーカーアカウント as en1
+entity 店舗ごとの報酬 as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「年間報酬による制限の解除」ボタンを押下する

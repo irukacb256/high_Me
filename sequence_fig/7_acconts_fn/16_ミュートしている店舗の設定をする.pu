@@ -8,7 +8,7 @@ boundary ミュート企業一覧画面 as bo2
 control 表示 as co1
 control 処理 as co2
 
-entity ワーカーアカウント as en1
+entity ミュートしている店舗 as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「ミュートにしている店舗」ボタンを押下する

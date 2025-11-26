@@ -6,7 +6,7 @@ control 表示 as co1
 boundary チャット画面 as ch1
 control 処理 as co2
 
-entity メール as ml1
+entity メッセージ as ml1
 
 ' 2
 co1 -> me1 : システムは画面を表示する

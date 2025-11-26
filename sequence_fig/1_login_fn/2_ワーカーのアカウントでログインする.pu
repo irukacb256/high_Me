@@ -8,7 +8,7 @@ control 表示 as co1
 boundary メイン画面 as sm1
 control 処理 as co2
 
-entity ワーカーアカウント as en1
+entity ワーカー as en1
 
 ' 2
 co1 -> lo1 : ログイン画面を表示する

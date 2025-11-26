@@ -4,7 +4,7 @@
 actor ワーカー as wo1
 boundary 求人詳細画面 as jd1
 control 表示 as co1
-entity 店舗 as en1
+entity ワーカーからのレビュー as en1
 
 ' 2
 co1 -> en1 : 店舗を参照する

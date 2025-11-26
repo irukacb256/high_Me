@@ -6,7 +6,7 @@ control 表示 as co1
 control 表示 as co2
 boundary 入力画面 as b2
 control 処理 as co3
-entity ワーカーデータ as en1
+entity メッセージ as en1
 boundary 完了画面 as b3
 
 b1 <- co1 :画面を表示する

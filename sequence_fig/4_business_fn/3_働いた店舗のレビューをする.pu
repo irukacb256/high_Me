@@ -3,7 +3,7 @@
 actor    ワーカー as wo1
 boundary 評価選択画面 as rsc1
 control  表示     as co1
-entity   レビュー as rv1
+entity   ワーカーからのレビュー as rv1
 boundary レビュー入力画面 as ric1
 boundary 投稿完了画面 as rcc1
 

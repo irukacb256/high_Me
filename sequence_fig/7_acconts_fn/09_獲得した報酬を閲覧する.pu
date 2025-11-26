@@ -10,7 +10,7 @@ control 表示 as co1
 control 処理 as co2
 control 処理 as co3
 
-entity ワーカーアカウント as en1
+entity 獲得報酬 as en1
 entity 求人 as en2
 
 co1 -> bo1:表示()

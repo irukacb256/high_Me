@@ -10,7 +10,7 @@ control 表示 as co1
 control 処理 as co2
 control 登録 as co3
 
-entity ワーカーアカウント as en1
+entity ワーカー as en1
 
 alt ログインしていない場合
     co1 -> bo1:「アカウント作成」ボタンを表示する

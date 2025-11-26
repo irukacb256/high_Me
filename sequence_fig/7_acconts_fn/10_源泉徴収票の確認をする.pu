@@ -10,7 +10,8 @@ boundary 源泉徴収票ファイル as bo4
 control 表示 as co1
 control 処理 as co2
 
-entity ワーカーアカウント as en1
+entity 求人 as en1
+entity 獲得報酬 as en2
 
 co1 -> bo1:表示()
 wo1 -> bo1:「源泉徴収票の確認と印刷」\nボタンを押下する

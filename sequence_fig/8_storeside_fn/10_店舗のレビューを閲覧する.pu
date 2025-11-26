@@ -3,7 +3,7 @@
 actor 店舗 as cp1
 boundary レビュー一覧画面 as b1
 control 処理 as co2
-entity レビューデータ as en1
+entity ワーカーからのレビュー as en1
 boundary ワーカー詳細画面 as b2
 boundary 求人詳細画面 as b3
 

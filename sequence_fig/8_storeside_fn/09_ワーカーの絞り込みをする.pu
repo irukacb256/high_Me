@@ -4,7 +4,7 @@ actor 店舗 as cp1
 boundary 一覧画面 as b1
 control 表示 as co1
 control 絞り込み処理 as co2
-entity ワーカーデータ as en1
+entity ワーカー as en1
 boundary 絞り込み画面 as b2
 
 b1 <- co1 :画面を表示する()

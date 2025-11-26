@@ -13,7 +13,8 @@ control 表示 as co1
 control 処理 as co2
 control 登録 as co3
 
-entity ワーカーアカウント as en1
+entity ワーカー as en1
+entity 銀行口座 as en2
 
 co1 -> bo1:表示()
 wo1 -> bo1:「引き出す」ボタンを押下する

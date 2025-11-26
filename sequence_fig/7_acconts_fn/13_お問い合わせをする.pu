@@ -9,7 +9,7 @@ boundary お問い合わせ画面 as bo3
 control 表示 as co1
 control 登録 as co2
 
-entity 問い合わせ as en1
+entity 運営 as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「お問い合わせ」ボタンを押下する

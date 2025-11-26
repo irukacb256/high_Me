@@ -11,7 +11,7 @@ control 処理 as co2
 boundary 質問画面 as qu1
 control 処理 as co3
 
-entity メール as ml1
+entity 求人 as ml1
 
 boundary 申し込み完了画面 as ac1
 

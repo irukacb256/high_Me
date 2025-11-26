@@ -7,7 +7,7 @@ control 表示 as co1
 
 control 処理 as co2
 
-entity お気に入り as fa1
+entity お気に入り求人 as fa1
 
 ' 2
 co1 -> fa1 : お気に入り求人を参照する

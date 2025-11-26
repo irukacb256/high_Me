@@ -4,7 +4,7 @@ actor ワーカー as wo1
 boundary QR読み取り画面 as ch2
 boundary QR読み取り後画面 as ch1
 control 表示 as co1
-entity 予定 as en1
+entity 今後の予定 as en1
 boundary 報酬確定修正依頼画面 as rc1
 boundary 報酬の最終確認画面 as rl1
 boundary 報酬確定画面 as rc2

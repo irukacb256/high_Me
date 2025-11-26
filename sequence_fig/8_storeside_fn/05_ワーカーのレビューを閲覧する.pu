@@ -3,7 +3,7 @@
 actor 店舗 as cp1
 boundary 画面 as b1
 control 処理 as co2
-entity レビューデータ as en1
+entity 店舗からのレビュー as en1
 
 co2 -> en1 :参照()
 co2 <-- en1

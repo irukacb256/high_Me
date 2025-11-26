@@ -9,7 +9,7 @@ boundary バッチ詳細画面 as bo3
 control 表示 as co1
 control 処理 as co2
 
-entity ワーカーアカウント as en1
+entity バッチ as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「バッチ一覧」ボタンを押下する

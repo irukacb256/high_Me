@@ -5,6 +5,8 @@ boundary はたらく画面 as wk1
 control 表示 as co1
 boundary これまでの仕事画面 as ks1
 boundary 求人詳細画面 as jd1
+
+entity これまでの仕事 as aj1
 ' 2
 co1 -> wk1 : 表示する
 wo1 -> wk1 :  ユーザーは「これまでの仕事」ボタンを押下する

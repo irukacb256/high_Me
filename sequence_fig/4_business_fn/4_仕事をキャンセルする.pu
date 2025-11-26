@@ -11,7 +11,8 @@ boundary キャンセル理由入力画面 as cri1
 boundary キャンセル理由入力内容確認画面 as cfc1
 boundary キャンセル内容最終確認画面 as cfc2
 boundary キャンセル完了画面 as cmp1
-entity 予定 as en1
+entity 今後の予定 as en1
+entity 求人 as jb1
 
 co1 -> en1 : 予定を参照する
 en1 --> co1

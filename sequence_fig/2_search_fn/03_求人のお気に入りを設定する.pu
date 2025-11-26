@@ -6,7 +6,7 @@ boundary さがす画面  as sc1
 control  表示        as co1
 control  処理        as co2
 entity   求人        as jb1
-entity   お気に入り   as fa1
+entity   お気に入り求人   as fa1
 
 co1 -> jb1 : 求人を参照する
 jb1 --> co1

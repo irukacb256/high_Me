@@ -7,7 +7,9 @@ control 処理 as co2
 control 表示 as co3
 boundary 確認画面 as b2
 control 処理 as co4
-entity ワーカーデータ as en1
+
+entity ワーカー as en1
+entity 店舗ごとの報酬 as en2
 boundary 完了画面 as b3
 
 b1 <- co1 :画面を表示する()

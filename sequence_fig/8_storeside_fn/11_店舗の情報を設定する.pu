@@ -7,7 +7,8 @@ control 処理 as co2
 boundary 店舗情報画面 as b2
 boundary 変更画面 as b3
 control 処理 as co3
-entity 店舗情報 as en1
+
+entity 店舗 as en1
 boundary 完了画面 as b4
 
 b1 <- co1 :画面を表示する()

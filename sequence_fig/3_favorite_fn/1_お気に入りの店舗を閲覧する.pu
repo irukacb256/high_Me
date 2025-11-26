@@ -5,7 +5,7 @@ actor ワーカー as wo1
 boundary お気に入り画面 as fv1
 control 表示 as co1
 
-entity お気に入り as fa1
+entity お気に入り店舗 as fa1
 
 ' 2
 co1 -> fa1 : お気に入り店舗を参照する()

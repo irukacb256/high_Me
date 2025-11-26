@@ -7,8 +7,8 @@ boundary 新規作成画面 as b2
 control 処理 as co2
 boundary かんたん自動入力画面 as b3
 control 処理 as co3
-entity 求人 as en1
 
+entity 求人のひな形 as en1
 boundary ひな型作成完了画面 as b4
 
 b1 <- co1 : 画面を表示する

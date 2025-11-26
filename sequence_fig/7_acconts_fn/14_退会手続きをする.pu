@@ -13,7 +13,7 @@ control 表示 as co1
 control 処理 as co2
 control 削除 as co3
 
-entity ワーカーアカウント as en1
+entity ワーカー as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「退会手続き」ボタンを押下する

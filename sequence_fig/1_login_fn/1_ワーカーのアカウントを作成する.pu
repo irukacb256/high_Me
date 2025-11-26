@@ -13,7 +13,7 @@ control 処理 as co2
 control 処理 as co3
 control 処理 as co4
 
-entity ワーカーアカウント as ac1
+entity ワーカー as ac1
 boundary さがす画面 as sc1
 
 ' 2

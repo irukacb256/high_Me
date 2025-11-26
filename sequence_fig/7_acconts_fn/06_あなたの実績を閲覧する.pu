@@ -8,7 +8,7 @@ boundary 実績画面 as bo2
 control 表示 as co1
 control 処理 as co2
 
-entity ワーカーアカウント as en1
+entity 実績 as en1
 
 co1 -> bo1:表示()
 wo1 -> bo1:「あなたの実績」ボタンを押下する
