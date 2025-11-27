@@ -1,23 +1,34 @@
 @startuml メッセージでやり取りする
 
 actor 店舗 as cp1
-boundary 画面 as b1
+boundary メッセージ一覧画面 as mlv1
 control 表示 as co1
-control 表示 as co2
-boundary 入力画面 as b2
-control 処理 as co3
-entity メッセージ as en1
-boundary 完了画面 as b3
+boundary メッセージ詳細画面 as mdv1
+control 処理 as co2
 
-b1 <- co1 :画面を表示する
-cp1 -> b1 :メッセージを送るワーカーを選択する
-b1 -> co2 :起動する:method=POST()
+entity ワーカー as wo1
+entity 求人 as jb1
+entity メール as ml1
+boundary 完了画面 as cmv1
 
-co2 -> b2 :画面を表示する
-cp1 -> b2 :メッセージを入力し、「送信」ボタンを押下する
-b2 -> co3 :起動()
-co3 -> en1 :送信処理
-co3 <-- en1 
-co3 -> b3 :画面を表示する
+co1 -> wo1 : ワーカーを参照する
+co1 <-- wo1
+co1 -> jb1 : 求人を参照する
+co1 <-- jb1
+co1 -> mlv1 : 画面を表示する
+cp1 -> mlv1 : ユーザーはメッセージを送りたい\n「ワーカ」ボタンを押下する
+mlv1 -> mdv1 : 画面を表示する:method_GET()
+cp1 -> mdv1 : ユーザーはメッセージを入力して\n「送信する」ボタンを押下する
+mdv1 -> co2 : 起動:method_POST()
+
+alt メッセージが未入力の場合
+    co2 -> mdv1 : システムは\n「メッセージを入力してください」と表示する
+
+else メッセージが入力された場合
+    co2 -> ml1 : メッセージを送信する
+    co2 <-- ml1
+    co2 -> cmv1 : システムは画面を表示する:method_GET()
+
+end
 
 @enduml

@@ -1,38 +1,76 @@
 @startuml 修正依頼の確認、承認をする
 
-actor 店舗 as st1
-boundary 修正依頼画面 as b1
-control 表示 as c1
-control 表示 as c2
-boundary 拒否理由記入画面 as b2
-boundary 確認画面 as b3
-control 処理 as c3
-entity 情報 as en1
-boundary 完了画面 as b4
+actor 店舗 as cp1
+boundary 修正依頼ホーム画面 as b1
+control 表示 as co1
+boundary 修正依頼確認画面 as b2
+control 処理 as co2
+boundary 承認画面 as b3
+control 処理 as co3
+boundary 拒否画面 as b4
+control 処理 as co4
 
-alt 修正依頼が届いていない場合 
-b1 <- c1 :「修正依頼がありません」と画面に表示する
+entity 修正依頼 as cr1
+entity ワーカー as wo1
+entity 求人 as jb1
+boundary 完了画面 as b5
 
-else 修正依頼が届いている場合
-b1 <- c1 :画面に修正依頼を表示する
+co1 -> cr1 : 修正依頼を参照する
+co1 <-- cr1
+co1 -> b1 : 画面を表示する
+
+alt 修正依頼がない場合
+    co1 -> b1 : システムは\n「修正依頼はありません」と表示する
+
+else 修正依頼がある場合
+    co1 -> wo1 : ワーカーを参照する
+    co1 <-- wo1
+    co1 -> jb1 : 求人を参照する
+    co1 <-- jb1
+    co1 -> b1 : システムは\n修正依頼のある求人とワーカー名を表示する
+
+    cp1 -> b1 : ユーザーは「ワーカー」ボタンを押下する
+    b1 -> b2 : 画面を表示する:method_GET()
+    cp1 -> b2 : ユーザーは「承認」または「拒否」ボタンを押下する
+
+    alt 拒否ボタンを押下した場合
+        b2 -> b4 : 画面を表示する:method_GET()
+        cp1 -> b4 : ユーザーは拒否の理由を記入し\n「拒否する」ボタンを押下する
+        b4 -> co4 : 起動:method_POST()
+
+        alt メッセージが入力されていない場合
+            co4 -> b4 : システムは\n「メッセージが入力されていません」と表示する
+        
+        else メッセージが入力された場合
+            co4 -> cr1 : 修正依頼を拒否
+            co4 <-- cr1
+            co4 -> wo1 : ワーカーに修正依頼の拒否を送信
+            co4 <-- wo1
+            co4 -> b5 : システムは画面を表示する:method_GET()
+
+        end
+
+    else 承認ボタンを押下した場合
+        b2 -> b3 : 画面を表示する:method_GET()
+        cp1 -> b3 : ユーザーは\nチェックボックスにチェックし「承認する」ボタンを押下する
+        b3 -> co3 : 起動:method_POST()
+
+        alt チェックボックスにチェックしてない場合
+            co3 -> b3 : システムは「チェック項目にチェックされていません」と表示する
+
+        else チェック項目にチェックされた場合
+            co3 -> cr1 : 修正依頼を承認
+            co3 <-- cr1
+            co3 -> wo1 : ワーカーに修正依頼の承認を送信
+            co3 <-- wo1
+            co3 -> b5 : システムは画面を表示する:method_GET()
+
+        end
+
+    end
+
 
 end
 
-st1 -> b1 :内容を確認してボタンを押下
-
-alt 「拒否」ボタンを押下した場合
-b1 -> c2 
-c2 -> b2 :画面を表示する()
-
-else 「承認」ボタンを押下した場合
-b1 -> c2 
-c2 -> b3 :画面を表示する
-
-end
-
-st1 -> b3 :チェックボックスにチェックを入れ\n「承認する」ボタンを押下
-b3 -> c3 :承認処理()
-c3 -> en1 :更新()
-c3 -> b4 :画面を表示する
 
 @enduml

@@ -3,31 +3,23 @@
 actor 店舗 as cp1
 boundary 年間報酬による制限の解除画面 as b1
 control 表示 as co1
-control 処理 as co2
-control 表示 as co3
-boundary 確認画面 as b2
+
+boundary リクエスト確認画面 as b2
 control 処理 as co4
 
 entity ワーカー as en1
 entity 店舗ごとの報酬 as en2
 boundary 完了画面 as b3
 
-b1 <- co1 :画面を表示する()
-cp1 -> b1 :制限解除のステータスを選択
-b1 -> co2 :起動する:method=POST()
-co1 <- co2
-b1 <- co1 :画面を表示する()
-cp1 -> b1 :「解除手続きリクエスト」ボタンを押下する
-b1 -> co3 
-co3 -> b2 :画面を表示する()
+co1 -> b1 : 画面を表示する
+cp1 -> b1 : ユーザー年間報酬の解除を\n「リクエスト」ボタンを押下する
+b1 -> b2 : 画面を表示する:method_GET()
+cp1 -> b2 : ユーザーは「リクエストを送信」ボタンを押下する
 
-alt 「キャンセル」ボタンが押下された場合
-b1 <- b2 :画面を表示する()
-else 「リクエストを送信」ボタンを押下した場合
-b2 -> co4 :起動する()
-co4 -> en1 :送信する()
-co4 <-- en1 
-co4 -> b3 :画面を表示する()
+alt 制限解除のステータスを「
+
+
+else
 
 end
 
