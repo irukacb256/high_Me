@@ -20,7 +20,7 @@ else 企業がある場合
 
     mm1 -> ap1 : 絞り込みの条件を設定し「OK」ボタンを押下する
 
-    ap1 -> co1 : 起動(POST)
+    ap1 -> co1 : 起動:method_POST()
 
     co1 -> cop1 : 企業を参照する
     cop1 --> co1
@@ -29,7 +29,7 @@ else 企業がある場合
 
     mm1 -> ap1 : 企業の「ステータス」ボタンを押下する
 
-    ap1 -> co1 : 起動(POST)
+    ap1 -> co1 : 起動:method_POST()
 
     co1 -> cop1 : 企業のステータスを更新する
     cop1 --> co1

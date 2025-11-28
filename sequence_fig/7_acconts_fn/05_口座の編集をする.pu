@@ -5,34 +5,40 @@ actor ワーカー as wo1
 boundary マイページ画面 as bo1
 
 boundary 報酬管理 as bo1
+control 表示 as co1
 boundary 報酬管理 as bo2
 boundary 振込口追加画面 as bo3
 
-control 表示 as co1
 control 処理 as co2
-control 登録 as co3
+control 処理 as co3
 
 entity ワーカー as en1
 entity 銀行口座 as en2
 
-co1 -> bo1:表示()
+co1 -> bo1: 画面を表示する()
 wo1 -> bo1:「引き出す」ボタンを押下する
-bo1 -> co2:起動():method=GET()
-co2 -> en1:参照()
+bo1 -> co2: 起動:method=POST()
+co2 -> en1: ウォレット残高を参照する()
 en1 --> co2
 
-co2 -> bo2:表示()
-wo1 -> bo2:「振込先口座を登録」ボタンを押下する
-bo2 -> co2:起動():method=GET()
-co2 -> bo3:表示()
+co2 -> bo2: 画面を表示する()
+wo1 -> bo2:「振込先口座を編集」ボタンを押下する
+bo2 -> co3: 起動:method=POST()
+co3 -> en2: 銀行口座を参照する
+co3 <-- en2
+co3 -> bo3: 画面を表示する() 
 wo1 -> bo3:銀行、口座種別、支店、口座番号、\n口座名義を入力し、「保存」ボタンを押下する
 bo3 -> co3:起動():method=POST()
+
 alt 必須項目が未入力の場合
-    co3 -> bo3:「(未入力項目)が未入力です」と表示する
+    co3 -> bo3:システムは「(未入力項目)が未入力です」と表示する
 
 else 必須項目が入力されている場合
-    co3 -> en1:登録():method=POST()
-    co3 -> bo2:表示()
+    co3 -> en1: 銀行口座を変更する  
+    co3 <-- en1
+    co3 -> en2 : 変更された銀行口座を登録する
+    co3 <-- en2
+    co3 -> bo2:画面を表示する:method_GET()
 
 end
 
