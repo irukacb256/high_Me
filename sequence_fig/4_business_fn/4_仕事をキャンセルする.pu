@@ -10,12 +10,12 @@ boundary キャンセル理由選択画面 as crs1
 boundary キャンセル理由入力画面 as cri1
 boundary キャンセル理由入力内容確認画面 as cfc1
 boundary キャンセル内容最終確認画面 as cfc2
-boundary キャンセル完了画面 as cmp1
-entity 今後の予定 as en1
+entity キャンセル理由 as en1
+entity 今後の予定 as en2
 entity 求人 as jb1
 
-co1 -> en1 : 予定を参照する
-en1 --> co1
+co1 -> en2 : 予定を参照する
+en2 --> co1
 alt 応募済みのお仕事がない場合
     co1 -> wk1 : 「今後の予定はありません」「次のお仕事を探してみましょう」と「仕事を探す」ボタンを表示する
 else 応募済みのお仕事がある場合
@@ -40,8 +40,11 @@ else 応募済みのお仕事がある場合
     else 「確定する」ボタンを押下した場合
         cfc2 -> cfc2 :「キャンセルしました」のポップを表示する
         wo1 -> cfc2 : 「OK」ボタンを押下する
-        cfc2 -> en1 : 削除する
+
+        cfc2 -> en1 :送信する
         cfc2 <-- en1
+        cfc2 -> en2 : 削除する
+        cfc2 <-- en2
         cfc2 -> wk1 : 表示する
     end 
 end 
