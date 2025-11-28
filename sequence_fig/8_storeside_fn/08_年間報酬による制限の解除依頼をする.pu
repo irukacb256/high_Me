@@ -5,21 +5,29 @@ boundary 年間報酬による制限の解除画面 as b1
 control 表示 as co1
 
 boundary リクエスト確認画面 as b2
-control 処理 as co4
+control 処理 as co2
 
 entity ワーカー as en1
 entity 店舗ごとの報酬 as en2
-boundary 完了画面 as b3
+boundary 完了画面 as bo3
 
+co1 -> en2 : 報酬を参照する()
+co1 <-- en2
 co1 -> b1 : 画面を表示する
 cp1 -> b1 : ユーザー年間報酬の解除を\n「リクエスト」ボタンを押下する
-b1 -> b2 : 画面を表示する:method_GET()
+b1 -> b2 : 画面を表示する:method=GET()
 cp1 -> b2 : ユーザーは「リクエストを送信」ボタンを押下する
+b2 -> co2 : 起動:method=POST()
 
-alt 制限解除のステータスを「
+alt 制限解除をブロックしている場合
+    co2 -> en1 : ワーカーを表示しない()
+    co2 <-- en1
 
+else 制限解除ができる場合
+    co2 -> en1 : リクエストを送信する()
+    co2 <-- en1
+    co2 -> bo3 : 画面を表示する:method=GET()
 
-else
 
 end
 
