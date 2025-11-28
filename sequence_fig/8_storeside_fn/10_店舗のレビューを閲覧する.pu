@@ -19,14 +19,14 @@ b1 <- co1 :画面にレビューを表示する
 
     alt ワーカーの名前を押下した場合
         cp1 -> b1 :画面を表示する
-        b1 -> co2 : 起動:method_POST()
+        b1 -> co2 : 起動:method=POST()
         co2 -> wr1 : ワーカーの名前を参照する
         co2 <-- wr1
         co2 -> b1 : 画面を表示する()
 
     else 求人タイトルを押下した場合
         cp1 -> b1 :画面を表示する
-        b1 -> co2 : 起動:method_POST()
+        b1 -> co2 : 起動:method=POST()
         co2 -> wr1 : ワーカーの名前を参照する
         co2 <-- wr1
         co2 -> b1 : 画面を表示する()

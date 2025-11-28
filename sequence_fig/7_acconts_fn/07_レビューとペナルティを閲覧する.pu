@@ -8,6 +8,7 @@ boundary レビュー閲覧画面 as bo2
 boundary ペナルティ詳細画面 as bo3
 
 control 処理 as co2
+control 処理 as co3
 
 entity 店舗からのレビュー as en1
 entity ペナルティ as en2
@@ -15,27 +16,29 @@ entity ペナルティ as en2
 co1 -> bo1:画面を表示する()
 wo1 -> bo1:ユーザーは「レビューとペナルティ」ボタンを押下する
 bo1 -> co2:起動:method=POST()
-co2 -> en1: レビューを参照する()
-en1 --> co2
-co2 -> en2: ペナルティを参照する()
-co2 <-- en2
 
 alt レビューがない場合
     co2 -> bo2:システムは\n「レビューはありません。」と表示する
 
 else レビューがある場合
-    co2 -> bo2:画面を表示する()
+    co2 -> en1: レビューを参照する()
+    en1 --> co2
+    co2 -> en2: ペナルティを参照する()
+    co2 <-- en2
+    co2 -> bo2:画面を表示する:method=GET()
 
-end
+    wo1 -> bo2:ユーザーはペナルティの「詳細」ボタンを押下する
+    bo2 -> co3:起動:method=POST()
 
-wo1 -> bo2:「詳細」ボタンを押下する
-bo2 -> co2:起動():method=GET()
+    alt ペナルティがない場合
+        co3 -> bo3:システムは\n「データはありません。」と表示する
 
-alt ペナルティがない場合
-    co2 -> bo3:「データはありません。」と表示する
+    else
+        co3 -> en2: ペナルティの詳細を参照する()
+        co3 <-- en2
+        co3 -> bo3:画面を表示する:method=GET()
 
-else
-    co2 -> bo3:表示()
+    end
     
 end
 

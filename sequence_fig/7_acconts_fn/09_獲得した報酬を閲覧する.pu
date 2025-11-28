@@ -3,26 +3,26 @@
 actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
+control 表示 as co1
 boundary 獲得した報酬画面 as bo2
 boundary 求人詳細画面 as bo3
 
-control 表示 as co1
 control 処理 as co2
 control 処理 as co3
 
 entity 獲得報酬 as en1
 entity 求人 as en2
 
-co1 -> bo1:表示()
-wo1 -> bo1:「獲得した報酬」ボタンを押下する
-bo1 -> co2:起動():method=GET()
-co2 -> en1:参照()
-en1 --> co2
+co1 -> bo1:画面を表示する()
+wo1 -> bo1:ユーザーは\n「獲得した報酬」ボタンを押下する
+bo1 -> co2:起動:method=POST()
 
 alt 獲得した報酬がない場合
-    co2 -> bo2:「獲得した報酬はありません」と表示する
+    co2 -> bo2:システムは「獲得した報酬はありません」と表示する
 
 else 獲得した報酬がある場合
+    co2 -> en1:参照()
+    en1 --> co2
     co2 -> bo2:表示()
 
     wo1 -> bo2:働いた月のグラフを押下する

@@ -3,30 +3,34 @@
 actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
+control 表示 as co1
 boundary バッチ一覧画面 as bo2
 boundary バッチ詳細画面 as bo3
 
-control 表示 as co1
 control 処理 as co2
+control 処理 as co3
 
 entity バッチ as en1
+entity 求人 as en2 
 
-co1 -> bo1:表示()
-wo1 -> bo1:「バッチ一覧」ボタンを押下する
-bo1 -> co2:起動():method=GET()
-co2 -> en1:参照()
+co1 -> bo1:画面を表示する()
+wo1 -> bo1:ユーザーは\n「バッチ一覧」ボタンを押下する
+bo1 -> co2:起動:method=POST()
+co2 -> en1:バッチを参照する()
 en1 --> co2
 
-co2 -> bo2:表示()
+co2 -> bo2:ユーザーは画面を表示する()
 
 wo1 -> bo2:「バッチ詳細」ボタンを押下する
-bo2 -> co2:起動():method=GET()
+bo2 -> co3:起動():method=POST()
 
 alt バッチを獲得していない場合
-    co2 -> bo3:「「バッジを獲得できる可能性がある仕事」を表示する
+    co3 -> bo3:「バッジを獲得できる可能性がある仕事」\nを表示する
 
 else
-    co2 -> bo3:表示()
+    co3 -> en2:バッチを\n獲得している求人を参照する()
+    en2 --> co3
+    co3 -> bo3:画面を表示する:method=GET()
     
 end
 

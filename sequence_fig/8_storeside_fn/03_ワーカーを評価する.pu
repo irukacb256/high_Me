@@ -10,13 +10,13 @@ control 処理 as co3
 entity 店舗からの評価 as en1
 boundary 完了画面 as b4
 
-b1 <- co1 : 画面を表示する:method_GET()
+b1 <- co1 : 画面を表示する:method=GET()
 cp1 -> b1 : ユーザーはワーカーの\n「レビュー」ボタンを表示する
-b1 -> b2 :画面を表示する:method_GET()
+b1 -> b2 :画面を表示する:method=GET()
 
 alt 1人ずつ評価する場合
     cp1 -> b2 : ユーザーは必要情報を入力し、\n「レビューを送信する」ボタンを押下する
-    b2 -> co2 : 起動:method_POST()
+    b2 -> co2 : 起動:method=POST()
     
     alt 評価項目が未入力の場合
         co2 -> b2 : 「(未入力項目)の評価項目が未入力です」\nと表示する
@@ -29,9 +29,9 @@ alt 1人ずつ評価する場合
     end
 
 else 「まとめてレビューを入力」を押下した場合
-    b2 -> b3 : 画面を表示する:method_GET()
+    b2 -> b3 : 画面を表示する:method=GET()
     cp1 -> b3 : ユーザーはレビューを入力し、\n「まとめて入力」ボタンを押下する
-    b3 -> co3 : 起動:method_POST()
+    b3 -> co3 : 起動:method=POST()
 
     alt 評価項目が未入力の場合
             b3 <- co3 :「(未入力項目)の評価項目が未入力です」\nと画面に表示する
