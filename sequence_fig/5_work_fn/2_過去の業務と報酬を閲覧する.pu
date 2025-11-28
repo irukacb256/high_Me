@@ -4,18 +4,28 @@ actor ワーカー as wo1
 boundary はたらく画面 as wk1
 control 表示 as co1
 boundary これまでの仕事画面 as ks1
+control 処理 as co2
 boundary 求人詳細画面 as jd1
+control 処理 as co3
 
 entity これまでの仕事 as aj1
+entity 求人 as jb1
 ' 2
-co1 -> wk1 : 表示する
-wo1 -> wk1 :  ユーザーは「これまでの仕事」ボタンを押下する
+co1 -> wk1 : 画面を表示する()
+wo1 -> wk1 : ユーザーは\n「これまでの仕事」ボタンを押下する
+wk1 -> co2 : 起動:method=POST()
+
 alt これまでの仕事がない場合
-wk1 -> ks1 : システムは「これまでの仕事はありません」と表示する
+    co2 -> ks1 : システムは\n「これまでの仕事はありません」と表示する
 else 仕事がある場合
-wk1 -> ks1 : 表示する
-wo1 -> ks1 : ユーザーは過去の業務を選択する
-ks1 -> jd1 : 表示する
+    co2 -> aj1 : これまでの仕事を参照する()
+    co2 <-- aj1
+    co2 -> ks1 : 画面を表示する:method=GET()
+    wo1 -> ks1 : ユーザーは過去の業務を選択する
+    ks1 -> co3 : 起動:method=POST()
+    co3 -> jb1 :　求人の詳細を参照する()
+    co3 <-- jb1
+    co3 -> jd1 : 画面を表示する:method=GET()
 end
 
 @enduml
