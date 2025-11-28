@@ -3,41 +3,42 @@
 actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
+control 表示 as co1
 boundary 保有資格一覧画面 as bo2
 boundary 資格登録画面 as bo3
 boundary 分野選択画面 as bo4
 boundary 写真選択画面 as bo5
 
-control 表示 as co1
 control 処理 as co2
-control 登録 as co3
+control 処理 as co3
+control 処理 as co4
 
 entity 資格 as en1
 
-co1 -> bo1:表示()
-wo1 -> bo1:「保有資格」ボタンを押下する
-bo1 -> co2:起動():method=GET()
-co2 -> en1:参照()
-en1 --> co2
+co1 -> bo1:画面を表示する()
+wo1 -> bo1:ユーザーは「保有資格」ボタンを押下する
+bo1 -> co2:起動:method=POST()
 
 alt 登録済みの資格がない場合
     co2 -> bo2:「登録された資格はありません」と表示する
 
 else 登録済みの資格がある場合
-    co2 -> bo2:表示()
+    co2 -> en1:資格を参照する()
+    en1 --> co2
+    co2 -> bo2:画面を表示する:method=GET()
 
 end
 
 wo1 -> bo2:「資格を追加する」ボタンを押下する
-bo2 -> bo3:表示()
+bo2 -> bo3:画面を表示する:method=GET()
 wo1 -> bo3:「登録する資格分野」ボタンを押下する
-bo3 -> bo4:表示()
+bo3 -> bo4:画面を表示する:method=GET()
 wo1 -> bo4:資格の分野を選択する
-bo4 -> bo3:表示()
+bo4 -> bo3:画面を表示する:method=GET()
 wo1 -> bo3:「写真を選択」ボタンを押下する
-bo3 -> bo5:表示()
+bo3 -> bo5:画面を表示する:method=GET()
 wo1 -> bo5:写真を選択する
-bo5 -> bo3:表示()
+bo5 -> bo3:画面を表示する:method=GET()
 
 wo1 -> bo3:チェックボックスにチェックを入れ\n「登録する」ボタンを押下する
 bo3 -> co3:起動():method=POST()
@@ -51,10 +52,11 @@ else チェックがされていない場合
     co3 -> bo3:「注意事項への同意が必須です」と表示する
 
 else 全て選択されている場合    
-    co3 -> en1:登録():method=POST()
-    co2 -> en1:参照()
-    en1 --> co2
-    co2 -> bo2:表示()
+    co3 -> en1:資格を登録する()
+    co3 <--en1 
+    co4 -> en1:資格を参照する()
+    en1 --> co4
+    co4 -> bo2:画面を表示する:method=GET()
 
 end
 

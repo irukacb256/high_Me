@@ -3,33 +3,35 @@
 actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
+control 表示 as co1
 boundary 提供企業一覧画面 as bo2
 boundary 本人確認画面 as bo3
 boundary 申し込み制限解除確定画面 as bo4
 
-control 表示 as co1
 control 処理 as co2
-control 登録 as co3
+control 処理 as co3
 
 entity 店舗ごとの報酬 as en1
 
-co1 -> bo1:表示()
-wo1 -> bo1:「年間報酬による制限の解除」ボタンを押下する
-bo1 -> co2:起動():method=GET()
-co2 -> en1:参照()
-en1 --> co2
+co1 -> bo1:画面を表示する()
+wo1 -> bo1:ユーザーは\n「年間報酬による制限の解除」ボタンを押下する
+bo1 -> co2:起動():method=POST()
+
 alt 企業からの制限解除リクエストが来ていない場合
-    en1 -> bo2:制限解除リクエストはありませんと表示する
+    co2 -> bo2:制限解除リクエストはありませんと表示する
 
 else 企業からの制限解除リクエストが来ている場合
-    co2 -> bo2:表示()
+    co2 -> en1:店舗ごとの報酬を参照()
+    en1 --> co2
+    co2 -> bo2:画面を表示する:method=GET()
 
-    wo1 -> bo2:「制限を解除する」ボタンを押下する
-    bo2 -> bo3:表示()
-    wo1 -> bo3:「本人確認」ボタンを押下する
-    bo3 -> co3:起動():method=POSt()
-    co3 -> en1:登録():method=POST()
-    co3 -> bo2:表示()
+    wo1 -> bo2:ユーザーは「制限を解除する」ボタンを押下する
+    bo2 -> bo3:画面を表示する:method=GET()
+    wo1 -> bo3:ユーザーは「本人確認」ボタンを押下する
+    bo3 -> co3:起動:method=POST()
+    co3 -> en1:承認する()
+    co3 <-- en1
+    co3 -> bo2:画面を表示する:method=GET()
 
 end
 

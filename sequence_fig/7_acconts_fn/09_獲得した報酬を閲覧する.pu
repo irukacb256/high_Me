@@ -9,6 +9,7 @@ boundary 求人詳細画面 as bo3
 
 control 処理 as co2
 control 処理 as co3
+control 処理 as co4
 
 entity 獲得報酬 as en1
 entity 求人 as en2
@@ -21,19 +22,25 @@ alt 獲得した報酬がない場合
     co2 -> bo2:システムは「獲得した報酬はありません」と表示する
 
 else 獲得した報酬がある場合
-    co2 -> en1:参照()
+    co2 -> en1:獲得報酬を参照する()
     en1 --> co2
-    co2 -> bo2:表示()
+    co2 -> bo2:画面を表示する:method=GET()
 
-    wo1 -> bo2:働いた月のグラフを押下する
-    bo2 -> co2:起動():method=GET()
-    co2 -> bo2:表示()
+    wo1 -> bo2:ユーザーは働いた月のグラフを押下する
+    bo2 -> co3:起動:method=POST()
+    co3 -> en1:その月のグラフを参照する()
+    co3 <-- en1
+    co3 -> en2:求人を参照する()
+    co3 <-- en2
+    co3 -> bo2:画面を表示する:method_GET()
 
-    wo1 -> bo2:働いた日付を押下する
-    bo2 -> co3:起動():method=GET()
-    co3 -> en2:参照()
-    en2 --> co3
-    co3 -> bo3:表示()
+    wo1 -> bo2:ユーザーは働いた日付を押下する
+    bo2 -> co4:起動:method=POST()
+    co4 -> en1:日付を参照する()
+    en1 --> co4
+    co4 -> en2:求人を参照する()
+    co4 <-- en2
+    co4 -> bo3:画面を表示する:method=GET()
 
 end
 
