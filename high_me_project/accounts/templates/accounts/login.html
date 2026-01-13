@@ -1,0 +1,21 @@
+<style>
+    .login-container { padding: 40px 20px; font-family: sans-serif; }
+    .error-msg { color: #ff3b30; font-size: 0.8rem; margin-bottom: 20px; text-align: center; }
+    input { width: 100%; padding: 15px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+    .btn-login { background: #FFD700; color: #333; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; }
+</style>
+
+<div class="login-container">
+    <h2 style="text-align: center;">ログイン</h2>
+    
+    {% if error %}
+        <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="phone" placeholder="電話番号">
+        <input type="password" name="password" placeholder="パスワード">
+        <button type="submit" class="btn-login">ログイン</button>
+    </form>
+</div>

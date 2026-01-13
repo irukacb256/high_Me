@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from .models import WorkerProfile
+from django.contrib.auth import authenticate, login
 
 # --- オンボーディングの流れ ---
 
@@ -77,31 +78,57 @@ def verify_dob(request):
 
 
 def profile_setup(request):
-    """
-    ワーカー詳細登録画面
-    氏名、フリガナ、性別、住所、働き方などを入力
-    """
+    """画像1: プロフィール登録・都道府県・通知設定など"""
     if request.method == 'POST':
-        # フォームからデータを取得
-        furigana = request.POST.get('furigana')
-        address = request.POST.get('address')
-        working_style = request.POST.get('working_style')
-        # ... 他の項目も同様に取得
-
-        # プロフィールを更新
         profile = request.user.workerprofile
-        profile.furigana = furigana
-        profile.address = address
-        profile.working_style = working_style
-        # ... 他の項目も保存
+        
+        # プロフィール情報
+        profile.real_name = request.POST.get('real_name')
+        profile.furigana = request.POST.get('furigana')
+        profile.gender = request.POST.get('gender')
+        profile.address = request.POST.get('address')
+        profile.prefecture = request.POST.get('prefecture')
+        
+        # 利用端末の設定
+        profile.notifications_enabled = 'notifications' in request.POST
+        profile.location_enabled = 'location' in request.POST
+        
+        profile.is_identity_verified = True # 本人確認完了とする
         profile.save()
-
-        # 全て完了したら「さがす（メイン画面）」へ
-        return redirect('index')
+        
+        return redirect('index') # 登録内容の確認画面を挟む場合は別途作成
 
     return render(request, 'accounts/profile_setup.html')
 
 
 def login_view(request):
-    """既存ユーザー用のログイン画面（Step 2以降で詳細実装）"""
+    """画像2: ログインシーケンスの再現"""
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+        password = request.POST.get('password')
+
+        # 1. 電話番号が無記入の場合
+        if not phone:
+            return render(request, 'accounts/login.html', {'error': '電話番号が入力されていません'})
+        
+        # 2. パスワードが無記入の場合
+        if not password:
+            return render(request, 'accounts/login.html', {'error': 'パスワードが入力されていません'})
+
+        # 3. 参照（認証）
+        user = authenticate(request, username=phone, password=password)
+
+        if user is not None:
+            # ログイン成功 -> さがす画面へ
+            login(request, user)
+            return redirect('index')
+        else:
+            # 電話番号もしくはパスワードが正しくない場合
+            return render(request, 'accounts/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
+
     return render(request, 'accounts/login.html')
+
+# accounts/views.py 内に追加
+def mypage(request):
+    """マイページ画面 (画像5)"""
+    return render(request, 'accounts/mypage.html')

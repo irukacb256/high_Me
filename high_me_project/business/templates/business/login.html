@@ -1,0 +1,7 @@
+<h2>事業者ログイン</h2>
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="メールアドレス">
+    <input type="password" name="password" placeholder="パスワード">
+    <button type="submit">ログイン</button>
+</form>

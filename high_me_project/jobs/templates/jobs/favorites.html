@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .header-tab { display: flex; background: white; border-bottom: 1px solid #eee; }
+    .tab-item { flex: 1; text-align: center; padding: 15px 0; font-size: 14px; color: #999; font-weight: bold; cursor: pointer; }
+    .tab-item.active { color: #333; border-bottom: 3px solid var(--timee-yellow); }
+    
+    .filter-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #fff; font-size: 13px; color: #333; }
+    
+    /* トグルスイッチ */
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--timee-yellow); }
+    input:checked + .slider:before { transform: translateX(18px); }
+
+    .date-label { padding: 15px; font-weight: bold; font-size: 18px; }
+    
+    /* お気に入り用横並びカード */
+    .fav-card { background: white; margin: 10px; border-radius: 12px; display: flex; padding: 12px; gap: 12px; position: relative; }
+    .fav-img { width: 80px; height: 80px; background: #eee; border-radius: 8px; flex-shrink: 0; }
+    .fav-info { flex: 1; }
+    .fav-title { font-size: 13px; font-weight: bold; margin-bottom: 8px; line-height: 1.4; }
+    .fav-meta { font-size: 12px; color: #666; margin-top: 4px; }
+    .fav-price { font-weight: bold; font-size: 14px; margin-top: 4px; display: block; }
+    .heart-icon { position: absolute; top: 12px; right: 12px; color: #ff3b30; font-size: 18px; }
+</style>
+
+<div class="header-tab">
+    <div class="tab-item active">募集</div>
+    <div class="tab-item">店舗</div>
+</div>
+
+<div class="filter-bar">
+    <span>募集中のお仕事のみを表示</span>
+    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+</div>
+
+<div class="date-label">11月17日 (月)</div>
+
+<div class="fav-card">
+    <div class="fav-img"></div>
+    <div class="fav-info">
+        <div class="fav-title">【飲食経験1年以上の方】韓国屋台ホンデポチャ仙台</div>
+        <div class="fav-meta">12:00 〜 17:00</div>
+        <div class="fav-meta">仙台市</div>
+        <span class="fav-price">¥5,190</span>
+    </div>
+    <i class="fa-solid fa-heart heart-icon"></i>
+</div>
+{% endblock %}

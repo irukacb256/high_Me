@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .work-header { background: white; padding: 10px 0; text-align: center; font-weight: bold; }
+    .work-tabs { display: flex; padding: 10px; background: white; }
+    .work-tab { flex: 1; border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 14px; }
+    .work-tab.active { border: 2px solid #ff3b30; color: #333; font-weight: bold; }
+    
+    .schedule-date { padding: 20px; font-size: 20px; font-weight: bold; }
+    .schedule-card { background: white; border-radius: 12px; margin: 0 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+    .schedule-img { width: 100%; height: 200px; background: #eee; }
+    .schedule-body { padding: 20px; }
+    .schedule-title { font-weight: bold; font-size: 16px; margin-bottom: 15px; }
+    .schedule-time { color: #666; font-size: 14px; }
+</style>
+
+<div class="work-header">はたらく</div>
+
+<div class="work-tabs">
+    <div class="work-tab active">今後の予定</div>
+    <div class="work-tab">完了した仕事</div>
+</div>
+
+<div class="schedule-date">6月11日 (日)</div>
+
+<div class="schedule-card">
+    <div class="schedule-img"></div>
+    <div class="schedule-body">
+        <div class="schedule-title">【Timee 池袋店】コンビニスタッフ募集！</div>
+        <div class="schedule-time">2023年6月11日 18:00〜23:00</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <style>
+        body { display: flex; margin: 0; font-family: sans-serif; background-color: #f5f5f5; }
+        
+        /* サイドバー (画像10) */
+        .sidebar { width: 240px; background: white; height: 100vh; border-right: 1px solid #ddd; position: sticky; top: 0; }
+        .sidebar-brand { padding: 20px; font-size: 24px; font-weight: bold; color: #333; }
+        .nav-item { padding: 12px 20px; display: flex; align-items: center; text-decoration: none; color: #666; font-size: 14px; }
+        .nav-item:hover { background: #fff9e6; }
+        .nav-item.active { background: #fff3c4; color: #333; font-weight: bold; }
+
+        /* メインコンテンツ (画像8, 9) */
+        .main-content { flex: 1; padding: 20px; }
+        .top-bar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
+        .btn-blue { background: #007bff; color: white; padding: 10px 20px; border-radius: 4px; border: none; font-weight: bold; }
+        
+        .dashboard-header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .quick-actions { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 20px; }
+        .action-card { background: white; padding: 15px; text-align: center; border-radius: 8px; border: 1px solid #eee; font-size: 12px; }
+        .action-card i { font-size: 24px; display: block; margin-bottom: 8px; }
+
+        .calendar-section { background: white; padding: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<!-- サイドバー (画像10) -->
+<div class="sidebar">
+    <div class="sidebar-brand">Timee <span style="font-size: 10px;">店舗ID 9999</span></div>
+    <div style="padding: 0 20px 10px; font-size: 12px; font-weight: bold;">タイミー 汐留店</div>
+    <a href="#" class="nav-item active">🏠 ホーム</a>
+    <a href="#" class="nav-item">👤 ワーカー管理</a>
+    <a href="#" class="nav-item">➕ 求人のひな形</a>
+    <a href="#" class="nav-item">📋 求人一覧</a>
+    <a href="#" class="nav-item">💬 メッセージ</a>
+    <a href="#" class="nav-item">🔳 チェックイン/アウト管理</a>
+</div>
+
+<!-- メインエリア -->
+<div class="main-content">
+    <!-- 上部ボタン (画像9) -->
+    <div class="top-bar">
+        <button style="padding: 10px; border: 1px solid #ddd; background: white;">🔳 チェックイン/アウト</button>
+        <button class="btn-blue">➕ ひな形から求人を作成</button>
+    </div>
+
+    <!-- お知らせ (画像8) -->
+    <div class="dashboard-header">
+        <div style="font-weight: bold; margin-bottom: 10px;">タイミーからの重要なお知らせ</div>
+        <div style="font-size: 13px; color: #007bff;">・8月の定期メンテナンスについて</div>
+    </div>
+
+    <!-- アイコンボタン並び (画像8) -->
+    <div class="quick-actions">
+        <div class="action-card" style="background: #007bff; color: white;">➕<br>新規募集</div>
+        <div class="action-card">🔳<br>チェックイン</div>
+        <div class="action-card">⚠️<br>修正依頼</div>
+        <div class="action-card">⭐<br>ワーカー評価</div>
+        <div class="action-card">💬<br>メッセージ</div>
+    </div>
+
+    <!-- カレンダー (画像8) -->
+    <div class="calendar-section">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+            <span style="font-weight: bold;">求人一覧</span>
+            <div>
+                <button>カレンダー表示</button>
+                <button>リスト表示</button>
+            </div>
+        </div>
+        <div style="height: 400px; border: 1px solid #eee; text-align: center; padding-top: 100px; color: #ccc;">
+            [ ここにカレンダーUI ]
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
