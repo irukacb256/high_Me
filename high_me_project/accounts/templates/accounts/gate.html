@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; background-color: #fff; }
+        .container { display: flex; flex-direction: column; align-items: center; height: 100vh; padding: 40px 20px; box-sizing: border-box; }
+        .image-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .image-area img { max-width: 100%; height: auto; }
+        
+        .action-area { width: 100%; max-width: 400px; text-align: center; }
+        .message { font-size: 0.9rem; margin-bottom: 20px; color: #333; font-weight: bold; }
+        .terms { font-size: 0.7rem; color: #888; margin-bottom: 20px; }
+        .terms a { color: #007AFF; text-decoration: none; }
+
+        .btn { display: block; width: 100%; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-bottom: 12px; font-size: 1rem; }
+        .btn-primary { background-color: #007AFF; color: #fff; } /* iOS風ブルー */
+        .btn-secondary { background-color: #fff; color: #333; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-area">
+            <!-- キャラクターが並んでいるイラスト画像 -->
+            <p style="font-size: 60px;">🏘️🐼🏘️</p>
+        </div>
+
+        <div class="action-area">
+            <p class="message">さっそく<br>タイミーを始めましょう！</p>
+            <p class="terms">
+                <a href="#">プライバシーポリシー</a>と<a href="#">利用規約</a>に同意して
+            </p>
+            <a href="{% url 'signup' %}" class="btn btn-primary">はじめる</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary">ログイン</a>
+        </div>
+    </div>
+</body>
+</html>

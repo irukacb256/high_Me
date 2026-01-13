@@ -16,7 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from accounts import views as account_views # accountsアプリのviewsをインポート
+from jobs import views as job_views          # ★これを追加！
+
+# config/urls.py
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', account_views.onboarding1, name='onboarding1'),
+    path('step2/', account_views.onboarding2, name='onboarding2'),
+    path('step3/', account_views.onboarding3, name='onboarding3'),
+    path('gate/', account_views.gate, name='gate'),
+    path('signup/', account_views.signup, name='signup'),
+    
+    # これを追加！ name='login' とすることでエラーが消えます
+    path('login/', account_views.login_view, name='login'), 
+    
+    path('home/', job_views.index, name='index'),
 ]

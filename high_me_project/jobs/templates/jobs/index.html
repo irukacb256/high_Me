@@ -1,0 +1,31 @@
+<div class="header">
+    <div class="date-selector">
+        <!-- 日付選択バー -->
+    </div>
+</div>
+
+<div class="job-grid">
+    {% for job in jobs %}
+    <div class="job-card">
+        <div class="card-visual" style="background-color: {{ job.image_color }}">
+            <span class="urgent-tag">締切間近</span>
+            <h1>Job</h1>
+        </div>
+        <div class="card-body">
+            <p class="job-title">{{ job.title }}</p>
+            <p class="job-info">{{ job.start_time|date:"H:i" }}〜{{ job.end_time|date:"H:i" }}</p>
+            <p class="job-loc">{{ job.location }}</p>
+            <p class="job-reward">¥{{ job.reward|stringformat:"d" }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ボトムナビゲーション -->
+<div class="bottom-nav">
+    <div class="nav-item active">さがす</div>
+    <div class="nav-item">お気に入り</div>
+    <div class="nav-item">はたらく</div>
+    <div class="nav-item">メッセージ</div>
+    <div class="nav-item">マイページ</div>
+</div>

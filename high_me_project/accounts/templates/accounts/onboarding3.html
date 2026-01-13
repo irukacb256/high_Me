@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; background-color: #FFD700; }
+        .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; padding: 20px; box-sizing: border-box; }
+        .image-area { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .text-area { height: 200px; color: #333; }
+        .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 40px; }
+        .dot { width: 8px; height: 8px; background: rgba(0,0,0,0.1); border-radius: 50%; }
+        .dot.active { background: rgba(0,0,0,0.5); }
+        .clickable-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; text-decoration: none; color: inherit; }
+    </style>
+</head>
+<body>
+    <a href="{% url 'gate' %}" class="clickable-overlay">
+        <div class="container">
+            <div class="image-area">
+                <!-- 画像3のイラスト（ハートとスイッチなど） -->
+                <p style="font-size: 100px;">❤️</p>
+            </div>
+            <div class="text-area">
+                <h2 style="font-size: 1.2rem;">便利な機能で仕事をチェック！</h2>
+                <p style="font-size: 0.9rem; color: #555;">お気に入り登録とプッシュ通知ONで、<br>気になる仕事も見逃しません。</p>
+            </div>
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+            </div>
+        </div>
+    </a>
+</body>
+</html>
