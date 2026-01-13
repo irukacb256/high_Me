@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Timee Demo Final v2</title>
+    
+    <!-- CSS読み込み -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/filter.css">
+    <link rel="stylesheet" href="css/location.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/detail.css">
+    <link rel="stylesheet" href="css/extra.css">
+</head>
+<body>
+
+    <div id="app-wrapper">
+
+        <!-- ==========================================
+             1. ホーム画面 (さがす)
+        =========================================== -->
+        <div id="home-screen" class="screen active">
+            <div class="fixed-header-group">
+                <div class="home-header-top">
+                    <div class="location-btn" onclick="goToScreen('location-screen')">
+                        <span class="location-icon">📍</span>
+                        <span id="home-location-text">埼玉県</span>
+                        <span class="arrow-icon">▼</span>
+                    </div>
+                    <div class="date-scroller" id="date-container"></div>
+                </div>
+                <div class="sticky-sort-bar">
+                    <div class="sort-selector" onclick="openSort()">
+                        <span style="margin-right:5px;">📂</span>
+                        <span id="current-sort-label">締切時刻が近い順</span>
+                        <span class="arrow-icon">▼</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-content">
+                <div class="notify-row">
+                    この日の新しい仕事を通知
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="job-grid" id="job-grid"></div>
+            </div>
+
+            <div class="fab-filter" onclick="goToScreen('filter-screen')">
+                <span style="margin-right:5px;">⚙️</span> 絞り込み
+            </div>
+
+            <!-- ナビゲーション -->
+            <nav>
+                <div class="nav-item active" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
+                <div class="nav-item" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
+                <div class="nav-item" id="nav-work" onclick="switchTab('work-screen')"><div class="nav-icon">🤝</div><span>はたらく</span></div>
+                <div class="nav-item" id="nav-msg" onclick="switchTab('message-screen')"><div class="nav-icon">💬</div><span>メッセージ</span></div>
+                <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
+            </nav>
+        </div>
+
+
+        <!-- ==========================================
+             2. お気に入り画面
+        =========================================== -->
+        <div id="fav-screen" class="screen">
+            <div class="header-bar">お気に入り</div>
+            <div class="sub-tab-bar">
+                <div class="sub-tab-item active">募集</div>
+                <div class="sub-tab-item">店舗</div>
+            </div>
+            <div class="scroll-content" style="background:#fff;">
+                <div class="notify-row" style="border-bottom:1px solid #eee;">
+                    募集中の仕事のみを表示
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-icon">♡</div>
+                    <div class="empty-title">仕事をお気に入りしてみましょう</div>
+                    <div class="empty-desc">
+                        気になる仕事はお気に入りしてみましょう！<br>
+                        再募集や募集に空きができたときお知らせします。
+                    </div>
+                    <button class="btn-blue-search" onclick="switchTab('home-screen')">仕事をさがす</button>
+                </div>
+            </div>
+            <nav>
+                <div class="nav-item" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
+                <div class="nav-item active" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
+                <div class="nav-item" id="nav-work" onclick="switchTab('work-screen')"><div class="nav-icon">🤝</div><span>はたらく</span></div>
+                <div class="nav-item" id="nav-msg" onclick="switchTab('message-screen')"><div class="nav-icon">💬</div><span>メッセージ</span></div>
+                <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
+            </nav>
+        </div>
+
+
+        <!-- ==========================================
+             3. はたらく画面
+        =========================================== -->
+        <div id="work-screen" class="screen">
+            <div class="header-bar">はたらく</div>
+            <div class="sub-tab-bar">
+                <div class="sub-tab-item active">今後の予定</div>
+                <div class="sub-tab-item">これまでの仕事</div>
+            </div>
+            <div class="scroll-content" style="background:#fff;">
+                <div class="empty-state">
+                    <div class="empty-title" style="margin-top:20px;">今後の予定はありません</div>
+                    <div class="empty-desc" style="margin-bottom:20px;">
+                        次の仕事を探してみましょう
+                    </div>
+                    <button class="btn-blue-search" onclick="switchTab('home-screen')">仕事をさがす</button>
+                    <div class="work-illustration"><div style="font-size:5rem;">🚲</div></div>
+                </div>
+                <div class="work-banner">
+                    <div style="text-align:center;">
+                        <div style="font-size:0.8rem;">Timee</div>
+                        <div>かんたん</div>
+                        <div style="font-size:1.2rem;">働きかたガイド</div>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <div class="nav-item" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
+                <div class="nav-item" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
+                <div class="nav-item active" id="nav-work" onclick="switchTab('work-screen')"><div class="nav-icon">🤝</div><span>はたらく</span></div>
+                <div class="nav-item" id="nav-msg" onclick="switchTab('message-screen')"><div class="nav-icon">💬</div><span>メッセージ</span></div>
+                <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
+            </nav>
+        </div>
+
+
+        <!-- ==========================================
+             4. メッセージ画面
+        =========================================== -->
+        <div id="message-screen" class="screen">
+            <div class="header-bar">メッセージ</div>
+            <div class="scroll-content" style="background:#fff;">
+                <div class="empty-state" style="margin-top:100px;">
+                    <div class="empty-icon" style="font-size:5rem;">💬</div>
+                    <div class="empty-title">メッセージはありません</div>
+                    <div class="empty-desc">
+                        マッチング中の仕事がある場合、ここで店舗とやりとりができます。
+                    </div>
+                    <button class="btn-blue-search" onclick="switchTab('home-screen')">仕事をさがす</button>
+                </div>
+            </div>
+            <nav>
+                <div class="nav-item" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
+                <div class="nav-item" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
+                <div class="nav-item" id="nav-work" onclick="switchTab('work-screen')"><div class="nav-icon">🤝</div><span>はたらく</span></div>
+                <div class="nav-item active" id="nav-msg" onclick="switchTab('message-screen')"><div class="nav-icon">💬</div><span>メッセージ</span></div>
+                <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
+            </nav>
+        </div>
+
+
+        <!-- ==========================================
+             5. マイページ画面 (項目追加版)
+        =========================================== -->
+        <div id="mypage-screen" class="screen">
+            <div class="header-bar">
+                マイページ
+                <div class="mypage-header-icon">🔔</div>
+            </div>
+            <div class="scroll-content">
+                <!-- プロフィール -->
+                <div class="mp-profile">
+                    <div class="mp-avatar">👤</div>
+                    <div class="mp-info">
+                        <div class="mp-info-top">Timee Membership ❓</div>
+                        <div class="mp-rank">ROOKIE</div>
+                        <div class="mp-level-badge">あなたの実績 Lv 0</div>
+                    </div>
+                </div>
+                <!-- ウォレット -->
+                <div class="mp-wallet-section">
+                    <div class="mp-wallet-card">
+                        <div class="mp-w-label">💳 ウォレット残高</div>
+                        <div class="mp-w-row">
+                            <div class="mp-w-amount">¥0</div>
+                            <button class="mp-w-btn">引き出す</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 本人確認 -->
+                <div class="mp-verify-section">
+                    <div style="display:flex; align-items:flex-start; margin-bottom:10px;">
+                        <span style="font-size:1.5rem; margin-right:10px;">🆔</span>
+                        <div style="text-align:left;">
+                            <div class="mp-verify-title">まずは本人確認をしましょう！</div>
+                            <div class="mp-verify-desc" style="margin-bottom:0;">
+                                本人確認書類を登録すると仕事に申し込めるようになります。
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-blue-block">本人確認にすすむ</button>
+                </div>
+                
+                <!-- メニュー: アカウント -->
+                <div class="mp-menu-label">アカウント</div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">⚙️</div><div class="mp-menu-text">アカウント設定</div></div>
+                </div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📋</div><div class="mp-menu-text">レビューとペナルティ</div></div>
+                </div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">⭐</div><div class="mp-menu-text">バッジ一覧</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🏅</div><div class="mp-menu-text">保有資格</div></div>
+                </div>
+
+                <!-- ★追加: お仕事 -->
+                <div class="mp-menu-label">お仕事</div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">💼</div><div class="mp-menu-text">これまでの仕事</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🗂️</div><div class="mp-menu-text">長期バイトの応募履歴</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">¥</div><div class="mp-menu-text">獲得した報酬</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🧾</div><div class="mp-menu-text">源泉徴収票の確認と印刷</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🔓</div><div class="mp-menu-text">年間報酬による制限の解除</div></div>
+                </div>
+
+                <!-- ★追加: 通知とプライバシー -->
+                <div class="mp-menu-label">通知とプライバシー</div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📍</div><div class="mp-menu-text">位置情報の設定</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📲</div><div class="mp-menu-text">プッシュ通知設定</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🔇</div><div class="mp-menu-text">ミュートしている店舗</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🔔</div><div class="mp-menu-text">お知らせメール設定</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🧪</div><div class="mp-menu-text">検便依頼と結果</div></div>
+                </div>
+
+                <!-- ★追加: サポート -->
+                <div class="mp-menu-label">サポート</div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">✉️</div><div class="mp-menu-text">お問い合わせ</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">❓</div><div class="mp-menu-text">よくある質問</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🚩</div><div class="mp-menu-text">アプリの不具合・改善要望を報告</div></div>
+                </div>
+
+                <!-- ★追加: その他 -->
+                <div class="mp-menu-label">その他</div>
+                <div class="mp-menu-group">
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📄</div><div class="mp-menu-text">プライバシーポリシー</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📜</div><div class="mp-menu-text">利用規約</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">📑</div><div class="mp-menu-text">取扱職種の範囲</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">⚖️</div><div class="mp-menu-text">オープンソースライセンス</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🐱</div><div class="mp-menu-text">タイミーを一緒につきりませんか？</div></div>
+                    <div class="mp-menu-item"><div class="mp-menu-icon">🚪</div><div class="mp-menu-text">退会手続き</div></div>
+                </div>
+
+                <!-- ★追加: タイミーラボバナー -->
+                <div style="padding: 20px;">
+                    <img src="https://placehold.co/600x200/FFD700/333?text=Timee+Labo" style="width:100%; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                </div>
+
+                <div style="height:50px;"></div>
+            </div>
+            <nav>
+                <div class="nav-item" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
+                <div class="nav-item" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
+                <div class="nav-item" id="nav-work" onclick="switchTab('work-screen')"><div class="nav-icon">🤝</div><span>はたらく</span></div>
+                <div class="nav-item" id="nav-msg" onclick="switchTab('message-screen')"><div class="nav-icon">💬</div><span>メッセージ</span></div>
+                <div class="nav-item active" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
+            </nav>
+        </div>
+
+
+        <!-- ==========================================
+             6. 絞り込み画面
+        =========================================== -->
+        <div id="filter-screen" class="screen">
+            <div class="header-bar">
+                <div class="header-left" onclick="goToScreen('home-screen')">←</div>
+                絞り込み
+                <div class="header-right">すべて解除</div>
+            </div>
+            <div class="scroll-content">
+                <div class="filter-list">
+                    <div class="filter-row"><div class="filter-label-main"><span class="filter-icon">💼</span>職種</div><div class="filter-value">指定なし</div></div>
+                    <div class="filter-row"><div class="filter-label-main"><span class="filter-icon">¥</span>報酬</div><div class="filter-value">指定なし</div></div>
+                    <div class="filter-row"><div class="filter-label-main"><span class="filter-icon">🕒</span>時間帯</div><div class="filter-value">指定なし</div></div>
+                    <div class="filter-row"><div class="filter-label-main"><span class="filter-icon">✨</span>待遇</div><div class="filter-value">指定なし</div></div>
+                    <div class="filter-row"><div class="filter-label-main">除外キーワード</div><div class="filter-value">指定なし</div></div>
+                    <div class="switch-row"><span>登録した資格が必要な仕事のみ</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+                    <div class="switch-row"><span>募集中のみ表示</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                </div>
+            </div>
+            <div class="bottom-btn-container">
+                <button class="btn-blue" onclick="goToScreen('home-screen')">絞り込み結果を表示</button>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             7. 場所設定画面
+        =========================================== -->
+        <div id="location-screen" class="screen">
+            <div class="header-bar">
+                <div class="header-left" onclick="goToScreen('home-screen')">←</div>
+                場所
+            </div>
+            <div class="scroll-content">
+                <div class="section-label">現在の設定</div>
+                <div class="loc-box">
+                    <span class="current-pref" id="setting-pref">埼玉県</span>
+                    <button class="btn-small-blue" onclick="goToScreen('pref-screen')">変更</button>
+                </div>
+                <div class="section-label">近くの仕事がさがせます</div>
+                <div class="map-search-card" onclick="goToScreen('map-screen')">
+                    <div class="map-btn-overlay">
+                        <span style="color:#007AFF; margin-right:5px;">📍</span> マップでさがす <span class="badge-count">20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             8. 都道府県選択画面 (47都道府県)
+        =========================================== -->
+        <div id="pref-screen" class="screen">
+            <div class="header-bar">
+                <div class="header-left" onclick="goToScreen('location-screen')">←</div>
+                都道府県
+            </div>
+            <div class="scroll-content pref-list" id="pref-list-container">
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="北海道"><span class="pref-name">北海道</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="青森県"><span class="pref-name">青森県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="岩手県"><span class="pref-name">岩手県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="宮城県"><span class="pref-name">宮城県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="秋田県"><span class="pref-name">秋田県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="山形県"><span class="pref-name">山形県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="福島県"><span class="pref-name">福島県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="茨城県"><span class="pref-name">茨城県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="栃木県"><span class="pref-name">栃木県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="群馬県"><span class="pref-name">群馬県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="埼玉県" checked><span class="pref-name">埼玉県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="千葉県"><span class="pref-name">千葉県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="東京都"><span class="pref-name">東京都</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="神奈川県"><span class="pref-name">神奈川県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="新潟県"><span class="pref-name">新潟県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="富山県"><span class="pref-name">富山県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="石川県"><span class="pref-name">石川県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="福井県"><span class="pref-name">福井県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="山梨県"><span class="pref-name">山梨県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="長野県"><span class="pref-name">長野県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="岐阜県"><span class="pref-name">岐阜県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="静岡県"><span class="pref-name">静岡県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="愛知県"><span class="pref-name">愛知県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="三重県"><span class="pref-name">三重県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="滋賀県"><span class="pref-name">滋賀県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="京都府"><span class="pref-name">京都府</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="大阪府"><span class="pref-name">大阪府</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="兵庫県"><span class="pref-name">兵庫県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="奈良県"><span class="pref-name">奈良県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="和歌山県"><span class="pref-name">和歌山県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="鳥取県"><span class="pref-name">鳥取県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="島根県"><span class="pref-name">島根県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="岡山県"><span class="pref-name">岡山県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="広島県"><span class="pref-name">広島県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="山口県"><span class="pref-name">山口県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="徳島県"><span class="pref-name">徳島県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="香川県"><span class="pref-name">香川県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="愛媛県"><span class="pref-name">愛媛県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="高知県"><span class="pref-name">高知県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="福岡県"><span class="pref-name">福岡県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="佐賀県"><span class="pref-name">佐賀県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="長崎県"><span class="pref-name">長崎県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="熊本県"><span class="pref-name">熊本県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="大分県"><span class="pref-name">大分県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="宮崎県"><span class="pref-name">宮崎県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="鹿児島県"><span class="pref-name">鹿児島県</span></label>
+                <label class="pref-check-row"><input type="checkbox" name="pref" value="沖縄県"><span class="pref-name">沖縄県</span></label>
+            </div>
+            <div class="bottom-btn-container">
+                <button class="btn-blue" onclick="applyPref()">OK</button>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             9. マップ検索画面
+        =========================================== -->
+        <div id="map-screen" class="screen">
+            <div class="map-controls">
+                <div class="map-search-bar">
+                    <div class="map-back" onclick="goToScreen('location-screen')">✕</div>
+                    <input type="text" placeholder="エリア・駅名で検索">
+                </div>
+                <div class="map-filters">
+                    <span class="map-pill">募集中のみ <label class="switch map-switch"><input type="checkbox" checked><span class="slider"></span></label></span>
+                </div>
+            </div>
+            <div id="google-map"></div>
+            <div class="map-bottom-card" onclick="goToScreen('detail-screen')">
+                <div class="mb-tag">締切</div>
+                <div class="mb-title">【ピッキング・検品梱包】午後からのお仕事★倉庫内作業スタッフ募集</div>
+                <div class="mb-meta">12月1日(月) 11:00〜17:00</div>
+                <div class="mb-price">¥6,913</div>
+            </div>
+        </div>
+
+
+        <!-- ==========================================
+             10. 詳細画面
+        =========================================== -->
+        <div id="detail-screen" class="screen">
+            <div class="detail-header-img" id="d-img">
+                <div class="back-btn-circle" onclick="goToScreen('home-screen')">←</div>
+            </div>
+            <div class="scroll-content detail-content">
+                <div class="d-category">飲食 / ファストフード</div>
+                <h1 class="d-title" id="d-title">タイトル</h1>
+                <div class="d-time-row">
+                    <span class="clock-icon">🕒</span>
+                    <span id="d-datetime">日時</span>
+                </div>
+                <div class="d-tags">
+                    <span class="tag-red">あと55分で募集締め切り</span>
+                    <span class="tag-red">募集人数 0/1人</span>
+                </div>
+                <div class="d-price" id="d-price">¥0</div>
+                <div class="d-specs">
+                    <div class="spec-row"><span class="spec-icon">¥</span> 時給 ¥1,141 + 深夜割増手当</div>
+                    <div class="spec-row"><span class="spec-icon">🚇</span> 交通費支給なし</div>
+                </div>
+
+                <hr class="d-divider">
+
+                <div id="other-dates-section" style="display:none;">
+                    <h3 class="d-section-title">ほかの日時でも募集中です</h3>
+                    <div id="other-dates-list"></div>
+                    <div class="more-link">もっとみる (49件)</div>
+                    <hr class="d-divider">
+                </div>
+
+                <h3 class="d-section-title">待遇</h3>
+                <div class="d-icon-box">
+                    <div class="d-icon-item"><div class="d-icon-shape">🔰</div><span>未経験者歓迎</span></div>
+                </div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">業務内容</h3>
+                <div class="d-text-block" id="d-desc">ここに業務内容が入ります。</div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">注意事項</h3>
+                <div class="d-text-block" id="d-notes">注意事項</div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">持ち物</h3>
+                <ul class="d-list" id="d-items"></ul>
+
+                <h3 class="d-section-title" style="margin-top:20px;">働くための条件</h3>
+                <ul class="d-list" id="d-conditions"></ul>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">業務に関する書類</h3>
+                <div class="pdf-list">
+                    <div class="pdf-item"><div class="pdf-icon">📄</div><div class="pdf-name">_衛生マナー_株式会社ヤオコー様.pdf</div></div>
+                    <div class="pdf-item"><div class="pdf-icon">📄</div><div class="pdf-name">労働条件通知書.pdf</div></div>
+                </div>
+                
+                <div class="embedded-map">
+                    <img src="https://placehold.co/600x300/e0e0e0/999?text=Map+Preview" alt="Map">
+                </div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">働く場所</h3>
+                <p class="d-text-simple" id="d-address">住所</p>
+                <h3 class="d-section-title" style="margin-top:15px;">アクセス</h3>
+                <p class="d-text-simple">マップよりご確認ください</p>
+
+                <h3 class="d-section-title" style="margin-top:15px;">店舗情報</h3>
+                <div class="shop-info-card">
+                    <div class="shop-logo">🏬</div>
+                    <div class="shop-name" id="d-shopname">店舗名</div>
+                    <div class="shop-link">この店舗の募集状況</div>
+                </div>
+
+                <h3 class="d-section-title" style="margin-top:20px;">獲得できる可能性のあるバッジ</h3>
+                <div class="d-icon-box">
+                    <div class="d-icon-item" style="color:#f57c00;">
+                        <div class="d-icon-shape" style="background:#fff3e0;">🥫</div>
+                        <span>品出し</span>
+                    </div>
+                </div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">店舗の評価</h3>
+                <div class="good-rate-area">
+                    <div class="gr-label">Good率</div>
+                    <div class="gr-value">👍 99%</div>
+                    <div class="gr-sub">❓ この数字について</div>
+                </div>
+
+                <h3 class="d-section-title" style="margin-top:20px;">レビュー</h3>
+                <div id="review-list"></div>
+                <hr class="d-divider">
+
+                <h3 class="d-section-title">この仕事に似ている仕事</h3>
+                <div id="similar-jobs-list"></div>
+
+                <div style="height: 100px;"></div>
+            </div>
+            <div class="detail-footer">
+                <div class="footer-heart">♡</div>
+                <button class="footer-apply-btn" onclick="alert('申し込み完了')">申し込む</button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             グローバル要素 (オーバーレイ, ソートシート)
+        =========================================== -->
+        <div class="overlay" id="overlay" onclick="closeSort()"></div>
+
+        <div class="bottom-sheet" id="sort-sheet">
+             <div class="sheet-header">
+                 <span class="sheet-close" onclick="closeSort()">✕</span>
+                 並び替え
+             </div>
+             <div class="sheet-option" onclick="selectSort('現在地から近い順')">現在地から近い順</div>
+             <div class="sheet-option" onclick="selectSort('指定した場所から近い順')">指定した場所から近い順</div>
+             <div class="sheet-option" onclick="selectSort('報酬が高い順')">報酬が高い順</div>
+             <div class="sheet-option" onclick="selectSort('開始時間が早い順')">開始時間が早い順</div>
+             <div class="sheet-option selected" onclick="selectSort('締切時刻が近い順')">締切時刻が近い順</div>
+        </div>
+        
+    </div>
+
+    <!-- JS読み込み -->
+    <script src="js/data.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+</body>
+</html>
