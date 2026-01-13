@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Timee Demo Final v2</title>
+    <title>Timee Demo Complete</title>
     
     <!-- CSS読み込み -->
     <link rel="stylesheet" href="css/base.css">
@@ -52,7 +52,6 @@
                 <span style="margin-right:5px;">⚙️</span> 絞り込み
             </div>
 
-            <!-- ナビゲーション -->
             <nav>
                 <div class="nav-item active" id="nav-home" onclick="switchTab('home-screen')"><div class="nav-icon">🔍</div><span>さがす</span></div>
                 <div class="nav-item" id="nav-fav" onclick="switchTab('fav-screen')"><div class="nav-icon">♡</div><span>お気に入り</span></div>
@@ -61,7 +60,6 @@
                 <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
             </nav>
         </div>
-
 
         <!-- ==========================================
              2. お気に入り画面
@@ -95,7 +93,6 @@
                 <div class="nav-item" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
             </nav>
         </div>
-
 
         <!-- ==========================================
              3. はたらく画面
@@ -132,7 +129,6 @@
             </nav>
         </div>
 
-
         <!-- ==========================================
              4. メッセージ画面
         =========================================== -->
@@ -157,9 +153,8 @@
             </nav>
         </div>
 
-
         <!-- ==========================================
-             5. マイページ画面 (項目追加版)
+             5. マイページ画面
         =========================================== -->
         <div id="mypage-screen" class="screen">
             <div class="header-bar">
@@ -167,7 +162,6 @@
                 <div class="mypage-header-icon">🔔</div>
             </div>
             <div class="scroll-content">
-                <!-- プロフィール -->
                 <div class="mp-profile">
                     <div class="mp-avatar">👤</div>
                     <div class="mp-info">
@@ -176,7 +170,6 @@
                         <div class="mp-level-badge">あなたの実績 Lv 0</div>
                     </div>
                 </div>
-                <!-- ウォレット -->
                 <div class="mp-wallet-section">
                     <div class="mp-wallet-card">
                         <div class="mp-w-label">💳 ウォレット残高</div>
@@ -186,7 +179,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 本人確認 -->
                 <div class="mp-verify-section">
                     <div style="display:flex; align-items:flex-start; margin-bottom:10px;">
                         <span style="font-size:1.5rem; margin-right:10px;">🆔</span>
@@ -200,7 +192,6 @@
                     <button class="btn-blue-block">本人確認にすすむ</button>
                 </div>
                 
-                <!-- メニュー: アカウント -->
                 <div class="mp-menu-label">アカウント</div>
                 <div class="mp-menu-group">
                     <div class="mp-menu-item"><div class="mp-menu-icon">⚙️</div><div class="mp-menu-text">アカウント設定</div></div>
@@ -213,7 +204,6 @@
                     <div class="mp-menu-item"><div class="mp-menu-icon">🏅</div><div class="mp-menu-text">保有資格</div></div>
                 </div>
 
-                <!-- ★追加: お仕事 -->
                 <div class="mp-menu-label">お仕事</div>
                 <div class="mp-menu-group">
                     <div class="mp-menu-item"><div class="mp-menu-icon">💼</div><div class="mp-menu-text">これまでの仕事</div></div>
@@ -223,7 +213,6 @@
                     <div class="mp-menu-item"><div class="mp-menu-icon">🔓</div><div class="mp-menu-text">年間報酬による制限の解除</div></div>
                 </div>
 
-                <!-- ★追加: 通知とプライバシー -->
                 <div class="mp-menu-label">通知とプライバシー</div>
                 <div class="mp-menu-group">
                     <div class="mp-menu-item"><div class="mp-menu-icon">📍</div><div class="mp-menu-text">位置情報の設定</div></div>
@@ -233,7 +222,6 @@
                     <div class="mp-menu-item"><div class="mp-menu-icon">🧪</div><div class="mp-menu-text">検便依頼と結果</div></div>
                 </div>
 
-                <!-- ★追加: サポート -->
                 <div class="mp-menu-label">サポート</div>
                 <div class="mp-menu-group">
                     <div class="mp-menu-item"><div class="mp-menu-icon">✉️</div><div class="mp-menu-text">お問い合わせ</div></div>
@@ -241,7 +229,6 @@
                     <div class="mp-menu-item"><div class="mp-menu-icon">🚩</div><div class="mp-menu-text">アプリの不具合・改善要望を報告</div></div>
                 </div>
 
-                <!-- ★追加: その他 -->
                 <div class="mp-menu-label">その他</div>
                 <div class="mp-menu-group">
                     <div class="mp-menu-item"><div class="mp-menu-icon">📄</div><div class="mp-menu-text">プライバシーポリシー</div></div>
@@ -252,7 +239,6 @@
                     <div class="mp-menu-item"><div class="mp-menu-icon">🚪</div><div class="mp-menu-text">退会手続き</div></div>
                 </div>
 
-                <!-- ★追加: タイミーラボバナー -->
                 <div style="padding: 20px;">
                     <img src="https://placehold.co/600x200/FFD700/333?text=Timee+Labo" style="width:100%; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
                 </div>
@@ -267,7 +253,6 @@
                 <div class="nav-item active" id="nav-mypage" onclick="switchTab('mypage-screen')"><div class="nav-icon">👤</div><span>マイページ</span></div>
             </nav>
         </div>
-
 
         <!-- ==========================================
              6. 絞り込み画面
@@ -294,7 +279,6 @@
             </div>
         </div>
 
-
         <!-- ==========================================
              7. 場所設定画面
         =========================================== -->
@@ -317,7 +301,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- ==========================================
              8. 都道府県選択画面 (47都道府県)
@@ -381,7 +364,6 @@
             </div>
         </div>
 
-
         <!-- ==========================================
              9. マップ検索画面
         =========================================== -->
@@ -403,7 +385,6 @@
                 <div class="mb-price">¥6,913</div>
             </div>
         </div>
-
 
         <!-- ==========================================
              10. 詳細画面
@@ -537,6 +518,7 @@
     <script src="js/router.js"></script>
     <script src="js/main.js"></script>
     <script src="js/map.js"></script>
+    <!-- ※注意: APIキーの部分を書き換えてください -->
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
 </body>
 </html>

@@ -1,46 +1,16 @@
-/* css/home.css */
-
 .home-header-top { padding: 10px 15px 0; border-bottom: 1px solid transparent; }
 .location-btn { display: flex; align-items: center; font-weight: bold; font-size: 1rem; margin-bottom: 10px; cursor: pointer; }
 .location-icon { margin-right: 5px; }
 .arrow-icon { margin-left: 5px; font-size: 0.7rem; color: #999; }
 
 /* 日付スクローラー */
-.date-scroller {
-    display: flex;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    white-space: nowrap;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch; /* スムーズスクロール */
-    cursor: grab; /* マウスカーソルを手のひらに */
-}
+.date-scroller { display: flex; overflow-x: auto; padding-bottom: 10px; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; }
 .date-scroller::-webkit-scrollbar { display: none; }
-
-.date-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    margin-right: 8px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    flex-shrink: 0;
-    cursor: pointer;
-    
-    /* ★ここが重要：テキスト選択を無効化 */
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
+.date-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 48px; height: 48px; margin-right: 8px; border: 1px solid #eee; border-radius: 8px; flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .date-item.active { background: var(--primary-yellow); border-color: var(--primary-yellow); font-weight: bold; }
 .d-day { font-size: 0.7rem; }
 .d-num { font-size: 1.1rem; }
 
-/* 以下変更なし */
 .sticky-sort-bar { padding: 10px 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; display: flex; align-items: center; background: #fff; }
 .sort-selector { font-size: 0.9rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; width: 100%; }
 .notify-row { padding: 10px 15px; display: flex; justify-content: flex-end; align-items: center; font-size: 0.75rem; color: #666; margin-bottom: 5px; }
