@@ -33,4 +33,10 @@ urlpatterns = [
     path('login/', account_views.login_view, name='login'), 
     
     path('home/', job_views.index, name='index'),
+
+    #ログイン画面 - 新規登録など
+    path('signup/', account_views.signup, name='signup'),
+    path('verify/dob/', account_views.verify_dob, name='verify_dob'), # 追加
+    path('profile-setup/', account_views.profile_setup, name='profile_setup'),
+
 ]

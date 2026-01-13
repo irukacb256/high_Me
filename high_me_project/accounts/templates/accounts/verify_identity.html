@@ -1,0 +1,15 @@
+<style>
+    .verify-container { text-align: center; padding: 40px 20px; font-family: sans-serif; }
+    .lock-icon { font-size: 100px; margin: 60px 0; color: #FFD700; }
+    .btn-next { background: #007AFF; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: block; }
+</style>
+
+<div class="verify-container">
+    <h2 style="font-size: 1.2rem; text-align: left;">安全なログインのため、当人確認が必要です。</h2>
+    <p style="font-size: 0.8rem; color: #666; text-align: left;">すでに {{ phone }} はタイミーに登録されています。質問に答えてログインしてください。</p>
+    
+    <div class="lock-icon">🔒</div>
+
+    <a href="{% url 'verify_dob' %}" class="btn-next">次へ</a>
+    <p style="font-size: 0.7rem; color: #888; margin-top: 40px;">❔ 身に覚えがない/質問に答えられない場合</p>
+</div>
