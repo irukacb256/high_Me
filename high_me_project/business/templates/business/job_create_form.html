@@ -1,0 +1,203 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    /* 全体レイアウト */
+    .form-container { max-width: 1000px; margin: 0 auto; padding-top: 20px; padding-bottom: 120px; }
+    .section-card { background: white; padding: 35px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #eee; }
+    
+    /* セクションタイトル（番号を消して左ラインのデザインに統一） */
+    .section-title { font-size: 18px; font-weight: bold; margin-bottom: 30px; color: #333; border-left: 5px solid #007AFF; padding-left: 15px; display: flex; align-items: center; }
+    
+    /* フォーム要素共通 */
+    label { display: block; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #333; }
+    .required-tag { background: #ff3b30; color: white; font-size: 10px; padding: 2px 5px; border-radius: 2px; margin-left: 8px; vertical-align: middle; }
+    
+    input[type="text"], input[type="number"], input[type="date"], input[type="time"], textarea, select { 
+        width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 20px; font-size: 14px; outline: none;
+    }
+    input:focus, textarea:focus { border-color: #007AFF; }
+
+    .flex-row { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+    .flex-item { flex: 1; }
+
+    /* 公開設定エリア (画像6準拠) */
+    .radio-box-group { border: 1px solid #eee; border-radius: 8px; padding: 25px; background: #fff; }
+    .radio-option { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 25px; cursor: pointer; }
+    .radio-option input[type="radio"] { margin-top: 4px; width: 18px; height: 18px; }
+    .option-label { font-weight: bold; font-size: 15px; }
+    .option-desc { font-size: 12px; color: #888; margin-top: 5px; line-height: 1.5; }
+
+    /* グループ限定公開時の選択肢 */
+    .group-selection { margin-left: 30px; padding: 20px; background: #fcfcfc; border: 1px solid #eee; border-radius: 6px; }
+    .check-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; cursor: pointer; font-weight: normal; }
+    .check-item input[type="checkbox"] { width: 16px; height: 16px; }
+
+    /* 時給・交通費 (画像7, 8準拠) */
+    .wage-input-wrapper { display: flex; align-items: center; gap: 10px; width: 250px; }
+    .unit { font-weight: bold; font-size: 14px; color: #333; }
+    .sub-text { font-size: 12px; color: #888; line-height: 1.6; margin: -10px 0 20px 0; }
+
+    /* 下部固定フッターバー (画像10準拠) */
+    .bottom-bar { position: fixed; bottom: 0; left: 240px; right: 0; background: white; padding: 20px 40px; border-top: 1px solid #ddd; display: flex; justify-content: center; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+    .btn-confirm { background: #007AFF; color: white; border: none; padding: 16px; width: 100%; max-width: 650px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+    .btn-confirm:hover { background: #0063cc; }
+</style>
+
+<div class="form-container">
+    <h1 style="font-size: 22px; margin-bottom: 30px;">求人内容の作成</h1>
+
+    <form method="POST" id="jobCreateForm">
+        {% csrf_token %}
+        
+        <!-- 1. 求人内容 (画像3, 4, 5) -->
+        <div class="section-card">
+            <div class="section-title">求人内容</div>
+            
+            <div class="flex-row">
+                <div style="width: 250px;">
+                    <label>求人日</label>
+                    <input type="date" name="work_date" value="2025-04-29" required>
+                </div>
+                <div class="flex-item">
+                    <label>開始</label>
+                    <input type="time" name="start_time" value="18:00" required>
+                </div>
+                <div style="padding-top: 15px; font-weight: bold;">〜</div>
+                <div class="flex-item">
+                    <label>終了</label>
+                    <input type="time" name="end_time" value="23:00" required>
+                </div>
+                <div style="padding-top: 15px; font-size: 12px; color: #888;">(5時間0分)</div>
+            </div>
+
+            <!-- タイトル入力（データベース保存に必須。ひな形から引き継ぎ） -->
+            <label>求人タイトル <span class="required-tag">必須</span></label>
+            <input type="text" name="title" value="{{ template.title }}" placeholder="例: 【カフェ】接客スタッフ" required>
+
+            <div class="flex-row">
+                <div class="flex-item">
+                    <label>休憩の開始</label>
+                    <input type="time" name="break_start" placeholder="--:--">
+                </div>
+                <div class="flex-item">
+                    <label>休憩時間</label>
+                    <div class="wage-input-wrapper">
+                        <input type="number" name="break_duration" value="0" style="margin-bottom:0;"> 
+                        <span class="unit">分</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="max-width: 400px;">
+                <label>求人の締切時間</label>
+                <select name="deadline">
+                    <option value="start">【推奨】開始時刻と同時</option>
+                    <option value="1h">1時間前</option>
+                    <option value="1d">前日まで</option>
+                </select>
+            </div>
+
+            <div style="width: 150px;">
+                <label>募集人数 <span class="required-tag">必須</span></label>
+                <div class="wage-input-wrapper">
+                    <input type="number" name="count" value="1" style="margin-bottom:0;" required>
+                    <span class="unit">人</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 公開設定 (画像6) -->
+        <div class="section-card">
+            <div class="section-title">公開設定</div>
+            <div class="radio-box-group">
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="public">
+                    <div>
+                        <span class="option-label">一般公開</span>
+                        <div class="option-desc">すべてのワーカーに求人が公開されます。</div>
+                    </div>
+                </label>
+                
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="badge">
+                    <div>
+                        <span class="option-label">バッジ限定公開 ❓</span>
+                        <div class="option-desc">経験豊富なワーカーに働いてほしい求人におすすめです。</div>
+                    </div>
+                </label>
+                
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="group" checked>
+                    <div>
+                        <span class="option-label">グループ限定公開</span>
+                        <div class="check-item" style="margin-top:10px;">
+                            <input type="checkbox" name="auto_public" checked> 
+                            <span style="font-size:13px; color:#007AFF; font-weight: bold;">自動で「一般公開」に切り替える（ベータ版）</span>
+                        </div>
+                    </div>
+                </label>
+                
+                <div class="group-selection">
+                    <label class="check-item"><input type="checkbox" name="group_exp" checked> 稼働経験あり (271人)</label>
+                    <label class="check-item"><input type="checkbox" name="group_fav"> お気に入り (86人)</label>
+                    <label class="check-item"><input type="checkbox" name="group_reg"> レジ経験者 (13人)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 時給・交通費 (画像7, 8) -->
+        <div class="section-card">
+            <div class="section-title">時給・交通費</div>
+            <div style="max-width: 500px;">
+                <label>時給 <span class="required-tag">必須</span></label>
+                <div class="wage-input-wrapper">
+                    <input type="number" name="wage" value="1300" style="margin-bottom:0;" required>
+                    <span class="unit">円</span>
+                </div>
+                <p class="sub-text">
+                    深夜手当（22時以降の勤務）、残業手当（8時間を超える勤務）は、入力した時給に応じて自動計算されます。
+                </p>
+
+                <label>交通費 <span class="required-tag">必須</span></label>
+                <div class="wage-input-wrapper">
+                    <input type="number" name="transport" value="700" style="margin-bottom:0;" required>
+                    <span class="unit">円</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 自動送信メッセージ (画像9) -->
+        <div class="section-card">
+            <div class="section-title">自動送信メッセージ</div>
+            
+            <div style="margin-bottom: 25px;">
+                <label>送信設定</label>
+                <div style="display:flex; gap:30px;">
+                    <label class="check-item"><input type="radio" name="send_msg" value="yes" checked> 送信する</label>
+                    <label class="check-item"><input type="radio" name="send_msg" value="no"> 送信しない</label>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label>送信対象</label>
+                <div style="display:flex; gap:30px;">
+                    <label class="check-item"><input type="radio" name="target" value="all"> 全員</label>
+                    <label class="check-item"><input type="radio" name="target" value="first" checked> はじめてマッチングしたワーカー</label>
+                </div>
+            </div>
+
+            <label>メッセージ内容</label>
+            <textarea name="message" style="height: 150px;">申し込みいただきありがとうございます！
+当日は到着しましたら入口から入っていただき、「タイミーから申し込みした〇〇です」と近くの店員にお伝えください。
+不明点などあればメッセージか緊急連絡先にご連絡ください。</textarea>
+        </div>
+
+        <!-- 5. 下部固定バー (画像10) -->
+        <div class="bottom-bar">
+            <button type="submit" class="btn-confirm">入力した求人内容を確認</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

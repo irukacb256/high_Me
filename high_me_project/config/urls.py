@@ -51,4 +51,13 @@ urlpatterns = [
     # config/urls.py の urlpatterns 内に追加
     path('biz/templates/', biz_views.template_list, name='biz_template_list'),      # ひな形一覧
     path('biz/templates/create/', biz_views.template_create, name='biz_template_create'), # ひな形作成
+
+    # 詳細画面
+    path('biz/templates/<int:pk>/', biz_views.template_detail, name='biz_template_detail'),
+    # 編集画面
+    path('biz/templates/<int:pk>/edit/', biz_views.template_edit, name='biz_template_edit'),
+    # このひな形を元に求人作成（勤務日時入力画面へ）
+    path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
+    path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
+    path('biz/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
 ]

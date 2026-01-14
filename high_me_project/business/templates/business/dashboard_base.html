@@ -47,7 +47,9 @@
     <a href="{% url 'biz_template_list' %}" class="nav-item {% if 'template' in request.path %}active{% endif %}">
         <i class="fa-solid fa-plus-square"></i> 求人のひな形
     </a>
-    <a href="#" class="nav-item"><i class="fa-solid fa-list-ul"></i> 求人一覧</a>
+    <a href="{% url 'biz_job_posting_list' %}" class="nav-item {% if request.resolver_match.url_name == 'biz_job_posting_list' %}active{% endif %}">
+    <i class="fa-solid fa-list-ul"></i> 求人一覧
+    </a>
     <a href="#" class="nav-item"><i class="fa-solid fa-comment-dots"></i> メッセージ</a>
 </div>
 

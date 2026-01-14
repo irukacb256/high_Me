@@ -1,0 +1,27 @@
+{% extends 'business/dashboard_base.html' %}
+{% block content %}
+<div class="form-container">
+    <h1>求人内容の確認</h1>
+    <div class="section-card">
+        <h3>{{ data.title }}</h3>
+        <p>日時: {{ data.work_date }} {{ data.start_time }} 〜 {{ data.end_time }}</p>
+        
+        <hr>
+        {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            <label style="background: #f9f9f9; padding: 20px; border-radius: 8px; display: block; cursor: pointer;">
+                <input type="checkbox" name="confirm_check" required> 
+                <strong>休業手当に関する事項を確認しました</strong><br>
+                <span style="font-size:12px; color:#666;">（シーケンス図に基づいた必須チェック）</span>
+            </label>
+            
+            <div style="margin-top:30px; display:flex; gap:10px;">
+                <a href="javascript:history.back()" class="btn-white">求人内容を変更</a>
+                <button type="submit" class="btn-blue">求人公開</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

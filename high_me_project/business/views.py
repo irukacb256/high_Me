@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from .models import BusinessProfile, Store, JobTemplate
+from .models import JobTemplate, JobPosting, Store, BusinessProfile
 
 # --- 登録フロー ---
 
@@ -177,3 +177,101 @@ def template_create(request):
     return render(request, 'business/template_form.html', {
         'store': store
     })
+
+@login_required
+def template_detail(request, pk):
+    """詳細画面"""
+    store = get_biz_context(request)
+    template = get_object_or_404(JobTemplate, pk=pk, store=store)
+    return render(request, 'business/template_detail.html', {'template': template, 'store': store})
+
+@login_required
+def template_edit(request, pk):
+    """編集画面 (template_form.html を再利用)"""
+    store = get_biz_context(request)
+    template = get_object_or_404(JobTemplate, pk=pk, store=store)
+
+    if request.method == 'POST':
+        template.title = request.POST.get('title')
+        template.industry = request.POST.get('industry')
+        template.occupation = request.POST.get('occupation')
+        template.work_content = request.POST.get('work_content')
+        template.precautions = request.POST.get('precautions')
+        template.belongings = request.POST.get('belongings')
+        template.requirements = request.POST.get('requirements')
+        template.address = request.POST.get('address')
+        template.access = request.POST.get('access')
+        template.contact_number = request.POST.get('contact_number')
+        template.auto_message = request.POST.get('auto_message')
+        template.save()
+        return redirect('biz_template_list')
+
+    return render(request, 'business/template_form.html', {
+        'template': template, 
+        'store': store, 
+        'is_edit': True
+    })
+
+# --- 求人作成フロー (画像3・4のシーケンス準拠) ---
+
+@login_required
+def job_create_from_template(request, template_pk):
+    """画像1・2: ひな形を元に求人を作成(勤務日時設定)"""
+    store = get_biz_context(request)
+    template = get_object_or_404(JobTemplate, pk=template_pk, store=store)
+    
+    if request.method == 'POST':
+        # シーケンス図: 必要情報を入力し「求人内容を確認」ボタンを押下
+        # セッションに一時保存して確認画面へ
+        request.session['pending_job'] = {
+            'template_id': template.pk,
+            'work_date': request.POST.get('work_date'),
+            'start_time': request.POST.get('start_time'),
+            'end_time': request.POST.get('end_time'),
+            'title': request.POST.get('title'),
+        }
+        return redirect('biz_job_confirm')
+    
+    return render(request, 'business/job_create_form.html', {'template': template, 'store': store})
+
+@login_required
+def job_posting_list(request):
+    """求人一覧画面（実際に公開した募集のリスト）"""
+    store = get_biz_context(request)
+    # 現在の店舗に紐づく求人を、勤務日が新しい順に取得
+    postings = JobPosting.objects.filter(template__store=store).order_by('-work_date', '-start_time') if store else []
+    
+    return render(request, 'business/job_posting_list.html', {
+        'store': store,
+        'postings': postings
+    })
+
+@login_required
+def job_confirm(request):
+    """求人公開の確定処理"""
+    pending_data = request.session.get('pending_job')
+    if not pending_data:
+        return redirect('biz_template_list')
+    
+    if request.method == 'POST':
+        if 'confirm_check' in request.POST:
+            template = get_object_or_404(JobTemplate, pk=pending_data['template_id'])
+            
+            # 求人を作成
+            JobPosting.objects.create(
+                template=template,
+                title=pending_data.get('title') or template.title,
+                work_date=pending_data['work_date'],
+                start_time=pending_data['start_time'],
+                end_time=pending_data['end_time'],
+                work_content=template.work_content,
+                is_published=True
+            )
+            
+            del request.session['pending_job']
+            # ★ 修正：ダッシュボードではなく「求人一覧」へリダイレクト
+            return redirect('biz_job_posting_list') 
+        else:
+            return render(request, 'business/job_confirm.html', {'error': 'チェックがされていません。', 'data': pending_data})
+
+    return render(request, 'business/job_confirm.html', {'data': pending_data})

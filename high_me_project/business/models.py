@@ -51,3 +51,17 @@ class JobTemplate(models.Model):
 
     def __str__(self):
         return self.title
+    
+class JobPosting(models.Model):
+    template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE, verbose_name="元にするひな形")
+    work_date = models.DateField("勤務日")
+    start_time = models.TimeField("開始時間")
+    end_time = models.TimeField("終了時間")
+    # ひな形からコピーされるが、求人ごとに個別設定可能な項目
+    title = models.CharField("求人タイトル", max_length=200)
+    work_content = models.TextField("業務内容")
+    is_published = models.BooleanField("公開フラグ", default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.work_date} {self.title}"

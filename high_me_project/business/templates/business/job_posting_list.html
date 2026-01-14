@@ -1,0 +1,58 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .list-header { margin-bottom: 25px; }
+    .list-title { font-size: 20px; font-weight: bold; margin: 0; }
+    
+    .posting-card { background: white; border-radius: 8px; border: 1px solid #eee; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 20px; }
+    
+    .date-box { background: #f8f9fa; border-radius: 6px; padding: 10px; text-align: center; min-width: 80px; }
+    .date-box .day { font-size: 12px; color: #666; }
+    .date-box .date { font-size: 18px; font-weight: bold; color: #333; }
+
+    .posting-info { flex: 1; }
+    .posting-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; color: #333; }
+    .posting-time { font-size: 14px; color: #666; }
+    
+    .status-tag { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .status-published { background: #e6f7ed; color: #1f8b4d; } /* 公開中（緑） */
+</style>
+
+<div class="list-header">
+    <h1 class="list-title">求人一覧</h1>
+    <p style="font-size: 13px; color: #666;">募集を出した求人の状況を確認できます</p>
+</div>
+
+<div class="posting-list-container">
+    {% for posting in postings %}
+    <div class="posting-card">
+        <!-- 日付ボックス -->
+        <div class="date-box">
+            <div class="day">{{ posting.work_date|date:"l" }}</div>
+            <div class="date">{{ posting.work_date|date:"m/d" }}</div>
+        </div>
+
+        <div class="posting-info">
+            <div style="margin-bottom: 8px;">
+                <span class="status-tag status-published">公開中</span>
+            </div>
+            <div class="posting-title">{{ posting.title }}</div>
+            <div class="posting-time">
+                <i class="fa-regular fa-clock"></i> {{ posting.start_time|time:"H:i" }} 〜 {{ posting.end_time|time:"H:i" }}
+            </div>
+        </div>
+
+        <div class="posting-actions">
+            <button class="btn-white" style="font-size: 12px;">詳細・編集</button>
+        </div>
+    </div>
+    {% empty %}
+    <div style="background: white; padding: 80px; text-align: center; border: 1px dashed #ccc; border-radius: 8px;">
+        <p style="color: #999; margin-bottom: 20px;">まだ公開された求人がありません</p>
+        <a href="{% url 'biz_template_list' %}" class="btn-blue" style="text-decoration: none;">ひな形を選んで求人を作成する</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
