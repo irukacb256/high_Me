@@ -1,0 +1,70 @@
+{% extends 'business/base_signup.html' %}
+{% block content %}
+<style>
+    /* 進行状況バー (画像2, 3準拠) */
+    .stepper {
+        display: flex;
+        margin: -40px -40px 40px -40px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+    .step {
+        flex: 1; padding: 15px 0; text-align: center; font-size: 11px; color: #007AFF;
+        position: relative;
+    }
+    .step.inactive { color: #999; }
+    .step.active { font-weight: bold; border-bottom: 3px solid #007AFF; }
+    .step::before { content: '✓ '; }
+    .step.no-check::before { content: ''; }
+
+    .section-box { padding: 10px 0; text-align: left; }
+    .section-title { font-weight: bold; font-size: 18px; margin-bottom: 20px; }
+    
+    .radio-list { margin-bottom: 40px; }
+    .radio-label { display: block; margin-bottom: 15px; font-size: 16px; cursor: pointer; }
+    .radio-label input { width: 18px; height: 18px; margin-right: 10px; vertical-align: middle; }
+
+    .industry-label { font-size: 14px; font-weight: bold; margin-bottom: 5px; display: block; }
+    .industry-note { font-size: 12px; color: #666; margin-bottom: 15px; display: block; }
+    
+    select { 
+        width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; color: #999;
+        appearance: none; background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 15px center;
+    }
+    select.selected { color: #333; }
+
+    .btn-next { background: #007AFF; color: white; border: none; width: 100%; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 60px; cursor: pointer; }
+</style>
+
+<!-- 進行バー -->
+<div class="stepper">
+    <div class="step">メール登録</div>
+    <div class="step">アカウント登録</div>
+    <div class="step active no-check">3. 事業者登録</div>
+    <div class="step inactive no-check">4. 店舗登録</div>
+</div>
+
+<div class="section-box">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="section-title">事業形態</div>
+        <div class="radio-list">
+            <label class="radio-label"><input type="radio" name="biz_type" value="corp" checked> 法人</label>
+            <label class="radio-label"><input type="radio" name="biz_type" value="indiv"> 個人事業主</label>
+        </div>
+
+        <div class="section-title">事業者の業務内容</div>
+        <label class="industry-label">業種</label>
+        <span class="industry-note">＊ 該当する業種が無い場合は、類似する業種を選択してください。</span>
+        
+        <select name="industry" id="industrySelect" required onchange="this.classList.add('selected')">
+            <option value="">選択してください</option>
+            <option value="1">飲食</option>
+            <option value="2">物流</option>
+            <option value="3">イベント</option>
+        </select>
+
+        <button type="submit" class="btn-next">次へ</button>
+    </form>
+</div>
+{% endblock %}

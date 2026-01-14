@@ -1,0 +1,95 @@
+{% extends 'business/base_signup.html' %}
+
+{% block content %}
+<style>
+    /* プログレスバー (ステップ4: 店舗登録がアクティブ) */
+    .stepper {
+        display: flex;
+        margin: -40px -40px 40px -40px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+    .step {
+        flex: 1; padding: 15px 0; text-align: center; font-size: 11px; color: #007AFF;
+        position: relative;
+    }
+    .step.inactive { color: #999; }
+    .step.active { font-weight: bold; border-bottom: 3px solid #007AFF; }
+    .step::before { content: '✓ '; }
+    .step.no-check::before { content: ''; }
+
+    /* フォームスタイル (画像7準拠) */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .section-title { font-weight: bold; font-size: 16px; }
+    .reflect-btn { background: #007AFF; color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; }
+
+    .form-item { margin-bottom: 20px; text-align: left; }
+    .form-item label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #333; }
+    
+    input, select { 
+        width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; background-color: #fff;
+    }
+    input::placeholder { color: #ccc; }
+    
+    .btn-register { 
+        background: #007AFF; color: white; border: none; width: 100%; padding: 16px; border-radius: 6px; 
+        font-weight: bold; font-size: 16px; margin-top: 30px; cursor: pointer; 
+    }
+</style>
+
+<!-- 進行バー -->
+<div class="stepper">
+    <div class="step">メール登録</div>
+    <div class="step">アカウント登録</div>
+    <div class="step">3. 事業者登録</div>
+    <div class="step active no-check">4. 店舗登録</div>
+</div>
+
+<div class="form-body">
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="section-header">
+            <span class="section-title">店舗の所在地</span>
+            <button type="button" class="reflect-btn">事業者の所在地を反映する</button>
+        </div>
+
+        <div class="form-item">
+            <label>店舗名</label>
+            <input type="text" name="store_name" placeholder="例: タイミー 汐留店" required>
+        </div>
+
+        <div class="form-item">
+            <label>郵便番号</label>
+            <input type="text" name="post_code" placeholder="例: 1700013" required>
+        </div>
+
+        <div class="form-item">
+            <label>都道府県</label>
+            <select name="prefecture">
+                <option value="">選択してください</option>
+                <option value="東京都">東京都</option>
+                <option value="埼玉県">埼玉県</option>
+                <option value="神奈川県">神奈川県</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label>市区町村名</label>
+            <input type="text" name="city" placeholder="例: 豊島区">
+        </div>
+
+        <div class="form-item">
+            <label>町域・番地</label>
+            <input type="text" name="address_line" placeholder="例: 東池袋1-18-1">
+        </div>
+
+        <div class="form-item">
+            <label>建物名など</label>
+            <input type="text" name="building" placeholder="例: Hareza Tower 27階">
+        </div>
+
+        <button type="submit" class="btn-register">店舗を登録する</button>
+    </form>
+</div>
+{% endblock %}

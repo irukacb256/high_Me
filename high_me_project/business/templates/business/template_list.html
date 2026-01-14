@@ -1,0 +1,74 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .list-header { margin-bottom: 25px; }
+    .list-title { font-size: 20px; font-weight: bold; margin: 0 0 5px 0; }
+    .list-sub { font-size: 13px; color: #666; }
+
+    /* 並び替えエリア */
+    .sort-section { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .btn-sort { border: 1px solid #007AFF; color: #007AFF; background: white; padding: 5px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+    .btn-sort.active { background: #eef6ff; }
+
+    /* ひな形カード */
+    .template-card { background: white; border-radius: 8px; border: 1px solid #eee; display: flex; padding: 20px; margin-bottom: 15px; gap: 20px; transition: 0.2s; }
+    .template-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    
+    .template-img { width: 220px; height: 140px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .template-img img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .template-info { flex: 1; display: flex; flex-direction: column; }
+    .meta-text { font-size: 12px; color: #999; margin-bottom: 5px; }
+    .template-link-title { color: #007AFF; font-size: 16px; font-weight: bold; text-decoration: none; margin-bottom: 10px; }
+    
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; }
+    .action-btns { display: flex; gap: 8px; }
+    .btn-action { border: 1px solid #ddd; background: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; color: #333; }
+    .btn-action i { margin-right: 4px; color: #666; }
+    
+    .btn-create-job-now { background: #007AFF; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; }
+</style>
+
+<div class="list-header">
+    <h1 class="list-title">求人のひな形一覧</h1>
+    <p class="list-sub">作成した求人のひな形一覧が表示されます</p>
+</div>
+
+<div class="sort-section">
+    <span style="font-size: 12px; font-weight: bold;">並び替え</span>
+    <button class="btn-sort active">作成日が新しい</button>
+    <button class="btn-sort">求人の作成が新しい</button>
+</div>
+
+<!-- ひな形リスト -->
+{% for template in templates %}
+<div class="template-card">
+    <div class="template-img">
+        <!-- 画像がない場合のプレースホルダー -->
+        <span style="font-size: 40px; color: #ccc;">🍕</span>
+    </div>
+    <div class="template-info">
+        <div class="meta-text">{{ template.industry }} / {{ template.occupation }}</div>
+        <a href="#" class="template-link-title">{{ template.title }}</a>
+        <div class="meta-text"><i class="fa-solid fa-location-dot"></i> {{ template.address }}</div>
+        <div class="meta-text">最終更新日時: {{ template.created_at|date:"Y/m/d H:i" }}</div>
+        
+        <div class="card-footer">
+            <div class="action-btns">
+                <button class="btn-action"><i class="fa-solid fa-pen"></i> 編集</button>
+                <button class="btn-action"><i class="fa-solid fa-copy"></i> コピー</button>
+                <button class="btn-action"><i class="fa-solid fa-trash"></i> 削除</button>
+            </div>
+            <button class="btn-create-job-now"><i class="fa-solid fa-circle-plus"></i> このひな形を元に求人を作成</button>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div style="background: white; padding: 80px; text-align: center; border: 1px dashed #ccc; border-radius: 8px;">
+    <p style="color: #999; margin-bottom: 20px;">作成済みのひな形がありません</p>
+    <a href="{% url 'biz_template_create' %}" class="btn-blue" style="text-decoration: none;">新しいひな形を作成する</a>
+</div>
+{% endfor %}
+
+{% endblock %}

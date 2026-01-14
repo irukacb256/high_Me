@@ -39,10 +39,16 @@ urlpatterns = [
     # 事業者登録フロー
     path('biz/', biz_views.landing, name='biz_landing'), # 画像3
     path('biz/signup/', biz_views.signup, name='biz_signup'), # 画像4, 5
+    path('biz/account-register/', biz_views.account_register, name='biz_account_register'), # 追加
+    path('biz/business-register/', biz_views.business_register, name='biz_business_register'), # 追加
     path('biz/verify/', biz_views.verify_docs, name='biz_verify'), # 画像6
     path('biz/store-setup/', biz_views.store_setup, name='biz_store_setup'), # 画像7
     path('biz/login/', biz_views.biz_login, name='biz_login'),
     
     # 事業者ダッシュボード
     path('biz/home/', biz_views.dashboard, name='biz_dashboard'), # 画像8, 9, 10
+
+    # config/urls.py の urlpatterns 内に追加
+    path('biz/templates/', biz_views.template_list, name='biz_template_list'),      # ひな形一覧
+    path('biz/templates/create/', biz_views.template_create, name='biz_template_create'), # ひな形作成
 ]

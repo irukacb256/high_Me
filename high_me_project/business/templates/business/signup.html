@@ -1,0 +1,43 @@
+<!-- business/templates/business/signup.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>アカウント開設 | Timee</title>
+    <style>
+        body { font-family: sans-serif; background: #fcfcfc; margin: 0; display: flex; justify-content: center; padding: 40px; }
+        .container { max-width: 900px; width: 100%; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
+        .main-flex { display: flex; gap: 40px; text-align: left; margin-top: 40px; }
+        .form-side { flex: 1; border-left: 1px solid #eee; padding-left: 40px; }
+        .radio-item { display: block; margin-bottom: 15px; font-size: 16px; cursor: pointer; }
+        .email-input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-submit { background: #007bff; color: white; border: none; width: 100%; padding: 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Timee</h1>
+        <p>求人掲載用アカウント開設</p>
+        <div class="main-flex">
+            <div style="flex:1;">
+                <p style="color: #007bff; font-weight: bold;">\ 最短即日で求人掲載 /</p>
+                <div style="background:#eee; height:200px; border-radius:8px; display:flex; align-items:center; justify-content:center;">画像</div>
+                <p style="font-size:12px; line-height:1.6;">タイミーでは簡単な業務から...</p>
+            </div>
+            <div class="form-side">
+                <form method="POST">
+                    {% csrf_token %}
+                    <p><b>ご利用目的を選択してください</b></p>
+                    <label class="radio-item"><input type="radio" name="p" checked> 求人を掲載したい（事業者の方）</label>
+                    <label class="radio-item"><input type="radio" name="p"> 働く仕事を探したい（ワーカーの方）</label>
+                    
+                    <hr>
+                    <p><b>登録するメールアドレス</b></p>
+                    <input type="email" name="email" class="email-input" placeholder="example@timee.co.jp">
+                    <button type="submit" class="btn-submit">アカウントを開設</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,257 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    /* 全体レイアウト */
+    .form-container { max-width: 1000px; margin: 0 auto; padding-top: 20px; padding-bottom: 120px; }
+    .section-card { background: white; padding: 35px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #eee; }
+    
+    /* セクション番号とタイトル */
+    .section-num { background: #007AFF; color: white; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px; font-weight: bold; }
+    .section-title { font-size: 18px; font-weight: bold; margin-bottom: 25px; display: flex; align-items: center; }
+    
+    /* フォーム要素 */
+    label { display: block; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #333; }
+    .required-tag { background: #ff3b30; color: white; font-size: 10px; padding: 2px 5px; border-radius: 2px; margin-left: 8px; }
+    input[type="text"], textarea, select { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 25px; font-size: 14px; outline: none; }
+    textarea { height: 140px; resize: vertical; }
+
+    /* 下部固定バー */
+    .bottom-bar { position: fixed; bottom: 0; left: 240px; right: 0; background: white; padding: 20px 50px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 20px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+
+    /* --- かんたん自動入力モーダル --- */
+    #autoFillModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; }
+    .modal-content { background:white; width:95%; max-width:1000px; border-radius:12px; padding:30px; display: flex; flex-direction: column; max-height: 90vh; }
+    .autofill-columns { display:flex; border:1px solid #eee; border-radius:8px; height:500px; overflow: hidden; }
+    
+    .col-left { flex: 1; border-right: 1px solid #eee; overflow-y: auto; background: #fff; }
+    .col-mid { flex: 1; border-right: 1px solid #eee; overflow-y: auto; background: #fafafa; }
+    .col-right { flex: 1.2; overflow-y: auto; background: #fff; padding: 10px; }
+
+    .cat-item { padding: 16px 20px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; align-items: center; }
+    .cat-item:hover { background: #f5f5f5; }
+    .cat-item.active { background: #eef6ff; color: #007AFF; font-weight: bold; }
+    .cat-item span { color: #ccc; font-size: 12px; }
+
+    .role-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .btn-apply { background: #007AFF; color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    .btn-apply:hover { background: #0063cc; }
+
+    /* 写真・書類エリア */
+    .photo-grid { display: flex; gap: 15px; }
+    .photo-box { width: 180px; height: 120px; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; color: #999; text-align: center; }
+</style>
+
+<div class="form-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="font-size: 22px; margin: 0;">求人のひな形を新規作成</h1>
+        <button type="button" class="btn-white" onclick="openModal()" style="background: #eef6ff; color: #007AFF; border: 1px solid #007AFF; padding: 10px 24px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+            ✨ かんたん自動入力
+        </button>
+    </div>
+
+    <form method="POST" id="jobTemplateForm">
+        {% csrf_token %}
+
+        <!-- セクション 3 & 4 -->
+        <div class="section-card">
+            <div class="section-title"><span class="section-num">3</span> 基本情報</div>
+            <label>求人タイトル <span class="required-tag">必須</span></label>
+            <input type="text" name="title" id="id_title" placeholder="【新橋駅徒歩5分】笑顔溢れるレストランでホールスタッフ！" required>
+            
+            <div style="display: flex; gap: 20px;">
+                <div style="flex:1;">
+                    <label>業種 <span class="required-tag">必須</span></label>
+                    <select name="industry" id="id_industry">
+                        <option value="飲食">飲食</option>
+                        <option value="販売">販売</option>
+                        <option value="物流">物流</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label>職種 <span class="required-tag">必須</span></label>
+                    <input type="text" name="occupation" id="id_occupation" placeholder="レストランスタッフ" style="margin-bottom:0;">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><span class="section-num">4</span> 業務内容 <span class="required-tag">必須</span></div>
+            <textarea name="work_content" id="id_work_content" placeholder="具体的な業務内容を記入してください" required></textarea>
+            <label>注意事項</label>
+            <textarea name="precautions" style="height: 80px;" placeholder="服装や身だしなみなど"></textarea>
+        </div>
+
+        <!-- セクション 5, 6, 7 -->
+        <div class="section-card">
+            <div class="section-title"><span class="section-num">5</span> 待遇</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+                <label style="font-weight:normal;"><input type="checkbox" checked> 未経験者歓迎</label>
+                <label style="font-weight:normal;"><input type="checkbox"> まかないあり</label>
+            </div>
+            <div class="section-title"><span class="section-num">6</span> 持ち物</div>
+            <input type="text" name="belongings" id="id_belongings" placeholder="ボールペン、メモ帳">
+            <div class="section-title"><span class="section-num">7</span> 働くための条件</div>
+            <input type="text" name="requirements" id="id_requirements" placeholder="GOOD率90%以上など">
+        </div>
+
+        <!-- セクション 10: 就業場所 -->
+        <div class="section-card">
+            <div class="section-title"><span class="section-num">10</span> 就業場所と環境</div>
+            <label>住所 <span class="required-tag">必須</span></label>
+            <input type="text" name="address" value="{{ store.prefecture }}{{ store.city }}{{ store.address_line }}" required>
+            <label>アクセス</label>
+            <input type="text" name="access" placeholder="〇〇駅より徒歩5分">
+            <label>緊急連絡先</label>
+            <input type="text" name="contact_number" placeholder="000-0000-0000">
+        </div>
+
+        <!-- セクション 11: 自動メッセージ -->
+        <div class="section-card">
+            <div class="section-title"><span class="section-num">11</span> 自動送信メッセージ</div>
+            <textarea name="auto_message" id="id_auto_message" placeholder="マッチング時に送られるメッセージ"></textarea>
+        </div>
+
+        <div class="bottom-bar">
+            <button type="submit" class="btn-white" style="border: 1px solid #ddd; color: #333;">ひな形の作成を完了</button>
+            <button type="submit" name="create_job" class="btn-primary" style="padding: 12px 50px;">続けて求人を作成</button>
+        </div>
+    </form>
+</div>
+
+<!-- かんたん自動入力モーダル -->
+<div id="autoFillModal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="font-size:18px; margin:0;">かんたん自動入力</h2>
+            <button type="button" onclick="closeModal()" style="border:none; background:none; font-size:32px; cursor:pointer; color:#ccc;">&times;</button>
+        </div>
+
+        <div class="autofill-columns">
+            <!-- 左：大分類 -->
+            <div class="col-left" id="mainCategoryList">
+                <!-- JSで生成 -->
+            </div>
+            <!-- 中：中分類 -->
+            <div class="col-mid" id="subCategoryList">
+                <!-- JSで生成 -->
+            </div>
+            <!-- 右：職種 -->
+            <div class="col-right" id="roleCategoryList">
+                <!-- JSで生成 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- モーダル制御 ---
+    function openModal() { 
+        document.getElementById('autoFillModal').style.display = 'flex';
+        renderMainCategories(); // 最初の大分類を表示
+    }
+    function closeModal() { document.getElementById('autoFillModal').style.display = 'none'; }
+
+    // --- 自動入力データ定義 ---
+    const categoryData = {
+        'food': {
+            label: 'フード・飲食',
+            subs: {
+                'cafe': {
+                    label: 'カフェ・喫茶店',
+                    roles: [
+                        { name: 'ホール', title: '【おしゃれカフェ】接客・配膳スタッフ', content: 'カフェでの接客、ドリンクの提供、テーブル片付けをお願いします。', req: '笑顔で接客できる方', msg: 'エプロンを貸与します。', industry: '飲食', job: 'ホール' },
+                        { name: 'キッチン', title: '【カフェ】キッチン補助・洗い場', content: '簡単な調理補助、盛り付け、洗い場業務をお願いします。', req: '料理が好きな方', msg: '裏口からお入りください。', industry: '飲食', job: 'キッチン' }
+                    ]
+                },
+                'izakaya': {
+                    label: 'レストラン・居酒屋',
+                    roles: [
+                        { name: 'ホール', title: '【居酒屋】元気な接客スタッフ募集！', content: 'オーダー取り、お酒の提供、元気な挨拶をお願いします。', req: '未経験OK！', msg: 'まかない付きです！', industry: '飲食', job: 'ホール' }
+                    ]
+                }
+            }
+        },
+        'retail': {
+            label: '販売・小売',
+            subs: {
+                'convenience': {
+                    label: 'コンビニ',
+                    roles: [
+                        { name: 'レジ打ち', title: '【コンビニ】レジ・品出しスタッフ', content: 'レジ対応、商品の陳列、清掃をお願いします。', req: 'コンビニ経験者歓迎', msg: '制服を貸与します。', industry: '販売', job: 'レジ' }
+                    ]
+                }
+            }
+        },
+        'logistics': {
+            label: '物流・配送',
+            subs: {
+                'warehouse': {
+                    label: '倉庫内作業',
+                    roles: [
+                        { name: 'ピッキング', title: '【倉庫】簡単なピッキング・検品', content: 'リストを見て商品を集めるだけの簡単な作業です。', req: 'コツコツ作業が好きな方', msg: '軍手を持参してください。', industry: '物流', job: 'ピッキング' }
+                    ]
+                }
+            }
+        }
+    };
+
+    // --- レンダリング処理 ---
+    function renderMainCategories() {
+        const list = document.getElementById('mainCategoryList');
+        list.innerHTML = '';
+        Object.keys(categoryData).forEach(key => {
+            const div = document.createElement('div');
+            div.className = 'cat-item';
+            div.innerHTML = `${categoryData[key].label} <span>&gt;</span>`;
+            div.onclick = () => selectMain(div, key);
+            list.appendChild(div);
+        });
+        // 初期状態で一番上を選択
+        list.firstChild.click();
+    }
+
+    function selectMain(el, mainKey) {
+        document.querySelectorAll('.col-left .cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+
+        const subList = document.getElementById('subCategoryList');
+        subList.innerHTML = '';
+        const subs = categoryData[mainKey].subs;
+        Object.keys(subs).forEach(subKey => {
+            const div = document.createElement('div');
+            div.className = 'cat-item';
+            div.innerHTML = `${subs[subKey].label} <span>&gt;</span>`;
+            div.onclick = () => selectSub(div, mainKey, subKey);
+            subList.appendChild(div);
+        });
+        subList.firstChild.click();
+    }
+
+    function selectSub(el, mainKey, subKey) {
+        document.querySelectorAll('.col-mid .cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+
+        const roleList = document.getElementById('roleCategoryList');
+        roleList.innerHTML = '';
+        const roles = categoryData[mainKey].subs[subKey].roles;
+        roles.forEach(role => {
+            const div = document.createElement('div');
+            div.className = 'role-item';
+            div.innerHTML = `<span>${role.name}</span><button type="button" class="btn-apply">適用</button>`;
+            div.querySelector('button').onclick = () => applyJobData(role);
+            roleList.appendChild(div);
+        });
+    }
+
+    function applyJobData(role) {
+        document.getElementById('id_title').value = role.title;
+        document.getElementById('id_work_content').value = role.content;
+        document.getElementById('id_requirements').value = role.req;
+        document.getElementById('id_auto_message').value = role.msg;
+        document.getElementById('id_industry').value = role.industry;
+        document.getElementById('id_occupation').value = role.job;
+        closeModal();
+    }
+</script>
+{% endblock %}

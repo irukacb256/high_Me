@@ -1,0 +1,54 @@
+{% extends 'business/base_signup.html' %}
+{% block content %}
+<style>
+    .form-header { margin-bottom: 30px; }
+    .form-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+    .form-desc { font-size: 14px; color: #333; }
+    
+    .label-text { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+    
+    .input-group { margin-bottom: 25px; position: relative; }
+    .input-note { font-size: 12px; color: #666; margin-bottom: 8px; display: block; }
+    
+    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    input:focus { border-color: #007AFF; outline: none; }
+    
+    .eye-btn { position: absolute; right: 12px; bottom: 12px; color: #999; cursor: pointer; }
+    .btn-submit { background: #007AFF; color: white; border: none; width: 100%; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
+</style>
+
+<div class="form-header">
+    <div class="form-title">アカウント</div>
+    <div class="form-desc">タイミーの管理画面を操作する方の情報を入力してください。</div>
+</div>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="grid-2">
+    <!-- name="last_name" があるか確認 -->
+        <div><label class="label-text">姓</label><input type="text" name="last_name" placeholder="例: 山田" required></div>
+    <!-- name="first_name" があるか確認 -->
+        <div><label class="label-text">名</label><input type="text" name="first_name" placeholder="例: 太郎" required></div>
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">ログイン用メールアドレス</label>
+        <span class="input-note">＊ ワーカーがマッチングした際にも通知が届きます。</span>
+        <input type="email" value="demo@example.com" readonly style="background:#F9F9F9;">
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">パスワード</label>
+        <!-- name="password" があるか確認 -->
+        <input type="password" name="password" required>
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">パスワード (確認用)</label>
+        <input type="password" name="password" required>
+    </div>
+
+    <button type="submit" class="btn-submit">アカウントを登録する</button>
+</form>
+{% endblock %}

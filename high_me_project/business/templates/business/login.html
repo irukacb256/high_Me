@@ -1,7 +1,49 @@
-<h2>事業者ログイン</h2>
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="メールアドレス">
-    <input type="password" name="password" placeholder="パスワード">
-    <button type="submit">ログイン</button>
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン | Timee事業者用</title>
+    <style>
+        body { font-family: sans-serif; background-color: #F4F7F9; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-card { background: white; width: 400px; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
+        .logo { font-size: 28px; font-weight: bold; margin-bottom: 30px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { font-size: 14px; font-weight: bold; display: block; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; border: 1px solid #DDD; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .btn-login { background: #007AFF; color: white; border: none; width: 100%; padding: 14px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .error-msg { color: #ff3b30; font-size: 13px; margin-bottom: 15px; }
+        .footer-links { margin-top: 25px; font-size: 13px; color: #007AFF; }
+        .footer-links a { text-decoration: none; color: inherit; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo">Timee</div>
+    <p style="font-weight: bold; margin-bottom: 30px;">事業者用管理画面 ログイン</p>
+
+    {% if error %}
+        <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" name="email" placeholder="example@timee.co.jp" required>
+        </div>
+        <div class="form-group">
+            <label>パスワード</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn-login">ログイン</button>
+    </form>
+
+    <div class="footer-links">
+        <a href="#">パスワードをお忘れの方</a><br><br>
+        <a href="{% url 'biz_signup' %}" style="color: #666;">新規アカウント開設はこちら</a>
+    </div>
+</div>
+
+</body>
+</html>

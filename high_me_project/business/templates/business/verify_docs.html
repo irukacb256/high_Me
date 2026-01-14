@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事業者確認書類のアップロード | Timee</title>
+    <style>
+        :root {
+            --timee-blue: #007AFF;
+            --bg-gray: #F4F7F9;
+            --border-color: #DDE2E5;
+        }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif; background-color: var(--bg-gray); margin: 0; padding: 40px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        
+        .progress-bar { display: flex; justify-content: space-between; margin-bottom: 40px; position: relative; }
+        .progress-step { font-size: 12px; color: #ccc; text-align: center; flex: 1; }
+        .progress-step.active { color: var(--timee-blue); font-weight: bold; }
+
+        h1 { font-size: 22px; margin-bottom: 30px; border-left: 5px solid var(--timee-blue); padding-left: 15px; }
+
+        /* 書類選択エリア */
+        .doc-select-section { margin-bottom: 30px; }
+        .label-title { font-weight: bold; margin-bottom: 10px; display: block; }
+        select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 16px; margin-bottom: 20px; }
+
+        /* アップロードエリア (想像) */
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #FAFBFC;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .upload-zone:hover { border-color: var(--timee-blue); background: #F0F7FF; }
+        .upload-zone i { font-size: 40px; color: #999; margin-bottom: 10px; display: block; }
+        .file-info { font-size: 14px; color: #666; margin-top: 10px; }
+
+        /* スマホからアップロード (画像6準拠) */
+        .mobile-link-box { background: #F0F7FF; border: 1px solid #B3D7F7; padding: 15px; border-radius: 8px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .btn-qr { color: #ff3b30; font-weight: bold; cursor: pointer; background: white; border: 1px solid #ff3b30; padding: 5px 15px; border-radius: 4px; font-size: 12px; }
+
+        /* チェックリスト (画像6準拠) */
+        .checklist-container { margin-top: 40px; padding-top: 30px; border-top: 1px solid #EEE; }
+        .check-group { margin-bottom: 25px; }
+        .check-group-title { font-weight: bold; color: var(--timee-blue); margin-bottom: 10px; font-size: 14px; }
+        .check-item { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; cursor: pointer; }
+        .check-item input { width: 18px; height: 18px; margin-right: 12px; }
+
+        .btn-submit { background: #ccc; color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-submit.active { background: var(--timee-blue); cursor: pointer; box-shadow: 0 4px 12px rgba(0,122,255,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="progress-bar">
+        <div class="progress-step">アカウント開設</div>
+        <div class="progress-step active">本人確認書類</div>
+        <div class="progress-step">店舗登録</div>
+    </div>
+
+    <h1>事業者確認書類の送信</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="doc-select-section">
+            <label class="label-title">1. 提出する書類を選択してください</label>
+            <select name="doc_type" id="doc_type">
+                <option value="">選択してください</option>
+                <option value="履歴事項全部証明書">履歴事項全部証明書（法人の場合）</option>
+                <option value="開業届">開業届（個人事業主の場合）</option>
+                <option value="運転免許証">代表者 運転免許証</option>
+            </select>
+
+            <label class="label-title">2. 書類をアップロードしてください</label>
+            <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+                <div id="upload-placeholder">
+                    <span style="font-size: 40px;">📁</span>
+                    <p style="font-weight: bold; margin: 10px 0 5px;">クリックまたはドラッグ＆ドロップで追加</p>
+                    <p style="font-size: 12px; color: #999;">PDF, JPG, PNG (最大10MB)</p>
+                </div>
+                <div id="file-name-display" style="display:none; font-weight: bold; color: var(--timee-blue);"></div>
+                <input type="file" id="file-input" name="document" style="display: none;" onchange="handleFileSelect(this)">
+            </div>
+
+            <div class="mobile-link-box">
+                <div style="font-size: 13px;">
+                    <strong>スマートフォンからアップロードする場合</strong><br>
+                    QRコードを表示して読み取ってください。
+                </div>
+                <button type="button" class="btn-qr">QRを表示</button>
+            </div>
+        </div>
+
+        <div class="checklist-container">
+            <label class="label-title">3. 確認項目にチェックをつけてください</label>
+            
+            <div class="check-group">
+                <div class="check-group-title">【共通の確認事項】</div>
+                <label class="check-item"><input type="checkbox" class="sync-check"> 書類の内容と入力した情報が一致している</label>
+                <label class="check-item"><input type="checkbox" class="sync-check"> 書類の四隅がすべて写り、文字が鮮明である</label>
+                <label class="check-item"><input type="checkbox" class="sync-check"> 有効期限内のものである</label>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn" disabled>事業者の確認のための書類を送信する</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function handleFileSelect(input) {
+        const display = document.getElementById('file-name-display');
+        const placeholder = document.getElementById('upload-placeholder');
+        if (input.files.length > 0) {
+            display.innerText = "選択済み: " + input.files[0].name;
+            display.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+        validateForm();
+    }
+
+    const checks = document.querySelectorAll('.sync-check');
+    const btn = document.getElementById('submitBtn');
+    const fileInput = document.getElementById('file-input');
+    const docType = document.getElementById('doc_type');
+
+    function validateForm() {
+        const allChecked = Array.from(checks).every(c => c.checked);
+        const hasFile = fileInput.files.length > 0;
+        const hasType = docType.value !== "";
+
+        if (allChecked && hasFile && hasType) {
+            btn.classList.add('active');
+            btn.disabled = false;
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+        }
+    }
+
+    checks.forEach(c => c.addEventListener('change', validateForm));
+    docType.addEventListener('change', validateForm);
+</script>
+
+</body>
+</html>
