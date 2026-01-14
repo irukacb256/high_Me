@@ -1,0 +1,8 @@
+# Python Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.env
+# IDE files (optional, but recommended)
+.idea/
+.vscode/
