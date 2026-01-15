@@ -1,15 +1,126 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
 <style>
-    .verify-container { text-align: center; padding: 40px 20px; font-family: sans-serif; }
-    .lock-icon { font-size: 100px; margin: 60px 0; color: #FFD700; }
-    .btn-next { background: #007AFF; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: block; }
+    /* 画面全体 */
+    .identity-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #ffffff;
+        padding: 40px 25px 20px;
+        box-sizing: border-box;
+    }
+
+    /* ヘッダー */
+    .header-nav {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .back-arrow {
+        text-decoration: none;
+        color: #333333;
+        font-size: 24px;
+        margin-right: 20px;
+        font-weight: 300;
+    }
+    .header-text {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    /* タイトルと説明 */
+    .title-section {
+        margin-bottom: 20px;
+    }
+    .main-title {
+        font-size: 22px;
+        font-weight: bold;
+        line-height: 1.4;
+        margin: 0 0 15px 0;
+    }
+    .description {
+        font-size: 14px;
+        color: #666666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* 南京錠アイコン（中央配置） */
+    .icon-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 100px;
+    }
+
+    /* ヘルプリンク */
+    .help-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .help-link {
+        font-size: 13px;
+        color: #888888;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    /* ボタンエリア */
+    .btn-section {
+        width: 100%;
+    }
+    .next-button {
+        display: block;
+        width: 100%;
+        padding: 18px 0;
+        background-color: #007AFF; /* タイミーブルー */
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+    }
 </style>
 
-<div class="verify-container">
-    <h2 style="font-size: 1.2rem; text-align: left;">安全なログインのため、当人確認が必要です。</h2>
-    <p style="font-size: 0.8rem; color: #666; text-align: left;">すでに {{ phone }} はタイミーに登録されています。質問に答えてログインしてください。</p>
-    
-    <div class="lock-icon">🔒</div>
+<div class="identity-container">
+    <!-- ヘッダー -->
+    <div class="header-nav">
+        <a href="{% url 'signup' %}" class="back-arrow">＜</a>
+        <span class="header-text">当人確認</span>
+    </div>
 
-    <a href="{% url 'verify_dob' %}" class="btn-next">次へ</a>
-    <p style="font-size: 0.7rem; color: #888; margin-top: 40px;">❔ 身に覚えがない/質問に答えられない場合</p>
+    <!-- テキストエリア -->
+    <div class="title-section">
+        <h1 class="main-title">安全なログインのため、<br>当人確認が必要です。</h1>
+        <p class="description">
+            すでに登録されています。質問に答えてログインしてください。
+        </p>
+    </div>
+
+    <!-- アイコンエリア -->
+    <div class="icon-section">
+        <span>🔒</span>
+    </div>
+
+    <!-- ヘルプリンク -->
+    <div class="help-section">
+        <a href="#" class="help-link">
+            <i class="fa-regular fa-circle-question"></i>
+            身に覚えがない/質問に答えられない場合
+        </a>
+    </div>
+
+    <!-- 次へボタン -->
+    <div class="btn-section">
+        <a href="{% url 'verify_dob' %}" class="next-button">次へ</a>
+    </div>
 </div>
+{% endblock %}

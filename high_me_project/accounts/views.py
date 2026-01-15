@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from .models import WorkerProfile
+from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
 
 # --- オンボーディングの流れ ---
@@ -26,30 +27,31 @@ def gate(request):
 # --- 会員登録・本人確認の流れ ---
 
 def signup(request):
-    """
-    画像3: アカウント作成（電話番号とパスワード入力）
-    シーケンス図に基づいたバリデーションを実装
-    """
+    """画像3: アカウント作成（電話番号とパスワード入力）"""
     if request.method == 'POST':
         phone = request.POST.get('phone')
         password = request.POST.get('password')
 
         # 1. 未入力チェック
-        if not phone:
-            return render(request, 'accounts/signup.html', {'error': '電話番号を入力してください'})
-        if not password:
-            return render(request, 'accounts/signup.html', {'error': 'パスワードを入力してください'})
+        if not phone or not password:
+            return render(request, 'accounts/signup.html', {'error': '電話番号とパスワードを入力してください'})
 
-        # 2. 電話番号の重複チェック（電話番号をusernameとして扱う）
+        # 2. 【最重要】電話番号の重複チェック
+        # すでに登録されている場合は、エラーメッセージを出して同じ画面に戻す
         if User.objects.filter(username=phone).exists():
-            return render(request, 'accounts/signup.html', {'error': 'この電話番号は既に使用されています'})
+            return render(request, 'accounts/signup.html', {
+                'error': 'この電話番号は既に登録されています。',
+                'phone': phone  # 入力していた番号を戻してあげる
+            })
 
-        # 3. ユーザー作成と自動ログイン
-        user = User.objects.create_user(username=phone, password=password)
-        login(request, user)
-        
-        # 本人確認（南京錠の画面）へ遷移
-        return redirect('verify_identity')
+        try:
+            # 3. ユーザー作成
+            user = User.objects.create_user(username=phone, password=password)
+            login(request, user)
+            return redirect('verify_identity')
+        except IntegrityError:
+            # 万が一、同時送信などで重複が発生した場合の保険
+            return render(request, 'accounts/signup.html', {'error': '登録エラーが発生しました。もう一度お試しください。'})
 
     return render(request, 'accounts/signup.html')
 

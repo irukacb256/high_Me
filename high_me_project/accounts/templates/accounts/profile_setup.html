@@ -1,87 +1,174 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: sans-serif; background-color: #f8f8f8; margin: 0; padding: 0; }
-        .header { background: #fff; padding: 20px; text-align: center; font-weight: bold; border-bottom: 1px solid #ddd; position: sticky; top: 0; }
-        .container { padding: 20px; }
-        .section-title { font-size: 0.9rem; color: #666; margin: 20px 0 10px; font-weight: bold; }
-        .form-group { background: #fff; padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
-        .form-group label { width: 100px; font-size: 0.9rem; color: #333; }
-        .form-group input, .form-group select { border: none; flex: 1; outline: none; font-size: 1rem; }
-        
-        .switch-group { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; border-bottom: 1px solid #eee; }
-        .switch-label { font-size: 0.9rem; }
+{% extends 'base_auth.html' %}
 
-        .btn-submit { background: #FFD700; color: #333; border: none; width: 100%; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 1rem; margin-top: 30px; cursor: pointer; }
-        
-        /* 画像アップロードボタン風 */
-        .image-upload { width: 80px; height: 80px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 10px auto; overflow: hidden; position: relative; }
-        .image-upload input { opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer; }
-    </style>
-</head>
-<body>
+{% block content %}
+<style>
+    /* 画面全体の設定：Flexboxでボタンを下に押し出す */
+    .setup-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #F8F8F8; /* タイミー風の薄いグレー背景 */
+        box-sizing: border-box;
+    }
 
-<div class="header">初期設定</div>
+    /* ヘッダー */
+    .header {
+        height: 60px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
 
-<div class="container">
-    <form method="POST" enctype="multipart/form-data">
+    /* スクロール可能な入力エリア */
+    .form-body {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+
+    /* 各セクションのタイトル */
+    .section-title {
+        padding: 15px 20px 8px;
+        font-size: 12px;
+        color: #888;
+        font-weight: bold;
+    }
+
+    /* プロフィール画像アップロード */
+    .image-upload-section {
+        background: white;
+        padding: 30px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: #EEE;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: #AAA;
+        overflow: hidden;
+    }
+
+    /* 入力行のスタイル */
+    .input-row {
+        background: white;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #F5F5F5;
+    }
+    .input-row label {
+        width: 100px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+    .input-row input, .input-row select {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 15px;
+        background: transparent;
+    }
+
+    /* iOS風スイッチのセクション */
+    .toggle-row {
+        background: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #F5F5F5;
+    }
+    .toggle-label { font-size: 14px; font-weight: bold; }
+
+    /* 下部固定ボタンエリア */
+    .footer-area {
+        padding: 15px 20px 30px;
+        background: #F8F8F8;
+        flex-shrink: 0;
+    }
+    .btn-save {
+        display: block;
+        width: 100%;
+        padding: 18px 0;
+        background-color: #007AFF; /* タイミーブルー */
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="setup-container">
+    <div class="header">プロフィール登録</div>
+
+    <form method="POST" enctype="multipart/form-data" style="display:contents;">
         {% csrf_token %}
+        <div class="form-body">
+            
+            <div class="section-title">プロフィール画像</div>
+            <div class="image-upload-section">
+                <div class="avatar-circle">👤</div>
+                <input type="file" name="profile_image" style="font-size: 11px; color: #888;">
+            </div>
 
-        <div class="section-title">プロフィール画像</div>
-        <div class="image-upload">
-            <span style="font-size: 2rem; color: #aaa;">👤</span>
-            <input type="file" name="profile_image" accept="image/*">
-        </div>
+            <div class="section-title">基本情報</div>
+            <div class="input-row">
+                <label>氏名</label>
+                <input type="text" name="real_name" placeholder="例：タイミー 太郎" required>
+            </div>
+            <div class="input-row">
+                <label>フリガナ</label>
+                <input type="text" name="furigana" placeholder="例：タイミー タロウ" required>
+            </div>
+            <div class="input-row">
+                <label>性別</label>
+                <select name="gender">
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
 
-        <div class="section-title">基本情報</div>
-        <div class="form-group">
-            <label>氏名</label>
-            <input type="text" name="real_name" placeholder="タイミー 太郎" required>
-        </div>
-        <div class="form-group">
-            <label>フリガナ</label>
-            <input type="text" name="furigana" placeholder="タイミー タロウ" required>
-        </div>
-        <div class="form-group">
-            <label>性別</label>
-            <select name="gender">
-                <option value="男性">男性</option>
-                <option value="女性">女性</option>
-                <option value="その他">その他</option>
-            </select>
-        </div>
+            <div class="section-title">住所</div>
+            <div class="input-row">
+                <label>都道府県</label>
+                <input type="text" name="prefecture" placeholder="例：東京都" required>
+            </div>
+            <div class="input-row">
+                <label>市区町村</label>
+                <input type="text" name="address" placeholder="例：港区赤坂 1-2-3" required>
+            </div>
 
-        <div class="section-title">住所</div>
-        <div class="form-group">
-            <label>都道府県</label>
-            <select name="prefecture">
-                <option value="東京都">東京都</option>
-                <option value="埼玉県">埼玉県</option>
-                <option value="神奈川県">神奈川県</option>
-                <!-- 必要に応じて追加 -->
-            </select>
-        </div>
-        <div class="form-group">
-            <label>市区町村</label>
-            <input type="text" name="address" placeholder="〇〇市△△区 1-2-3" required>
-        </div>
-
-        <div class="section-title">利用端末の設定</div>
-        <div class="switch-group">
-            <span class="switch-label">通知を許可する</span>
-            <input type="checkbox" name="notifications" checked>
-        </div>
-        <div class="switch-group">
-            <span class="switch-label">位置情報の利用を許可する</span>
-            <input type="checkbox" name="location" checked>
+            <div class="section-title">利用端末の設定</div>
+            <div class="toggle-row">
+                <span class="toggle-label">通知を許可する</span>
+                <input type="checkbox" name="notifications" checked style="width:20px; height:20px; accent-color:#4cd964;">
+            </div>
+            <div class="toggle-row">
+                <span class="toggle-label">位置情報の利用を許可する</span>
+                <input type="checkbox" name="location" checked style="width:20px; height:20px; accent-color:#4cd964;">
+            </div>
         </div>
 
-        <button type="submit" class="btn-submit">登録内容を確認する</button>
+        <div class="footer-area">
+            <button type="submit" class="btn-save">登録して仕事をさがす</button>
+        </div>
     </form>
 </div>
-
-</body>
-</html>
+{% endblock %}

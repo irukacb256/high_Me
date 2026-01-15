@@ -1,8 +1,177 @@
-<form method="POST">
-    {% csrf_token %}
-    <h2>電話番号とパスワードを入力</h2>
-    {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
-    <input type="text" name="phone" placeholder="電話番号">
-    <input type="password" name="password" placeholder="パスワード">
-    <button type="submit">次へ</button>
-</form>
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    /* 画面全体のコンテナ */
+    .signup-container {
+        padding: 40px 25px;
+        background: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 戻るボタン */
+    .back-btn {
+        font-size: 24px;
+        text-decoration: none;
+        color: #333;
+        display: inline-block;
+        margin-bottom: 20px;
+        width: 30px;
+    }
+
+    /* メインタイトル */
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 35px;
+        line-height: 1.4;
+        color: #000;
+    }
+
+    /* エラーメッセージ（重複時などの表示） */
+    .error-banner {
+        background-color: #fff2f2;
+        border: 1px solid #ffcccc;
+        color: #ff3b30;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 25px;
+        font-weight: bold;
+    }
+
+    /* 入力グループ */
+    .input-group {
+        margin-bottom: 30px;
+    }
+
+    .input-group label {
+        font-size: 12px;
+        font-weight: bold;
+        color: #999;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .input-group input {
+        width: 100%;
+        border: none;
+        border-bottom: 2px solid #eee;
+        padding: 10px 0;
+        font-size: 18px;
+        outline: none;
+        border-radius: 0;
+        transition: border-color 0.3s;
+    }
+
+    /* 入力中（フォーカス時）の線の色 */
+    .input-group input:focus {
+        border-bottom-color: var(--ios-blue);
+    }
+
+    /* 次へボタン */
+    .btn-submit {
+        background-color: #eee;
+        color: #aaa;
+        width: 100%;
+        padding: 18px;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s, color 0.3s;
+        cursor: not-allowed;
+    }
+
+    /* 入力完了時のボタン色（Active） */
+    .btn-submit.active {
+        background-color: var(--ios-blue);
+        color: white;
+        cursor: pointer;
+    }
+
+    .note {
+        font-size: 11px;
+        color: #888;
+        margin-top: 15px;
+        line-height: 1.5;
+    }
+</style>
+
+<div class="signup-container">
+    <!-- 戻るリンク（ゲート画面へ） -->
+    <a href="{% url 'gate' %}" class="back-btn">＜</a>
+
+    <h1 class="title">SMS認証を行います。<br>電話番号を入力してください。</h1>
+
+    <!-- サーバー側（Views.py）で発生したエラー（重複など）を表示 -->
+    {% if error %}
+    <div class="error-banner">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" id="signupForm">
+        {% csrf_token %}
+        
+        <div class="input-group">
+            <label>電話番号</label>
+            <input type="tel" name="phone" id="phoneInput" 
+                   placeholder="09000000000" 
+                   value="{{ phone|default:'' }}" 
+                   maxlength="11" 
+                   required autocomplete="tel">
+        </div>
+
+        <div class="input-group">
+            <label>パスワード</label>
+            <input type="password" name="password" id="passInput" 
+                   placeholder="8文字以上の半角英数字" 
+                   required autocomplete="new-password">
+        </div>
+
+        <p class="note">
+            ※入力した電話番号に認証コードが送られます。<br>
+            ※今回はメールアドレスの代わりに電話番号をIDとして使用します。
+        </p>
+
+        <button type="submit" class="btn-submit" id="submitBtn" disabled>次へ</button>
+    </form>
+</div>
+
+<script>
+    // リアルタイム・バリデーション（ボタンの活性化制御）
+    const phoneInput = document.getElementById('phoneInput');
+    const passInput = document.getElementById('passInput');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function checkInputs() {
+        const phoneValue = phoneInput.value.trim();
+        const passValue = passInput.value.trim();
+
+        // 電話番号10桁以上かつパスワード8桁以上でボタンを青くする
+        if (phoneValue.length >= 10 && passValue.length >= 8) {
+            submitBtn.disabled = false;
+            submitBtn.classList.add('active');
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('active');
+        }
+    }
+
+    // 入力イベントを監視
+    phoneInput.addEventListener('input', checkInputs);
+    passInput.addEventListener('input', checkInputs);
+
+    // 数字以外の入力を防ぐ（電話番号用）
+    phoneInput.addEventListener('keydown', (e) => {
+        if (!/[\d]|Backspace|Tab|ArrowLeft|ArrowRight|Delete/.test(e.key)) {
+            // 数字と制御キー以外は無効化（簡易的な処理）
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Timee Clone - Welcome</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --timee-yellow: #FFD700; --ios-blue: #007AFF; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #333; display: flex; justify-content: center; align-items: center; overflow: hidden; font-family: -apple-system, sans-serif; }
+
+        /* スマホの外枠 */
+        .phone-wrapper {
+            width: 100%; max-width: 430px; height: 100vh;
+            background-color: white; position: relative;
+            display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* コンテンツエリア（ナビがないので100%使用） */
+        .content-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    </style>
+</head>
+<body>
+    <div class="phone-wrapper">
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
