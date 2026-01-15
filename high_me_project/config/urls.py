@@ -29,6 +29,20 @@ urlpatterns = [
 
      # jobsアプリ関連
     path('home/', job_views.index, name='index'),
+    # 場所フロー
+    path('home/location/', job_views.location_home, name='location_home'),
+    path('home/location/prefs/', job_views.pref_select, name='pref_select'),
+    path('home/location/map/', job_views.map_view, name='map_view'),
+    # 絞り込みフロー
+    path('home/refine/', job_views.refine_home, name='refine_home'),
+    path('home/refine/occupation/', job_views.occupation_select, name='occupation_select'),
+    path('home/refine/reward/', job_views.reward_select, name='reward_select'),
+
+    # ★ ここから下の3行が不足していたためエラーになっていました
+    path('home/refine/time/', job_views.time_select, name='time_select'),
+    path('home/refine/treatment/', job_views.treatment_select, name='treatment_select'),
+    path('home/refine/keyword/', job_views.keyword_exclude, name='keyword_exclude'),
+
     path('favorites/', job_views.favorites, name='favorites'),      # ★追加
     path('schedule/', job_views.work_schedule, name='work_schedule'), # ★追加
     path('messages/', job_views.messages, name='messages'),          # ★追加

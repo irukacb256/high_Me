@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="header" style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee;">
+    <a href="{% url 'index' %}" style="font-size:24px; text-decoration:none; color:#333;">×</a>
+    <div style="flex:1; text-align:center; font-weight:bold;">場所</div>
+</div>
+<div style="padding:20px;">
+    <p style="font-size:12px; color:#999; font-weight:bold;">現在の設定</p>
+    <div style="background:#F2F2F2; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:bold;">{% if selected_prefs %}{{ selected_prefs|join:", " }}{% else %}未設定{% endif %}</span>
+        <a href="{% url 'pref_select' %}" style="background:#007AFF; color:white; padding:6px 15px; border-radius:20px; text-decoration:none; font-size:13px;">変更</a>
+    </div>
+    <p style="font-size:12px; color:#999; margin-top:30px;">近くの仕事が探せます</p>
+    <a href="{% url 'map_view' %}" style="border:1px solid #eee; padding:35px; border-radius:12px; display:block; text-align:center; text-decoration:none; color:#333; background:white; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+        <i class="fa-solid fa-location-dot" style="color:#007AFF; margin-right:10px;"></i><strong>マップで探す</strong>
+    </a>
+</div>
+{% endblock %}

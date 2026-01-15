@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="header" style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee; background:white;">
+    <a href="{% url 'refine_home' %}" style="text-decoration:none; color:#333; margin-right:20px;">＜</a>
+    <div style="font-weight:bold;">時間帯を選択</div>
+</div>
+
+<div style="padding:30px 15px; display:flex; align-items:center; gap:10px; background:white;">
+    <i class="fa-regular fa-clock" style="color:#999;"></i>
+    <span style="font-size:14px; font-weight:bold; margin-right:auto;">時間帯</span>
+    <input type="time" value="00:00" style="border:none; font-size:16px; color:#ccc;">
+    <span>〜</span>
+    <input type="time" value="23:59" style="border:none; font-size:16px; color:#ccc;">
+</div>
+
+<div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
+    <button onclick="location.href='{% url 'refine_home' %}'" style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
+</div>
+{% endblock %}
