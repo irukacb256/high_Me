@@ -1,6 +1,7 @@
 # business/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # --- 以前作成したモデル ---
 class BusinessProfile(models.Model):
@@ -52,16 +53,38 @@ class JobTemplate(models.Model):
     def __str__(self):
         return self.title
     
+# business/models.py (JobPostingモデルを以下のように調整)
+
 class JobPosting(models.Model):
-    template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE, verbose_name="元にするひな形")
+    template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE)
     work_date = models.DateField("勤務日")
     start_time = models.TimeField("開始時間")
     end_time = models.TimeField("終了時間")
-    # ひな形からコピーされるが、求人ごとに個別設定可能な項目
     title = models.CharField("求人タイトル", max_length=200)
-    work_content = models.TextField("業務内容")
-    is_published = models.BooleanField("公開フラグ", default=False)
+    
+    # ★ ここに work_content を追加
+    work_content = models.TextField("業務内容", blank=True, null=True)
+    
+    # 時給・交通費（以前追加したもの）
+    hourly_wage = models.IntegerField("時給", default=1100)
+    transportation_fee = models.IntegerField("交通費", default=500)
+    
+    is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def total_payment(self):
+        return (self.hourly_wage * 5) + self.transportation_fee
+
     def __str__(self):
-        return f"{self.work_date} {self.title}"
+        return self.title
+    
+    @property
+    def is_expired(self):
+        """現在時刻が開始時刻（締切）を過ぎているか判定"""
+        now = timezone.now()
+        # 日付と時間を結合して比較
+        job_deadline = timezone.make_aware(
+            timezone.datetime.combine(self.work_date, self.start_time)
+        )
+        return now > job_deadline

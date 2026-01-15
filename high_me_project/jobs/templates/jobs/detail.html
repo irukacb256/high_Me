@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .detail-container { background: white; min-height: 100%; }
+    .header-img { width: 100%; height: 220px; background: #eee; position: relative; }
+    .back-btn { position: absolute; top: 20px; left: 15px; background: rgba(0,0,0,0.3); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+    
+    .detail-body { padding: 20px; padding-bottom: 100px; } /* ボタン分の余白 */
+    .category-text { font-size: 11px; color: #999; margin-bottom: 8px; }
+    .job-title { font-size: 18px; font-weight: bold; line-height: 1.5; margin-bottom: 15px; color: #333; }
+    
+    .info-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #333; margin-bottom: 10px; }
+    .info-row i { color: #666; margin-top: 3px; }
+    
+    .payment-box { margin: 20px 0; border-top: 1px dotted #eee; border-bottom: 1px dotted #eee; padding: 15px 0; }
+    .total-amount { font-size: 28px; font-weight: bold; color: #333; }
+    .breakdown { font-size: 12px; color: #666; margin-top: 5px; }
+
+    .section-title { font-weight: bold; font-size: 15px; margin: 30px 0 15px; border-left: 4px solid #FFD700; padding-left: 10px; }
+    .content-text { font-size: 14px; color: #444; line-height: 1.8; white-space: pre-wrap; }
+
+    /* 固定ボトムボタン (iOS風) */
+    .fixed-footer { position: fixed; bottom: 0; width: 100%; max-width: 430px; /* base.htmlのphone-wrapperに合わせる */ padding: 15px 20px; background: white; border-top: 1px solid #eee; box-sizing: border-box; z-index: 1000; }
+    .btn-apply { background: #CCDEFF; color: #007AFF; width: 100%; border: none; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+</style>
+
+<div class="detail-container">
+    <div class="header-img">
+        <a href="{% url 'index' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <!-- 画像がない場合のプレースホルダー -->
+        <img src="https://via.placeholder.com/400x250?text={{ job.template.occupation }}" style="width:100%; height:100%; object-fit:cover;">
+    </div>
+
+    <div class="detail-body">
+        <div class="category-text">{{ job.template.industry }} / {{ job.template.occupation }}</div>
+        <div class="job-title">{{ job.title }}</div>
+        
+        <div class="info-row">
+            <i class="fa-regular fa-clock"></i>
+            <div>
+                {{ job.work_date|date:"Y年m月d日(D)" }}<br>
+                {{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }}
+            </div>
+        </div>
+
+        <div class="info-row">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>{{ job.template.address }}</div>
+        </div>
+
+        <div class="payment-box">
+            <div class="total-amount">¥{{ job.total_payment }}</div>
+            <div class="breakdown">
+                時給 ¥{{ job.hourly_wage|default:"1100" }} / 交通費 ¥{{ job.transportation_fee|default:"500" }}含む
+            </div>
+        </div>
+
+        <div class="section-title">業務内容</div>
+        <div class="content-text">{{ job.template.work_content }}</div>
+
+        <div class="section-title">持ち物</div>
+        <div class="content-text">{{ job.template.belongings|default:"なし" }}</div>
+
+        <div class="section-title">働くための条件</div>
+        <div class="content-text">{{ job.template.requirements|default:"特になし" }}</div>
+    </div>
+</div>
+
+<!-- 固定ボタン -->
+<div class="fixed-footer">
+    <button class="btn-apply">本人確認にすすむ</button>
+</div>
+
+{% endblock %}

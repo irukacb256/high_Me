@@ -60,4 +60,7 @@ urlpatterns = [
     path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
     path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
     path('biz/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
+
+    # 求人詳細画面
+    path('job/<int:pk>/', job_views.job_detail, name='job_detail'),
 ]

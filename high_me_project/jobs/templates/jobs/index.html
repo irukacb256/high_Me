@@ -1,211 +1,218 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <style>
-    /* ヘッダー固定部分 */
-    .sticky-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: white;
-    }
+    /* 全体設定 */
+    .search-container { background-color: #F8F8F8; min-height: 100vh; position: relative; }
 
-    /* 1. 場所選択 */
-    .location-selector {
-        display: flex;
-        align-items: center;
-        padding: 12px 16px;
-        background: #f2f2f2;
-        margin: 10px 16px;
-        border-radius: 25px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-    .location-selector i { margin-right: 8px; color: #333; }
+    /* 1. ヘッダー・日付ナビ */
+    .sticky-header { position: sticky; top: 0; z-index: 1000; background: white; border-bottom: 1px solid #eee; }
+    .location-bar { display: flex; align-items: center; padding: 10px 15px; background: #f2f2f2; margin: 10px 15px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; color: #333; }
+    .location-bar i { margin-right: 8px; }
 
-    /* 2. 日付スクロール */
-    .date-scroll-wrapper {
-        display: flex;
-        overflow-x: auto;
-        padding: 10px 16px;
-        gap: 8px;
-        -ms-overflow-style: none; scrollbar-width: none;
-    }
-    .date-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .date-scroll { display: flex; overflow-x: auto; padding: 5px 15px 15px; gap: 8px; -webkit-overflow-scrolling: touch; }
+    .date-scroll::-webkit-scrollbar { display: none; }
     
-    .date-btn {
-        min-width: 55px;
-        height: 65px;
-        border: 1px solid #eee;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: white;
-        flex-shrink: 0;
-    }
-    .date-btn.active {
-        background: #FFD700;
-        border: none;
-    }
-    .date-btn .day { font-size: 11px; font-weight: bold; margin-bottom: 2px; }
-    .date-btn .num { font-size: 16px; font-weight: bold; }
+    .date-link { text-decoration: none; color: inherit; flex-shrink: 0; }
+    .date-item { min-width: 55px; height: 65px; border: 1px solid #eee; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; transition: 0.2s; }
+    .date-item.active { background: #FFD700; border: none; }
+    .date-item .day-text { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 2px; }
+    .date-item.active .day-text { color: #333; }
+    .date-item .date-num { font-size: 18px; font-weight: bold; }
+    .date-item.sun .date-num { color: #ff3b30; }
+    .date-item.sat .date-num { color: #007AFF; }
 
-    /* 3. 並び替えボタン */
-    .sort-bar {
-        padding: 8px 16px;
-        border-top: 1px solid #eee;
-        display: flex;
-        align-items: center;
-        font-size: 13px;
-        font-weight: bold;
-    }
-    .sort-bar i { margin-right: 8px; font-size: 16px; }
+    .sort-label-bar { padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: bold; border-top: 1px solid #f2f2f2; background: white; }
 
-    /* 4. 通知バー */
-    .notif-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        background: white;
-        border-top: 8px solid #f8f8f8;
-    }
-    .notif-bar .date-label { font-size: 14px; font-weight: bold; }
-    .notif-bar .toggle { display: flex; align-items: center; font-size: 12px; color: #333; }
-
-    /* 5. 横スクロール求人セクション（今がチャンス！） */
-    .horizontal-section {
-        padding: 16px;
-        background: white;
-    }
-    .section-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-    .section-sub { font-size: 12px; color: #666; margin-bottom: 12px; }
+    /* 2. 求人グリッド (2列) */
+    .job-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 15px 100px; }
+    .job-card { background: white; border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+    .card-img { position: relative; width: 100%; height: 110px; background: #eee; }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .timer-badge { position: absolute; top: 6px; left: 6px; background: #ff3b30; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
     
-    .horizontal-scroll {
-        display: flex;
-        overflow-x: auto;
-        gap: 12px;
-        padding-bottom: 10px;
-    }
-    .h-card { width: 160px; flex-shrink: 0; position: relative; }
-    .h-img { width: 160px; height: 100px; background: #ddd; border-radius: 8px; object-fit: cover; }
-    .h-title { font-size: 12px; font-weight: bold; margin-top: 8px; line-height: 1.4; height: 3.2em; overflow: hidden; }
-    .h-area { font-size: 11px; color: #666; background: #f0f0f0; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
-    .heart-btn { position: absolute; top: 5px; right: 5px; background: white; border-radius: 50%; padding: 6px; font-size: 14px; color: #ccc; }
+    .card-body { padding: 10px; flex: 1; }
+    .job-title { font-size: 12px; font-weight: bold; line-height: 1.4; height: 2.8em; overflow: hidden; margin-bottom: 8px; color: #333; }
+    .job-info { font-size: 11px; color: #666; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .job-price { font-size: 16px; font-weight: bold; color: #333; margin-top: 5px; }
 
-    /* 6. メイングリッド求人 */
-    .job-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        padding: 16px;
-        background: #f8f8f8;
-    }
-    .v-card { background: white; border-radius: 12px; overflow: hidden; position: relative; }
-    .v-img-wrapper { position: relative; width: 100%; height: 110px; background: #ddd; }
-    .timer-tag { position: absolute; top: 6px; left: 6px; background: #ff3b30; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .v-title { padding: 8px; font-size: 12px; font-weight: bold; line-height: 1.4; }
-    .v-badge { position: absolute; bottom: 8px; left: 8px; background: #007AFF; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+    /* 3. 絞り込みモーダル全体 */
+    .filter-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 3000; display: none; overflow: hidden; }
+    .filter-page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; transition: 0.3s ease-out; }
+    .sub-page { transform: translateX(100%); }
+    .sub-page.active { transform: translateX(0); }
 
-    /* 7. 絞り込みボタン（フローティング） */
-    .filter-fab {
-        position: fixed;
-        bottom: 90px; /* ボトムナビの上 */
-        left: 50%;
-        transform: translateX(-50%);
-        background: #FFD700;
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-weight: bold;
-        font-size: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
-        z-index: 1000;
-        border: none;
-    }
-    .filter-fab i { margin-right: 8px; }
+    .modal-header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .modal-title { font-weight: bold; font-size: 16px; }
+    .icon-btn { border: none; background: none; font-size: 20px; cursor: pointer; color: #333; }
+    .reset-link { border: none; background: none; color: #007AFF; font-size: 13px; font-weight: bold; }
+
+    .modal-body { flex: 1; overflow-y: auto; }
+    .filter-item { padding: 20px 15px; border-bottom: 1px solid #f5f5f5; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .filter-item span i { margin-right: 12px; color: #999; width: 18px; text-align: center; }
+
+    /* 報酬サークル */
+    .reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; }
+    .reward-circle { aspect-ratio: 1; border: 1px solid #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
+    .reward-circle input { display: none; }
+    .reward-circle:has(input:checked) { border-color: #007AFF; color: #007AFF; background: #eef6ff; }
+
+    /* iOSスイッチ */
+    .ios-switch-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; }
+    .ios-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .ios-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 24px; width: 24px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #4cd964; }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    .modal-footer { padding: 15px; border-top: 1px solid #eee; background: white; }
+    .btn-apply-main { width: 100%; padding: 16px; background: #007AFF; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+
+    /* フローティングボタン */
+    .floating-filter { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #FFD700; padding: 12px 30px; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: none; z-index: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 </style>
 
-<!-- ヘッダーエリア -->
-<div class="sticky-header">
-    <div class="location-selector">
-        <i class="fa-solid fa-location-dot"></i>
-        埼玉県、東京都
+<div class="search-container">
+    <!-- ヘッダーエリア -->
+    <div class="sticky-header">
+        <div class="location-bar" onclick="openFilter(); openSub('pageLocation')">
+            <i class="fa-solid fa-location-dot"></i> 
+            <span>{% if selected_prefs %}{{ selected_prefs.0 }}{% if selected_prefs|length > 1 %}...{% endif %}{% else %}場所を指定{% endif %}</span>
+        </div>
+        
+        <div class="date-scroll">
+            {% for d in date_list %}
+            <a href="?date={{ d|date:'Y-m-d' }}{% for p in selected_prefs %}&pref={{ p }}{% endfor %}{% if selected_reward %}&reward={{ selected_reward }}{% endif %}" class="date-link">
+                <div class="date-item {% if d == selected_date %}active{% endif %} {% if d.weekday == 6 %}sun{% elif d.weekday == 5 %}sat{% endif %}">
+                    <span class="day-text">{% if d == today %}今日{% else %}{{ d|date:"D" }}{% endif %}</span>
+                    <span class="date-num">{{ d|date:"j" }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="sort-label-bar">
+            <span><i class="fa-solid fa-bars-staggered"></i> 締切時刻が近い順</span>
+            <i class="fa-solid fa-chevron-down" style="color:#ccc;"></i>
+        </div>
     </div>
-    <div class="date-scroll-wrapper">
-        <div class="date-btn active"><span class="day">今日</span><span class="num">6</span></div>
-        <div class="date-btn"><span class="day">金</span><span class="num">7</span></div>
-        <div class="date-btn"><span class="day">土</span><span class="num">8</span></div>
-        <div class="date-btn"><span class="day">日</span><span class="num">9</span></div>
-        <div class="date-btn"><span class="day">月</span><span class="num">10</span></div>
-        <div class="date-btn"><span class="day">火</span><span class="num">11</span></div>
-    </div>
-    <div class="sort-bar">
-        <i class="fa-solid fa-bars-staggered"></i> 締切時刻が近い順
+
+    <!-- 求人一覧 -->
+    <div class="job-grid">
+        {% for job in main_jobs %}
+        <a href="{% url 'job_detail' job.pk %}" class="job-card">
+            <div class="card-img">
+                <div class="timer-badge">締切間近</div>
+                <img src="https://via.placeholder.com/200x120?text={{ job.template.occupation }}">
+            </div>
+            <div class="card-body">
+                <div class="job-title">{{ job.title }}</div>
+                <div class="job-info"><i class="fa-regular fa-clock"></i> {{ job.start_time|time:"H:i" }}〜</div>
+                <div class="job-info"><i class="fa-solid fa-location-dot"></i> {{ job.template.store.city }}</div>
+                <div class="job-price">¥{{ job.total_payment }}</div>
+            </div>
+        </a>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 100px 20px; color: #999;">
+            <p>この日の仕事はまだありません</p>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
-<!-- 通知バー -->
-<div class="notif-bar">
-    <span class="date-label">2025年11月6日</span>
-    <div class="toggle">この日の新しい募集を通知 <span style="margin-left:8px; background:#eee; padding:2px 8px; border-radius:10px; font-weight:bold;">OFF</span></div>
-</div>
-
-<!-- おすすめセクション (横スクロール) -->
-<div class="horizontal-section">
-    <div class="section-title">今がチャンス！募集が増えている仕事</div>
-    <div class="section-sub">気になった仕事はお気に入りして、募集があった時にすぐ気づけるようにしましょう！</div>
-    
-    <div class="horizontal-scroll">
-        <!-- カード1 -->
-        <div class="h-card">
-            <div class="h-img"></div>
-            <i class="fa-regular fa-heart heart-btn"></i>
-            <div class="h-title">初心者OK🔰【ヤマト運輸株式会社 品川東海営業所】...</div>
-            <div class="h-area">大田区</div>
-        </div>
-        <!-- カード2 -->
-        <div class="h-card">
-            <div class="h-img"></div>
-            <i class="fa-regular fa-heart heart-btn"></i>
-            <div class="h-title">【銀座本社センター】倉庫内での軽作業（仕分け）</div>
-            <div class="h-area">中央区</div>
-        </div>
-        <!-- カード3 -->
-        <div class="h-card">
-            <div class="h-img"></div>
-            <i class="fa-regular fa-heart heart-btn"></i>
-            <div class="h-title">🔰『小割烹』の...</div>
-            <div class="h-area">中央区</div>
-        </div>
-    </div>
-</div>
-
-<!-- メイン求人一覧 (グリッド) -->
-<div class="job-grid">
-    <div class="v-card">
-        <div class="v-img-wrapper">
-            <div class="timer-tag"><i class="fa-regular fa-clock"></i> 00:02:36</div>
-            <i class="fa-regular fa-heart heart-btn"></i>
-            <div class="v-badge">要資格</div>
-        </div>
-        <div class="v-title">美容師スタイリスト募...</div>
-    </div>
-    <div class="v-card">
-        <div class="v-img-wrapper">
-            <div class="timer-tag"><i class="fa-regular fa-clock"></i> 00:17:36</div>
-            <i class="fa-regular fa-heart heart-btn"></i>
-            <span style="position:absolute; bottom:8px; left:8px; background:#fff; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold;">未経験歓迎</span>
-        </div>
-        <div class="v-title">不動産の世界にちょっと興...</div>
-    </div>
-</div>
-
-<!-- 絞り込みボタン -->
-<button class="filter-fab">
+<!-- 絞り込みフローティングボタン -->
+<button class="floating-filter" onclick="openFilter()">
     <i class="fa-solid fa-sliders"></i> 絞りこみ
 </button>
 
+<!-- 絞り込みオーバーレイ (全画面) -->
+<div id="filterOverlay" class="filter-overlay">
+    <form method="GET" action="{% url 'index' %}" id="filterForm">
+        <!-- A. メイン絞り込みページ -->
+        <div id="pageMain" class="filter-page">
+            <div class="modal-header">
+                <button type="button" class="icon-btn" onclick="closeFilter()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-title">絞り込み</div>
+                <button type="button" class="reset-link" onclick="location.href='{% url 'index' %}'">すべて解除</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-item" onclick="openSub('pageLocation')">
+                    <span><i class="fa-solid fa-location-dot"></i> 場所</span>
+                    <span style="color:#999;">{% if selected_prefs %}{{ selected_prefs.0 }}...{% else %}すべて{% endif %} ＞</span>
+                </div>
+                <div class="filter-item" onclick="openSub('pageReward')">
+                    <span><i class="fa-solid fa-yen-sign"></i> 報酬</span>
+                    <span style="color:#999;">{% if selected_reward %}¥{{ selected_reward }}~{% else %}指定なし{% endif %} ＞</span>
+                </div>
+                
+                <div class="ios-switch-row">
+                    <span style="font-size:15px; font-weight:bold;">募集中の仕事のみ</span>
+                    <label class="ios-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn-apply-main">絞り込み結果を表示</button>
+            </div>
+        </div>
+
+        <!-- B. 場所選択サブページ -->
+        <div id="pageLocation" class="filter-page sub-page">
+            <div class="modal-header">
+                <button type="button" class="icon-btn" onclick="closeSub()"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="modal-title">場所を選択</div>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="modal-body">
+                {% for p in prefectures_list %}
+                <label style="display:flex; justify-content:space-between; padding:18px 15px; border-bottom:1px solid #f5f5f5; cursor:pointer;">
+                    <span style="font-size:15px;">{{ p }}</span>
+                    <input type="checkbox" name="pref" value="{{ p }}" {% if p in selected_prefs %}checked{% endif %} style="width:22px; height:22px;">
+                </label>
+                {% endfor %}
+            </div>
+            <div class="modal-footer"><button type="button" class="btn-apply-main" onclick="closeSub()">OK</button></div>
+        </div>
+
+        <!-- C. 報酬選択サブページ (splitエラー修正版) -->
+        <div id="pageReward" class="filter-page sub-page">
+            <div class="modal-header">
+                <button type="button" class="icon-btn" onclick="closeSub()"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="modal-title">報酬</div>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="modal-body">
+                <p style="padding:20px 15px 10px; font-size:12px; color:#666; font-weight:bold;">報酬の合計額（交通費を除く）</p>
+                <div class="reward-grid">
+                    {% for val in reward_list %}
+                    <label class="reward-circle">
+                        <input type="radio" name="reward" value="{{ val }}" {% if selected_reward == val|stringformat:"s" %}checked{% endif %}>
+                        <span>¥{{ val }}~</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn-apply-main" onclick="closeSub()">OK</button></div>
+        </div>
+
+        <!-- 現在の日付を隠しフィールドで保持 -->
+        <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+    </form>
+</div>
+
+<script>
+    // モーダル・サブページ制御
+    function openFilter() { document.getElementById('filterOverlay').style.display = 'block'; }
+    function closeFilter() { document.getElementById('filterOverlay').style.display = 'none'; }
+    function openSub(id) { document.getElementById(id).classList.add('active'); }
+    function closeSub() { document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active')); }
+
+    // 初期化：日付スクロールの現在位置調整（任意）
+    window.onload = function() {
+        const activeItem = document.querySelector('.date-item.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    };
+</script>
 {% endblock %}
