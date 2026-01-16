@@ -1,0 +1,47 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<style>
+    /* 基本構造はStep2と同じ */
+    .apply-page { display: flex; flex-direction: column; height: 100%; background: white; }
+    .progress-header { height: 4px; width: 100%; background: #eee; position: relative; }
+    .progress-bar { position: absolute; left: 0; top: 0; height: 100%; background: #007AFF; width: 60%; }
+    .header { height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .header-title { flex: 1; text-align: center; font-weight: bold; margin-right: 30px; }
+    .content { flex: 1; padding: 20px 15px; }
+
+    .doc-card { display: flex; align-items: center; padding: 18px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 15px; text-decoration: none; color: #007AFF; font-weight: bold; }
+    .doc-icon { width: 40px; height: 40px; background: #f8f8f8; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #333; }
+    
+    .footer { padding: 15px 20px 30px; border-top: 1px solid #eee; }
+    .btn-next { width: 100%; padding: 16px; border-radius: 10px; border: none; font-weight: bold; font-size: 16px; background: #007AFF; color: white; cursor: pointer; }
+</style>
+
+<div class="apply-page">
+    <div class="header">
+        <a href="javascript:history.back()" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <div class="header-title">業務に関する書類を確認</div>
+    </div>
+    <div class="progress-header"><div class="progress-bar"></div></div>
+
+    <div class="content">
+        <p style="font-size: 13px; color: #666; margin-bottom: 25px;">書類を確認して次へ進んでください</p>
+
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 12px;">業務に関する書類</div>
+        <a href="#" class="doc-card">
+            <div class="doc-icon"><i class="fa-solid fa-file-invoice"></i></div>
+            労働条件通知書.pdf
+        </a>
+
+        <div style="font-size: 14px; font-weight: bold; margin-top: 30px; margin-bottom: 12px;">労働者向けリーフレット</div>
+        <a href="#" class="doc-card">
+            <div class="doc-icon"><i class="fa-solid fa-file-lines"></i></div>
+            労働者向けリーフレット.pdf
+        </a>
+    </div>
+
+    <form method="POST" class="footer">
+        {% csrf_token %}
+        <button type="submit" class="btn-next">次へ</button>
+    </form>
+</div>
+{% endblock %}

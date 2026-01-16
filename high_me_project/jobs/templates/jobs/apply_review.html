@@ -1,0 +1,53 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    .apply-page { display: flex; flex-direction: column; height: 100%; background: white; }
+    .header { height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .header-title { flex: 1; text-align: center; font-weight: bold; margin-right: 30px; }
+
+    /* プログレスバー修正 */
+    .progress-header { height: 4px; width: 100%; background: #eee; position: relative; flex-shrink: 0; }
+    .progress-bar { position: absolute; left: 0; top: 0; height: 4px; background: #007AFF; width: 100%; }
+
+    .content { flex: 1; overflow-y: auto; padding: 25px 15px; }
+    
+    .review-section { margin-bottom: 35px; }
+    .review-label { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; display: block; }
+    .review-val { font-size: 18px; font-weight: bold; color: #000; margin-bottom: 5px; }
+    .review-sub { font-size: 13px; color: #666; line-height: 1.6; }
+
+    .footer { padding: 15px 20px 30px; border-top: 1px solid #eee; flex-shrink: 0; }
+    .btn-confirm { width: 100%; padding: 18px; background: #007AFF; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
+</style>
+
+<div class="apply-page">
+    <div class="header">
+        <a href="javascript:history.back()" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <div class="header-title">申し込み内容の確認</div>
+    </div>
+    <div class="progress-header"><div class="progress-bar"></div></div>
+
+    <div class="content">
+        <p style="font-size: 13px; color: #666; margin-bottom: 30px;">申し込み内容の最終確認をして下さい。</p>
+
+        <div class="review-section">
+            <span class="review-label">就業日時</span>
+            <div class="review-val">{{ job.work_date|date:"Y年m月d日(D)" }}</div>
+            <div class="review-val">{{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }}</div>
+            <p class="review-sub">開始時刻にチェックインできなかった場合、即時入金ができません。余裕を持って到着しましょう。</p>
+        </div>
+
+        <div class="review-section">
+            <span class="review-label">働く場所</span>
+            <div class="review-val">{{ job.template.store.store_name }}</div>
+            <p class="review-sub">📍 {{ job.template.address }}</p>
+        </div>
+    </div>
+
+    <form method="POST" class="footer">
+        {% csrf_token %}
+        <button type="submit" class="btn-confirm">同意して申し込みを確定</button>
+    </form>
+</div>
+{% endblock %}

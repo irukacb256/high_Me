@@ -1,0 +1,122 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    /* 画面全体 */
+    .apply-page {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: white;
+    }
+
+    /* ヘッダー */
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
+    .header-title { flex: 1; text-align: center; font-weight: bold; margin-right: 30px; }
+
+    /* プログレスバーの修正（高さを4pxに固定） */
+    .progress-header {
+        height: 4px;
+        width: 100%;
+        background: #eee;
+        position: relative; /* ここが重要 */
+        flex-shrink: 0;
+    }
+    .progress-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 4px; /* 高さを指定 */
+        background: #007AFF;
+        width: 80%; /* ステップ4なので80% */
+    }
+
+    /* メインコンテンツ */
+    .policy-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 15px;
+    }
+
+    .policy-item {
+        border-left: 6px solid #eee;
+        padding: 5px 0 5px 15px;
+        margin-bottom: 25px;
+    }
+    .policy-item.pink { border-left-color: #ffb5bc; }
+    .policy-item.red { border-left-color: #ff3b30; }
+    
+    .policy-item h4 { margin: 0 0 5px 0; font-size: 16px; }
+    .policy-item p { margin: 0; font-size: 13px; color: #666; line-height: 1.5; }
+
+    /* 下部ボタン */
+    .footer {
+        padding: 15px 20px 30px;
+        background: #f0f0f0;
+        border-top: 1px solid #ddd;
+        flex-shrink: 0;
+    }
+    .btn-agree {
+        width: 100%;
+        padding: 18px;
+        border-radius: 10px;
+        border: none;
+        background: #003b95; /* 濃い青 */
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="apply-page">
+    <div class="header">
+        <a href="javascript:history.back()" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <div class="header-title">キャンセルポリシー</div>
+    </div>
+    <!-- プログレスバー -->
+    <div class="progress-header"><div class="progress-bar"></div></div>
+
+    <div class="policy-body">
+        <p style="font-size:13px; color:#333; margin-bottom:25px;">
+            お仕事申し込み後のキャンセルには、キャンセルポリシーが適用されます。
+        </p>
+
+        <div class="policy-item">
+            <h4>仕事開始24時間以上前</h4>
+            <p>キャンセルによるペナルティポイントの付与はございません。</p>
+        </div>
+        <div class="policy-item pink">
+            <h4>24時間〜</h4>
+            <p>ペナルティポイントが +4 されます。</p>
+        </div>
+        <div class="policy-item pink">
+            <h4>12時間〜</h4>
+            <p>ペナルティポイントが +5 されます。</p>
+        </div>
+        <div class="policy-item red">
+            <h4>4時間〜仕事開始前</h4>
+            <p>ペナルティポイントが +7 されます。</p>
+        </div>
+        <div class="policy-item red">
+            <h4>無断欠勤時</h4>
+            <p style="color:#ff3b30; font-weight:bold;">無断欠勤および仕事開始時間を過ぎたキャンセルは、一旦仕事への申し込みを制限させていただきます。</p>
+        </div>
+        
+        <div style="height: 40px;"></div>
+    </div>
+
+    <form method="POST" class="footer">
+        {% csrf_token %}
+        <button type="submit" class="btn-agree">同意して次へ</button>
+        <p style="text-align:center; font-size:11px; color:#666; margin-top:12px;">このボタンを押すと、キャンセルポリシーに同意します</p>
+    </form>
+</div>
+{% endblock %}

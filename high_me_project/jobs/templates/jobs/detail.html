@@ -1,39 +1,80 @@
-{% extends 'base.html' %}
+{% extends 'base_main.html' %}
+
 {% block content %}
 <style>
-    .detail-container { background: white; min-height: 100%; }
+    .detail-container { background: white; min-height: 100%; position: relative; }
+    
+    /* ヘッダー画像 */
     .header-img { width: 100%; height: 220px; background: #eee; position: relative; }
-    .back-btn { position: absolute; top: 20px; left: 15px; background: rgba(0,0,0,0.3); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-    
-    .detail-body { padding: 20px; padding-bottom: 100px; } /* ボタン分の余白 */
+    .back-btn { 
+        position: absolute; top: 20px; left: 15px; 
+        background: rgba(0,0,0,0.3); color: white; 
+        width: 35px; height: 35px; border-radius: 50%; 
+        display: flex; align-items: center; justify-content: center; 
+        text-decoration: none; z-index: 10;
+    }
+    .header-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ボディ（パディングを多めにとる：ナビ75px + ボタン約80px = 155px以上） */
+    .detail-body { padding: 20px; padding-bottom: 180px; } 
+
     .category-text { font-size: 11px; color: #999; margin-bottom: 8px; }
-    .job-title { font-size: 18px; font-weight: bold; line-height: 1.5; margin-bottom: 15px; color: #333; }
+    .job-title { font-size: 18px; font-weight: bold; line-height: 1.5; margin-bottom: 20px; color: #333; }
     
-    .info-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: #333; margin-bottom: 10px; }
-    .info-row i { color: #666; margin-top: 3px; }
+    .info-row { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: #333; margin-bottom: 12px; }
+    .info-row i { color: #666; margin-top: 3px; width: 16px; text-align: center; }
     
-    .payment-box { margin: 20px 0; border-top: 1px dotted #eee; border-bottom: 1px dotted #eee; padding: 15px 0; }
-    .total-amount { font-size: 28px; font-weight: bold; color: #333; }
+    /* 報酬表示 */
+    .payment-box { margin: 25px 0; border-top: 1px dotted #eee; border-bottom: 1px dotted #eee; padding: 15px 0; }
+    .total-amount { font-size: 30px; font-weight: bold; color: #333; }
     .breakdown { font-size: 12px; color: #666; margin-top: 5px; }
 
-    .section-title { font-weight: bold; font-size: 15px; margin: 30px 0 15px; border-left: 4px solid #FFD700; padding-left: 10px; }
+    .section-title { font-weight: bold; font-size: 16px; margin: 35px 0 15px; border-left: 4px solid #FFD700; padding-left: 12px; }
     .content-text { font-size: 14px; color: #444; line-height: 1.8; white-space: pre-wrap; }
 
-    /* 固定ボトムボタン (iOS風) */
-    .fixed-footer { position: fixed; bottom: 0; width: 100%; max-width: 430px; /* base.htmlのphone-wrapperに合わせる */ padding: 15px 20px; background: white; border-top: 1px solid #eee; box-sizing: border-box; z-index: 1000; }
-    .btn-apply { background: #CCDEFF; color: #007AFF; width: 100%; border: none; padding: 16px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+    /* ★ 修正：ナビゲーションバー（75px）の上に配置される固定ボタン */
+    .fixed-footer { 
+        position: absolute; 
+        bottom: 75px; /* ボトムナビの高さ分だけ浮かせる */
+        left: 0;
+        width: 90%; 
+        padding: 15px 20px; 
+        background: rgba(255, 255, 255, 0.95); 
+        border-top: 1px solid #eee; 
+        box-sizing: border-box; 
+        z-index: 1001; /* コンテンツより上に表示 */
+    }
+
+    .btn-apply { 
+        display: block;
+        width: 100%; 
+        padding: 16px; 
+        background: #007AFF; /* タイミーブルー */
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        font-size: 16px; 
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2);
+    }
+    
+    /* 状態別のボタン色 */
+    .btn-verify { background: #FFD700 !important; color: #333 !important; }
+    .btn-closed { background: #eee !important; color: #aaa !important; cursor: not-allowed; }
 </style>
 
 <div class="detail-container">
     <div class="header-img">
         <a href="{% url 'index' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <!-- 画像がない場合のプレースホルダー -->
-        <img src="https://via.placeholder.com/400x250?text={{ job.template.occupation }}" style="width:100%; height:100%; object-fit:cover;">
+        <img src="https://via.placeholder.com/400x250?text={{ job.template.occupation }}" alt="求人画像">
     </div>
 
     <div class="detail-body">
         <div class="category-text">{{ job.template.industry }} / {{ job.template.occupation }}</div>
-        <div class="job-title">{{ job.title }}</div>
+        <h1 class="job-title">{{ job.title }}</h1>
         
         <div class="info-row">
             <i class="fa-regular fa-clock"></i>
@@ -59,16 +100,24 @@
         <div class="content-text">{{ job.template.work_content }}</div>
 
         <div class="section-title">持ち物</div>
-        <div class="content-text">{{ job.template.belongings|default:"なし" }}</div>
+        <div class="content-text">{{ job.template.belongings|default:"特になし" }}</div>
 
         <div class="section-title">働くための条件</div>
         <div class="content-text">{{ job.template.requirements|default:"特になし" }}</div>
     </div>
 </div>
 
-<!-- 固定ボタン -->
+<!-- 固定ボタン（ナビの上） -->
 <div class="fixed-footer">
-    <button class="btn-apply">本人確認にすすむ</button>
+    {% if not user.is_authenticated %}
+        <a href="{% url 'gate' %}" class="btn-apply">ログインして申し込む</a>
+    {% elif needs_verification %}
+        <a href="{% url 'verify_identity' %}" class="btn-apply btn-verify">本人確認に進む</a>
+    {% elif is_closed %}
+        <div class="btn-apply btn-closed">募集を終了しました</div>
+    {% else %}
+        <a href="{% url 'apply_step_1' job.pk %}" class="btn-apply">申し込みへ進む</a>
+    {% endif %}
 </div>
 
 {% endblock %}

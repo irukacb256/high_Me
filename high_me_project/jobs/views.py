@@ -1,4 +1,5 @@
-from django.shortcuts import render , get_object_or_404
+from django.shortcuts import render , get_object_or_404 , redirect 
+from django.contrib.auth.decorators import login_required
 from business.models import JobPosting
 from django.utils import timezone
 from datetime import timedelta, datetime
@@ -96,3 +97,56 @@ def work_schedule(request):
 def messages(request):
     """メッセージ画面 (画像4)"""
     return render(request, 'jobs/messages.html')
+
+
+@login_required
+def apply_step_1_belongings(request, pk):
+    """ステップ1: 持ち物確認 (画像4)"""
+    job = get_object_or_404(JobPosting, pk=pk)
+    profile = request.user.workerprofile
+
+    # シーケンス図代替フロー: 本人確認をしていない場合
+    if not profile.is_identity_verified:
+        return render(request, 'jobs/detail.html', {'job': job, 'needs_verification': True})
+
+    # シーケンス図代替フロー: 求人が締切済み/満員の場合
+    if job.is_expired: # 前回定義したプロパティ
+        return render(request, 'jobs/detail.html', {'job': job, 'is_closed': True})
+
+    if request.method == 'POST':
+        return redirect('apply_step_2_conditions', pk=pk)
+    
+    return render(request, 'jobs/apply_belongings.html', {'job': job})
+
+@login_required
+def apply_step_2_conditions(request, pk):
+    """ステップ2: 働くための条件確認 (画像5)"""
+    job = get_object_or_404(JobPosting, pk=pk)
+    if request.method == 'POST':
+        return redirect('apply_step_3_documents', pk=pk)
+    return render(request, 'jobs/apply_conditions.html', {'job': job})
+
+@login_required
+def apply_step_3_documents(request, pk):
+    """ステップ3: 業務に関する書類確認 (画像6)"""
+    job = get_object_or_404(JobPosting, pk=pk)
+    if request.method == 'POST':
+        return redirect('apply_step_4_policy', pk=pk)
+    return render(request, 'jobs/apply_documents.html', {'job': job})
+
+@login_required
+def apply_step_4_policy(request, pk):
+    """ステップ4: キャンセルポリシー同意 (画像7, 8)"""
+    job = get_object_or_404(JobPosting, pk=pk)
+    if request.method == 'POST':
+        return redirect('apply_step_5_review', pk=pk)
+    return render(request, 'jobs/apply_policy.html', {'job': job})
+
+@login_required
+def apply_step_5_review(request, pk):
+    """ステップ5: 申し込み内容の最終確認 (画像9)"""
+    job = get_object_or_404(JobPosting, pk=pk)
+    if request.method == 'POST':
+        # ここで実際の申し込みデータを保存する（今回は割愛）
+        return render(request, 'jobs/apply_complete.html', {'job': job})
+    return render(request, 'jobs/apply_review.html', {'job': job})

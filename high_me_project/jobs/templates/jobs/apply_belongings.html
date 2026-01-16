@@ -1,0 +1,67 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<style>
+    .apply-container { display: flex; flex-direction: column; height: 100%; background: white; }
+    /* 上部の青い進捗バー */
+    .progress-header { height: 4px; width: 100%; background: #eee; position: relative; }
+    .progress-bar { position: absolute; left: 0; top: 0; height: 100%; background: #007AFF; width: 20%; transition: 0.3s; }
+    
+    .header { height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #eee; }
+    .header-title { flex: 1; text-align: center; font-weight: bold; margin-right: 30px; }
+
+    .item-list { flex: 1; overflow-y: auto; }
+    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; border-bottom: 1px solid #f5f5f5; }
+    .btn-ok { background: #eee; color: #999; border: none; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+    .btn-ok.active { background: #007AFF; color: white; }
+
+    .footer { padding: 15px 20px 30px; background: white; border-top: 1px solid #eee; }
+    .btn-next { width: 100%; padding: 16px; border-radius: 10px; border: none; background: #eee; color: #aaa; font-weight: bold; font-size: 16px; }
+    .btn-next.enabled { background: #007AFF; color: white; }
+</style>
+
+<div class="apply-container">
+    <div class="header">
+        <a href="{% url 'job_detail' job.pk %}" style="text-decoration:none; color:black; font-size:24px;">×</a>
+        <div class="header-title">持ち物を確認</div>
+    </div>
+    <div class="progress-header"><div class="progress-bar"></div></div>
+
+    <div style="padding: 20px 15px 10px; font-size: 13px; color: #333;">
+        持ち物を確認して次へ進んでください。
+    </div>
+
+    <div class="item-list">
+        <!-- 持ち物項目。実際にはDBから取得するのが理想ですが、今回は画像通り固定 -->
+        <div class="item-row">
+            <div style="font-size:14px; flex:1; padding-right:10px;">【初回勤務の方】印鑑、身分証</div>
+            <button type="button" class="btn-ok">OK</button>
+        </div>
+        <div class="item-row">
+            <div style="font-size:14px; flex:1; padding-right:10px;">滑り止め付き軍手</div>
+            <button type="button" class="btn-ok">OK</button>
+        </div>
+        <div class="item-row">
+            <div style="font-size:14px; flex:1; padding-right:10px;">動きやすい服装</div>
+            <button type="button" class="btn-ok">OK</button>
+        </div>
+    </div>
+
+    <form method="POST" class="footer">
+        {% csrf_token %}
+        <button type="submit" id="nextBtn" class="btn-next" disabled>次へ</button>
+    </form>
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('.btn-ok');
+    const nextBtn = document.getElementById('nextBtn');
+    buttons.forEach(btn => {
+        btn.onclick = () => {
+            btn.classList.toggle('active');
+            const allChecked = Array.from(buttons).every(b => b.classList.contains('active'));
+            nextBtn.disabled = !allChecked;
+            if(allChecked) nextBtn.classList.add('enabled'); else nextBtn.classList.remove('enabled');
+        };
+    });
+</script>
+{% endblock %}

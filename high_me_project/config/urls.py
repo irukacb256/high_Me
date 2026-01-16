@@ -77,4 +77,10 @@ urlpatterns = [
 
     # 求人詳細画面
     path('job/<int:pk>/', job_views.job_detail, name='job_detail'),
+    # 申込画面一連フロー
+    path('job/<int:pk>/apply/belongings/', job_views.apply_step_1_belongings, name='apply_step_1'),
+    path('job/<int:pk>/apply/conditions/', job_views.apply_step_2_conditions, name='apply_step_2_conditions'), # 修正
+    path('job/<int:pk>/apply/documents/', job_views.apply_step_3_documents, name='apply_step_3_documents'),   # 修正
+    path('job/<int:pk>/apply/policy/', job_views.apply_step_4_policy, name='apply_step_4_policy'),             # 修正
+    path('job/<int:pk>/apply/review/', job_views.apply_step_5_review, name='apply_step_5_review'),             # 修正
 ]
