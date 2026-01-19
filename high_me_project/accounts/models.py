@@ -20,5 +20,9 @@ class WorkerProfile(models.Model):
     # 本人確認ステータス
     is_identity_verified = models.BooleanField(default=False)
 
+    # 緊急連絡先
+    emergency_phone = models.CharField(max_length=20, blank=True)
+    emergency_relation = models.CharField(max_length=50, blank=True)
+
     def __str__(self):
         return self.user.username

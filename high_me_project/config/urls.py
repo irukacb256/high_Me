@@ -5,6 +5,8 @@ from django.urls import path
 from accounts import views as account_views
 from jobs import views as job_views
 from business import views as biz_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -49,6 +51,29 @@ urlpatterns = [
 
     # accountsアプリ関連
     path('mypage/', account_views.mypage, name='mypage'),            # ★追加
+    path('settings/', account_views.account_settings, name='account_settings'), # 設定一覧
+    path('settings/profile/', account_views.profile_edit, name='profile_edit'), # ★プロフィール編集画面
+    path('settings/other/', account_views.other_profile_edit, name='other_profile_edit'),
+
+    # 修正：phone_change_home を phone_change に変更
+    # 電話番号変更フロー
+    # 1. 現在の番号表示画面
+    path('settings/phone/', account_views.phone_change, name='phone_change'), 
+    
+    # 2. 登録済み番号の入力画面 (ここを phone_verify_old に統一します)
+    path('settings/phone/verify-old/', account_views.phone_change_confirm, name='phone_verify_old'), 
+    
+    # 3. 新しい番号の入力画面
+    path('settings/phone/new/', account_views.phone_input_new, name='phone_input_new'), 
+    
+    # 4. パスワード確定画面
+    path('settings/phone/confirm/', account_views.phone_confirm_password, name='phone_confirm_password'),
+
+    # アカウント設定関連
+    path('settings/', account_views.account_settings, name='account_settings'),
+    path('settings/profile/', account_views.profile_edit, name='profile_edit'),
+    path('settings/emergency/', account_views.emergency_contact_edit, name='emergency_contact'),
+    path('settings/phone/', account_views.phone_change_confirm, name='phone_change'),
 
     # 事業者登録フロー
     path('biz/', biz_views.landing, name='biz_landing'), # 画像3
@@ -83,4 +108,4 @@ urlpatterns = [
     path('job/<int:pk>/apply/documents/', job_views.apply_step_3_documents, name='apply_step_3_documents'),   # 修正
     path('job/<int:pk>/apply/policy/', job_views.apply_step_4_policy, name='apply_step_4_policy'),             # 修正
     path('job/<int:pk>/apply/review/', job_views.apply_step_5_review, name='apply_step_5_review'),             # 修正
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

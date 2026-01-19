@@ -1,0 +1,133 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    /* 100%指定で枠からはみ出さないようにし、スクロールを防止 */
+    .other-profile-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #ffffff;
+        box-sizing: border-box;
+        overflow: hidden; /* 横スクロールを強制防止 */
+    }
+
+    /* ヘッダー */
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
+    .back-btn {
+        font-size: 24px;
+        text-decoration: none;
+        color: #333;
+        margin-right: 20px;
+        display: block;
+        width: 30px;
+    }
+    .header-title {
+        font-weight: bold;
+        font-size: 16px;
+        flex: 1;
+        text-align: center;
+        margin-right: 50px; /* 戻るボタンとのバランス調整 */
+    }
+
+    /* メインボディ：ここをFlexで広げてボタンを下に押し出す */
+    .form-body {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 画像1の冒頭説明文 */
+    .disclaimer {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    /* セクション名：所属 */
+    .section-label {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    /* 入力エリア：画像通りのシンプルな下線スタイル */
+    .input-box {
+        border: none;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+        padding: 15px 0;
+        font-size: 16px;
+        color: #333;
+        outline: none;
+        background: transparent;
+        border-radius: 0;
+    }
+    .input-box:focus {
+        border-bottom-color: #007AFF;
+    }
+
+    /* 下部固定ボタンエリア：margin-top: auto で一番下へ */
+    .footer-area {
+        padding: 15px 20px 30px;
+        margin-top: auto; 
+        flex-shrink: 0;
+    }
+
+    .btn-save {
+        display: block;
+        width: 100%;
+        padding: 18px 0;
+        background-color: #007AFF; /* タイミーブルー */
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="other-profile-wrapper">
+    <!-- ヘッダー -->
+    <div class="header">
+        <a href="{% url 'account_settings' %}" class="back-btn">＜</a>
+        <span class="header-title">その他のプロフィール</span>
+    </div>
+
+    <!-- フォーム本体 -->
+    <form method="POST" style="display: contents;">
+        {% csrf_token %}
+        <div class="form-body">
+            <!-- 画像1の説明文 -->
+            <p class="disclaimer">
+                ここで入力した内容は外部に公開されず、サービスの改善にのみ利用します。
+            </p>
+
+            <div class="section-label">所属</div>
+            
+            <!-- 所属の入力欄 -->
+            <input type="text" name="affiliation" class="input-box" 
+                   value="{{ profile.affiliation|default:'' }}" 
+                   placeholder="例：専門学生" required>
+        </div>
+
+        <!-- 保存ボタン -->
+        <div class="footer-area">
+            <button type="submit" class="btn-save">保存</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

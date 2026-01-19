@@ -1,0 +1,70 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .settings-container { background-color: #ffffff; min-height: 100%; }
+    .header { height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #eee; }
+    .header-title { flex: 1; text-align: center; font-weight: bold; font-size: 16px; margin-right: 30px; }
+
+    .menu-list { margin-top: 10px; }
+    .menu-item { 
+        display: flex; align-items: center; padding: 18px 20px; 
+        border-bottom: 1px solid #f2f2f2; text-decoration: none; color: #333;
+    }
+    .menu-item:active { background: #f9f9f9; }
+    .menu-icon { width: 30px; font-size: 18px; color: #333; text-align: center; margin-right: 15px; }
+    .menu-label { flex: 1; font-size: 15px; }
+    .chevron { color: #ccc; font-size: 14px; }
+
+    /* 赤枠の強調用（開発確認用） */
+    .highlight { border: 2px solid #ff3b30; }
+</style>
+
+<div class="settings-container">
+    <div class="header">
+        <a href="{% url 'mypage' %}" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <div class="header-title">アカウント設定</div>
+    </div>
+
+    <div class="menu-list">
+        <!-- あなたのプロフィール -->
+        <a href="{% url 'profile_edit' %}" class="menu-item">
+            <div class="menu-icon"><i class="fa-regular fa-user"></i></div>
+            <div class="menu-label">あなたのプロフィール</div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+
+        <!-- その他のプロフィール -->
+        <a href="{% url 'other_profile_edit' %}" class="menu-item">
+            <div class="menu-icon"><i class="fa-solid fa-plus"></i></div>
+            <div class="menu-label">その他のプロフィール</div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+
+        <!-- 電話番号 -->
+        <a href="{% url 'phone_change' %}" class="menu-item">
+            <div class="menu-icon"><i class="fa-solid fa-phone"></i></div>
+            <div class="menu-label">電話番号</div>
+                <div>
+                    <!-- 現在の番号を表示 -->
+                    <span class="item-value">{{ request.user.username }}</span>
+                    <i class="fa-solid fa-chevron-right chevron"></i>
+                </div>
+        </a>
+
+        <!-- 緊急連絡先 -->
+        <a href="{% url 'emergency_contact' %}" class="menu-item">
+            <div class="menu-icon"><i class="fa-solid fa-asterisk"></i></div>
+            <div class="menu-label">緊急連絡先</div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+
+        <!-- 働き方 -->
+        <a href="#" class="menu-item">
+            <div class="menu-icon"><i class="fa-regular fa-address-card"></i></div>
+            <div class="menu-label">働き方</div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}

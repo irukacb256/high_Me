@@ -1,0 +1,27 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<style>
+    .phone-container { padding: 40px 25px; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
+    .title { font-size: 24px; font-weight: bold; margin: 30px 0 20px; }
+    .desc { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 30px; }
+    .card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 30px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .btn-white { display: block; width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; text-decoration: none; color: #333; margin-top: 20px; }
+</style>
+
+<div class="phone-container">
+    <div>
+        <a href="{% url 'account_settings' %}" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <h1 class="title">電話番号</h1>
+        <p class="desc">電話番号はログインや、タイミーまたは店舗が連絡するために必要です。変更があった場合は、変更手続きをおこなってください。</p>
+        
+        <div class="card">
+            <div style="font-size:12px; font-weight:bold; color:#888; margin-bottom:10px;">現在の電話番号</div>
+            <div style="font-size:20px; font-weight:bold;">{{ masked_phone }}</div>
+            <a href="{% url 'phone_verify_old' %}" class="btn-white">変更</a>
+            <p style="font-size:11px; color:#888; margin-top:15px;">変更すると、しばらく変更できなくなります</p>
+        </div>
+        
+        <p style="font-size:12px; color:#999; margin-top:30px; line-height:1.5;">タイミーは1人1アカウントまでご利用可能です。必ずご本人の電話番号を登録してください。</p>
+    </div>
+</div>
+{% endblock %}

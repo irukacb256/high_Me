@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import WorkerProfile
 from django.db import IntegrityError
@@ -134,3 +135,109 @@ def login_view(request):
 def mypage(request):
     """マイページ画面 (画像5)"""
     return render(request, 'accounts/mypage.html')
+
+# アカウント設定
+@login_required
+def account_settings(request):
+    """アカウント設定メイン画面（設定項目の一覧）"""
+    return render(request, 'accounts/account_settings.html')
+
+@login_required
+def profile_edit(request):
+    profile = request.user.workerprofile
+    if request.method == 'POST':
+        # 名前の更新
+        request.user.last_name = request.POST.get('last_name')
+        request.user.first_name = request.POST.get('first_name')
+        request.user.save()
+
+        # プロフィール情報の更新
+        profile.last_name_kana = request.POST.get('last_kana')
+        profile.first_name_kana = request.POST.get('first_kana')
+        profile.gender = request.POST.get('gender')
+        profile.birth_date = request.POST.get('birth_date')
+
+        # ★ 画像の保存処理を追加
+        if 'profile_image' in request.FILES:
+            profile.profile_image = request.FILES['profile_image']
+        
+        profile.save()
+        return redirect('account_settings')
+    
+    return render(request, 'accounts/profile_edit.html', {'profile': profile})
+
+@login_required
+def other_profile_edit(request):
+    """その他のプロフィール（所属設定）"""
+    profile = request.user.workerprofile
+    if request.method == 'POST':
+        # 入力された「所属」をデータベースに保存
+        profile.affiliation = request.POST.get('affiliation')
+        profile.save()
+        return redirect('account_settings')
+    return render(request, 'accounts/other_profile.html', {'profile': profile})
+
+@login_required
+def emergency_contact_edit(request):
+    """緊急連絡先設定"""
+    profile = request.user.workerprofile
+    if request.method == 'POST':
+        # 図の「緊急連絡先」更新処理
+        profile.emergency_phone = request.POST.get('emergency_phone')
+        profile.emergency_relation = request.POST.get('emergency_relation')
+        profile.save()
+        return redirect('account_settings')
+    return render(request, 'accounts/emergency_contact.html', {'profile': profile})
+
+#
+@login_required
+def phone_change(request):
+    """画像1: 現在の番号表示"""
+    phone = request.user.username
+    masked_phone = "*" * (len(phone) - 4) + phone[-4:] if len(phone) > 4 else phone
+    return render(request, 'accounts/phone_change_home.html', {'masked_phone': masked_phone})
+
+@login_required
+def phone_change_confirm(request):
+    """画像2: 旧番号入力"""
+    if request.method == 'POST':
+        input_phone = request.POST.get('old_phone')
+        if input_phone == request.user.username:
+            return redirect('phone_input_new')  # 次のステップ名を確認
+        else:
+            return render(request, 'accounts/phone_change_confirm.html', {'error': '電話番号が一致しません。'})
+    return render(request, 'accounts/phone_change_confirm.html')
+
+@login_required
+def phone_input_new(request):
+    """画像3: 新番号入力"""
+    if request.method == 'POST':
+        new_phone = request.POST.get('new_phone')
+        request.session['pending_new_phone'] = new_phone
+        return redirect('phone_confirm_password') # 次のステップ名を確認
+    return render(request, 'accounts/phone_input_new.html')
+
+
+@login_required
+def phone_confirm_password(request):
+    """【画像4改変】パスワードを入力して確定する"""
+    new_phone = request.session.get('pending_new_phone')
+    if not new_phone:
+        return redirect('phone_change')
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        # パスワード認証
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            # 電話番号（username）を更新
+            user.username = new_phone
+            user.save()
+            del request.session['pending_new_phone']
+            return redirect('account_settings') # 完了後、設定トップへ戻る
+        else:
+            return render(request, 'accounts/phone_confirm_password.html', {
+                'new_phone': new_phone,
+                'error': 'パスワードが正しくありません。'
+            })
+    return render(request, 'accounts/phone_confirm_password.html', {'new_phone': new_phone})
