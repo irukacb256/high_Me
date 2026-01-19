@@ -2,134 +2,150 @@
 
 {% block content %}
 <style>
-    /* 全体レイアウト */
     .form-container { max-width: 1000px; margin: 0 auto; padding-top: 20px; padding-bottom: 120px; }
     .section-card { background: white; padding: 35px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #eee; }
     
-    /* セクションタイトル（番号を削除し、スッキリさせたデザイン） */
-    .section-title { font-size: 18px; font-weight: bold; margin-bottom: 25px; display: flex; align-items: center; border-left: 4px solid #007AFF; padding-left: 15px; }
+    .field-label { display: flex; align-items: center; margin-bottom: 12px; font-weight: bold; font-size: 14px; color: #333; }
+    .tag-required { background: #ff3b30; color: white; font-size: 10px; padding: 2px 5px; border-radius: 2px; margin-left: 8px; }
     
-    /* フォーム要素 */
-    label { display: block; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #333; }
-    .required-tag { background: #ff3b30; color: white; font-size: 10px; padding: 2px 5px; border-radius: 2px; margin-left: 8px; }
-    input[type="text"], input[type="date"], input[type="time"], textarea, select { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 25px; font-size: 14px; outline: none; }
-    textarea { height: 140px; resize: vertical; }
+    input[type="text"], input[type="number"], textarea, select { 
+        width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; 
+        margin-bottom: 25px; font-size: 14px; outline: none; background-color: #fff;
+    }
+    input::placeholder, textarea::placeholder { color: #ccc; }
+    
+    /* クリック選択式リスト */
+    .selectable-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px; }
+    .list-box-item { 
+        background: #fcfcfc; border: 1px solid #eee; padding: 14px; border-radius: 6px; 
+        font-size: 14px; color: #666; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
+    }
+    .list-box-item:hover { background: #f5f5f5; }
+    .list-box-item.selected { background: #eef6ff; border-color: #007AFF; color: #007AFF; font-weight: bold; }
+    .list-box-item.selected::after { content: '✓'; }
+
+    /* モーダル関連 */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000;
+    }
+    .modal-content {
+        background: white; width: 900px; height: 600px; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden;
+    }
+    .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .modal-body { display: flex; flex: 1; overflow: hidden; }
+    
+    /* 3カラム構成 */
+    .col-left, .col-mid, .col-right { flex: 1; overflow-y: auto; border-right: 1px solid #eee; padding: 10px; }
+    .col-right { border-right: none; background: #f9f9f9; }
+    
+    .cat-item, .role-item { 
+        padding: 12px 15px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; font-size: 14px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .cat-item:hover, .role-item:hover { background: #f0f7ff; }
+    .cat-item.active { background: #eef6ff; color: #007AFF; font-weight: bold; }
+
+    .btn-apply { background: #007AFF; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
 
     /* 下部固定バー */
-    .bottom-bar { position: fixed; bottom: 0; left: 240px; right: 0; background: white; padding: 20px 50px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 20px; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-
-    /* かんたん自動入力モーダル */
-    #autoFillModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; }
-    .modal-content { background:white; width:95%; max-width:1000px; border-radius:12px; padding:30px; display: flex; flex-direction: column; max-height: 90vh; }
-    .autofill-columns { display:flex; border:1px solid #eee; border-radius:8px; height:500px; overflow: hidden; }
-    .col-left { flex: 1; border-right: 1px solid #eee; overflow-y: auto; background: #fff; }
-    .col-mid { flex: 1; border-right: 1px solid #eee; overflow-y: auto; background: #fafafa; }
-    .col-right { flex: 1.2; overflow-y: auto; background: #fff; padding: 10px; }
-    .cat-item { padding: 16px 20px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid #f9f9f9; align-items: center; }
-    .cat-item.active { background: #eef6ff; color: #007AFF; font-weight: bold; }
-    .role-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
-    .btn-apply { background: #007AFF; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-
-    /* 写真・書類エリア */
-    .photo-grid { display: flex; gap: 15px; margin-bottom: 10px; }
-    .photo-box { width: 180px; height: 120px; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; color: #999; cursor: pointer; }
+    .form-footer-bar { 
+        position: fixed; bottom: 0; left: 240px; right: 0; background: white; 
+        padding: 20px 50px; border-top: 1px solid #ddd; display: flex; 
+        justify-content: flex-end; align-items: center; gap: 30px; z-index: 1000; 
+    }
+    .btn-primary-large { background: #007AFF; color: white; border: none; padding: 15px 60px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
 </style>
 
 <div class="form-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h1 style="font-size: 22px; margin: 0;">{% if is_edit %}求人のひな形を編集{% else %}求人のひな形を新規作成{% endif %}</h1>
-        <button type="button" class="btn-white" onclick="openModal()" style="background: #eef6ff; color: #007AFF; border: 1px solid #007AFF; padding: 10px 24px; border-radius: 4px; font-weight: bold; cursor: pointer;">
-            ✨ かんたん自動入力
-        </button>
+        <h1 style="font-size: 22px;">求人のひな形を{% if is_edit %}編集{% else %}新規作成{% endif %}</h1>
+        <button type="button" class="btn-white" onclick="openModal()" style="background: #eef6ff; color: #007AFF; border: 1px solid #007AFF; font-weight: bold; padding: 10px 20px; border-radius: 5px; cursor: pointer;">✨ かんたん自動入力</button>
     </div>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- 基本情報 -->
         <div class="section-card">
-            <div class="section-title">基本情報</div>
-            <label>求人タイトル <span class="required-tag">必須</span></label>
-            <input type="text" name="title" id="id_title" value="{{ template.title|default:'' }}" placeholder="例: 【カフェ】接客・ホールスタッフ" required>
-            
+            <div class="field-label">求人タイトル <span class="tag-required">必須</span></div>
+            <input type="text" name="title" id="id_title" value="{{ template.title }}" placeholder="募集内容が伝わるタイトルを入力" required>
+
             <div style="display: flex; gap: 20px;">
-                <div style="flex:1;">
-                    <label>業種 <span class="required-tag">必須</span></label>
-                    <select name="industry" id="id_industry">
-                        <option value="飲食" {% if template.industry == '飲食' %}selected{% endif %}>飲食</option>
-                        <option value="販売" {% if template.industry == '販売' %}selected{% endif %}>販売</option>
-                        <option value="物流" {% if template.industry == '物流' %}selected{% endif %}>物流</option>
+                <div style="flex: 1;">
+                    <div class="field-label">業種 <span class="tag-required">必須</span></div>
+                    <select name="industry" id="id_industry" required>
+                        <option value="" disabled {% if not template.industry %}selected{% endif %}>選択してください</option>
+                        <option {% if template.industry == '飲食・レストラン' %}selected{% endif %}>飲食・レストラン</option>
+                        <option {% if template.industry == '居酒屋・バー' %}selected{% endif %}>居酒屋・バー</option>
+                        <option {% if template.industry == '物流・倉庫' %}selected{% endif %}>物流・倉庫</option>
+                        <option {% if template.industry == '販売・小売' %}selected{% endif %}>販売・小売</option>
+                        <option {% if template.industry == 'イベント・キャンペーン' %}selected{% endif %}>イベント・キャンペーン</option>
                     </select>
                 </div>
-                <div style="flex:1;">
-                    <label>職種 <span class="required-tag">必須</span></label>
-                    <input type="text" name="occupation" id="id_occupation" value="{{ template.occupation|default:'' }}" placeholder="例: レストランスタッフ" required>
+                <div style="flex: 1;">
+                    <div class="field-label">職種 <span class="tag-required">必須</span></div>
+                    <select name="occupation" id="id_occupation" required>
+                        <option value="" disabled {% if not template.occupation %}selected{% endif %}>選択してください</option>
+                        <option {% if template.occupation == 'ホールスタッフ' %}selected{% endif %}>ホールスタッフ</option>
+                        <option {% if template.occupation == 'キッチン補助' %}selected{% endif %}>キッチン補助</option>
+                        <option {% if template.occupation == '品出し・ピッキング' %}selected{% endif %}>品出し・ピッキング</option>
+                        <option {% if template.occupation == 'レジ打ち' %}selected{% endif %}>レジ打ち</option>
+                    </select>
                 </div>
             </div>
-        </div>
 
-        <!-- 業務内容 -->
-        <div class="section-card">
-            <div class="section-title">業務内容</div>
-            <label>業務内容 <span class="required-tag">必須</span></label>
-            <textarea name="work_content" id="id_work_content" placeholder="具体的な業務内容を記入してください" required>{{ template.work_content|default:'' }}</textarea>
-            
-            <label>注意事項</label>
-            <textarea name="precautions" style="height: 100px;" placeholder="服装や集合場所など">{{ template.precautions|default:'' }}</textarea>
-        </div>
+            <div class="field-label">業務内容 <span class="tag-required">必須</span></div>
+            <textarea name="work_content" id="id_work_content" rows="5" placeholder="当日のお仕事内容を具体的に記入してください">{{ template.work_content }}</textarea>
 
-        <!-- 待遇・条件 -->
-        <div class="section-card">
-            <div class="section-title">待遇・条件</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-                <label style="font-weight:normal;"><input type="checkbox" name="unexp" {% if template.has_unexperienced_welcome %}checked{% endif %}> 未経験者歓迎</label>
-                <label style="font-weight:normal;"><input type="checkbox" name="meal" {% if template.has_meal %}checked{% endif %}> まかないあり</label>
+            <!-- 持ち物・条件の保存用（models.pyに合わせてTextFieldで送る） -->
+            <input type="hidden" name="belongings" id="id_belongings" value="{{ template.belongings }}">
+            <input type="hidden" name="requirements" id="id_requirements" value="{{ template.requirements }}">
+
+            <div class="field-label" style="margin-top: 20px;">持ち物（クリックで選択）</div>
+            <div class="selectable-list" id="list_belongings">
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_belongings')">ボールペン</div>
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_belongings')">メモ帳</div>
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_belongings')">印鑑（シャチハタ可）</div>
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_belongings')">滑り止め付き軍手</div>
             </div>
-            
-            <label>持ち物</label>
-            <input type="text" name="belongings" id="id_belongings" value="{{ template.belongings|default:'' }}" placeholder="例: ボールペン、メモ帳">
 
-            <label>働くための条件</label>
-            <input type="text" name="requirements" id="id_requirements" value="{{ template.requirements|default:'' }}" placeholder="例: GOOD率90%以上など">
+            <div class="field-label">働くための条件（クリックで選択）</div>
+            <div class="selectable-list" id="list_requirements">
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_requirements')">未経験者歓迎</div>
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_requirements')">清潔感のある方</div>
+                <div class="list-box-item" onclick="toggleSelection(this, 'id_requirements')">明るく接客ができる方</div>
+            </div>
         </div>
 
-        <!-- 就業場所 -->
         <div class="section-card">
-            <div class="section-title">就業場所と環境</div>
-            <label>住所 <span class="required-tag">必須</span></label>
-            <input type="text" name="address" value="{% if template %}{{ template.address }}{% else %}{{ store.prefecture }}{{ store.city }}{{ store.address_line }}{% endif %}" required>
-            
-            <label>アクセス</label>
-            <input type="text" name="access" value="{{ template.access|default:'' }}" placeholder="例: 〇〇駅から徒歩5分">
-            
-            <label>緊急連絡先 <span class="required-tag">必須</span></label>
-            <input type="text" name="contact_number" value="{{ template.contact_number|default:'' }}" placeholder="例: 000-0000-0000" required>
+            <div class="field-label">就業場所の住所 <span class="tag-required">必須</span></div>
+            <input type="text" name="address" id="id_address" placeholder="例：東京都中央区銀座 1-2-3" value="{% if template.address %}{{ template.address }}{% else %}{{ store.prefecture }}{{ store.city }}{{ store.address_line }}{% endif %}">
+
+            <div class="field-label">アクセス</div>
+            <textarea name="access" id="id_access" placeholder="最寄駅からの徒歩分数など">{{ template.access }}</textarea>
+
+            <div class="field-label">緊急連絡先 <span class="tag-required">必須</span></div>
+            <input type="text" name="contact_number" id="id_contact_number" placeholder="例：09012345678" value="{{ template.contact_number }}">
+
+            <div class="field-label">自動送信メッセージ</div>
+            <textarea name="auto_message" id="id_auto_message" placeholder="お申し込み確定時にワーカーへ自動送信されるメッセージです">{{ template.auto_message }}</textarea>
         </div>
 
-        <!-- 自動メッセージ -->
-        <div class="section-card">
-            <div class="section-title">自動送信メッセージ</div>
-            <textarea name="auto_message" id="id_auto_message" placeholder="マッチング時に送られるメッセージ">{{ template.auto_message|default:'' }}</textarea>
-        </div>
-
-        <!-- 下部固定バー -->
-        <div class="bottom-bar">
-            <a href="{% url 'biz_template_list' %}" class="btn-white" style="border: 1px solid #ddd; color: #666; text-decoration: none; padding: 12px 30px; display: flex; align-items: center; border-radius: 6px;">キャンセル</a>
-            <button type="submit" class="btn-blue" style="padding: 12px 50px;">
-                {% if is_edit %}ひな形の更新を完了{% else %}ひな形の作成を完了{% endif %}
-            </button>
+        <div class="form-footer-bar">
+            <button type="button" class="btn-text-only" onclick="history.back()">キャンセル</button>
+            <button type="submit" class="btn-primary-large">{% if is_edit %}変更を保存{% else %}ひな形を作成{% endif %}</button>
         </div>
     </form>
 </div>
 
-<!-- モーダル (カテゴリ選択) -->
-<div id="autoFillModal">
+<!-- 自動入力モーダル -->
+<div class="modal-overlay" id="autoFillModal">
     <div class="modal-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="font-size:18px; margin:0;">かんたん自動入力</h2>
-            <button type="button" onclick="closeModal()" style="border:none; background:none; font-size:32px; cursor:pointer; color:#ccc;">&times;</button>
+        <div class="modal-header">
+            <strong style="font-size: 18px;">✨ かんたん自動入力（テンプレート選択）</strong>
+            <span style="cursor: pointer; font-size: 24px;" onclick="closeModal()">&times;</span>
         </div>
-        <div class="autofill-columns">
+        <div class="modal-body">
             <div class="col-left" id="mainCategoryList"></div>
             <div class="col-mid" id="subCategoryList"></div>
             <div class="col-right" id="roleCategoryList"></div>
@@ -138,78 +154,112 @@
 </div>
 
 <script>
-    function openModal() { 
-        document.getElementById('autoFillModal').style.display = 'flex';
-        renderMain();
+    /**
+     * 1. モーダルの制御
+     */
+    const modal = document.getElementById('autoFillModal');
+    function openModal() {
+        modal.style.display = 'flex';
+        renderMainCategories();
     }
-    function closeModal() { document.getElementById('autoFillModal').style.display = 'none'; }
+    function closeModal() { modal.style.display = 'none'; }
 
+    /**
+     * 2. データ定義
+     */
     const categoryData = {
-        'food': { label: 'フード・飲食', subs: {
-            'cafe': { label: 'カフェ', roles: [{ name: 'ホール', title: '【カフェ】ホールスタッフ', content: '接客、配膳', req: '笑顔で対応できる方', industry: '飲食', job: 'ホール' }] },
-            'izakaya': { label: '居酒屋', roles: [{ name: 'キッチン', title: '【居酒屋】キッチン補助', content: '簡単な調理、洗い場', req: '料理が好きな方', industry: '飲食', job: 'キッチン' }] }
-        }},
-        'retail': { label: '販売・小売', subs: {
-            'convenience': { label: 'コンビニ', roles: [{ name: 'レジ', title: 'コンビニスタッフ募集', content: 'レジ打ち、品出し', req: 'コンビニ経験者', industry: '販売', job: 'レジ' }] }
-        }},
-        'logistics': { label: '物流・配送', subs: {
-            'warehouse': { label: '倉庫', roles: [{ name: 'ピッキング', title: '【倉庫】軽作業', content: '商品のピッキング', req: '未経験歓迎', industry: '物流', job: '軽作業' }] }
-        }}
+        'food': {
+            label: 'フード・飲食',
+            subs: {
+                'cafe': {
+                    label: 'カフェ・喫茶店',
+                    roles: [
+                        { name: 'ホール', title: '【カフェ】接客・配膳スタッフ', content: 'カフェでの接客、オーダー、配膳、テーブル片付け。', industry: '飲食・レストラン', job: 'ホールスタッフ', msg: 'エプロンをお貸しします。' },
+                        { name: 'キッチン', title: '【カフェ】調理補助・洗い場', content: '簡単な盛り付け、仕込み、洗い場業務。', industry: '飲食・レストラン', job: 'キッチン補助', msg: '裏口からお入りください。' }
+                    ]
+                },
+                'izakaya': {
+                    label: 'レストラン・居酒屋',
+                    roles: [
+                        { name: 'ホール', title: '【居酒屋】元気な接客スタッフ募集！', content: 'お酒の提供、オーダー、元気な挨拶。', industry: '居酒屋・バー', job: 'ホールスタッフ', msg: 'まかない付きです！' }
+                    ]
+                }
+            }
+        },
+        'logistics': {
+            label: '物流・倉庫',
+            subs: {
+                'warehouse': {
+                    label: '倉庫内作業',
+                    roles: [
+                        { name: 'ピッキング', title: '【倉庫】簡単なピッキング・検品', content: 'リストを見て商品を集める簡単な作業。', industry: '物流・倉庫', job: '品出し・ピッキング', msg: '動きやすい靴でお越しください。' }
+                    ]
+                }
+            }
+        }
     };
 
-    function renderMain() {
+    function renderMainCategories() {
         const list = document.getElementById('mainCategoryList');
         list.innerHTML = '';
         Object.keys(categoryData).forEach(key => {
             const div = document.createElement('div');
             div.className = 'cat-item';
             div.innerHTML = `${categoryData[key].label} <span>&gt;</span>`;
-            div.onclick = () => {
-                document.querySelectorAll('.col-left .cat-item').forEach(i => i.classList.remove('active'));
-                div.classList.add('active');
-                renderSub(key);
-            };
+            div.onclick = () => selectMain(div, key);
             list.appendChild(div);
         });
-        list.firstChild.click();
     }
 
-    function renderSub(mainKey) {
-        const list = document.getElementById('subCategoryList');
-        list.innerHTML = '';
+    function selectMain(el, mainKey) {
+        document.querySelectorAll('.col-left .cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        const subList = document.getElementById('subCategoryList');
+        subList.innerHTML = '';
         const subs = categoryData[mainKey].subs;
         Object.keys(subs).forEach(subKey => {
             const div = document.createElement('div');
             div.className = 'cat-item';
             div.innerHTML = `${subs[subKey].label} <span>&gt;</span>`;
-            div.onclick = () => {
-                document.querySelectorAll('.col-mid .cat-item').forEach(i => i.classList.remove('active'));
-                div.classList.add('active');
-                renderRoles(mainKey, subKey);
-            };
-            list.appendChild(div);
+            div.onclick = () => selectSub(div, mainKey, subKey);
+            subList.appendChild(div);
         });
-        list.firstChild.click();
+        document.getElementById('roleCategoryList').innerHTML = '';
     }
 
-    function renderRoles(mainKey, subKey) {
-        const list = document.getElementById('roleCategoryList');
-        list.innerHTML = '';
-        categoryData[mainKey].subs[subKey].roles.forEach(role => {
+    function selectSub(el, mainKey, subKey) {
+        document.querySelectorAll('.col-mid .cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        const roleList = document.getElementById('roleCategoryList');
+        roleList.innerHTML = '';
+        const roles = categoryData[mainKey].subs[subKey].roles;
+        roles.forEach(role => {
             const div = document.createElement('div');
             div.className = 'role-item';
-            div.innerHTML = `<span>${role.name}</span><button type="button" class="btn-apply" onclick='applyData(${JSON.stringify(role)})'>適用</button>`;
-            list.appendChild(div);
+            div.innerHTML = `<span>${role.name}</span><button type="button" class="btn-apply">適用</button>`;
+            div.querySelector('.btn-apply').onclick = () => applyJobData(role);
+            roleList.appendChild(div);
         });
     }
 
-    function applyData(role) {
+    function applyJobData(role) {
         document.getElementById('id_title').value = role.title;
         document.getElementById('id_work_content').value = role.content;
-        document.getElementById('id_requirements').value = role.req;
+        document.getElementById('id_auto_message').value = role.msg;
         document.getElementById('id_industry').value = role.industry;
         document.getElementById('id_occupation').value = role.job;
         closeModal();
+    }
+
+    /**
+     * 3. 持ち物・条件の選択（hidden inputにカンマ区切りで保存）
+     */
+    function toggleSelection(el, hiddenInputId) {
+        el.classList.toggle('selected');
+        const parent = el.parentElement;
+        const selectedItems = Array.from(parent.querySelectorAll('.list-box-item.selected'))
+                                   .map(item => item.textContent.trim());
+        document.getElementById(hiddenInputId).value = selectedItems.join('、');
     }
 </script>
 {% endblock %}

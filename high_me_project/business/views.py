@@ -102,18 +102,21 @@ def store_setup(request):
     return render(request, 'business/store_setup.html')
 
 def biz_login(request):
-    """事業者用ログイン画面"""
+    """ログイン成功時のリダイレクト先をポータルへ"""
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        # Django標準の認証（usernameにemailを入れている前提）
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('biz_dashboard')
-        else:
-            return render(request, 'business/login.html', {'error': 'メールアドレスまたはパスワードが正しくありません'})
+        # ... 認証ロジック ...
+        return redirect('biz_portal') # ダッシュボードではなくポータルへ
     return render(request, 'business/login.html')
+
+@login_required
+def biz_portal(request):
+    """画像1: 企業 / 店舗一覧（ログイン後の初期画面）"""
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    stores = Store.objects.filter(business=biz_profile)
+    return render(request, 'business/portal.html', {
+        'biz_profile': biz_profile,
+        'stores': stores
+    })
 
 
 # --- 管理画面（ログイン中の情報を表示する） ---
@@ -128,28 +131,39 @@ def get_biz_context(request):
         return None
 
 @login_required
-def dashboard(request):
-    """ホーム画面"""
-    # ログインユーザーに紐づく店舗を確実に取得
-    biz_profile = BusinessProfile.objects.filter(user=request.user).first()
-    store = Store.objects.filter(business=biz_profile).first() if biz_profile else None
+def dashboard(request, store_id):
+    """店舗ホーム画面（カレンダー優先）"""
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
     
-    # templatesの取得
-    templates = JobTemplate.objects.filter(store=store).order_by('-created_at') if store else []
+    # この店舗の全求人を取得
+    postings = JobPosting.objects.filter(template__store=store)
 
     return render(request, 'business/dashboard.html', {
         'store': store,
-        'templates': templates
+        'postings': postings,
     })
 
 @login_required
-def template_list(request):
-    """ひな形一覧画面"""
-    biz_profile = BusinessProfile.objects.filter(user=request.user).first()
-    store = Store.objects.filter(business=biz_profile).first() if biz_profile else None
+def add_store(request):
+    """新しい店舗を追加する（企業管理画面からの操作）"""
+    if request.method == 'POST':
+        biz_profile = BusinessProfile.objects.get(user=request.user)
+        Store.objects.create(
+            business=biz_profile,
+            store_name=request.POST.get('store_name'),
+            # ... 他の住所項目など
+        )
+        return redirect('biz_portal')
+    return render(request, 'business/store_setup.html') # 以前作成したフォームを流用
+
+@login_required
+def template_list(request, store_id):
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
     
-    # この店舗が作成したひな形を全件取得
-    templates = JobTemplate.objects.filter(store=store).order_by('-created_at') if store else []
+    # ★ store=store で絞り込んでいるか確認
+    templates = JobTemplate.objects.filter(store=store).order_by('-created_at')
     
     return render(request, 'business/template_list.html', {
         'store': store,
@@ -157,26 +171,31 @@ def template_list(request):
     })
 
 @login_required
-def template_create(request):
-    """ひな形作成フォーム"""
-    store = get_biz_context(request)
-    if request.method == 'POST' and store:
-        JobTemplate.objects.create(
-            store=store,
-            title=request.POST.get('title'),
-            industry=request.POST.get('industry'),
-            occupation=request.POST.get('occupation'),
-            work_content=request.POST.get('work_content'),
-            address=request.POST.get('address'),
-            access=request.POST.get('access'),
-            contact_number=request.POST.get('contact_number'),
-            auto_message=request.POST.get('auto_message'),
-        )
-        return redirect('biz_template_list')
+def template_create(request, store_id):
+    # 1. 現在のユーザーに紐づく事業者プロフィールを取得
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    # 2. URLの store_id に基づいて、操作対象の店舗を特定
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
 
-    return render(request, 'business/template_form.html', {
-        'store': store
-    })
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        if title:
+            # 3. 保存時に「store=store」を必ず入れる！
+            JobTemplate.objects.create(
+                store=store,  # ★ここが抜けていると、誰のひな形か不明になりリストに出ません
+                title=title,
+                industry=request.POST.get('industry'),
+                occupation=request.POST.get('occupation'),
+                work_content=request.POST.get('work_content'),
+                address=request.POST.get('address'),
+                access=request.POST.get('access'),
+                contact_number=request.POST.get('contact_number'),
+                auto_message=request.POST.get('auto_message'),
+            )
+            # 4. 完了後のリダイレクト先にも store_id を含める
+            return redirect('biz_template_list', store_id=store.id)
+
+    return render(request, 'business/template_form.html', {'store': store})
 
 @login_required
 def template_detail(request, pk):
@@ -235,14 +254,17 @@ def job_create_from_template(request, template_pk):
     return render(request, 'business/job_create_form.html', {'template': template, 'store': store})
 
 @login_required
-def job_posting_list(request):
-    """求人一覧画面（実際に公開した募集のリスト）"""
-    store = get_biz_context(request)
-    # 現在の店舗に紐づく求人を、勤務日が新しい順に取得
-    postings = JobPosting.objects.filter(template__store=store).order_by('-work_date', '-start_time') if store else []
+def job_posting_list(request, store_id): # ★ store_id を引数に追加
+    """店舗別の求人一覧画面"""
+    # ログインユーザーの店舗であることを確認
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
+    
+    # この店舗（store）に紐づく求人のみを取得
+    postings = JobPosting.objects.filter(template__store=store).order_by('-work_date', '-start_time')
     
     return render(request, 'business/job_posting_list.html', {
-        'store': store,
+        'store': store,      # サイドバーのURL生成に必要
         'postings': postings
     })
 

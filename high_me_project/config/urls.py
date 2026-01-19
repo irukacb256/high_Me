@@ -82,14 +82,24 @@ urlpatterns = [
     path('biz/business-register/', biz_views.business_register, name='biz_business_register'), # 追加
     path('biz/verify/', biz_views.verify_docs, name='biz_verify'), # 画像6
     path('biz/store-setup/', biz_views.store_setup, name='biz_store_setup'), # 画像7
+    # --- 登録・ログイン ---
     path('biz/login/', biz_views.biz_login, name='biz_login'),
+    # --- 企業用マイページ（画像1：企業・店舗一覧） ---
+    path('biz/portal/', biz_views.biz_portal, name='biz_portal'),
+
     
     # 事業者ダッシュボード
-    path('biz/home/', biz_views.dashboard, name='biz_dashboard'), # 画像8, 9, 10
+    # --- 各店舗ごとの管理画面（URLにIDを入れる） ---
+    path('biz/store/<int:store_id>/home/', biz_views.dashboard, name='biz_dashboard'),
+    path('biz/store/<int:store_id>/templates/', biz_views.template_list, name='biz_template_list'),
+    path('biz/store/<int:store_id>/templates/create/', biz_views.template_create, name='biz_template_create'),
 
     # config/urls.py の urlpatterns 内に追加
     path('biz/templates/', biz_views.template_list, name='biz_template_list'),      # ひな形一覧
-    path('biz/templates/create/', biz_views.template_create, name='biz_template_create'), # ひな形作成
+   path('biz/store/<int:store_id>/templates/create/', biz_views.template_create, name='biz_template_create'),
+
+    # --- 店舗追加機能 ---
+    path('biz/portal/add-store/', biz_views.add_store, name='biz_add_store'),
 
     # 詳細画面
     path('biz/templates/<int:pk>/', biz_views.template_detail, name='biz_template_detail'),
@@ -98,7 +108,7 @@ urlpatterns = [
     # このひな形を元に求人作成（勤務日時入力画面へ）
     path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
     path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
-    path('biz/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
+    path('biz/store/<int:store_id>/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
 
     # 求人詳細画面
     path('job/<int:pk>/', job_views.job_detail, name='job_detail'),
