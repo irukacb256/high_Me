@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import JobTemplate, JobPosting, Store, BusinessProfile
 
 # --- 登録フロー ---
@@ -11,32 +12,48 @@ def landing(request):
     return render(request, 'business/landing.html')
 
 def signup(request):
-    """ステップ1: メールアドレス入力 (画像4, 5)"""
+    """ステップ1: メールアドレス入力"""
     if request.method == 'POST':
-        # セッションにメールを一時保存して次のステップへ
-        request.session['signup_email'] = request.POST.get('email')
+        email = request.POST.get('email')
+        if not email:
+            # メールアドレスが空の場合はエラーを表示
+            return render(request, 'business/signup.html', {'error': 'メールアドレスを入力してください'})
+        
+        # セッションにメールを保存
+        request.session['signup_email'] = email
         return redirect('biz_account_register')
     return render(request, 'business/signup.html')
 
 def account_register(request):
-    """画像1: 管理者情報登録（User作成）"""
-    email = request.session.get('signup_email', 'demo@example.com')
+    """画像1: 管理者情報登録"""
+    # セッションから取得。取れない場合は登録の最初(signup)へ戻す
+    email = request.session.get('signup_email')
+    
+    if not email:
+        return redirect('biz_signup')
+
     if request.method == 'POST':
-        # get('name属性の名前', '取れなかった時のデフォルト値')
         last_name = request.POST.get('last_name', "")
         first_name = request.POST.get('first_name', "")
         password = request.POST.get('password', "")
         
-        # 値が空でないか念のためチェック
         if not last_name or not first_name or not password:
              return render(request, 'business/account_register.html', {
                  'email': email,
                  'error': '全ての項目を入力してください'
              })
 
+        # 既に同じメールアドレスのユーザーがいないかチェック（念のため）
+        if User.objects.filter(username=email).exists():
+             return render(request, 'business/account_register.html', {
+                 'email': email,
+                 'error': 'このメールアドレスは既に登録されています。'
+             })
+
         # DjangoのUser作成
+        # usernameにemailを割り当てています
         user = User.objects.create_user(
-            username=email,
+            username=email, # ここが空だとエラーになる
             email=email,
             password=password,
             first_name=first_name,
@@ -44,6 +61,7 @@ def account_register(request):
         )
         login(request, user)
         return redirect('biz_business_register')
+        
     return render(request, 'business/account_register.html', {'email': email})
 
 @login_required
@@ -102,17 +120,34 @@ def store_setup(request):
     return render(request, 'business/store_setup.html')
 
 def biz_login(request):
-    """ログイン成功時のリダイレクト先をポータルへ"""
+    """事業者用ログイン画面"""
     if request.method == 'POST':
-        # ... 認証ロジック ...
-        return redirect('biz_portal') # ダッシュボードではなくポータルへ
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        # Djangoの標準ユーザーシステムではusernameにemailを入れている前提
+        user = authenticate(request, username=email, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('biz_portal')
+        else:
+            messages.error(request, "メールアドレスまたはパスワードが正しくありません。")
+            return render(request, 'business/login.html', {'error': "認証に失敗しました"})
+            
     return render(request, 'business/login.html')
 
 @login_required
 def biz_portal(request):
     """画像1: 企業 / 店舗一覧（ログイン後の初期画面）"""
-    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    try:
+        # プロフィールがない場合は、事業者登録画面へ誘導する
+        biz_profile = BusinessProfile.objects.get(user=request.user)
+    except BusinessProfile.DoesNotExist:
+        return redirect('biz_business_register')
+
     stores = Store.objects.filter(business=biz_profile)
+    
     return render(request, 'business/portal.html', {
         'biz_profile': biz_profile,
         'stores': stores
@@ -269,17 +304,56 @@ def job_posting_list(request, store_id): # ★ store_id を引数に追加
     })
 
 @login_required
-def job_confirm(request):
-    """求人公開の確定処理"""
-    pending_data = request.session.get('pending_job')
-    if not pending_data:
-        return redirect('biz_template_list')
+def job_posting_detail(request, store_id, pk):
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
+    posting = get_object_or_404(JobPosting, pk=pk, template__store=store)
     
+    return render(request, 'business/job_posting_detail.html', {
+        'store': store,
+        'posting': posting
+    })
+
+@login_required
+def job_worker_list(request, store_id, pk):
+    """画像2: マッチングしたワーカーの一覧画面"""
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
+    posting = get_object_or_404(JobPosting, pk=pk, template__store=store)
+    
+    # 実際はここで申し込みモデル(Applicationなど)から取得しますが、
+    # 今回はデモ用にダミーデータを作成します
+    matched_workers = [
+        {'worker_name': '山田 太郎', 'status': '確定済み'},
+    ]
+    
+    return render(request, 'business/job_worker_list.html', {
+        'store': store,
+        'posting': posting,
+        'matched_workers': matched_workers
+    })
+
+@login_required
+def job_confirm(request):
+    """求人公開の確定処理（最終確認画面）"""
+    pending_data = request.session.get('pending_job')
+    
+    # 【重要】サイドバーのURL生成に store オブジェクトが必要
+    store = get_biz_context(request)
+    
+    # セッションデータがない場合（ブラウザバック等）の安全策
+    if not pending_data:
+        if store:
+            return redirect('biz_template_list', store_id=store.id)
+        return redirect('biz_portal')
+
     if request.method == 'POST':
+        # チェックボックスの確認
         if 'confirm_check' in request.POST:
+            # セッションデータからひな形を取得
             template = get_object_or_404(JobTemplate, pk=pending_data['template_id'])
             
-            # 求人を作成
+            # 求人をDBに保存
             JobPosting.objects.create(
                 template=template,
                 title=pending_data.get('title') or template.title,
@@ -290,10 +364,21 @@ def job_confirm(request):
                 is_published=True
             )
             
+            # 完了したのでセッションを削除
             del request.session['pending_job']
-            # ★ 修正：ダッシュボードではなく「求人一覧」へリダイレクト
-            return redirect('biz_job_posting_list') 
+            
+            # 完了後の遷移先：この店舗の「求人一覧」へ
+            return redirect('biz_job_posting_list', store_id=store.id)
         else:
-            return render(request, 'business/job_confirm.html', {'error': 'チェックがされていません。', 'data': pending_data})
+            # チェック漏れがある場合
+            return render(request, 'business/job_confirm.html', {
+                'error': 'チェックがされていません。確認をお願いします。',
+                'data': pending_data,
+                'store': store  # ★追加
+            })
 
-    return render(request, 'business/job_confirm.html', {'data': pending_data})
+    # GET時の表示
+    return render(request, 'business/job_confirm.html', {
+        'data': pending_data,
+        'store': store  # ★追加
+    })

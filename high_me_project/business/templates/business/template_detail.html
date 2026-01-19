@@ -12,7 +12,7 @@
 
 <div class="detail-container">
     <div class="header-actions">
-        <a href="{% url 'biz_template_list' %}" style="text-decoration:none; color:#666;">＜ 一覧に戻る</a>
+        <a href="{% url 'biz_template_list' store.id %}" style="text-decoration:none; color:#666;">＜ 一覧に戻る</a>
         <a href="{% url 'biz_template_edit' template.pk %}" class="btn-blue">このひな形を編集する</a>
     </div>
 

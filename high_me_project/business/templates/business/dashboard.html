@@ -1,161 +1,61 @@
 {% extends 'business/dashboard_base.html' %}
 
+{% block header_actions %}
+    <a href="#" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト</a>
+    <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">ひな形から求人を募集</a>
+{% endblock %}
+
 {% block content %}
-<!-- FullCalendar 6.1.8 CDN -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 <style>
-    /* 1. お知らせセクション */
-    .notice-section {
-        background: white;
-        padding: 20px 25px;
-        border-radius: 8px;
-        border: 1px solid #eee;
-        margin-bottom: 25px;
-    }
-    .notice-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-    .notice-title { font-weight: bold; font-size: 15px; color: #333; }
-    .notice-link-all { font-size: 12px; color: #999; text-decoration: none; }
+    .notice-section { background: white; padding: 20px 25px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 25px; }
+    .notice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .notice-title { font-weight: bold; font-size: 15px; }
     .notice-list { list-style: none; padding: 0; margin: 0; }
     .notice-item { font-size: 13px; margin-bottom: 8px; }
     .notice-date { color: #333; margin-right: 15px; font-weight: 500; }
     .notice-text { color: #007AFF; text-decoration: none; }
 
-    /* 2. クイックアクションボタン (7列グリッド) */
-    .quick-actions-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px;
-        margin-bottom: 30px;
-    }
-    .action-btn {
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 15px 5px;
-        text-align: center;
-        text-decoration: none;
-        color: #333;
-        font-size: 11px;
-        font-weight: bold;
-        transition: 0.2s;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .action-btn:hover { background: #f9f9f9; transform: translateY(-2px); }
-    .action-btn i { font-size: 24px; margin-bottom: 10px; color: #555; }
-    
-    /* 新規募集ボタンのみ青色 */
+    .quick-actions-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 30px; }
+    .action-btn { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 18px 5px; text-align: center; text-decoration: none; color: #333; font-size: 11px; font-weight: bold; transition: 0.2s; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .action-btn i { font-size: 26px; margin-bottom: 12px; color: #555; }
     .action-btn.primary { background: #007AFF; border: none; color: white; }
     .action-btn.primary i { color: white; }
+    .badge-new { position: absolute; top: -8px; right: 5px; background: #ff3b30; color: white; padding: 2px 5px; border-radius: 4px; font-size: 9px; }
 
-    /* NEWバッジ */
-    .badge-new {
-        position: absolute; top: -8px; right: 5px;
-        background: #ff3b30; color: white; padding: 2px 5px;
-        border-radius: 4px; font-size: 9px;
-    }
-
-    /* 3. 求人一覧 (カレンダーエリア) */
-    .calendar-card {
-        background: white;
-        padding: 25px;
-        border-radius: 8px;
-        border: 1px solid #eee;
-    }
-    .calendar-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+    .calendar-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #eee; }
+    .calendar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .calendar-title { font-size: 18px; font-weight: bold; }
-
-    /* 切替タブ */
     .view-tabs { display: flex; background: #f0f0f0; padding: 4px; border-radius: 6px; }
-    .tab-item {
-        padding: 6px 15px; border-radius: 4px; border: none;
-        font-size: 12px; font-weight: bold; cursor: pointer; color: #666; background: transparent;
-    }
+    .tab-item { padding: 6px 15px; border-radius: 4px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; color: #666; background: transparent; }
     .tab-item.active { background: white; color: #007AFF; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-    /* カレンダー内部のスタイル調整 */
-    #calendar { font-size: 13px; }
-    .fc-header-toolbar { margin-bottom: 20px !important; }
-    .fc-toolbar-title { font-size: 16px !important; font-weight: bold; }
-    .fc-day-sun .fc-col-header-cell-cushion { color: #ff3b30; }
-    .fc-day-sat .fc-col-header-cell-cushion { color: #007AFF; }
-    
-    /* 求人スロット（イベント）の見た目 */
-    .job-slot {
-        font-size: 10px;
-        padding: 2px 4px;
-        background: #e6f7ed; /* 薄い緑 */
-        color: #1f8b4d;
-        border-left: 3px solid #1f8b4d;
-        border-radius: 2px;
-        margin-bottom: 2px;
-        white-space: nowrap;
-        overflow: hidden;
-    }
+    .job-slot { font-size: 10px; padding: 2px 4px; background: #e6f7ed; color: #1f8b4d; border-left: 3px solid #1f8b4d; border-radius: 2px; }
 </style>
 
-<!-- 1. 重要なお知らせ -->
 <div class="notice-section">
     <div class="notice-header">
         <span class="notice-title">タイミーからの重要なお知らせ</span>
-        <a href="#" class="notice-link-all">すべてのお知らせを見る</a>
+        <a href="#" style="font-size: 12px; color: #999; text-decoration: none;">すべてのお知らせを見る</a>
     </div>
     <ul class="notice-list">
-        <li class="notice-item">
-            <span class="notice-date">2021年8月2日</span>
-            <a href="#" class="notice-text">8月の定期メンテナンスについて</a>
-        </li>
-        <li class="notice-item">
-            <span class="notice-date">2021年8月1日</span>
-            <a href="#" class="notice-text">お仕事申し込み制限の一部緩和について</a>
-        </li>
-        <li class="notice-item">
-            <span class="notice-date">2021年8月1日</span>
-            <a href="#" class="notice-text">お問い合わせ用LINEに関する不具合について</a>
-        </li>
+        <li class="notice-item"><span class="notice-date">2024年3月1日</span><a href="#" class="notice-text">定期メンテナンスについて</a></li>
     </ul>
 </div>
 
-<!-- 2. クイックアクション -->
 <div class="quick-actions-grid">
-    <a href="{% url 'biz_template_create' store.id %}" class="action-btn primary">
+    <a href="{% url 'biz_template_list' store.id %}" class="action-btn primary">
         <i class="fa-solid fa-circle-plus"></i>新規募集
     </a>
-    <a href="#" class="action-btn">
-        <i class="fa-solid fa-qrcode"></i>チェックイン/アウト
-    </a>
-    <a href="#" class="action-btn">
-        <i class="fa-solid fa-circle-exclamation"></i>修正依頼
-    </a>
-    <a href="#" class="action-btn">
-        <i class="fa-solid fa-user-check"></i>ワーカー評価
-    </a>
-    <a href="#" class="action-btn">
-        <i class="fa-solid fa-envelope"></i>メッセージ
-    </a>
-    <a href="#" class="action-btn">
-        <i class="fa-solid fa-user-plus"></i>招待機能
-    </a>
-    <a href="#" class="action-btn">
-        <span class="badge-new">NEW</span>
-        <i class="fa-solid fa-address-book"></i>就業予定表
-    </a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-qrcode"></i>チェックイン/アウト</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-circle-exclamation"></i>修正依頼</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-user-check"></i>ワーカー評価</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-envelope"></i>メッセージ</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-user-plus"></i>招待機能</a>
+    <a href="#" class="action-btn"><span class="badge-new">NEW</span><i class="fa-solid fa-address-book"></i>就業予定表</a>
 </div>
 
-<!-- 3. 求人一覧（カレンダー） -->
 <div class="calendar-card">
     <div class="calendar-top">
         <span class="calendar-title">求人一覧</span>
@@ -164,8 +64,6 @@
             <button class="tab-item" onclick="location.href='{% url 'biz_job_posting_list' store.id %}'">リスト表示</button>
         </div>
     </div>
-
-    <!-- カレンダー本体 -->
     <div id='calendar'></div>
 </div>
 
@@ -173,31 +71,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'ja',
-            height: 'auto',
-            headerToolbar: {
-                left: 'prev',
-                center: 'title',
-                right: 'next'
-            },
-            // サーバーから渡された求人データをカレンダー用に変換
-            events: [
-                {% for job in postings %}
-                {
-                    title: '{{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }} 👤{{ job.count|default:"1" }}/{{ job.count|default:"1" }}',
-                    start: '{{ job.work_date|date:"Y-m-d" }}',
-                    url: '{% url "biz_job_posting_list" store.id %}' // クリック時の遷移先（例）
-                },
-                {% endfor %}
-            ],
-            // イベントの見た目（タイミー風の緑の枠）をカスタマイズ
+            initialView: 'dayGridMonth', locale: 'ja', height: 'auto',
+            headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+            events: [{% for job in postings %}{ title: '{{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }} 👤{{ job.count|default:"1" }}/{{ job.count|default:"1" }}', start: '{{ job.work_date|date:"Y-m-d" }}', url: '#' },{% endfor %}],
             eventContent: function(arg) {
                 let italicEl = document.createElement('div');
                 italicEl.className = 'job-slot';
                 italicEl.innerHTML = arg.event.title;
-                let arrayOfDomNodes = [ italicEl ];
-                return { domNodes: arrayOfDomNodes };
+                return { domNodes: [ italicEl ] };
             }
         });
         calendar.render();

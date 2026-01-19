@@ -1,25 +1,59 @@
 {% extends 'business/dashboard_base.html' %}
+
 {% block content %}
+<style>
+    .form-container { max-width: 800px; margin: 0 auto; padding-top: 40px; padding-bottom: 100px; }
+    .section-card { background: white; padding: 40px; border-radius: 8px; border: 1px solid #eee; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    
+    h1 { font-size: 24px; font-weight: bold; margin-bottom: 30px; color: #333; }
+    h3 { font-size: 20px; font-weight: bold; color: #007AFF; margin-bottom: 15px; }
+    
+    .info-row { font-size: 16px; color: #555; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+    
+    hr { border: none; border-top: 1px solid #eee; margin: 30px 0; }
+
+    .confirm-box { background: #f9f9f9; padding: 25px; border-radius: 8px; display: block; cursor: pointer; border: 1px solid #eee; transition: 0.2s; }
+    .confirm-box:hover { background: #f4f4f4; }
+    .confirm-box input[type="checkbox"] { width: 20px; height: 20px; vertical-align: middle; margin-right: 12px; }
+
+    .btn-group { margin-top: 40px; display: flex; gap: 20px; }
+    .btn-white { flex: 1; text-align: center; padding: 15px; border: 1px solid #ddd; border-radius: 6px; text-decoration: none; color: #666; font-weight: bold; background: white; cursor: pointer; }
+    .btn-blue { flex: 2; text-align: center; padding: 15px; background: #007AFF; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+    .btn-blue:hover { background: #0063cc; }
+</style>
+
 <div class="form-container">
-    <h1>求人内容の確認</h1>
+    <h1>求人内容の最終確認</h1>
+    
     <div class="section-card">
         <h3>{{ data.title }}</h3>
-        <p>日時: {{ data.work_date }} {{ data.start_time }} 〜 {{ data.end_time }}</p>
+        <div class="info-row">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span><strong>日時:</strong> {{ data.work_date }} {{ data.start_time }} 〜 {{ data.end_time }}</span>
+        </div>
         
         <hr>
-        {% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+        
+        {% if error %}
+        <div style="background: #fff2f2; color: #d32f2f; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #ffcdd2;">
+            <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+        </div>
+        {% endif %}
         
         <form method="POST">
             {% csrf_token %}
-            <label style="background: #f9f9f9; padding: 20px; border-radius: 8px; display: block; cursor: pointer;">
+            <label class="confirm-box">
                 <input type="checkbox" name="confirm_check" required> 
                 <strong>休業手当に関する事項を確認しました</strong><br>
-                <span style="font-size:12px; color:#666;">（シーケンス図に基づいた必須チェック）</span>
+                <span style="font-size:12px; color:#888; margin-top: 8px; display: inline-block;">
+                    ※法令に基づき、募集側の都合で仕事が中止になった場合の休業手当等について確認をお願いします。
+                </span>
             </label>
             
-            <div style="margin-top:30px; display:flex; gap:10px;">
+            <div class="btn-group">
+                <!-- 履歴を戻るのではなく、明示的にURLを指定する場合は {% url 'biz_template_list' store.id %} なども可 -->
                 <a href="javascript:history.back()" class="btn-white">求人内容を変更</a>
-                <button type="submit" class="btn-blue">求人公開</button>
+                <button type="submit" class="btn-blue">求人を公開する</button>
             </div>
         </form>
     </div>

@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timee 事業者管理画面 | {{ store.store_name|default:"店舗管理" }}</title>
-    <!-- FontAwesomeの読み込み -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --timee-active-bg: #fff3c4; /* タイミー公式の薄い黄色 */
+            --timee-active-bg: #fff3c4; /* 画像のような薄い黄色 */
             --timee-hover-bg: #fff9e6;
-            --sidebar-width: 240px;
+            --sidebar-width: 260px;
         }
 
         body { 
@@ -23,7 +22,6 @@
             overflow: hidden;
         }
         
-        /* サイドバー全体 */
         .sidebar { 
             width: var(--sidebar-width); 
             background: white; 
@@ -34,49 +32,64 @@
             flex-shrink: 0;
         }
 
-        /* ロゴ・店舗IDエリア */
+        /* サイドバーヘッダー（ロゴとID） */
         .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 20px 10px 20px;
         }
-        .sidebar-brand { 
-            font-size: 22px; 
-            font-weight: bold; 
+        .sidebar-brand-row {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        .store-id-label { font-size: 10px; font-weight: normal; color: #888; }
-        .store-name-display { padding-top: 10px; font-size: 13px; font-weight: bold; color: #333; }
-        
-        /* スクロール可能なメニューエリア */
+        .sidebar-brand-row strong {
+            font-size: 24px;
+            letter-spacing: -1px;
+        }
+        .store-id-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: bold;
+        }
+        .store-name-display {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* メニューエリア */
         .nav-menu { 
             flex: 1; 
             overflow-y: auto; 
-            padding: 10px 0;
+            padding-bottom: 20px;
         }
-        
-        /* スクロールバーのデザイン（任意） */
-        .nav-menu::-webkit-scrollbar { width: 5px; }
-        .nav-menu::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
 
         .nav-item { 
-            padding: 12px 20px; 
+            padding: 10px 20px; 
             display: flex; 
             align-items: center; 
             text-decoration: none; 
-            color: #444; 
+            color: #333; 
             font-size: 13px; 
+            font-weight: 500;
             transition: 0.2s;
         }
-        .nav-item i { width: 25px; margin-right: 12px; font-size: 16px; color: #666; text-align: center; }
+        .nav-item i { 
+            width: 28px; 
+            margin-right: 10px; 
+            font-size: 17px; 
+            color: #444; 
+            text-align: center; 
+        }
         
-        /* ホバーとアクティブ（黄色いハイライト） */
         .nav-item:hover { background: var(--timee-hover-bg); }
-        .nav-item.active { background: var(--timee-active-bg); color: #333; font-weight: bold; }
-        .nav-item.active i { color: #333; }
+        /* アクティブな項目のスタイル（画像再現） */
+        .nav-item.active { 
+            background: var(--timee-active-bg); 
+            font-weight: bold; 
+        }
 
-        /* マイページへ戻るリンク */
         .back-to-portal {
             padding: 15px 20px;
             border-top: 1px solid #f0f0f0;
@@ -84,94 +97,123 @@
             color: #007AFF;
             text-decoration: none;
             display: block;
+            background: #fff;
         }
 
-        /* 右側メインエリア */
-        .main-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            min-width: 0; 
-        }
+        /* メインコンテンツ */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         
-        /* 上部ヘッダー（固定） */
         .top-header { 
             background: #f5f5f5; 
             padding: 15px 30px; 
             display: flex; 
             justify-content: flex-end; 
-            gap: 10px; 
+            gap: 12px; 
             flex-shrink: 0;
         }
-        .btn-white { background: white; border: 1px solid #ddd; padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none; color: #333; display: flex; align-items: center; }
-        .btn-blue { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; }
 
-        /* コンテンツ表示エリア */
-        .content-body { 
-            padding: 0 30px 40px; 
-            flex: 1; 
-            overflow-y: auto; 
+        .btn-header-white { 
+            background: white; border: 1px solid #ddd; padding: 8px 16px; border-radius: 4px; 
+            font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none; color: #333; 
+            display: flex; align-items: center; gap: 8px;
         }
+        .btn-header-blue { 
+            background: #007bff; color: white; border: none; padding: 8px 20px; border-radius: 4px; 
+            font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none;
+        }
+
+        .content-body { padding: 0 30px 40px; flex: 1; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-<!-- サイドバー -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <div class="sidebar-brand">
-            Timee 
-            <span class="store-id-label">店舗ID {{ store.id|default:"----" }}</span>
+        <div class="sidebar-brand-row">
+            <strong>Timee</strong>
+            <span class="store-id-label">店舗ID {{ store.id|default:"9999" }}</span>
         </div>
-        <div class="store-name-display">{{ store.store_name|default:"店舗未登録" }}</div>
+        <div class="store-name-display">{{ store.store_name|default:"タイミー 汐留店" }}</div>
     </div>
     
     <nav class="nav-menu">
-        <!-- ホーム（要 store.id） -->
+        <!-- ホーム -->
         <a href="{% url 'biz_dashboard' store.id %}" class="nav-item {% if request.resolver_match.url_name == 'biz_dashboard' %}active{% endif %}">
             <i class="fa-solid fa-house"></i> ホーム
         </a>
         
+        <!-- ワーカー管理 -->
         <a href="#" class="nav-item">
             <i class="fa-solid fa-user-group"></i> ワーカー管理
         </a>
 
-        <!-- 求人のひな形（要 store.id） -->
+        <!-- 求人のひな形 -->
         <a href="{% url 'biz_template_list' store.id %}" class="nav-item {% if 'template' in request.path %}active{% endif %}">
-            <i class="fa-solid fa-plus-square"></i> 求人のひな形
+            <i class="fa-solid fa-circle-plus"></i> 求人のひな形
         </a>
 
-        <!-- 求人一覧（要 store.id） -->
+        <!-- 求人一覧 -->
         <a href="{% url 'biz_job_posting_list' store.id %}" class="nav-item {% if 'postings' in request.path %}active{% endif %}">
-            <i class="fa-solid fa-list-ul"></i> 求人一覧
+            <i class="fa-solid fa-file-lines"></i> 求人一覧
         </a>
 
-        <!-- その他項目 -->
-        <a href="#" class="nav-item"><i class="fa-solid fa-comment-dots"></i> メッセージ</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト管理</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-circle-exclamation"></i> 修正依頼</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-user-check"></i> ワーカー評価</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-thumbs-up"></i> 店舗へのレビュー</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-file-invoice"></i> 利用明細</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-store"></i> 店舗情報</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-comment-medical"></i> 機能に対するご意見・ご要望</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-question-circle"></i> お問い合わせ</a>
+        <!-- メッセージ -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-comment-dots"></i> メッセージ
+        </a>
+
+        <!-- チェックイン/アウト管理 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-qrcode"></i> チェックイン/アウト管理
+        </a>
+
+        <!-- 修正依頼 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-circle-exclamation"></i> 修正依頼
+        </a>
+
+        <!-- ワーカー評価 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-user-check"></i> ワーカー評価
+        </a>
+
+        <!-- 店舗へのレビュー -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-thumbs-up"></i> 店舗へのレビュー
+        </a>
+
+        <!-- 利用明細 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-receipt"></i> 利用明細
+        </a>
+
+        <!-- 店舗情報 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-store"></i> 店舗情報
+        </a>
+
+        <!-- 機能に対するご意見・ご要望 -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-comment-medical"></i> 機能に対するご意見・ご要望
+        </a>
+
+        <!-- ご質問・お問い合わせ -->
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-question-circle"></i> ご質問・お問い合わせ
+        </a>
     </nav>
 
-    <!-- ポータル（店舗一覧）へ戻る -->
     <a href="{% url 'biz_portal' %}" class="back-to-portal">
-        <i class="fa-solid fa-arrow-left"></i> 企業 / 店舗一覧に戻る
+        <i class="fa-solid fa-chevron-left"></i> 企業 / 店舗一覧に戻る
     </a>
 </div>
 
-<!-- 右側エリア -->
 <div class="main-wrapper">
     <div class="top-header">
-        <button class="btn-white">🔳 チェックイン/アウト</button>
-        <!-- 求人のひな形を新規作成（要 store.id） -->
-        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">
-        求人のひな形を新規作成
-        </a>
+        {% block header_actions %}
+        <a href="#" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト</a>
+        <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">ひな形から求人を募集</a>
+        {% endblock %}
     </div>
 
     <div class="content-body">

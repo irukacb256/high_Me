@@ -83,7 +83,7 @@ urlpatterns = [
     path('biz/verify/', biz_views.verify_docs, name='biz_verify'), # 画像6
     path('biz/store-setup/', biz_views.store_setup, name='biz_store_setup'), # 画像7
     # --- 登録・ログイン ---
-    path('biz/login/', biz_views.biz_login, name='biz_login'),
+    path('biz/login/', biz_views.biz_login, name='biz_login'), # 修正
     # --- 企業用マイページ（画像1：企業・店舗一覧） ---
     path('biz/portal/', biz_views.biz_portal, name='biz_portal'),
 
@@ -109,6 +109,9 @@ urlpatterns = [
     path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
     path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
     path('biz/store/<int:store_id>/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
+    path('biz/store/<int:store_id>/postings/<int:pk>/', biz_views.job_posting_detail, name='biz_job_posting_detail'),
+    #ワーカーの確認
+    path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.job_worker_list, name='biz_job_worker_list'),
 
     # 求人詳細画面
     path('job/<int:pk>/', job_views.job_detail, name='job_detail'),

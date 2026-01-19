@@ -1,0 +1,92 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .matching-title { font-size: 20px; font-weight: bold; }
+    
+    .btn-tool { background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 4px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+    /* お知らせバナー */
+    .info-banner { background: #f3eefc; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: #5a2ea6; font-size: 14px; font-weight: bold; }
+
+    /* ワーカーテーブル */
+    .worker-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+    .worker-table th { background: #f9f9f9; padding: 12px 15px; text-align: left; color: #888; font-size: 12px; border-bottom: 1px solid #eee; }
+    .worker-table td { padding: 20px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
+
+    .worker-profile { display: flex; align-items: center; gap: 15px; }
+    .worker-img { width: 45px; height: 45px; border-radius: 50%; background: #ffeb3b; }
+    .worker-name-box { display: flex; flex-direction: column; }
+    .worker-name { color: #007AFF; font-weight: bold; text-decoration: none; }
+    .worker-kana { font-size: 11px; color: #888; }
+    .worker-meta { font-size: 12px; color: #666; margin-top: 4px; }
+
+    .status-confirmed { background: #b2f2bb; color: #2b8a3e; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+    
+    .badge-row { display: flex; gap: 5px; margin-top: 10px; }
+    .badge-item { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #d9480f; background: #fff4e6; padding: 2px 6px; border-radius: 4px; }
+</style>
+
+<div class="header-row">
+    <h1 class="matching-title">マッチングしたワーカー ({{ matched_workers.count }}/{{ posting.count }}人)</h1>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-tool">更新</button>
+        <button class="btn-tool">CSVダウンロード</button>
+        <button class="btn-tool" style="background: #333; color: white; border: none;"><i class="fa-regular fa-envelope"></i> 一括でメッセージを送る</button>
+    </div>
+</div>
+
+<div class="info-banner">
+    <i class="fa-solid fa-bullhorn"></i> [その他] ボタンからワーカーの欠勤を報告できるようになりました
+</div>
+
+<table class="worker-table">
+    <thead>
+        <tr>
+            <th style="width: 40px;"><input type="checkbox"></th>
+            <th>ワーカー</th>
+            <th>状態</th>
+            <th>電話</th>
+            <th>チェックイン/アウト</th>
+            <th>Good率・稼働回数</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match in matched_workers %}
+        <tr>
+            <td><input type="checkbox"></td>
+            <td>
+                <div class="worker-profile">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=1" class="worker-img">
+                    <div class="worker-name-box">
+                        <a href="#" class="worker-name">{{ match.worker_name }}</a>
+                        <span class="worker-kana">ヤマダ タロウ</span>
+                        <div class="worker-meta">32歳 男性</div>
+                    </div>
+                </div>
+                <div class="badge-row">
+                    <span class="badge-item">🍳 ホール</span>
+                    <span class="badge-item">🍽️ 洗い場</span>
+                </div>
+            </td>
+            <td><span class="status-confirmed">確定済み</span></td>
+            <td>09000000000</td>
+            <td style="color: #888; line-height: 1.6;">未チェックイン<br>未チェックアウト</td>
+            <td><i class="fa-regular fa-thumbs-up"></i> 100% <i class="fa-solid fa-briefcase" style="margin-left:8px;"></i> 2回</td>
+            <td>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn-tool"><i class="fa-regular fa-envelope"></i></button>
+                    <button class="btn-tool">その他 <i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'biz_job_posting_detail' store.id posting.id %}" style="color: #666; text-decoration: none;">＜ 求人詳細へ戻る</a>
+</div>
+{% endblock %}
