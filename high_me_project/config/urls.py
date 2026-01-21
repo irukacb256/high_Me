@@ -19,6 +19,13 @@ urlpatterns = [
 
     # --- 会員登録フロー ---
     path('signup/', account_views.signup, name='signup'),
+    path('signup/name/', account_views.setup_name, name='setup_name'),
+    path('signup/kana/', account_views.setup_kana, name='setup_kana'),
+    path('signup/gender/', account_views.setup_gender, name='setup_gender'),
+    path('signup/photo/', account_views.setup_photo, name='setup_photo'),
+    path('signup/address/', account_views.setup_address, name='setup_address'),
+    path('signup/workstyle/', account_views.setup_workstyle, name='setup_workstyle'),
+    path('signup/pref-select/', account_views.setup_pref_select, name='setup_pref_select'),
     
     # ★ ここが足りなかったためにエラーが出ていました
     path('verify/', account_views.verify_identity, name='verify_identity'), 

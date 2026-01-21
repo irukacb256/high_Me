@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Timee - アカウント登録</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --timee-yellow: #FFD700; --ios-blue: #007AFF; --progress-bg: #eee; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #333; display: flex; justify-content: center; align-items: center; overflow: hidden; font-family: -apple-system, sans-serif; }
+
+        /* スマホの外枠 */
+        .phone-wrapper {
+            width: 100%; max-width: 430px; height: 100vh;
+            background-color: white; position: relative;
+            display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* コンテンツエリア */
+        .content-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 20px 25px 30px; box-sizing: border-box; }
+
+        /* ヘッダー・戻るボタン */
+        .header { display: flex; align-items: center; margin-bottom: 20px; height: 40px; }
+        .back-link { text-decoration: none; color: black; font-size: 24px; width: 40px; }
+
+        /* プログレスバー（画像の上部にある青い線） */
+        .progress-container { display: flex; gap: 4px; margin-bottom: 30px; }
+        .progress-bar-segment { height: 4px; flex: 1; background: var(--progress-bg); border-radius: 2px; }
+        .progress-bar-segment.active { background: var(--ios-blue); }
+
+        /* テキスト・入力 */
+        .question-title { font-size: 22px; font-weight: bold; margin-bottom: 35px; color: #333; }
+        label { display: block; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 8px; }
+        
+        input[type="text"], input[type="tel"], select { 
+            width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; margin-bottom: 20px; outline: none; background: #fdfdfd; 
+        }
+        input:focus { border-color: var(--ios-blue); }
+
+        /* 選択肢（画像3, 6用） */
+        .option-item { border: 1px solid #eee; padding: 16px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .option-item input { margin-right: 15px; width: 20px; height: 20px; }
+
+        /* 下部固定エリア */
+        .footer-btn-area { margin-top: auto; padding-top: 20px; }
+        .btn-next { width: 100%; padding: 18px; border-radius: 10px; border: none; background-color: #eee; color: #aaa; font-weight: bold; font-size: 16px; cursor: not-allowed; transition: 0.3s; }
+        .btn-next.active { background-color: var(--ios-blue); color: white; cursor: pointer; }
+        .btn-later { width: 100%; background: none; border: none; color: #888; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="phone-wrapper">
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script>
+        // バリデーションスクリプト
+        function checkForm() {
+            const required = document.querySelectorAll('[required]');
+            const btn = document.querySelector('.btn-next');
+            if(!btn) return;
+            let ok = true;
+            required.forEach(el => {
+                if (el.type === 'radio' || el.type === 'checkbox') {
+                    const name = el.name;
+                    if(!document.querySelector(`input[name="${name}"]:checked`)) ok = false;
+                } else if (!el.value.trim()) {
+                    ok = false;
+                }
+            });
+            if(ok) { btn.classList.add('active'); btn.disabled = false; }
+            else { btn.classList.remove('active'); btn.disabled = true; }
+        }
+        document.addEventListener('input', checkForm);
+        window.addEventListener('load', checkForm);
+    </script>
+</body>
+</html>

@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import WorkerProfile
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
+from datetime import date
+from jobs.views import PREFECTURES
 
 # --- オンボーディングの流れ ---
 
@@ -56,6 +58,94 @@ def signup(request):
 
     return render(request, 'accounts/signup.html')
 
+@login_required
+def setup_name(request):
+    if request.method == 'POST':
+        profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
+        profile.last_name_kanji = request.POST.get('last_name')
+        profile.first_name_kanji = request.POST.get('first_name')
+        profile.save()
+        return redirect('setup_kana')
+    # パスを 'signup/...' に修正
+    return render(request, 'signup/step_name.html') 
+
+@login_required
+def setup_kana(request):
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        profile.last_name_kana = request.POST.get('last_name_kana')
+        profile.first_name_kana = request.POST.get('first_name_kana')
+        profile.save()
+        return redirect('setup_gender')
+    return render(request, 'signup/step_kana.html')
+
+@login_required
+def setup_gender(request):
+    """画像3: 性別選択"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        profile.gender = request.POST.get('gender')
+        profile.save()
+        return redirect('setup_photo')
+    return render(request, 'signup/step_gender.html')
+
+@login_required
+def setup_photo(request):
+    """画像4: 顔写真登録"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        if 'skip' in request.POST: # 「あとで」ボタン
+            return redirect('setup_address')
+        if 'face_photo' in request.FILES:
+            profile.face_photo = request.FILES['face_photo']
+            profile.save()
+            return redirect('setup_address')
+    return render(request, 'signup/step_photo.html')
+
+@login_required
+def setup_address(request):
+    """画像5: 住所入力"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        if 'skip' in request.POST:
+            return redirect('setup_workstyle')
+        profile.postal_code = request.POST.get('postal_code')
+        profile.prefecture = request.POST.get('prefecture')
+        profile.city = request.POST.get('city')
+        profile.address_line = request.POST.get('address_line')
+        profile.building = request.POST.get('building')
+        profile.save()
+        return redirect('setup_workstyle')
+    return render(request, 'signup/step_address.html')
+
+@login_required
+def setup_workstyle(request):
+    """画像6: 働き方登録"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        if 'skip' in request.POST:
+            return redirect('setup_pref_select')
+        profile.work_style = request.POST.get('work_style')
+        profile.career_interest = request.POST.get('career_interest')
+        profile.save()
+        return redirect('setup_pref_select')
+    return render(request, 'signup/step_workstyle.html')
+
+@login_required
+def setup_pref_select(request):
+    """画像7: 都道府県選択"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        # チェックボックスのリストを取得
+        prefs = request.POST.getlist('prefs')
+        profile.target_prefectures = ",".join(prefs)
+        profile.is_setup_completed = True
+        profile.save()
+        return redirect('index') # 最後にホームへ
+        
+    prefectures = ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都"] # 以下略
+    return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
+
 
 def verify_identity(request):
     """本人確認画面（南京錠アイコンの画面）"""
@@ -63,19 +153,31 @@ def verify_identity(request):
     return render(request, 'accounts/verify_identity.html', {'phone': phone})
 
 
+@login_required
 def verify_dob(request):
-    """本人確認画面（生年月日入力）"""
+    """生年月日入力画面の制御"""
     if request.method == 'POST':
         year = request.POST.get('year')
         month = request.POST.get('month')
         day = request.POST.get('day')
-
-        if year and month and day:
-            # プロフィールを作成または取得して生年月日を保存
-            profile, created = WorkerProfile.objects.get_or_create(user=request.user)
-            profile.birth_date = f"{year}-{month:0>2}-{day:0>2}" # YYYY-MM-DD形式
+        
+        try:
+            # 入力値を日付型に変換
+            birth_date = date(int(year), int(month), int(day))
+            
+            # WorkerProfileを取得または作成して生年月日を保存
+            profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
+            profile.birth_date = birth_date
             profile.save()
-            return redirect('profile_setup')
+            
+            # ★ ここを修正：プロフィールの初期画面ではなく「名前入力画面」へリダイレクト
+            return redirect('setup_name')
+            
+        except ValueError:
+            # 不正な日付（例: 2月31日など）が入力された場合
+            return render(request, 'accounts/verify_dob.html', {
+                'error': '正しい日付を入力してください。'
+            })
 
     return render(request, 'accounts/verify_dob.html')
 
@@ -146,25 +248,28 @@ def account_settings(request):
 def profile_edit(request):
     profile = request.user.workerprofile
     if request.method == 'POST':
-        # 名前の更新
-        request.user.last_name = request.POST.get('last_name')
-        request.user.first_name = request.POST.get('first_name')
-        request.user.save()
-
-        # プロフィール情報の更新
-        profile.last_name_kana = request.POST.get('last_kana')
-        profile.first_name_kana = request.POST.get('first_kana')
-        profile.gender = request.POST.get('gender')
-        profile.birth_date = request.POST.get('birth_date')
-
-        # ★ 画像の保存処理を追加
-        if 'profile_image' in request.FILES:
-            profile.profile_image = request.FILES['profile_image']
+        # 既存項目
+        profile.last_name_kanji = request.POST.get('last_name_kanji')
+        # ... 他の名前項目 ...
         
+        # 追加項目（住所）
+        profile.postal_code = request.POST.get('postal_code')
+        profile.prefecture = request.POST.get('prefecture')
+        profile.city = request.POST.get('city')
+        profile.address_line = request.POST.get('address_line')
+        profile.building = request.POST.get('building')
+        
+        # 画像保存
+        if 'face_photo' in request.FILES:
+            profile.face_photo = request.FILES['face_photo']
+            
         profile.save()
         return redirect('account_settings')
-    
-    return render(request, 'accounts/profile_edit.html', {'profile': profile})
+
+    return render(request, 'accounts/profile_edit.html', {
+        'profile': profile,
+        'prefectures_list': PREFECTURES # テンプレートにリストを渡す
+    })
 
 @login_required
 def other_profile_edit(request):

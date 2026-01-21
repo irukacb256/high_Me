@@ -1,0 +1,47 @@
+{% extends 'signup/signup_base.html' %}
+{% block content %}
+<div class="header"><a href="{% url 'setup_gender' %}" class="back-link">＜</a></div>
+<div class="progress-container">
+    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div>
+</div>
+<h1 class="question-title">顔が映っている写真を登録する</h1>
+
+<form method="post" enctype="multipart/form-data" style="flex:1; display:flex; flex-direction:column;">
+    {% csrf_token %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div id="preview" style="width:150px; height:150px; background:#f0f0f0; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+            <i class="fa-solid fa-user" style="font-size:70px; color:#ccc;"></i>
+        </div>
+        <label for="id_photo" style="display:inline-block; background:var(--ios-blue); color:white; padding:12px 25px; border-radius:30px; cursor:pointer; font-size:15px;">顔写真を登録</label>
+        <input type="file" id="id_photo" name="face_photo" accept="image/*" style="display:none;" onchange="previewImage(this)">
+    </div>
+
+    <div style="border:1px solid #eee; border-radius:12px; padding:20px; font-size:13px; color:#666; text-align:center;">
+        <strong style="display:block; margin-bottom:5px; color:#333;">顔写真の確認事項</strong>
+        店舗が本人かを確認するために使用します
+        <div style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:10px;">
+            <span style="background:#f0f0f0; padding:4px 8px; border-radius:5px;">あなたのみ</span>
+            <span style="background:#f0f0f0; padding:4px 8px; border-radius:5px;">正面向き</span>
+        </div>
+    </div>
+
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next" id="photoBtn" disabled>次へ</button>
+        <button type="submit" name="skip" class="btn-later">あとで</button>
+    </div>
+</form>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                document.getElementById('photoBtn').classList.add('active');
+                document.getElementById('photoBtn').disabled = false;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}

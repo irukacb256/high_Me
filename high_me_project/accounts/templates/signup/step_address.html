@@ -1,0 +1,35 @@
+{% extends 'signup/signup_base.html' %}
+{% block content %}
+<div class="header"><a href="{% url 'setup_photo' %}" class="back-link">＜</a></div>
+<div class="progress-container">
+    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div>
+</div>
+<h1 class="question-title">住所を入力する</h1>
+<p style="font-size:13px; color:#666; margin-top:-25px; margin-bottom:30px;">本人確認書類と完全に一致する住所を入力してください。</p>
+
+<form method="post" style="flex:1; display:flex; flex-direction:column;">
+    {% csrf_token %}
+    <label>郵便番号</label>
+    <input type="tel" name="postal_code" placeholder="1234567" maxlength="7">
+
+    <label>都道府県</label>
+    <select name="prefecture">
+        <option value="" disabled selected>未選択</option>
+        <option value="東京都">東京都</option>
+        <option value="神奈川県">神奈川県</option>
+        <option value="千葉県">千葉県</option>
+        <option value="埼玉県">埼玉県</option>
+    </select>
+
+    <label>市区町村・町名</label>
+    <input type="text" name="city" placeholder="港区南新橋" >
+
+    <label>丁目・番地</label>
+    <input type="text" name="address_line" placeholder="1丁目1-1" >
+
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next" disabled>次へ</button>
+        <button type="submit" name="skip" class="btn-later">あとで</button>
+    </div>
+</form>
+{% endblock %}

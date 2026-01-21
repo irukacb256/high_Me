@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import JobTemplate, JobPosting, Store, BusinessProfile
+from django.utils import timezone
+from accounts.models import WorkerProfile
+from .models import JobApplication, JobTemplate, JobPosting, Store, BusinessProfile
 
 # --- 登録フロー ---
 
@@ -316,21 +318,31 @@ def job_posting_detail(request, store_id, pk):
 
 @login_required
 def job_worker_list(request, store_id, pk):
-    """画像2: マッチングしたワーカーの一覧画面"""
+    """マッチングしたワーカーの一覧画面（実データ反映版）"""
     biz_profile = get_object_or_404(BusinessProfile, user=request.user)
     store = get_object_or_404(Store, id=store_id, business=biz_profile)
     posting = get_object_or_404(JobPosting, pk=pk, template__store=store)
     
-    # 実際はここで申し込みモデル(Applicationなど)から取得しますが、
-    # 今回はデモ用にダミーデータを作成します
-    matched_workers = [
-        {'worker_name': '山田 太郎', 'status': '確定済み'},
-    ]
-    
+    # 申し込みデータを取得（ワーカー情報とプロフィール情報を一括取得）
+    applications = JobApplication.objects.filter(job_posting=posting).select_related('worker', 'worker__workerprofile')
+
+    # 年齢計算のロジックを各ワーカーに追加
+    today = timezone.now().date()
+    for app in applications:
+        profile = getattr(app.worker, 'workerprofile', None)
+        if profile and profile.birth_date:
+            # 年齢計算
+            age = today.year - profile.birth_date.year - (
+                (today.month, today.day) < (profile.birth_date.month, profile.birth_date.day)
+            )
+            app.worker_age = age
+        else:
+            app.worker_age = "不明"
+
     return render(request, 'business/job_worker_list.html', {
         'store': store,
         'posting': posting,
-        'matched_workers': matched_workers
+        'matched_workers': applications,
     })
 
 @login_required

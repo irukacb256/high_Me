@@ -1,0 +1,24 @@
+{% extends 'signup/signup_base.html' %}
+{% block content %}
+<div class="header"><a href="{% url 'setup_address' %}" class="back-link">＜</a></div>
+<div class="progress-container">
+    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div>
+</div>
+<h1 class="question-title">働き方を登録</h1>
+
+<form method="post" style="flex:1; display:flex; flex-direction:column;">
+    {% csrf_token %}
+    <p style="font-size:14px; font-weight:bold; margin-bottom:15px;">アルバイトの働き方について教えてください</p>
+    <label class="option-item"><input type="radio" name="work_style" value="スキマバイトのみ" onclick="checkForm()"> スキマバイトにしか興味ない</label>
+    <label class="option-item"><input type="radio" name="work_style" value="長期も検討" onclick="checkForm()"> 良い店舗に出会えれば長期をしたい</label>
+    
+    <p style="font-size:14px; font-weight:bold; margin-top:20px; margin-bottom:15px;">正社員として働くことに興味はありますか？</p>
+    <label class="option-item"><input type="radio" name="career_interest" value="すぐに転職したい" onclick="checkForm()"> すぐにでも転職/就職したい</label>
+    <label class="option-item"><input type="radio" name="career_interest" value="興味なし" onclick="checkForm()"> 興味がない</label>
+
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next" disabled>次へ</button>
+        <button type="submit" name="skip" class="btn-later">あとで</button>
+    </div>
+</form>
+{% endblock %}

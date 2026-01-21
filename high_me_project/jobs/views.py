@@ -1,6 +1,6 @@
 from django.shortcuts import render , get_object_or_404 , redirect
 from django.contrib.auth.decorators import login_required
-from business.models import JobPosting
+from business.models import JobPosting , JobApplication
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db.models import Q
@@ -144,9 +144,17 @@ def apply_step_4_policy(request, pk):
 
 @login_required
 def apply_step_5_review(request, pk):
-    """ステップ5: 申し込み内容の最終確認 (画像9)"""
+    """ステップ5: 申し込み内容の最終確認"""
     job = get_object_or_404(JobPosting, pk=pk)
+    
     if request.method == 'POST':
-        # ここで実際の申し込みデータを保存する（今回は割愛）
+        # --- ここで実際の申し込みデータを保存する ---
+        # 重複申し込みを防ぎつつ作成
+        application, created = JobApplication.objects.get_or_create(
+            job_posting=job,
+            worker=request.user
+        )
+        # ---------------------------------------
         return render(request, 'jobs/apply_complete.html', {'job': job})
+    
     return render(request, 'jobs/apply_review.html', {'job': job})

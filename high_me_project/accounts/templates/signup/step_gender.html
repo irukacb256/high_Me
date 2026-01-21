@@ -1,0 +1,19 @@
+{% extends 'signup/signup_base.html' %}
+{% block content %}
+<div class="header"><a href="{% url 'setup_kana' %}" class="back-link">＜</a></div>
+<div class="progress-container">
+    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div>
+</div>
+<h1 class="question-title">戸籍上の性別を選択する</h1>
+<div style="background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:25px; font-size:13px; color:#666;">
+    <i class="fa-solid fa-info-circle"></i> 性別の選択が必要な理由<br>業務上必要としている店舗があります。
+</div>
+<form method="post" style="flex:1; display:flex; flex-direction:column;">
+    {% csrf_token %}
+    <label class="option-item"><input type="radio" name="gender" value="男性" required onclick="checkForm()"> 男性</label>
+    <label class="option-item"><input type="radio" name="gender" value="女性" onclick="checkForm()"> 女性</label>
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next" disabled>次へ</button>
+    </div>
+</form>
+{% endblock %}

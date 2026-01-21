@@ -88,3 +88,17 @@ class JobPosting(models.Model):
             timezone.datetime.combine(self.work_date, self.start_time)
         )
         return now > job_deadline
+    
+class JobApplication(models.Model):
+    """ワーカーからの申し込みを管理するモデル"""
+    job_posting = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
+    worker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='job_applications')
+    status = models.CharField("状態", max_length=20, default="確定済み")
+    applied_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # 同じ人が同じ求人に二重に申し込めないように設定
+        unique_together = ('job_posting', 'worker')
+
+    def __str__(self):
+        return f"{self.worker.last_name} - {self.job_posting.title}"

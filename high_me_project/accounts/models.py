@@ -2,27 +2,41 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class WorkerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Django標準のUserモデルと1対1で紐付け
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='workerprofile')
     
-    # 画像1の項目
-    birth_date = models.DateField(null=True, blank=True)
-    real_name = models.CharField(max_length=100, blank=True)
-    furigana = models.CharField(max_length=100, blank=True)
-    gender = models.CharField(max_length=10, blank=True)
-    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True)
-    prefecture = models.CharField(max_length=50, blank=True)
+    # 基本情報
+    birth_date = models.DateField("生年月日", null=True, blank=True)
     
-    # 利用端末の設定（通知・位置情報）
-    notifications_enabled = models.BooleanField(default=False)
-    location_enabled = models.BooleanField(default=False)
+    # 名前（画像1: 漢字 / 画像2: フリガナ）
+    last_name_kanji = models.CharField("姓(漢字)", max_length=50, null=True, blank=True)
+    first_name_kanji = models.CharField("名(漢字)", max_length=50, null=True, blank=True)
+    last_name_kana = models.CharField("セイ(カナ)", max_length=50, null=True, blank=True)
+    first_name_kana = models.CharField("メイ(カナ)", max_length=50, null=True, blank=True)
     
-    # 本人確認ステータス
-    is_identity_verified = models.BooleanField(default=False)
+    # 性別（画像3）
+    gender = models.CharField("性別", max_length=10, null=True, blank=True)
+    
+    # 顔写真（画像4）
+    face_photo = models.ImageField("顔写真", upload_to='profiles/faces/', null=True, blank=True)
+    
+    # 住所（画像5）
+    postal_code = models.CharField("郵便番号", max_length=7, null=True, blank=True)
+    prefecture = models.CharField("都道府県", max_length=20, null=True, blank=True)
+    city = models.CharField("市区町村", max_length=100, null=True, blank=True)
+    address_line = models.CharField("番地", max_length=100, null=True, blank=True)
+    building = models.CharField("建物名・部屋番号", max_length=100, null=True, blank=True)
+    
+    # 働き方（画像6）
+    work_style = models.CharField("アルバイトの働き方", max_length=100, null=True, blank=True)
+    career_interest = models.CharField("正社員への興味", max_length=100, null=True, blank=True)
+    
+    # 希望エリア（画像7: 都道府県選択をカンマ区切りで保存）
+    target_prefectures = models.TextField("希望都道府県", null=True, blank=True)
 
-    # 緊急連絡先
-    emergency_phone = models.CharField(max_length=20, blank=True)
-    emergency_relation = models.CharField(max_length=50, blank=True)
+    # 状態管理
+    is_setup_completed = models.BooleanField("セットアップ完了", default=False)
+    is_identity_verified = models.BooleanField("本人確認済み", default=False)
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} のプロフィール"

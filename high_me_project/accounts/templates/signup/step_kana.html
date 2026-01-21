@@ -1,0 +1,18 @@
+{% extends 'signup/signup_base.html' %}
+{% block content %}
+<div class="header"><a href="{% url 'setup_name' %}" class="back-link">＜</a></div>
+<div class="progress-container">
+    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div>
+</div>
+<h1 class="question-title">フリガナを入力する</h1>
+<form method="post" style="flex:1; display:flex; flex-direction:column;">
+    {% csrf_token %}
+    <div style="display: flex; gap: 15px;">
+        <div style="flex: 1;"><label>セイ</label><input type="text" name="last_name_kana" placeholder="ヤマダ" required></div>
+        <div style="flex: 1;"><label>メイ</label><input type="text" name="first_name_kana" placeholder="タロウ" required></div>
+    </div>
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next" disabled>次へ</button>
+    </div>
+</form>
+{% endblock %}

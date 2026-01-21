@@ -15,9 +15,6 @@
     .menu-icon { width: 30px; font-size: 18px; color: #333; text-align: center; margin-right: 15px; }
     .menu-label { flex: 1; font-size: 15px; }
     .chevron { color: #ccc; font-size: 14px; }
-
-    /* 赤枠の強調用（開発確認用） */
-    .highlight { border: 2px solid #ff3b30; }
 </style>
 
 <div class="settings-container">
@@ -27,39 +24,31 @@
     </div>
 
     <div class="menu-list">
-        <!-- あなたのプロフィール -->
         <a href="{% url 'profile_edit' %}" class="menu-item">
             <div class="menu-icon"><i class="fa-regular fa-user"></i></div>
             <div class="menu-label">あなたのプロフィール</div>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </a>
 
-        <!-- その他のプロフィール -->
         <a href="{% url 'other_profile_edit' %}" class="menu-item">
             <div class="menu-icon"><i class="fa-solid fa-plus"></i></div>
             <div class="menu-label">その他のプロフィール</div>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </a>
 
-        <!-- 電話番号 -->
+        <!-- 電話番号：番号の表示を削除 -->
         <a href="{% url 'phone_change' %}" class="menu-item">
             <div class="menu-icon"><i class="fa-solid fa-phone"></i></div>
             <div class="menu-label">電話番号</div>
-                <div>
-                    <!-- 現在の番号を表示 -->
-                    <span class="item-value">{{ request.user.username }}</span>
-                    <i class="fa-solid fa-chevron-right chevron"></i>
-                </div>
+            <i class="fa-solid fa-chevron-right chevron"></i>
         </a>
 
-        <!-- 緊急連絡先 -->
         <a href="{% url 'emergency_contact' %}" class="menu-item">
             <div class="menu-icon"><i class="fa-solid fa-asterisk"></i></div>
             <div class="menu-label">緊急連絡先</div>
             <i class="fa-solid fa-chevron-right chevron"></i>
         </a>
 
-        <!-- 働き方 -->
         <a href="#" class="menu-item">
             <div class="menu-icon"><i class="fa-regular fa-address-card"></i></div>
             <div class="menu-label">働き方</div>
