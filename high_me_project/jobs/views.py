@@ -84,15 +84,62 @@ def reward_select(request):
 def job_detail(request, pk):
     """求人詳細画面 (画像2)"""
     job = get_object_or_404(JobPosting, pk=pk)
-    return render(request, 'jobs/detail.html', {'job': job})
+    is_applied = False
+    if request.user.is_authenticated:
+        is_applied = JobApplication.objects.filter(job_posting=job, worker=request.user).exists()
+    
+    return render(request, 'jobs/detail.html', {
+        'job': job, 
+        'is_applied': is_applied,
+        'is_closed': job.is_expired
+    })
 
 def favorites(request):
     """お気に入り画面 (画像2)"""
     return render(request, 'jobs/favorites.html')
 
+@login_required
 def work_schedule(request):
     """はたらく画面 (画像3)"""
-    return render(request, 'jobs/work_schedule.html')
+    now = timezone.now()
+    # ユーザーの応募済み求人を全て取得（勤務日の昇順）
+    applications = JobApplication.objects.filter(worker=request.user).select_related('job_posting', 'job_posting__template__store').order_by('job_posting__work_date', 'job_posting__start_time')
+    
+    upcoming = []
+    completed = []
+    
+    for app in applications:
+        # 終了時間を考慮した完了判定（簡易的に勤務日と終了時間で判定）
+        job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
+        if job_end < now:
+            completed.append(app)
+        else:
+            upcoming.append(app)
+
+    # 日付ごとにグルーピングする関数（テンプレート用）
+    def group_by_date(app_list):
+        grouped = {}
+        # 曜日変換マップ
+        weekday_map = {0: '月', 1: '火', 2: '水', 3: '木', 4: '金', 5: '土', 6: '日'}
+        for app in app_list:
+            d = app.job_posting.work_date
+            if d not in grouped:
+                # (曜日(JP), アプリリスト)
+                grouped[d] = [weekday_map[d.weekday()], []]
+            grouped[d][1].append(app)
+        
+        # [(date, weekday_jp, [apps]), ...] の形式でソートして返す
+        result = []
+        for d in sorted(grouped.keys()):
+            result.append((d, grouped[d][0], grouped[d][1]))
+        return result
+
+    context = {
+        'upcoming_grouped': group_by_date(upcoming),
+        'completed_grouped': group_by_date(completed),
+        'tab': request.GET.get('tab', 'upcoming'),
+    }
+    return render(request, 'jobs/work_schedule.html', context)
 
 def messages(request):
     """メッセージ画面 (画像4)"""
@@ -133,6 +180,19 @@ def apply_step_3_documents(request, pk):
     if request.method == 'POST':
         return redirect('apply_step_4_policy', pk=pk)
     return render(request, 'jobs/apply_documents.html', {'job': job})
+
+@login_required
+def job_working_detail(request, pk):
+    """おしごと画面 (申し込み後の詳細・チェックイン)"""
+    application = get_object_or_404(JobApplication, job_posting_id=pk, worker=request.user)
+    # 曜日マップ（再利用）
+    weekday_map = {0: '月', 1: '火', 2: '水', 3: '木', 4: '金', 5: '土', 6: '日'}
+    weekday_jp = weekday_map[application.job_posting.work_date.weekday()]
+    
+    return render(request, 'jobs/job_working_detail.html', {
+        'app': application,
+        'weekday_jp': weekday_jp
+    })
 
 @login_required
 def apply_step_4_policy(request, pk):

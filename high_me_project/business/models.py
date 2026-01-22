@@ -136,8 +136,32 @@ class JobPosting(models.Model):
     hourly_wage = models.IntegerField("時給", default=1100)
     transportation_fee = models.IntegerField("交通費", default=500)
     
+    # 新規追加項目 (詳細表示・マッチング管理用)
+    recruitment_count = models.IntegerField("募集人数", default=1)
+    break_start = models.TimeField("休憩開始時間", null=True, blank=True)
+    break_duration = models.IntegerField("休憩時間(分)", default=0)
+    
+    VISIBILITY_CHOICES = [
+        ('public', '一般公開'),
+        ('badge', 'バッジ限定'),
+        ('group', 'グループ限定'),
+    ]
+    visibility = models.CharField("公開範囲", max_length=20, choices=VISIBILITY_CHOICES, default='public')
+
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def matched_count(self):
+        """確定済みのマッチング人数を返す"""
+        return self.applications.filter(status="確定済み").count()
+
+    @property
+    def is_old_posting(self):
+        """作成から6ヶ月以上経過しているか判定"""
+        now = timezone.now()
+        six_months_ago = now - timezone.timedelta(days=180)
+        return self.created_at < six_months_ago
 
     @property
     def total_payment(self):

@@ -1,0 +1,197 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    .address-edit-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 20px 25px 30px;
+        box-sizing: border-box;
+        background: white;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        height: 40px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f2f2f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-title {
+        flex: 1;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        margin-right: 36px;
+    }
+
+    .question-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #000;
+    }
+
+    .sub-text {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 35px;
+        line-height: 1.5;
+    }
+
+    form {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-group {
+        margin-bottom: 25px;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        box-sizing: border-box;
+        font-size: 16px;
+        outline: none;
+        background: #fdfdfd;
+        transition: border-color 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: var(--ios-blue);
+    }
+
+    input::placeholder {
+        color: #ccc;
+    }
+
+    .footer-area {
+        margin-top: auto;
+        padding-top: 20px;
+    }
+
+    .btn-ok {
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+        border: none;
+        background-color: #eee;
+        color: #aaa;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: not-allowed;
+        transition: 0.3s;
+    }
+
+    .btn-ok.active {
+        background-color: #007AFF;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+
+<div class="address-edit-wrapper">
+    <div class="header">
+        <a href="{% url 'profile_edit' %}" class="back-btn">＜</a>
+        <div class="header-title">プロフィールを編集</div>
+    </div>
+
+    <h1 class="question-title">住所を入力</h1>
+    <p class="sub-text">本人確認書類と完全に一致する住所を入力してください。</p>
+
+    <form method="POST" id="addressForm">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <label>郵便番号</label>
+            <input type="tel" name="postal_code" id="zip" placeholder="1057135"
+                value="{{ profile.postal_code|default:'' }}" maxlength="7" required>
+        </div>
+
+        <div class="input-group">
+            <label>都道府県</label>
+            <select name="prefecture" id="pref" required>
+                <option value="" disabled {% if not profile.prefecture %}selected{% endif %}>未選択</option>
+                {% for pref in prefectures_list %}
+                <option value="{{ pref }}" {% if profile.prefecture==pref %}selected{% endif %}>{{ pref }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>市区町村</label>
+            <input type="text" name="city" id="city" placeholder="港区" value="{{ profile.city|default:'' }}" required>
+        </div>
+
+        <div class="input-group">
+            <label>町・番地</label>
+            <input type="text" name="address_line" id="line" placeholder="東新橋2丁目5-2"
+                value="{{ profile.address_line|default:'' }}" required>
+        </div>
+
+        <div class="input-group">
+            <label>建物・部屋番号</label>
+            <input type="text" name="building" id="build" placeholder="タイミーマンション305"
+                value="{{ profile.building|default:'' }}">
+        </div>
+
+        <div class="footer-area">
+            <button type="submit" id="submitBtn" class="btn-ok" disabled>OK</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('addressForm');
+    const btn = document.getElementById('submitBtn');
+    const requiredInputs = form.querySelectorAll('[required]');
+
+    function checkForm() {
+        let isComplete = true;
+        requiredInputs.forEach(input => {
+            if (!input.value.trim()) isComplete = false;
+        });
+
+        if (isComplete) {
+            btn.classList.add('active');
+            btn.disabled = false;
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+        }
+    }
+
+    form.addEventListener('input', checkForm);
+    window.addEventListener('load', checkForm);
+</script>
+{% endblock %}

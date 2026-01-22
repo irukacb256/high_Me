@@ -12,21 +12,65 @@
         position: relative;
     }
 
-    .header { display: flex; align-items: center; margin-bottom: 30px; }
-    .header-title { font-weight: bold; flex: 1; text-align: center; margin-right: 40px; }
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
 
-    .question-title { font-size: 20px; font-weight: bold; margin-bottom: 40px; }
+    .header-title {
+        font-weight: bold;
+        flex: 1;
+        text-align: center;
+        margin-right: 40px;
+    }
+
+    .question-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 40px;
+    }
 
     /* 年・月・日の入力行 */
-    .dob-input-row { display: flex; gap: 20px; margin-bottom: 50px; }
-    .dob-field { flex: 1; border-bottom: 2px solid #eee; transition: 0.3s; }
-    .dob-field label { display: block; font-size: 12px; color: #999; margin-bottom: 5px; }
-    .dob-field input { width: 100%; border: none; font-size: 24px; padding: 5px 0; outline: none; background: transparent; }
-    .dob-field:focus-within { border-bottom-color: var(--ios-blue); }
+    .dob-input-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 50px;
+    }
+
+    .dob-field {
+        flex: 1;
+        border-bottom: 2px solid #eee;
+        transition: 0.3s;
+    }
+
+    .dob-field label {
+        display: block;
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+    }
+
+    .dob-field input {
+        width: 100%;
+        border: none;
+        font-size: 24px;
+        padding: 5px 0;
+        outline: none;
+        background: transparent;
+    }
+
+    .dob-field:focus-within {
+        border-bottom-color: var(--ios-blue);
+    }
 
     /* 下部固定ボタン */
-    .footer-btn-area { margin-top: auto; } /* margin-top:autoで一番下へ押し出す */
-    
+    .footer-btn-area {
+        margin-top: auto;
+    }
+
+    /* margin-top:autoで一番下へ押し出す */
+
     .btn-confirm {
         width: 100%;
         padding: 18px;
@@ -39,6 +83,7 @@
         cursor: not-allowed;
         transition: 0.3s;
     }
+
     .btn-confirm.active {
         background-color: var(--ios-blue);
         color: white;
@@ -49,11 +94,18 @@
 
 <div class="dob-wrapper">
     <div class="header">
-        <a href="{% url 'verify_identity' %}" style="text-decoration:none; color:black; font-size:24px;">＜</a>
-        <div class="header-title">当人確認</div>
+        <a href="javascript:history.back()" style="text-decoration:none; color:black; font-size:24px;">＜</a>
+        <div class="header-title">本人確認</div>
     </div>
 
     <h1 class="question-title">あなたの生年月日はいつですか？</h1>
+
+    {% if error %}
+    <div
+        style="background-color: #fff2f2; border: 1px solid #ffcccc; color: #ff3b30; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 25px; font-weight: bold;">
+        {{ error }}
+    </div>
+    {% endif %}
 
     <form method="POST" id="dobForm" style="flex:1; display:flex; flex-direction:column;">
         {% csrf_token %}
@@ -84,9 +136,9 @@
 
     function checkForm() {
         let allFilled = true;
-        inputs.forEach(i => { if(i.value.length < 1) allFilled = false; });
-        
-        if(allFilled) {
+        inputs.forEach(i => { if (i.value.length < 1) allFilled = false; });
+
+        if (allFilled) {
             btn.classList.add('active');
             btn.disabled = false;
         } else {

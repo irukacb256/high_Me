@@ -29,6 +29,8 @@ urlpatterns = [
     
     # ★ ここが足りなかったためにエラーが出ていました
     path('verify/', account_views.verify_identity, name='verify_identity'), 
+    path('verify/select/', account_views.verify_identity_select, name='verify_identity_select'), 
+    path('verify/upload/', account_views.verify_identity_upload, name='verify_identity_upload'), 
     path('verify/dob/', account_views.verify_dob, name='verify_dob'),
     path('profile-setup/', account_views.profile_setup, name='profile_setup'),
 
@@ -50,8 +52,7 @@ urlpatterns = [
     # ★ ここから下の3行が不足していたためエラーになっていました
     path('home/refine/time/', job_views.time_select, name='time_select'),
     path('home/refine/treatment/', job_views.treatment_select, name='treatment_select'),
-    path('home/refine/keyword/', job_views.keyword_exclude, name='keyword_exclude'),
-
+    path('working/<int:pk>/', job_views.job_working_detail, name='job_working_detail'),
     path('favorites/', job_views.favorites, name='favorites'),      # ★追加
     path('schedule/', job_views.work_schedule, name='work_schedule'), # ★追加
     path('messages/', job_views.messages, name='messages'),          # ★追加
@@ -60,6 +61,7 @@ urlpatterns = [
     path('mypage/', account_views.mypage, name='mypage'),            # ★追加
     path('settings/', account_views.account_settings, name='account_settings'), # 設定一覧
     path('settings/profile/', account_views.profile_edit, name='profile_edit'), # ★プロフィール編集画面
+    path('settings/profile/address/', account_views.profile_address_edit, name='profile_address_edit'), # ★住所変更専用画面
     path('settings/other/', account_views.other_profile_edit, name='other_profile_edit'),
 
     # 修正：phone_change_home を phone_change に変更
@@ -112,6 +114,8 @@ urlpatterns = [
     path('biz/templates/<int:pk>/', biz_views.template_detail, name='biz_template_detail'),
     # 編集画面
     path('biz/templates/<int:pk>/edit/', biz_views.template_edit, name='biz_template_edit'),
+    # 削除画面
+    path('biz/templates/<int:pk>/delete/', biz_views.template_delete, name='biz_template_delete'),
     # このひな形を元に求人作成（勤務日時入力画面へ）
     path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
     path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),

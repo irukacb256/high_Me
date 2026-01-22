@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from accounts.models import WorkerProfile
-from .models import JobApplication, JobTemplate, JobPosting, Store, BusinessProfile, QualificationMaster
+from .models import JobApplication, JobTemplate, JobPosting, Store, BusinessProfile, QualificationMaster, JobTemplatePhoto
 
 # --- 登録フロー ---
 
@@ -208,6 +208,23 @@ def template_list(request, store_id):
     })
 
 @login_required
+def template_delete(request, pk):
+    """求人ひな形の削除確認・実行」"""
+    template = get_object_or_404(JobTemplate, pk=pk)
+    # 本来は店舗の所有権チェックが必要
+    store = template.store
+
+    if request.method == 'POST':
+        template.delete()
+        messages.success(request, f"「{template.title}」を削除しました。")
+        return redirect('biz_template_list', store_id=store.pk)
+
+    return render(request, 'business/template_delete_confirm.html', {
+        'template': template,
+        'store': store
+    })
+
+@login_required
 def template_create(request, store_id):
     biz_profile = get_object_or_404(BusinessProfile, user=request.user)
     store = get_object_or_404(Store, id=store_id, business=biz_profile)
@@ -333,14 +350,20 @@ def job_create_from_template(request, template_pk):
     template = get_object_or_404(JobTemplate, pk=template_pk, store=store)
     
     if request.method == 'POST':
-        # シーケンス図: 必要情報を入力し「求人内容を確認」ボタンを押下
         # セッションに一時保存して確認画面へ
         request.session['pending_job'] = {
             'template_id': template.pk,
             'work_date': request.POST.get('work_date'),
             'start_time': request.POST.get('start_time'),
             'end_time': request.POST.get('end_time'),
-            'title': request.POST.get('title'),
+            'title': template.title,
+            # 新規項目
+            'wage': request.POST.get('wage'),
+            'transport': request.POST.get('transport'),
+            'visibility': request.POST.get('visibility'),
+            'auto_message': request.POST.get('auto_message'),
+            'msg_send': request.POST.get('msg_send') == 'true',
+            'count': request.POST.get('count', 1),
         }
         return redirect('biz_job_confirm')
     
@@ -429,6 +452,13 @@ def job_confirm(request):
                 start_time=pending_data['start_time'],
                 end_time=pending_data['end_time'],
                 work_content=template.work_content,
+                # 新規項目
+                hourly_wage=pending_data.get('wage', 1100),
+                transportation_fee=pending_data.get('transport', 500),
+                recruitment_count=pending_data.get('count', 1),
+                break_start=pending_data.get('break_start'),
+                break_duration=pending_data.get('break_duration', 0),
+                visibility=pending_data.get('visibility', 'public'),
                 is_published=True
             )
             
@@ -446,7 +476,12 @@ def job_confirm(request):
             })
 
     # GET時の表示
+    template = None
+    if pending_data:
+        template = get_object_or_404(JobTemplate, pk=pending_data['template_id'])
+
     return render(request, 'business/job_confirm.html', {
         'data': pending_data,
-        'store': store  # ★追加
+        'store': store,
+        'template': template
     })

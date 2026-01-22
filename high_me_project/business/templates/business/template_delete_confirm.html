@@ -1,0 +1,100 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .confirm-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background: white;
+        border: 1px solid #E5E5E5;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .confirm-icon {
+        font-size: 48px;
+        color: #FF3B30;
+        margin-bottom: 20px;
+    }
+
+    .confirm-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .target-box {
+        background: #F9F9F9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border: 1px solid #EEE;
+    }
+
+    .target-title {
+        font-weight: bold;
+        color: #007AFF;
+        font-size: 18px;
+    }
+
+    .btn-row {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 12px;
+        background: white;
+        border: 1px solid #D1D1D6;
+        color: #333;
+        border-radius: 8px;
+        font-weight: bold;
+        text-decoration: none;
+        display: block;
+    }
+
+    .btn-delete {
+        flex: 1;
+        padding: 12px;
+        background: #FF3B30;
+        border: none;
+        color: white;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-delete:hover {
+        background: #D32F2F;
+    }
+</style>
+
+<div class="confirm-container">
+    <div class="confirm-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h1 class="confirm-title">求人のひな形を削除しますか？</h1>
+    <p style="color: #666; margin-bottom: 25px; font-size: 14px;">
+        このひな形を削除すると、元の募集内容を復元することはできません。<br>
+        既に出されている求人は削除されません。
+    </p>
+
+    <div class="target-box">
+        <div style="font-size: 12px; color: #888; margin-bottom: 5px;">削除対象</div>
+        <div class="target-title">{{ template.title }}</div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="btn-row">
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">いいえ、戻ります</a>
+            <button type="submit" class="btn-delete">削除する</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

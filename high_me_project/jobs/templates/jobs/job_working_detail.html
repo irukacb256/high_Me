@@ -1,0 +1,290 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .working-container {
+        background: white;
+        min-height: 100vh;
+        padding-bottom: 80px;
+        position: relative;
+    }
+
+    /* ヘッダー */
+    .working-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        background: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .back-btn {
+        font-size: 20px;
+        color: #000;
+    }
+
+    .header-title {
+        font-weight: bold;
+        font-size: 17px;
+    }
+
+    .add-btn {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* メイン画像（上半分） */
+    .hero-image {
+        width: 100%;
+        height: 250px;
+        background: #eee;
+        overflow: hidden;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* 仕事の概要 */
+    .job-summary {
+        display: flex;
+        padding: 20px 15px;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .location-box {
+        width: 60px;
+        text-align: center;
+        font-size: 10px;
+        color: #666;
+    }
+
+    .location-icon {
+        width: 60px;
+        height: 60px;
+        background: #F2F2F7;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #007AFF;
+        margin-bottom: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-title-area {
+        flex: 1;
+    }
+
+    .job-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .job-date-time {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* チェックイン・アウト */
+    .check-status-area {
+        display: flex;
+        justify-content: space-around;
+        padding: 30px 15px;
+        text-align: center;
+    }
+
+    .status-item {
+        flex: 1;
+    }
+
+    .status-label {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    .status-date {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .status-time {
+        font-size: 28px;
+        font-weight: bold;
+        color: #D1D1D6;
+        letter-spacing: 2px;
+    }
+
+    .arrow-icon {
+        display: flex;
+        align-items: center;
+        color: #F2F2F7;
+        font-size: 20px;
+    }
+
+    /* QR読み取りボタン */
+    .action-area {
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .instruction {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 15px;
+    }
+
+    .btn-qr {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 16px;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .btn-cant-check {
+        font-size: 14px;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    /* リストメニュー */
+    .menu-list {
+        margin-top: 40px;
+        border-top: 1px solid #f2f2f2;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 18px 20px;
+        border-bottom: 1px solid #f2f2f2;
+        text-decoration: none;
+        color: #000;
+    }
+
+    .menu-icon {
+        width: 24px;
+        font-size: 18px;
+        color: #333;
+        margin-right: 15px;
+        text-align: center;
+    }
+
+    .menu-text {
+        flex: 1;
+        font-weight: 500;
+    }
+
+    .menu-arrow {
+        color: #C7C7CC;
+        font-size: 14px;
+    }
+</style>
+
+<div class="working-container">
+    <div class="working-header">
+        <a href="javascript:history.back()" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="header-title">おしごと画面</div>
+        <div class="add-btn"><i class="fa-solid fa-calendar-plus"></i> 追加</div>
+    </div>
+
+    <!-- 上半分：メイン画像 -->
+    <div class="hero-image">
+        {% if app.job_posting.template.photos.first %}
+        <img src="{{ app.job_posting.template.photos.first.image.url }}">
+        {% else %}
+        <div style="width:100%;height:100%;background:#eee;"></div>
+        {% endif %}
+    </div>
+
+    <!-- 仕事概要 -->
+    <div class="job-summary">
+        <div class="location-box">
+            <div class="location-icon">
+                <i class="fa-solid fa-location-dot"></i>
+            </div>
+            場所を確認
+        </div>
+        <div class="job-title-area">
+            <div class="job-title">{{ app.job_posting.title }}</div>
+            <div class="job-date-time">
+                予定：{{ app.job_posting.work_date|date:"n月j日" }} ({{ weekday_jp }}) {{
+                app.job_posting.start_time|date:"H:i" }}〜{{ app.job_posting.end_time|date:"H:i" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- チェックイン・アウト -->
+    <div class="check-status-area">
+        <div class="status-item">
+            <div class="status-label">チェックイン</div>
+            <div class="status-date">-月-日 (-)</div>
+            <div class="status-time">--:--</div>
+        </div>
+        <div class="arrow-icon">
+            <i class="fa-solid fa-caret-right"></i>
+        </div>
+        <div class="status-item">
+            <div class="status-label">チェックアウト</div>
+            <div class="status-date">-月-日 (-)</div>
+            <div class="status-time">--:--</div>
+        </div>
+    </div>
+
+    <div class="action-area">
+        <p class="instruction">仕事をはじめる/おわるときに、タップしてください</p>
+        <button class="btn-qr">
+            <i class="fa-solid fa-qrcode"></i> QRを読み込む
+        </button>
+        <div class="btn-cant-check">
+            チェックイン/アウトできなかった場合 <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+        </div>
+    </div>
+
+    <!-- メニューリスト -->
+    <div class="menu-list">
+        <a href="{% url 'job_detail' app.job_posting.pk %}" class="menu-item">
+            <i class="fa-solid fa-bars menu-icon"></i>
+            <span class="menu-text">募集詳細</span>
+            <i class="fa-solid fa-chevron-right menu-arrow"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <i class="fa-solid fa-file-lines menu-icon"></i>
+            <span class="menu-text">業務に関する書類</span>
+            <i class="fa-solid fa-chevron-right menu-arrow"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <i class="fa-solid fa-envelope menu-icon"></i>
+            <span class="menu-text">修正依頼</span>
+            <i class="fa-solid fa-chevron-right menu-arrow"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}

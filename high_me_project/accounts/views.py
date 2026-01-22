@@ -51,7 +51,11 @@ def signup(request):
             # 3. ユーザー作成
             user = User.objects.create_user(username=phone, password=password)
             login(request, user)
-            return redirect('verify_identity')
+            
+            # フローをセッションに記録
+            request.session['auth_flow'] = 'signup'
+            
+            return redirect('verify_dob')
         except IntegrityError:
             # 万が一、同時送信などで重複が発生した場合の保険
             return render(request, 'accounts/signup.html', {'error': '登録エラーが発生しました。もう一度お試しください。'})
@@ -155,31 +159,43 @@ def verify_identity(request):
 
 @login_required
 def verify_dob(request):
-    """生年月日入力画面の制御"""
+    """生年月日入力・検証画面"""
+    auth_flow = request.session.get('auth_flow', 'signup')
+    profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
         year = request.POST.get('year')
         month = request.POST.get('month')
         day = request.POST.get('day')
         
         try:
-            # 入力値を日付型に変換
             birth_date = date(int(year), int(month), int(day))
             
-            # WorkerProfileを取得または作成して生年月日を保存
-            profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
-            profile.birth_date = birth_date
-            profile.save()
-            
-            # ★ ここを修正：プロフィールの初期画面ではなく「名前入力画面」へリダイレクト
-            return redirect('setup_name')
+            if auth_flow == 'login':
+                # ログイン時の検証ロジック
+                if profile.birth_date and profile.birth_date == birth_date:
+                    return redirect('index')
+                elif not profile.birth_date:
+                    # 万が一誕生日の登録がない既存ユーザー（基本いないはずだが救済）
+                    profile.birth_date = birth_date
+                    profile.save()
+                    return redirect('index')
+                else:
+                    return render(request, 'accounts/verify_dob.html', {
+                        'error': '生年月日が登録情報と一致しません。'
+                    })
+            else:
+                # 新規登録時の保存ロジック
+                profile.birth_date = birth_date
+                profile.save()
+                return redirect('setup_name')
             
         except ValueError:
-            # 不正な日付（例: 2月31日など）が入力された場合
             return render(request, 'accounts/verify_dob.html', {
                 'error': '正しい日付を入力してください。'
             })
 
-    return render(request, 'accounts/verify_dob.html')
+    return render(request, 'accounts/verify_dob.html', {'auth_flow': auth_flow})
 
 
 def profile_setup(request):
@@ -224,9 +240,10 @@ def login_view(request):
         user = authenticate(request, username=phone, password=password)
 
         if user is not None:
-            # ログイン成功 -> さがす画面へ
+            # ログイン成功 -> 誕生日検証へ
             login(request, user)
-            return redirect('index')
+            request.session['auth_flow'] = 'login'
+            return redirect('verify_dob')
         else:
             # 電話番号もしくはパスワードが正しくない場合
             return render(request, 'accounts/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
@@ -248,17 +265,18 @@ def account_settings(request):
 def profile_edit(request):
     profile = request.user.workerprofile
     if request.method == 'POST':
-        # 既存項目
+        # 名前・性別・誕生日の基本情報のみここで更新
         profile.last_name_kanji = request.POST.get('last_name_kanji')
-        # ... 他の名前項目 ...
+        profile.first_name_kanji = request.POST.get('first_name_kanji')
+        profile.last_name_kana = request.POST.get('last_name_kana')
+        profile.first_name_kana = request.POST.get('first_name_kana')
+        profile.gender = request.POST.get('gender')
         
-        # 追加項目（住所）
-        profile.postal_code = request.POST.get('postal_code')
-        profile.prefecture = request.POST.get('prefecture')
-        profile.city = request.POST.get('city')
-        profile.address_line = request.POST.get('address_line')
-        profile.building = request.POST.get('building')
-        
+        # 生年月日の更新
+        dob_str = request.POST.get('birth_date')
+        if dob_str:
+            profile.birth_date = date.fromisoformat(dob_str)
+            
         # 画像保存
         if 'face_photo' in request.FILES:
             profile.face_photo = request.FILES['face_photo']
@@ -268,7 +286,25 @@ def profile_edit(request):
 
     return render(request, 'accounts/profile_edit.html', {
         'profile': profile,
-        'prefectures_list': PREFECTURES # テンプレートにリストを渡す
+        'prefectures_list': PREFECTURES
+    })
+
+@login_required
+def profile_address_edit(request):
+    """プロフィールの住所を専用画面（画像再現）で編集する"""
+    profile = request.user.workerprofile
+    if request.method == 'POST':
+        profile.postal_code = request.POST.get('postal_code')
+        profile.prefecture = request.POST.get('prefecture')
+        profile.city = request.POST.get('city')
+        profile.address_line = request.POST.get('address_line')
+        profile.building = request.POST.get('building')
+        profile.save()
+        return redirect('profile_edit')
+
+    return render(request, 'accounts/profile_address_edit.html', {
+        'profile': profile,
+        'prefectures_list': PREFECTURES
     })
 
 @login_required
@@ -346,3 +382,19 @@ def phone_confirm_password(request):
                 'error': 'パスワードが正しくありません。'
             })
     return render(request, 'accounts/phone_confirm_password.html', {'new_phone': new_phone})
+
+@login_required
+def verify_identity_select(request):
+    """詳細画面: 本人確認書類の選択画面"""
+    return render(request, 'accounts/verify_identity_select.html')
+
+@login_required
+def verify_identity_upload(request):
+    """本人確認書類のアップロードと完了処理"""
+    if request.method == 'POST':
+        # プロフィールを本人確認済みに更新
+        profile = request.user.workerprofile
+        profile.is_identity_verified = True
+        profile.save()
+        return redirect('mypage')
+    return render(request, 'accounts/verify_identity_upload.html')

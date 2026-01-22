@@ -2,37 +2,161 @@
 
 {% block content %}
 <style>
-    .list-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
-    .list-title { font-size: 20px; font-weight: bold; margin: 0; }
-    .list-sub { font-size: 13px; color: #666; margin-top: 5px; }
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 25px;
+    }
+
+    .list-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .list-sub {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
 
     /* 並び替えエリア */
-    .sort-section { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .btn-sort { border: 1px solid #007AFF; color: #007AFF; background: white; padding: 6px 188px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
-    .btn-sort.active { background: #eef6ff; }
+    .sort-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .btn-sort {
+        border: 1px solid #007AFF;
+        color: #007AFF;
+        background: white;
+        padding: 6px 188px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-sort.active {
+        background: #eef6ff;
+    }
+
     /* ボタンの幅を調整（188pxは例として微調整） */
-    .btn-sort { padding: 6px 18px; }
+    .btn-sort {
+        padding: 6px 18px;
+    }
 
     /* ひな形カード */
-    .template-card { background: white; border-radius: 8px; border: 1px solid #eee; display: flex; padding: 20px; margin-bottom: 15px; gap: 20px; transition: 0.2s; }
-    .template-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    
-    .template-img { width: 220px; height: 140px; background: #f9f9f9; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-    .template-img span { font-size: 50px; } 
-    
-    .template-info { flex: 1; display: flex; flex-direction: column; }
-    .meta-text { font-size: 12px; color: #999; margin-bottom: 5px; }
-    .template-link-title { color: #007AFF; font-size: 16px; font-weight: bold; text-decoration: none; margin-bottom: 10px; }
-    .template-link-title:hover { text-decoration: underline; }
-    
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; }
-    .action-btns { display: flex; gap: 8px; }
-    
-    .btn-action { border: 1px solid #ddd; background: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; color: #333; text-decoration: none; display: flex; align-items: center; }
-    .btn-action i { margin-right: 5px; color: #666; }
-    
-    .btn-create-job-now { background: #007AFF; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; text-decoration: none; }
-    .btn-blue { background: #007AFF; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 14px; }
+    .template-card {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        display: flex;
+        padding: 20px;
+        margin-bottom: 15px;
+        gap: 20px;
+        transition: 0.2s;
+    }
+
+    .template-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .template-img {
+        width: 220px;
+        height: 140px;
+        background: #f9f9f9;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .template-img span {
+        font-size: 50px;
+    }
+
+    .template-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-text {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+    }
+
+    .template-link-title {
+        color: #007AFF;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .template-link-title:hover {
+        text-decoration: underline;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 15px;
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-action {
+        border: 1px solid #ddd;
+        background: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-action i {
+        margin-right: 5px;
+        color: #666;
+    }
+
+    .btn-create-job-now {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-blue {
+        background: #007AFF;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
 </style>
 
 <div class="list-header">
@@ -56,23 +180,33 @@
     {% for template in templates %}
     <div class="template-card">
         <div class="template-img">
+            {% with photo=template.photos.first %}
+            {% if photo %}
+            <img src="{{ photo.image.url }}" alt="{{ template.title }}"
+                style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
             <span>🍕</span>
+            {% endif %}
+            {% endwith %}
         </div>
         <div class="template-info">
             <div class="meta-text">{{ template.industry }} / {{ template.occupation }}</div>
-            
+
             <!-- 【修正1】詳細URLから store.id を削除 -->
             <a href="{% url 'biz_template_detail' template.pk %}" class="template-link-title">{{ template.title }}</a>
-            
+
             <div class="meta-text"><i class="fa-solid fa-location-dot"></i> {{ template.address }}</div>
             <div class="meta-text">最終更新日時: {{ template.created_at|date:"Y/m/d H:i" }}</div>
-            
+
             <div class="card-footer">
                 <div class="action-btns">
                     <!-- 【修正2】編集URLから store.id を削除 -->
-                    <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action"><i class="fa-solid fa-pen"></i> 編集</a>
+                    <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action"><i
+                            class="fa-solid fa-pen"></i> 編集</a>
                     <button class="btn-action"><i class="fa-solid fa-copy"></i> コピー</button>
-                    <button class="btn-action"><i class="fa-solid fa-trash"></i> 削除</button>
+                    <!-- 追加：削除ボタンのリンク先設定 -->
+                    <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action"><i
+                            class="fa-solid fa-trash"></i> 削除</a>
                 </div>
                 <!-- 【修正3】求人作成URLから store.id を削除 (urls.py で template_pk のみを指定しているため) -->
                 <a href="{% url 'biz_job_create' template.pk %}" class="btn-create-job-now">

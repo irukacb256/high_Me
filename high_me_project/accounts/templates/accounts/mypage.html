@@ -3,52 +3,172 @@
 {% block content %}
 <style>
     /* 全体コンテナ：薄いグレーの背景 */
-    .mypage-container { background-color: #F8F8F8; min-height: 100%; padding-bottom: 30px; }
+    .mypage-container {
+        background-color: #F8F8F8;
+        min-height: 100%;
+        padding-bottom: 30px;
+    }
 
     /* ヘッダーエリア */
-    .mypage-header { background: white; padding: 30px 20px 20px; text-align: left; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-    .page-title { font-size: 24px; font-weight: bold; color: #000; }
-    .notif-bell { font-size: 20px; color: #333; }
+    .mypage-header {
+        background: white;
+        padding: 30px 20px 20px;
+        text-align: left;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .notif-bell {
+        font-size: 20px;
+        color: #333;
+    }
 
     /* プロフィール */
-    .profile-section { display: flex; align-items: center; gap: 15px; }
-    .avatar-circle { 
-        width: 75px; height: 75px; border-radius: 50%; border: 3px solid #ff3b30; 
-        padding: 3px; background: white; display: flex; align-items: center; justify-content: center;
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
-    .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #aaa; overflow: hidden; }
-    .avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
 
-    .rank-info { display: flex; flex-direction: column; }
-    .rank-label { font-size: 11px; color: #666; margin-bottom: 2px; }
-    .rank-name { font-size: 22px; font-weight: bold; color: #000; }
+    .avatar-circle {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 3px solid #ff3b30;
+        padding: 3px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: #aaa;
+        overflow: hidden;
+    }
+
+    .avatar-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .rank-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rank-label {
+        font-size: 11px;
+        color: #666;
+        margin-bottom: 2px;
+    }
+
+    .rank-name {
+        font-size: 22px;
+        font-weight: bold;
+        color: #000;
+    }
 
     /* ウォレット赤カード */
-    .wallet-card { 
-        background: #FF3B30; color: white; padding: 20px; border-radius: 15px; 
-        margin: 20px 15px 30px; display: flex; justify-content: space-between; align-items: center; 
+    .wallet-card {
+        background: #FF3B30;
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin: 20px 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-    .wallet-balance { font-size: 28px; font-weight: bold; }
-    .btn-withdraw { background: white; color: #FF3B30; padding: 8px 18px; border-radius: 25px; font-size: 12px; font-weight: bold; text-decoration: none; }
+
+    .wallet-balance {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .btn-withdraw {
+        background: white;
+        color: #FF3B30;
+        padding: 8px 18px;
+        border-radius: 25px;
+        font-size: 12px;
+        font-weight: bold;
+        text-decoration: none;
+    }
 
     /* メニューグループ共通 */
-    .menu-group { margin-bottom: 25px; }
-    .menu-title { padding: 0 20px 10px; font-size: 13px; color: #888; font-weight: bold; }
-    
-    .menu-item { 
-        background: white; padding: 18px 20px; display: flex; justify-content: space-between; 
-        align-items: center; border-bottom: 1px solid #f2f2f2; text-decoration: none; color: #333;
+    .menu-group {
+        margin-bottom: 25px;
     }
-    .menu-item:active { background: #f9f9f9; }
-    .menu-label-wrapper { display: flex; align-items: center; font-size: 15px; font-weight: 500; }
-    .menu-label-wrapper i { margin-right: 15px; color: #555; width: 20px; text-align: center; font-size: 18px; }
-    .chevron { color: #ccc; font-size: 14px; }
+
+    .menu-title {
+        padding: 0 20px 10px;
+        font-size: 13px;
+        color: #888;
+        font-weight: bold;
+    }
+
+    .menu-item {
+        background: white;
+        padding: 18px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f2f2f2;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .menu-item:active {
+        background: #f9f9f9;
+    }
+
+    .menu-label-wrapper {
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .menu-label-wrapper i {
+        margin-right: 15px;
+        color: #555;
+        width: 20px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .chevron {
+        color: #ccc;
+        font-size: 14px;
+    }
 
     /* バナー広告 */
     .lab-banner {
         margin: 10px 15px 40px;
-        background: #FFD700; /* タイミーラボ イエロー */
+        background: #FFD700;
+        /* タイミーラボ イエロー */
         border-radius: 12px;
         padding: 20px;
         display: flex;
@@ -56,12 +176,27 @@
         align-items: center;
         text-decoration: none;
         color: #333;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         position: relative;
     }
-    .lab-text b { font-size: 18px; display: block; margin-bottom: 5px; }
-    .lab-text span { font-size: 12px; }
-    .lab-icon { position: absolute; right: 15px; top: 10px; font-size: 12px; color: #666; }
+
+    .lab-text b {
+        font-size: 18px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .lab-text span {
+        font-size: 12px;
+    }
+
+    .lab-icon {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        font-size: 12px;
+        color: #666;
+    }
 </style>
 
 <div class="mypage-container">
@@ -74,12 +209,14 @@
         <div class="profile-section">
             <a href="{% url 'profile_edit' %}" class="avatar-circle">
                 <div class="avatar-inner">
-                    {% if user.workerprofile.profile_image %}<img src="{{ user.workerprofile.profile_image.url }}">{% else %}👤{% endif %}
+                    {% if user.workerprofile.face_photo %}<img src="{{ user.workerprofile.face_photo.url }}">{%
+                    else %}👤{% endif %}
                 </div>
             </a>
             <div class="rank-info">
                 <span class="rank-label">Timee Membership</span>
-                <span class="rank-name">MASTER <span style="font-size:14px; font-weight:normal; margin-left:8px;">Lv 16</span></span>
+                <span class="rank-name">MASTER <span style="font-size:14px; font-weight:normal; margin-left:8px;">Lv
+                        16</span></span>
             </div>
         </div>
     </div>
@@ -93,51 +230,131 @@
         <div class="btn-withdraw">引き出す</div>
     </div>
 
+    <!-- 本人確認誘導バナー (未確認時のみ表示) -->
+    {% if not user.workerprofile.is_identity_verified %}
+    <a href="{% url 'verify_identity_select' %}" class="lab-banner"
+        style="background: white; border: 2px solid #FF3B30; margin-top: -15px;">
+        <div class="lab-text">
+            <span style="color: #FF3B30; font-weight: bold;">本人確認が完了していません</span>
+            <b style="font-size: 16px;">本人確認へすすむ</b>
+        </div>
+        <div style="font-size: 24px;">🪪</div>
+        <i class="fa-solid fa-chevron-right chevron"
+            style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);"></i>
+    </a>
+    {% endif %}
+
     <!-- 1. アカウント -->
     <div class="menu-group">
         <div class="menu-title">アカウント</div>
-        <a href="{% url 'account_settings' %}" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-gear"></i> アカウント設定</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-clipboard-list"></i> レビューとペナルティ</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-circle-user"></i> バッジ一覧</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-award"></i> 保有資格</div><i class="fa-solid fa-chevron-right chevron"></i></a>
+        <a href="{% url 'account_settings' %}" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-gear"></i> アカウント設定</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-clipboard-list"></i> レビューとペナルティ</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-circle-user"></i> バッジ一覧</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-award"></i> 保有資格</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
     </div>
 
     <!-- 2. お仕事 -->
     <div class="menu-group">
         <div class="menu-title">お仕事</div>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-briefcase"></i> これまでの仕事</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-address-card"></i> 長期バイトの応募履歴</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-yen-sign"></i> 獲得した報酬</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-file-invoice-dollar"></i> 源泉徴収票の確認と印刷</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-user-lock"></i> 年間報酬による制限の解除</div><i class="fa-solid fa-chevron-right chevron"></i></a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-briefcase"></i> これまでの仕事</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-address-card"></i> 長期バイトの応募履歴</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-yen-sign"></i> 獲得した報酬</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-file-invoice-dollar"></i> 源泉徴収票の確認と印刷</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-user-lock"></i> 年間報酬による制限の解除</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
     </div>
 
     <!-- 3. 通知とプライバシー -->
     <div class="menu-group">
         <div class="menu-title">通知とプライバシー</div>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-location-arrow"></i> 位置情報の設定</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-bell"></i> プッシュ通知設定</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-volume-xmark"></i> ミュートしている店舗</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-envelope"></i> お知らせメール設定</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-clipboard-check"></i> 検便依頼と結果</div><i class="fa-solid fa-chevron-right chevron"></i></a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-location-arrow"></i> 位置情報の設定</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-bell"></i> プッシュ通知設定</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-volume-xmark"></i> ミュートしている店舗</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-envelope"></i> お知らせメール設定</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-clipboard-check"></i> 検便依頼と結果</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
     </div>
 
     <!-- 4. サポート -->
     <div class="menu-group">
         <div class="menu-title">サポート</div>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-envelope"></i> お問い合わせ</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-regular fa-circle-question"></i> よくある質問</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-flag"></i> アプリの不具合・改善要望を報告</div><i class="fa-solid fa-chevron-right chevron"></i></a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-envelope"></i> お問い合わせ</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-regular fa-circle-question"></i> よくある質問</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-flag"></i> アプリの不具合・改善要望を報告</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
     </div>
 
     <!-- 5. その他 -->
     <div class="menu-group">
         <div class="menu-title">その他</div>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-book"></i> プライバシーポリシー</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-file-lines"></i> 利用規約</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-list-check"></i> 取扱職種の範囲</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-cat"></i> タイミーを一緒につくりませんか？</div><i class="fa-solid fa-chevron-right chevron"></i></a>
-        <a href="#" class="menu-item"><div class="menu-label-wrapper"><i class="fa-solid fa-user-minus"></i> 退会手続き</div><i class="fa-solid fa-chevron-right chevron"></i></a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-book"></i> プライバシーポリシー</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-file-lines"></i> 利用規約</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-list-check"></i> 取扱職種の範囲</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-cat"></i> タイミーを一緒につくりませんか？</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        <a href="#" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-user-minus"></i> 退会手続き</div><i
+                class="fa-solid fa-chevron-right chevron"></i>
+        </a>
     </div>
 
     <!-- バナー：タイミーラボ -->

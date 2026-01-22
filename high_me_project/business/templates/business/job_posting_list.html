@@ -4,33 +4,155 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
 <style>
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .page-title { font-size: 22px; font-weight: bold; }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: bold;
+    }
 
     /* 切り替えタブ */
-    .view-switcher { display: flex; border: 1px solid #ddd; border-radius: 20px; background: white; padding: 2px; }
-    .view-btn { padding: 8px 16px; border-radius: 18px; border: none; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; background: none; color: #666; }
-    .view-btn.active { background: #eef6ff; color: #007AFF; }
+    .view-switcher {
+        display: flex;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        padding: 2px;
+    }
+
+    .view-btn {
+        padding: 8px 16px;
+        border-radius: 18px;
+        border: none;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        color: #666;
+    }
+
+    .view-btn.active {
+        background: #eef6ff;
+        color: #007AFF;
+    }
 
     /* リストテーブル（画像1再現） */
-    .job-list-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 20px; font-size: 13px; }
-    .job-list-table th { background: #f9f9f9; padding: 15px; text-align: left; color: #888; border-bottom: 1px solid #eee; }
-    .job-list-table td { padding: 20px 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
-    
-    .status-badge { background: white; border: 1px solid #ddd; padding: 5px 15px; border-radius: 20px; color: #333; font-weight: bold; }
-    .privacy-tag { background: #eef6ff; color: #007AFF; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-top: 5px; display: inline-block; }
-    .job-link { color: #007AFF; font-weight: bold; text-decoration: underline; cursor: pointer; }
-    .btn-copy-dropdown { background: #007AFF; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .job-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px;
+        font-size: 13px;
+    }
 
-    #calendar-view, #list-view { display: none; }
-    .visible { display: block !important; }
+    .job-list-table th {
+        background: #f9f9f9;
+        padding: 15px;
+        text-align: left;
+        color: #888;
+        border-bottom: 1px solid #eee;
+    }
+
+    .job-list-table td {
+        padding: 20px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 5px 15px;
+        border-radius: 20px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .privacy-tag {
+        background: #eef6ff;
+        color: #007AFF;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-top: 5px;
+        display: inline-block;
+    }
+
+    .job-link {
+        color: #007AFF;
+        font-weight: bold;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .btn-copy-dropdown {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* 6ヶ月経過後のスタイル */
+    .job-old {
+        background-color: #f5f5f5 !important;
+        color: #999 !important;
+    }
+
+    .job-old .job-link {
+        color: #999 !important;
+        text-decoration: none;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .job-old .status-badge {
+        background: #eee;
+        border-color: #ddd;
+        color: #aaa;
+    }
+
+    #calendar-view,
+    #list-view {
+        display: none;
+    }
+
+    .visible {
+        display: block !important;
+    }
+
+    /* カレンダーの期限切れイベント */
+    .fc-event.event-old {
+        background-color: #d1d1d6 !important;
+        border-color: #c7c7cc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
 </style>
 
 <div class="page-header">
     <h1 class="page-title">すべての求人一覧</h1>
     <div class="view-switcher">
-        <button class="view-btn active" id="btn-calendar" onclick="switchView('calendar')"><i class="fa-solid fa-calendar-days"></i> カレンダー表示</button>
-        <button class="view-btn" id="btn-list" onclick="switchView('list')"><i class="fa-solid fa-list-ul"></i> リスト表示</button>
+        <button class="view-btn active" id="btn-calendar" onclick="switchView('calendar')"><i
+                class="fa-solid fa-calendar-days"></i> カレンダー表示</button>
+        <button class="view-btn" id="btn-list" onclick="switchView('list')"><i class="fa-solid fa-list-ul"></i>
+            リスト表示</button>
     </div>
 </div>
 
@@ -56,12 +178,12 @@
         </thead>
         <tbody>
             {% for job in postings %}
-            <tr>
-                <td><span class="status-badge">求人中</span></td>
+            <tr class="{% if job.is_old_posting %}job-old{% endif %}">
+                <td><span class="status-badge">{% if job.is_old_posting %}期限切れ{% else %}求人中{% endif %}</span></td>
                 <td>
-                    <div>一般公開</div>
+                    <div>{{ job.get_visibility_display|default:"一般公開" }}</div>
                     <!-- グループ限定等の場合はタグを表示 -->
-                    {% if job.visibility == 'group' %}<span class="privacy-tag">接客エキスパート</span>{% endif %}
+                    {% if job.visibility == 'group' %}<span class="privacy-tag">グループ限定</span>{% endif %}
                 </td>
                 <td>
                     <a href="{% url 'biz_job_posting_detail' store.id job.id %}" class="job-link">{{ job.title }}</a>
@@ -70,9 +192,12 @@
                     {{ job.work_date|date:"Y年n月j日" }}（{{ job.work_date|date:"D" }}）<br>
                     <strong>{{ job.start_time|time:"H:i" }} 〜 {{ job.end_time|time:"H:i" }}</strong>
                 </td>
-                <td>{{ job.matched_count|default:0 }} / {{ job.count }}人</td>
+                <td>{{ job.matched_count }} / {{ job.recruitment_count }}人</td>
                 <td>
-                    <button class="btn-copy-dropdown"><i class="fa-regular fa-copy"></i> コピー <i class="fa-solid fa-chevron-down"></i></button>
+                    {% if not job.is_old_posting %}
+                    <button class="btn-copy-dropdown"><i class="fa-regular fa-copy"></i> コピー <i
+                            class="fa-solid fa-chevron-down"></i></button>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -96,13 +221,22 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth', locale: 'ja',
-            events: [{% for job in postings %}{ title: '{{ job.start_time|time:"H:i" }} 👤{{ job.matched_count }}/{{ job.count }}', start: '{{ job.work_date|date:"Y-m-d" }}', url: "{% url 'biz_job_posting_detail' store.id job.id %}" },{% endfor %}]
+            events: [
+                {% for job in postings %}
+                {
+                title: '{{ job.start_time|time:"H:i" }} 👤{{ job.matched_count }}/{{ job.recruitment_count }}',
+                start: '{{ job.work_date|date:"Y-m-d" }}',
+                url: "{% if not job.is_old_posting %}{% url 'biz_job_posting_detail' store.id job.id %}{% endif %}",
+                className: "{% if job.is_old_posting %}event-old{% endif %}"
+            },
+            {% endfor %}
+            ]
         });
-        calendar.render();
+    calendar.render();
     });
 </script>
 {% endblock %}
