@@ -2,12 +2,54 @@
 
 {% block content %}
 <style>
-    .detail-container { max-width: 900px; margin: 20px auto; }
-    .detail-card { background: white; padding: 40px; border-radius: 8px; border: 1px solid #eee; }
-    .detail-row { display: flex; border-bottom: 1px solid #f5f5f5; padding: 20px 0; }
-    .detail-label { width: 200px; font-weight: bold; color: #666; font-size: 14px; }
-    .detail-value { flex: 1; font-size: 15px; line-height: 1.6; white-space: pre-wrap; }
-    .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .detail-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding-bottom: 40px;
+    }
+
+    .detail-card {
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+    .detail-row {
+        display: flex;
+        border-bottom: 1px solid #f5f5f5;
+        padding: 20px 0;
+    }
+
+    .detail-label {
+        width: 200px;
+        font-weight: bold;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .detail-value {
+        flex: 1;
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .tag-blue {
+        background: #eef6ff;
+        color: #007AFF;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        display: inline-block;
+    }
 </style>
 
 <div class="detail-container">
@@ -17,19 +59,121 @@
     </div>
 
     <div class="detail-card">
-        <h1 style="font-size: 22px; margin-bottom: 30px; border-bottom: 2px solid #007AFF; padding-bottom: 10px;">ひな形の詳細確認</h1>
-        
-        <div class="detail-row"><div class="detail-label">求人タイトル</div><div class="detail-value"><strong>{{ template.title }}</strong></div></div>
-        <div class="detail-row"><div class="detail-label">業種 / 職種</div><div class="detail-value">{{ template.industry }} / {{ template.occupation }}</div></div>
-        <div class="detail-row"><div class="detail-label">業務内容</div><div class="detail-value">{{ template.work_content }}</div></div>
-        <div class="detail-row"><div class="detail-label">注意事項</div><div class="detail-value">{{ template.precautions|default:"なし" }}</div></div>
-        <div class="detail-row"><div class="detail-label">持ち物</div><div class="detail-value">{{ template.belongings }}</div></div>
-        <div class="detail-row"><div class="detail-label">条件</div><div class="detail-value">{{ template.requirements }}</div></div>
-        <div class="detail-row"><div class="detail-label">就業場所</div><div class="detail-value">{{ template.address }}</div></div>
-        <div class="detail-row"><div class="detail-label">アクセス</div><div class="detail-value">{{ template.access }}</div></div>
-        <div class="detail-row"><div class="detail-label">自動送信メッセージ</div><div class="detail-value" style="background:#f9f9f9; padding:15px; border-radius:4px;">{{ template.auto_message }}</div></div>
+        <h1 style="font-size: 22px; margin-bottom: 30px; border-bottom: 2px solid #007AFF; padding-bottom: 10px;">
+            ひな形の詳細確認</h1>
+
+        <div class="detail-row">
+            <div class="detail-label">求人タイトル</div>
+            <div class="detail-value"><strong>{{ template.title }}</strong></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">業種 / 職種</div>
+            <div class="detail-value">{{ template.industry }} / {{ template.occupation }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">写真</div>
+            <div class="detail-value">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
+                    {% for photo in template.photos.all %}
+                    <img src="{{ photo.image.url }}"
+                        style="width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px;">
+                    {% empty %}
+                    <span style="color:#999;">写真なし</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">業務内容</div>
+            <div class="detail-value">{{ template.work_content }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">注意事項</div>
+            <div class="detail-value">{{ template.precautions|default:"なし" }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">待遇</div>
+            <div class="detail-value">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">未経験者歓迎</span>{% endif %}
+                    {% if template.has_bike_car_commute %}<span class="tag-blue">バイク/車通勤可</span>{% endif %}
+                    {% if template.has_clothing_free %}<span class="tag-blue">服装自由</span>{% endif %}
+                    {% if template.has_coupon_get %}<span class="tag-blue">クーポンGET</span>{% endif %}
+                    {% if template.has_meal %}<span class="tag-blue">まかないあり</span>{% endif %}
+                    {% if template.has_hair_color_free %}<span class="tag-blue">髪型/カラー自由</span>{% endif %}
+                    {% if template.has_bike_bicycle_commute %}<span class="tag-blue">バイク/自転車通勤可</span>{% endif %}
+                    {% if template.has_bicycle_commute %}<span class="tag-blue">自転車通勤可</span>{% endif %}
+                    {% if template.has_transportation_allowance %}<span class="tag-blue">交通費支給</span>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">持ち物</div>
+            <div class="detail-value">{{ template.belongings|default:"なし" }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">条件</div>
+            <div class="detail-value">{{ template.requirements|default:"なし" }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">就業場所</div>
+            <div class="detail-value">{{ template.address }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">アクセス</div>
+            <div class="detail-value">{{ template.access|default:"なし" }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">受動喫煙防止措置</div>
+            <div class="detail-value">
+                {{ template.get_smoking_prevention_display }}
+                {% if template.has_smoking_area %}（喫煙可能エリアでの作業あり）{% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">資格設定</div>
+            <div class="detail-value">
+                {% if template.requires_qualification %}
+                あり（{% if template.qualification %}{{ template.qualification.name }}{% else %}{{
+                template.get_qualification_type_display }}{% endif %}）
+                {% if template.qualification_notes %}
+                <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                    {{ template.qualification_notes|linebreaksbr }}
+                </div>
+                {% endif %}
+                {% else %}
+                なし
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">マニュアル (PDF)</div>
+            <div class="detail-value">
+                {% if template.manual_pdf %}
+                <a href="{{ template.manual_pdf.url }}" target="_blank" style="color:#007AFF; text-decoration:none;">
+                    <i class="far fa-file-pdf"></i> PDFを確認する
+                </a>
+                {% else %}
+                なし
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">自動送信メッセージ</div>
+            <div class="detail-value" style="background:#f9f9f9; padding:15px; border-radius:4px;">
+                {{ template.auto_message|default:"未設定" }}
+            </div>
+        </div>
     </div>
-    
+
     <div style="margin-top: 30px; text-align: center;">
         <a href="{% url 'biz_job_create' template.pk %}" class="btn-blue" style="padding: 15px 100px; font-size: 18px;">
             この内容で求人を募集する

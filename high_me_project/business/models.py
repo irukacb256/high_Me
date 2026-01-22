@@ -20,8 +20,20 @@ class Store(models.Model):
     address_line = models.CharField("町域・番地", max_length=100)
     building = models.CharField("建物名など", max_length=100, blank=True)
 
+    @property
+    def full_address(self):
+        return f"{self.prefecture}{self.city}{self.address_line}{self.building}"
+
     def __str__(self):
         return self.store_name
+
+class QualificationMaster(models.Model):
+    """資格マスタ"""
+    name = models.CharField("資格名称", max_length=100)
+    category = models.CharField("カテゴリ", max_length=100)
+
+    def __str__(self):
+        return f"[{self.category}] {self.name}"
 
 # --- 今回追加するモデル ---
 class JobTemplate(models.Model):
@@ -33,26 +45,81 @@ class JobTemplate(models.Model):
     work_content = models.TextField("業務内容")
     precautions = models.TextField("注意事項")
     
-    # 待遇
-    has_unexperienced_welcome = models.BooleanField(default=False)
-    has_transportation_allowance = models.BooleanField(default=False)
-    has_meal = models.BooleanField(default=False)
-    has_hair_color_free = models.BooleanField(default=False)
+    # 待遇 (画像2を基に追加)
+    has_unexperienced_welcome = models.BooleanField("未経験者歓迎", default=False)
+    has_bike_car_commute = models.BooleanField("バイク/車通勤可", default=False)
+    has_clothing_free = models.BooleanField("服装自由", default=False)
+    has_coupon_get = models.BooleanField("クーポンGET", default=False)
+    has_meal = models.BooleanField("まかないあり", default=False)
+    has_hair_color_free = models.BooleanField("髪型/カラー自由", default=False)
+    has_bike_bicycle_commute = models.BooleanField("バイク/自転車通勤可", default=False)
+    has_bicycle_commute = models.BooleanField("自転車通勤可", default=False)
+    # 以前のものも残しつつ整理
+    has_transportation_allowance = models.BooleanField("交通費支給", default=False)
     
-    belongings = models.TextField("持ち物")
-    requirements = models.TextField("働くための条件")
+    belongings = models.TextField("持ち物", blank=True, null=True)
+    requirements = models.TextField("働くための条件", blank=True, null=True)
     
-    # 就業場所
+    # 書類 (画像4)
+    manual_pdf = models.FileField("業務に関する書類(PDF)", upload_to='job_manuals/', null=True, blank=True)
+    
+    # 就業場所 (画像5)
     address = models.CharField("就業場所の住所", max_length=255)
-    access = models.TextField("アクセス")
+    access = models.TextField("アクセス", blank=True, null=True)
     contact_number = models.CharField("緊急連絡先", max_length=20)
     
-    auto_message = models.TextField("自動送信メッセージ")
+    # 受動喫煙防止措置
+    SMOKING_CHOICES = [
+        ('indoor_no_smoking', '屋内禁煙'),
+        ('indoor_smoking_separate', '分煙'),
+        ('indoor_smoking_ok', '屋内喫煙可'),
+    ]
+    smoking_prevention = models.CharField("受動喫煙防止措置", max_length=50, choices=SMOKING_CHOICES, default='indoor_no_smoking')
+    has_smoking_area = models.BooleanField("喫煙可能エリアでの作業あり", default=False)
+    
+    # 資格設定
+    requires_qualification = models.BooleanField("資格が必要ですか？", default=False)
+    QUAL_CHOICES = [
+        ('none', '選択してください'),
+        # 運転免許
+        ('ordinary_car_license', '普通自動車免許'),
+        ('mid_size_car_license', '中型自動車免許'),
+        ('large_size_car_license', '大型自動車免許'),
+        ('semi_mid_size_car_license', '準中型自動車免許'),
+        ('motorcycle_license', '普通自動二輪車免許'),
+        ('large_motorcycle_license', '大型自動二輪車免許'),
+        ('moped_license', '原付免許'),
+        # 専門・技能
+        ('forklift', 'フォークリフト'),
+        ('hazardous_materials_b4', '危険物取扱者（乙4）'),
+        ('food_hygiene_manager', '食品衛生責任者'),
+        ('cook', '調理師'),
+        # 医療・介護
+        ('nursing_care_basics', '介護職員初任者研修'),
+        ('registered_seller', '登録販売者'),
+        # その他
+        ('security_guard_training', '警備員新任教育受講済'),
+        ('health_supervisor', '衛生管理者'),
+    ]
+    qualification_type = models.CharField("資格種別(旧)", max_length=50, choices=QUAL_CHOICES, default='none', blank=True, null=True)
+    qualification = models.ForeignKey(QualificationMaster, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="必須資格")
+    qualification_notes = models.TextField("資格の補足情報", blank=True, null=True)
+
+    auto_message = models.TextField("自動送信メッセージ", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
-    
+
+class JobTemplatePhoto(models.Model):
+    """求人ひな形に紐づく写真（最大12枚）"""
+    template = models.ForeignKey(JobTemplate, on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField("写真", upload_to='job_templates/photos/')
+    order = models.PositiveIntegerField("表示順", default=0)
+
+    class Meta:
+        ordering = ['order']
+
 # business/models.py (JobPostingモデルを以下のように調整)
 
 class JobPosting(models.Model):

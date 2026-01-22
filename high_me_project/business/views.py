@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from accounts.models import WorkerProfile
-from .models import JobApplication, JobTemplate, JobPosting, Store, BusinessProfile
+from .models import JobApplication, JobTemplate, JobPosting, Store, BusinessProfile, QualificationMaster
 
 # --- 登録フロー ---
 
@@ -209,30 +209,55 @@ def template_list(request, store_id):
 
 @login_required
 def template_create(request, store_id):
-    # 1. 現在のユーザーに紐づく事業者プロフィールを取得
     biz_profile = get_object_or_404(BusinessProfile, user=request.user)
-    # 2. URLの store_id に基づいて、操作対象の店舗を特定
     store = get_object_or_404(Store, id=store_id, business=biz_profile)
 
     if request.method == 'POST':
         title = request.POST.get('title')
         if title:
-            # 3. 保存時に「store=store」を必ず入れる！
-            JobTemplate.objects.create(
-                store=store,  # ★ここが抜けていると、誰のひな形か不明になりリストに出ません
+            # 1. テンプレートの作成
+            template = JobTemplate.objects.create(
+                store=store,
                 title=title,
                 industry=request.POST.get('industry'),
                 occupation=request.POST.get('occupation'),
                 work_content=request.POST.get('work_content'),
+                precautions=request.POST.get('precautions'),
+                # 待遇
+                has_unexperienced_welcome='has_unexperienced_welcome' in request.POST,
+                has_bike_car_commute='has_bike_car_commute' in request.POST,
+                has_clothing_free='has_clothing_free' in request.POST,
+                has_coupon_get='has_coupon_get' in request.POST,
+                has_meal='has_meal' in request.POST,
+                has_hair_color_free='has_hair_color_free' in request.POST,
+                has_bike_bicycle_commute='has_bike_bicycle_commute' in request.POST,
+                has_bicycle_commute='has_bicycle_commute' in request.POST,
+                has_transportation_allowance='has_transportation_allowance' in request.POST,
+                # その他
+                belongings=request.POST.get('belongings'),
+                requirements=request.POST.get('requirements'),
                 address=request.POST.get('address'),
                 access=request.POST.get('access'),
                 contact_number=request.POST.get('contact_number'),
+                smoking_prevention=request.POST.get('smoking_prevention', 'indoor_no_smoking'),
+                has_smoking_area='has_smoking_area' in request.POST,
+                requires_qualification=request.POST.get('requires_qualification') == 'true',
+                qualification_id=request.POST.get('qualification_id') if request.POST.get('qualification_id') != 'none' else None,
+                qualification_notes=request.POST.get('qualification_notes'),
                 auto_message=request.POST.get('auto_message'),
+                # PDF
+                manual_pdf=request.FILES.get('manual_pdf'),
             )
-            # 4. 完了後のリダイレクト先にも store_id を含める
+            
+            # 2. 写真の保存（複数枚）
+            photos = request.FILES.getlist('photos')
+            for i, photo in enumerate(photos):
+                JobTemplatePhoto.objects.create(template=template, image=photo, order=i)
+
             return redirect('biz_template_list', store_id=store.id)
 
-    return render(request, 'business/template_form.html', {'store': store})
+    qualifications = QualificationMaster.objects.all().order_by('category', 'name')
+    return render(request, 'business/template_form.html', {'store': store, 'qualifications': qualifications})
 
 @login_required
 def template_detail(request, pk):
@@ -253,19 +278,50 @@ def template_edit(request, pk):
         template.occupation = request.POST.get('occupation')
         template.work_content = request.POST.get('work_content')
         template.precautions = request.POST.get('precautions')
+        # 待遇
+        template.has_unexperienced_welcome = 'has_unexperienced_welcome' in request.POST
+        template.has_bike_car_commute = 'has_bike_car_commute' in request.POST
+        template.has_clothing_free = 'has_clothing_free' in request.POST
+        template.has_coupon_get = 'has_coupon_get' in request.POST
+        template.has_meal = 'has_meal' in request.POST
+        template.has_hair_color_free = 'has_hair_color_free' in request.POST
+        template.has_bike_bicycle_commute = 'has_bike_bicycle_commute' in request.POST
+        template.has_bicycle_commute = 'has_bicycle_commute' in request.POST
+        template.has_transportation_allowance = 'has_transportation_allowance' in request.POST
+        
         template.belongings = request.POST.get('belongings')
         template.requirements = request.POST.get('requirements')
         template.address = request.POST.get('address')
         template.access = request.POST.get('access')
         template.contact_number = request.POST.get('contact_number')
+        template.smoking_prevention = request.POST.get('smoking_prevention', 'indoor_no_smoking')
+        template.has_smoking_area = 'has_smoking_area' in request.POST
+        template.requires_qualification = request.POST.get('requires_qualification') == 'true'
+        template.qualification_id = request.POST.get('qualification_id') if request.POST.get('qualification_id') != 'none' else None
+        template.qualification_notes = request.POST.get('qualification_notes')
         template.auto_message = request.POST.get('auto_message')
+        
+        # PDFの更新（新しいファイルがある場合のみ）
+        if 'manual_pdf' in request.FILES:
+            template.manual_pdf = request.FILES['manual_pdf']
+            
         template.save()
-        return redirect('biz_template_list')
 
+        # 写真の更新（簡易的に一度削除して再登録）
+        if 'photos' in request.FILES:
+            template.photos.all().delete()
+            photos = request.FILES.getlist('photos')
+            for i, photo in enumerate(photos):
+                JobTemplatePhoto.objects.create(template=template, image=photo, order=i)
+
+        return redirect('biz_template_list', store_id=store.id)
+
+    qualifications = QualificationMaster.objects.all().order_by('category', 'name')
     return render(request, 'business/template_form.html', {
         'template': template, 
         'store': store, 
-        'is_edit': True
+        'is_edit': True,
+        'qualifications': qualifications
     })
 
 # --- 求人作成フロー (画像3・4のシーケンス準拠) ---
