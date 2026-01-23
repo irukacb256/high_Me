@@ -1,15 +1,13 @@
 {% extends 'signup/signup_base.html' %}
 {% block content %}
-<div class="progress-container" style="margin-top:20px;">
-    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div>
-</div>
 <h1 class="question-title">仕事を探したい都道府県を選んでください</h1>
 
 <form method="post" style="flex:1; display:flex; flex-direction:column;">
     {% csrf_token %}
     <div style="flex:1; overflow-y:auto; border-top:1px solid #eee;">
         {% for pref in prefectures %}
-        <label style="display:flex; align-items:center; padding:18px; border-bottom:1px solid #eee; gap:15px; cursor:pointer;">
+        <label
+            style="display:flex; align-items:center; padding:18px; border-bottom:1px solid #eee; gap:15px; cursor:pointer;">
             <input type="checkbox" name="prefs" value="{{ pref }}" onclick="checkForm()">
             <span style="font-size:16px;">{{ pref }}</span>
         </label>
@@ -26,7 +24,7 @@
     function checkForm() {
         const checked = document.querySelectorAll('input[name="prefs"]:checked');
         const btn = document.getElementById('okBtn');
-        if(checked.length > 0) { btn.classList.add('active'); btn.disabled = false; }
+        if (checked.length > 0) { btn.classList.add('active'); btn.disabled = false; }
         else { btn.classList.remove('active'); btn.disabled = true; }
     }
 </script>

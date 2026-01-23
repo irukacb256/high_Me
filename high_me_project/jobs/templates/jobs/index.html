@@ -22,7 +22,11 @@
         font-size: 14px;
         font-weight: bold;
         color: #333;
-        border-bottom: 1px solid #f0f0f0;
+        /* 両端を丸くする変更 */
+        border-radius: 30px;
+        margin: 10px 15px;
+        /* 少し余白を持たせて独立させる */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .location-left {
@@ -80,6 +84,15 @@
 
     .date-chip.active .date-weekday {
         color: #333;
+    }
+
+    /* 土日の色 */
+    .date-chip.sat {
+        color: #007AFF;
+    }
+
+    .date-chip.sun {
+        color: #FF3B30;
     }
 
     .date-label-wrapper {
@@ -205,16 +218,23 @@
         position: absolute;
         top: 8px;
         left: 8px;
-        background: rgba(224, 36, 94, 0.9);
-        /* 赤 */
-        color: white;
+        background: rgba(255, 255, 255, 0.95);
+        /* 白背景 */
+        color: #333;
+        /* デフォルト黒 */
         font-size: 10px;
         font-weight: bold;
-        padding: 3px 6px;
+        padding: 4px 8px;
         border-radius: 4px;
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge-timer.urgent {
+        color: #FF3B30;
+        /* 赤文字 */
     }
 
     /* お気に入りハート (右上) */
@@ -328,14 +348,16 @@
     <div class="date-section">
         <div class="date-scroll">
             {% for d in date_list %}
+            <!-- date:'w' で 0=日曜, 6=土曜 -->
             <a href="?date={{ d|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
-                class="date-chip {% if d == selected_date %}active{% endif %}">
+                class="date-chip {% if d == selected_date %}active{% endif %} {% if d|date:'w' == '0' %}sun{% elif d|date:'w' == '6' %}sat{% endif %}">
 
                 {% if d == today %}
-                <div class="date-label-today">今日</div>
-                {% else %}
+                <div class="date-day">今日</div>
                 <div class="date-weekday">{{ d|date:"D" }}</div>
+                {% else %}
                 <div class="date-day">{{ d|date:"j" }}</div>
+                <div class="date-weekday">{{ d|date:"D" }}</div>
                 {% endif %}
             </a>
             {% endfor %}
@@ -452,18 +474,28 @@
             const diff = deadline - now;
 
             if (diff > 0) {
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                // タイミー画像では「00:23:48」のように秒まで出ている
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                // 24時間以上の判定
+                if (diff > 24 * 60 * 60 * 1000) {
+                    const days = Math.ceil(diff / (24 * 60 * 60 * 1000));
+                    el.innerText = `あと${days}日`;
+                    el.parentElement.classList.remove('urgent');
+                } else {
+                    // 24時間未満：カウントダウン
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                const hStr = String(hours).padStart(2, '0');
-                const mStr = String(minutes).padStart(2, '0');
-                const sStr = String(seconds).padStart(2, '0');
-                el.innerText = `${hStr}:${mStr}:${sStr}`;
+                    const hStr = String(hours).padStart(2, '0');
+                    const mStr = String(minutes).padStart(2, '0');
+                    const sStr = String(seconds).padStart(2, '0');
+                    el.innerText = `${hStr}:${mStr}:${sStr}`;
+                    el.parentElement.classList.add('urgent');
+                }
             } else {
                 el.innerText = '締切';
-                el.parentElement.style.background = '#999';
+                el.parentElement.classList.remove('urgent');
+                // 締切後は目立たなくする
+                el.parentElement.style.background = '#eee';
             }
         });
     }

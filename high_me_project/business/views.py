@@ -261,6 +261,11 @@ def template_create(request, store_id):
                 requires_qualification=request.POST.get('requires_qualification') == 'true',
                 qualification_id=request.POST.get('qualification_id') if request.POST.get('qualification_id') != 'none' else None,
                 qualification_notes=request.POST.get('qualification_notes'),
+                
+                # スキルとその他条件
+                skills=",".join(request.POST.getlist('skills')),
+                other_conditions="\n".join([c for c in request.POST.getlist('other_conditions') if c.strip()]),
+
                 auto_message=request.POST.get('auto_message'),
                 # PDF
                 manual_pdf=request.FILES.get('manual_pdf'),
@@ -316,6 +321,11 @@ def template_edit(request, pk):
         template.requires_qualification = request.POST.get('requires_qualification') == 'true'
         template.qualification_id = request.POST.get('qualification_id') if request.POST.get('qualification_id') != 'none' else None
         template.qualification_notes = request.POST.get('qualification_notes')
+
+        # スキルとその他条件
+        template.skills = ",".join(request.POST.getlist('skills'))
+        template.other_conditions = "\n".join([c for c in request.POST.getlist('other_conditions') if c.strip()])
+
         template.auto_message = request.POST.get('auto_message')
         
         # PDFの更新（新しいファイルがある場合のみ）

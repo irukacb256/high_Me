@@ -27,6 +27,11 @@ urlpatterns = [
     path('signup/workstyle/', account_views.setup_workstyle, name='setup_workstyle'),
     path('signup/pref-select/', account_views.setup_pref_select, name='setup_pref_select'),
     
+    # 新規本人確認フロー (サインアップ用)
+    path('signup/identity/', account_views.signup_verify_identity, name='signup_verify_identity'),
+    path('signup/identity/skip/', account_views.signup_verify_identity_skip, name='signup_verify_identity_skip'),
+    path('signup/confirm/', account_views.signup_confirm, name='signup_confirm'),
+    
     # ★ ここが足りなかったためにエラーが出ていました
     path('verify/', account_views.verify_identity, name='verify_identity'), 
     path('verify/select/', account_views.verify_identity_select, name='verify_identity_select'), 

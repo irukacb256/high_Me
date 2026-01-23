@@ -27,10 +27,23 @@ def index(request):
     date_str = request.GET.get('date', timezone.now().strftime('%Y-%m-%d'))
     selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     selected_prefs = request.GET.getlist('pref')
+    # 空文字を除去
+    selected_prefs = [p for p in selected_prefs if p]
     
+    # ユーザーがログインしていて、かつGETパラメータがない場合は、登録情報をデフォルトにする
+    if request.user.is_authenticated and not selected_prefs and not request.GET.get('date'):
+        if hasattr(request.user, 'workerprofile') and request.user.workerprofile.target_prefectures:
+             # カンマ区切りで保存されていると仮定
+             saved_prefs = request.user.workerprofile.target_prefectures.split(',')
+             selected_prefs = [p for p in saved_prefs if p]
+
+    print(f"DEBUG: date={selected_date}, prefs={selected_prefs}")
+
     postings = JobPosting.objects.filter(is_published=True, work_date=selected_date).prefetch_related('template__photos')
     if selected_prefs:
         postings = postings.filter(template__store__prefecture__in=selected_prefs)
+    
+    print(f"DEBUG: count={postings.count()}")
     
     # お気に入り状況取得
     user_fav_job_ids = []
@@ -50,12 +63,37 @@ def index(request):
 # --- 場所フロー ---
 def location_home(request):
     """画像5左：場所の設定トップ"""
-    selected_prefs = request.GET.getlist('pref')
+    selected_prefs = []
+    # ユーザー設定を取得
+    if request.user.is_authenticated and hasattr(request.user, 'workerprofile'):
+        if request.user.workerprofile.target_prefectures:
+            selected_prefs = request.user.workerprofile.target_prefectures.split(',')
+            selected_prefs = [p for p in selected_prefs if p]
+            
+    # GETパラメータがあればそちらを優先（一時的な変更など）
+    params = request.GET.getlist('pref')
+    if params:
+        selected_prefs = params
+
     return render(request, 'jobs/location_home.html', {'selected_prefs': selected_prefs})
 
 def pref_select(request):
     """画像5中：都道府県リスト"""
-    selected_prefs = request.GET.getlist('pref')
+    if request.method == 'POST':
+        # プロフィールに保存
+        if request.user.is_authenticated and hasattr(request.user, 'workerprofile'):
+            profile = request.user.workerprofile
+            prefs = request.POST.getlist('pref')
+            profile.target_prefectures = ",".join(prefs)
+            profile.save()
+            return redirect('index') # 保存してホームへ
+
+    # 現在の設定を取得して初期値にする
+    selected_prefs = []
+    if request.user.is_authenticated and hasattr(request.user, 'workerprofile'):
+         if request.user.workerprofile.target_prefectures:
+            selected_prefs = request.user.workerprofile.target_prefectures.split(',')
+    
     return render(request, 'jobs/pref_select.html', {
         'prefectures_list': PREFECTURES,
         'selected_prefs': selected_prefs

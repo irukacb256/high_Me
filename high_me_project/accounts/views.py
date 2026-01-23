@@ -97,14 +97,37 @@ def setup_gender(request):
 def setup_photo(request):
     """画像4: 顔写真登録"""
     profile = get_object_or_404(WorkerProfile, user=request.user)
+@login_required
+def setup_photo(request):
+    """画像4: 顔写真登録"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
-        if 'skip' in request.POST: # 「あとで」ボタン
-            return redirect('setup_address')
         if 'face_photo' in request.FILES:
             profile.face_photo = request.FILES['face_photo']
             profile.save()
-            return redirect('setup_address')
+            
+        # 次へ（住所入力へ戻す）
+        return redirect('setup_address')
+            
     return render(request, 'signup/step_photo.html')
+
+@login_required
+def signup_verify_identity(request):
+    """サインアップフロー用: 本人確認画面 (あとでボタンあり)"""
+    return render(request, 'signup/step_identity.html')
+
+@login_required
+def signup_verify_identity_skip(request):
+    """本人確認スキップ -> 確認画面へ"""
+    return redirect('signup_confirm')
+
+@login_required
+def signup_confirm(request):
+    """入力内容確認画面"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    if request.method == 'POST':
+        return redirect('setup_pref_select')
+    return render(request, 'signup/step_confirm.html', {'profile': profile})
 
 @login_required
 def setup_address(request):
@@ -128,11 +151,11 @@ def setup_workstyle(request):
     profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
         if 'skip' in request.POST:
-            return redirect('setup_pref_select')
+            return redirect('signup_verify_identity') # 変更: 本人確認へ
         profile.work_style = request.POST.get('work_style')
         profile.career_interest = request.POST.get('career_interest')
         profile.save()
-        return redirect('setup_pref_select')
+        return redirect('signup_verify_identity') # 変更: 本人確認へ
     return render(request, 'signup/step_workstyle.html')
 
 @login_required
@@ -147,7 +170,15 @@ def setup_pref_select(request):
         profile.save()
         return redirect('index') # 最後にホームへ
         
-    prefectures = ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都"] # 以下略
+    prefectures = [
+        "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+        "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+        "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+        "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
+        "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+        "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
+        "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+    ]
     return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
 
 
@@ -396,5 +427,10 @@ def verify_identity_upload(request):
         profile = request.user.workerprofile
         profile.is_identity_verified = True
         profile.save()
+        
+        # サインアップフロー中なら、次は確認画面へ
+        if request.session.get('auth_flow') == 'signup':
+             return redirect('signup_confirm')
+
         return redirect('mypage')
     return render(request, 'accounts/verify_identity_upload.html')

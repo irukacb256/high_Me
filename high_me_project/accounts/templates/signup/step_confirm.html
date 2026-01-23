@@ -1,0 +1,63 @@
+{% extends 'signup/signup_base.html' %}
+
+{% block content %}
+<h1 class="question-title">入力内容の確認</h1>
+
+<div style="margin-bottom: 30px;">
+    <!-- 名前 (漢字) -->
+    <div style="margin-bottom: 20px;">
+        <label style="color:#999; font-size:12px;">氏名（漢字）</label>
+        <div style="font-size:16px; font-weight:bold;">
+            {{ profile.last_name_kanji }} {{ profile.first_name_kanji }}
+        </div>
+    </div>
+
+    <!-- 名前 (カナ) -->
+    <div style="margin-bottom: 20px;">
+        <label style="color:#999; font-size:12px;">氏名（カナ）</label>
+        <div style="font-size:16px; font-weight:bold;">
+            {{ profile.last_name_kana }} {{ profile.first_name_kana }}
+        </div>
+    </div>
+
+    <!-- 性別 -->
+    <div style="margin-bottom: 20px;">
+        <label style="color:#999; font-size:12px;">性別</label>
+        <div style="font-size:16px; font-weight:bold;">
+            {% if profile.gender == 'male' %}男性
+            {% elif profile.gender == 'female' %}女性
+            {% else %}未回答
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 生年月日 -->
+    <div style="margin-bottom: 20px;">
+        <label style="color:#999; font-size:12px;">生年月日</label>
+        <div style="font-size:16px; font-weight:bold;">
+            {{ profile.birth_date|date:"Y年n月j日" }}
+        </div>
+    </div>
+
+    <!-- 住所 -->
+    <div style="margin-bottom: 20px;">
+        <label style="color:#999; font-size:12px;">住所</label>
+        <div style="font-size:16px; font-weight:bold;">
+            {% if profile.postal_code %}
+            〒{{ profile.postal_code }}<br>
+            {{ profile.prefecture|default:"" }} {{ profile.city|default:"" }} {{ profile.address_line|default:"" }}<br>
+            {{ profile.building|default:"" }}
+            {% else %}
+            <span style="color:#ccc;">入力されていません</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="footer-btn-area">
+        <button type="submit" class="btn-next active">次へ</button>
+    </div>
+</form>
+{% endblock %}

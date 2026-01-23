@@ -133,6 +133,10 @@ class JobTemplate(models.Model):
     qualification = models.ForeignKey(QualificationMaster, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="必須資格")
     qualification_notes = models.TextField("資格の補足情報", blank=True, null=True)
 
+    # 申し込み条件 (画像1・2)
+    skills = models.TextField("必要なスキル", blank=True, null=True) # カンマ区切りなどで保存
+    other_conditions = models.TextField("その他の条件", blank=True, null=True) # 改行区切りなどで保存
+
     auto_message = models.TextField("自動送信メッセージ", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

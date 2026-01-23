@@ -1,20 +1,26 @@
 {% extends 'base_auth.html' %}
 {% block content %}
-<form method="GET" action="{% url 'index' %}">
-    <div class="header" style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee;">
-        <a href="{% url 'location_home' %}" style="font-size:20px; text-decoration:none; color:#333;">＜</a>
+<form method="POST" id="prefForm">
+    {% csrf_token %}
+    <div class="header"
+        style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee;">
+        <!-- 戻るボタンも保存して戻る挙動にする -->
+        <a href="#" onclick="document.getElementById('prefForm').submit(); return false;"
+            style="font-size:20px; text-decoration:none; color:#333;">＜</a>
         <div style="flex:1; text-align:center; font-weight:bold;">都道府県を選択</div>
     </div>
     <div style="height: calc(100vh - 140px); overflow-y:auto;">
         {% for p in prefectures_list %}
         <label style="display:flex; justify-content:space-between; padding:20px; border-bottom:1px solid #f5f5f5;">
             <span>{{ p }}</span>
-            <input type="checkbox" name="pref" value="{{ p }}" {% if p in selected_prefs %}checked{% endif %} style="width:22px; height:22px;">
+            <input type="checkbox" name="pref" value="{{ p }}" {% if p in selected_prefs %}checked{% endif %}
+                style="width:22px; height:22px;">
         </label>
         {% endfor %}
     </div>
     <div style="padding:15px; border-top:1px solid #eee; background:white;">
-        <button type="submit" style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold; font-size:16px;">OK</button>
+        <button type="submit"
+            style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold; font-size:16px;">OK</button>
     </div>
 </form>
 {% endblock %}
