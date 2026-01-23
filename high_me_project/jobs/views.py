@@ -1,9 +1,13 @@
-from django.shortcuts import render , get_object_or_404 , redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from business.models import JobPosting , JobApplication
+from business.models import JobPosting, JobApplication, Store
 from django.utils import timezone
 from datetime import timedelta, datetime
 from django.db.models import Q
+from .models import FavoriteJob, FavoriteStore
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 # 共通データ
 PREFECTURES = [
@@ -24,9 +28,14 @@ def index(request):
     selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     selected_prefs = request.GET.getlist('pref')
     
-    postings = JobPosting.objects.filter(is_published=True, work_date=selected_date)
+    postings = JobPosting.objects.filter(is_published=True, work_date=selected_date).prefetch_related('template__photos')
     if selected_prefs:
         postings = postings.filter(template__store__prefecture__in=selected_prefs)
+    
+    # お気に入り状況取得
+    user_fav_job_ids = []
+    if request.user.is_authenticated:
+        user_fav_job_ids = FavoriteJob.objects.filter(user=request.user).values_list('job_posting_id', flat=True)
     
     context = {
         'date_list': [timezone.now().date() + timedelta(days=i) for i in range(14)],
@@ -34,6 +43,7 @@ def index(request):
         'main_jobs': postings,
         'selected_prefs': selected_prefs,
         'today': timezone.now().date(),
+        'user_fav_job_ids': set(user_fav_job_ids),
     }
     return render(request, 'jobs/index.html', context)
 
@@ -83,20 +93,91 @@ def reward_select(request):
 
 def job_detail(request, pk):
     """求人詳細画面 (画像2)"""
-    job = get_object_or_404(JobPosting, pk=pk)
+    job = get_object_or_404(JobPosting.objects.prefetch_related('template__photos'), pk=pk)
     is_applied = False
+    is_favorited = False
     if request.user.is_authenticated:
         is_applied = JobApplication.objects.filter(job_posting=job, worker=request.user).exists()
+        is_favorited = FavoriteJob.objects.filter(user=request.user, job_posting=job).exists()
     
     return render(request, 'jobs/detail.html', {
         'job': job, 
         'is_applied': is_applied,
+        'is_favorited': is_favorited,
         'is_closed': job.is_expired
     })
 
+@login_required
 def favorites(request):
     """お気に入り画面 (画像2)"""
-    return render(request, 'jobs/favorites.html')
+    # お気に入り求人を取得
+    favorite_jobs = FavoriteJob.objects.filter(user=request.user).select_related('job_posting', 'job_posting__template__store').order_by('-created_at')
+    
+    # お気に入り店舗を取得
+    favorite_stores = FavoriteStore.objects.filter(user=request.user).select_related('store').order_by('-created_at')
+    
+    context = {
+        'favorite_jobs': favorite_jobs,
+        'favorite_stores': favorite_stores,
+        'tab': request.GET.get('tab', 'jobs') # 'jobs' or 'stores'
+    }
+    return render(request, 'jobs/favorites.html', context)
+
+@login_required
+def store_profile(request, store_id):
+    """店舗プロフィール画面"""
+    store = get_object_or_404(Store, id=store_id)
+    
+    # この店舗の求人一覧（期限切れでないもの）
+    job_postings = JobPosting.objects.filter(
+        template__store=store,
+        work_date__gte=timezone.now().date()
+    ).order_by('work_date', 'start_time')
+    
+    # お気に入り済みかどうか
+    is_favorited = FavoriteStore.objects.filter(user=request.user, store=store).exists()
+    
+    # 求人リストにお気に入り情報を付加
+    # (詳細なN+1対策は割愛するが、本来はPrefetchなどを利用)
+    user_fav_job_ids = FavoriteJob.objects.filter(user=request.user).values_list('job_posting_id', flat=True)
+
+    return render(request, 'jobs/store_profile.html', {
+        'store': store,
+        'job_postings': job_postings,
+        'is_favorited': is_favorited,
+        'user_fav_job_ids': set(user_fav_job_ids),
+    })
+
+@login_required
+@require_POST
+def toggle_favorite_job(request, job_id):
+    """求人お気に入りトグルAPI"""
+    job = get_object_or_404(JobPosting, id=job_id)
+    fav_job, created = FavoriteJob.objects.get_or_create(user=request.user, job_posting=job)
+    
+    if not created:
+        # 既に存在していた場合は削除（トグル動作）
+        fav_job.delete()
+        is_favorited = False
+    else:
+        is_favorited = True
+        
+    return JsonResponse({'status': 'success', 'is_favorited': is_favorited})
+
+@login_required
+@require_POST
+def toggle_favorite_store(request, store_id):
+    """店舗お気に入りトグルAPI"""
+    store = get_object_or_404(Store, id=store_id)
+    fav_store, created = FavoriteStore.objects.get_or_create(user=request.user, store=store)
+    
+    if not created:
+        fav_store.delete()
+        is_favorited = False
+    else:
+        is_favorited = True
+        
+    return JsonResponse({'status': 'success', 'is_favorited': is_favorited})
 
 @login_required
 def work_schedule(request):
@@ -218,3 +299,20 @@ def apply_step_5_review(request, pk):
         return render(request, 'jobs/apply_complete.html', {'job': job})
     
     return render(request, 'jobs/apply_review.html', {'job': job})
+
+@login_required
+def badge_list(request):
+    """バッジ一覧画面"""
+    from accounts.models import Badge, WorkerBadge  # ここでインポート（循環参照回避のため）
+
+    badges = Badge.objects.all()
+    # ログインユーザーのバッジ獲得状況を取得
+    my_badges = WorkerBadge.objects.filter(worker=request.user.workerprofile).select_related('badge')
+    
+    # バッジIDをキーにした辞書を作成（テンプレートで引きやすくするため）
+    my_badges_dict = {wb.badge.id: wb for wb in my_badges}
+
+    return render(request, 'jobs/badge_list.html', {
+        'badges': badges,
+        'my_badges_dict': my_badges_dict,
+    })

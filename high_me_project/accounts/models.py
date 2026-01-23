@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Badge(models.Model):
+    """バッジマスター"""
+    name = models.CharField("バッジ名", max_length=100)
+    icon = models.ImageField("アイコン画像", upload_to='badges/', null=True, blank=True)
+    description = models.TextField("説明", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
 class WorkerProfile(models.Model):
     # Django標準のUserモデルと1対1で紐付け
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='workerprofile')
@@ -40,3 +49,17 @@ class WorkerProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} のプロフィール"
+
+class WorkerBadge(models.Model):
+    """ワーカーごとのバッジ獲得状況"""
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='badges')
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    certified_count = models.IntegerField("認定回数", default=0)
+    certified_store_count = models.IntegerField("認定店舗数", default=0)
+    is_obtained = models.BooleanField("獲得済み", default=False)
+
+    class Meta:
+        unique_together = ('worker', 'badge')
+
+    def __str__(self):
+        return f"{self.worker.user.username} - {self.badge.name}"

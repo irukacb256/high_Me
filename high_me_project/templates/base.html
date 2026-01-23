@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -14,16 +15,20 @@
         }
 
         body {
-            margin: 0; padding: 0;
-            background-color: #333; /* PCで見るときは背景を暗く */
-            display: flex; justify-content: center;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            /* PCで見るときは背景を暗く */
+            display: flex;
+            justify-content: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         /* スマホ画面のシミュレーター枠 */
         .phone-wrapper {
             width: 100%;
-            max-width: 430px; /* iPhone Pro Max程度の幅 */
+            max-width: 430px;
+            /* iPhone Pro Max程度の幅 */
             height: 100vh;
             background-color: white;
             position: relative;
@@ -36,55 +41,90 @@
         .content-area {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 80px; /* 下部ナビの高さ分 */
+            padding-bottom: 80px;
+            /* 下部ナビの高さ分 */
             background-color: var(--bg-gray);
         }
 
         /* ボトムナビゲーション */
         .bottom-nav {
             position: absolute;
-            bottom: 0; width: 100%; height: 70px;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
             background: white;
             border-top: 1px solid var(--border-color);
-            display: flex; justify-content: space-around; align-items: center;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
-            text-align: center; font-size: 10px; color: #999; text-decoration: none; flex: 1;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            text-decoration: none;
+            flex: 1;
         }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
-        .nav-item.active { color: #333; font-weight: bold; }
+
+        .nav-item i {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: #333;
+            font-weight: bold;
+        }
 
         /* スクロールバーを隠す設定（任意） */
-        .content-area::-webkit-scrollbar { display: none; }
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="phone-wrapper">
-    <div class="content-area">
-        {% block content %}{% endblock %}
+    <div class="phone-wrapper">
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="{% url 'index' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <i class="fa-solid fa-magnifying-glass"></i>さがす
+            </a>
+            <a href="{% url 'favorites' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+                <i class="fa-regular fa-heart"></i>お気に入り
+            </a>
+            <a href="{% url 'work_schedule' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'work_schedule' %}active{% endif %}">
+                <i class="fa-solid fa-briefcase"></i>はたらく
+            </a>
+            <a href="{% url 'messages' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+                <i class="fa-regular fa-comment-dots"></i>メッセージ
+            </a>
+            <a href="{% url 'mypage' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'mypage' %}active{% endif %}">
+                <i class="fa-regular fa-user"></i>マイページ
+            </a>
+        </nav>
     </div>
 
-    <nav class="bottom-nav">
-        <a href="{% url 'index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
-            <i class="fa-solid fa-magnifying-glass"></i>さがす
-        </a>
-        <a href="{% url 'favorites' %}" class="nav-item {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
-            <i class="fa-regular fa-heart"></i>お気に入り
-        </a>
-        <a href="{% url 'work_schedule' %}" class="nav-item {% if request.resolver_match.url_name == 'work_schedule' %}active{% endif %}">
-            <i class="fa-solid fa-briefcase"></i>はたらく
-        </a>
-        <a href="{% url 'messages' %}" class="nav-item {% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
-            <i class="fa-regular fa-comment-dots"></i>メッセージ
-        </a>
-        <a href="{% url 'mypage' %}" class="nav-item {% if request.resolver_match.url_name == 'mypage' %}active{% endif %}">
-            <i class="fa-regular fa-user"></i>マイページ
-        </a>
-    </nav>
-</div>
-
+    <script>
+        // ブラウザバック時にページをリロードして、最新のお気に入り状態を反映させる
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
+
 </html>

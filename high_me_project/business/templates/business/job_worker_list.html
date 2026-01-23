@@ -2,34 +2,163 @@
 
 {% block content %}
 <style>
-    .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .matching-title { font-size: 20px; font-weight: bold; }
-    .btn-tool { background: white; border: 1px solid #ddd; padding: 8px 15px; border-radius: 4px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: bold; }
-    .btn-dark { background: #333; color: white; border: none; }
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-    .info-banner { background: #f3eefc; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: #5a2ea6; font-size: 14px; font-weight: bold; }
+    .matching-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
 
-    .worker-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-    .worker-table th { background: #f9f9f9; padding: 12px 15px; text-align: left; color: #888; font-size: 12px; border-bottom: 1px solid #eee; font-weight: normal; }
-    .worker-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 13px; }
+    .btn-tool {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+    }
 
-    .worker-info-cell { display: flex; align-items: center; gap: 12px; }
-    .worker-img { width: 50px; height: 50px; border-radius: 50%; background: #eee; object-fit: cover; }
-    .worker-name-box { display: flex; flex-direction: column; line-height: 1.4; }
-    .name-kanji { color: #888; font-size: 13px; }
-    .name-kana { color: #888; font-size: 11px; }
-    .worker-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .btn-dark {
+        background: #333;
+        color: white;
+        border: none;
+    }
 
-    .status-badge { background: #b2f2bb; color: #2b8a3e; padding: 4px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; display: inline-block; }
-    .tag-row { display: flex; gap: 5px; margin-top: 8px; }
-    .skill-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; display: flex; align-items: center; gap: 3px; }
-    .tag-orange { background: #fff4e6; color: #d9480f; }
-    .tag-purple { background: #f3f0ff; color: #5f3dc4; }
+    .info-banner {
+        background: #f3eefc;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #5a2ea6;
+        font-size: 14px;
+        font-weight: bold;
+    }
 
-    .back-link { color: #666; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; margin-top: 30px; font-size: 14px; }
-    
+    .worker-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .worker-table th {
+        background: #f9f9f9;
+        padding: 12px 15px;
+        text-align: left;
+        color: #888;
+        font-size: 12px;
+        border-bottom: 1px solid #eee;
+        font-weight: normal;
+    }
+
+    .worker-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .worker-info-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .worker-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #eee;
+        object-fit: cover;
+    }
+
+    .worker-name-box {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.4;
+    }
+
+    .name-kanji {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .name-kana {
+        color: #888;
+        font-size: 11px;
+    }
+
+    .worker-meta {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .status-badge {
+        background: #b2f2bb;
+        color: #2b8a3e;
+        padding: 4px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .tag-row {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .skill-tag {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .tag-orange {
+        background: #fff4e6;
+        color: #d9480f;
+    }
+
+    .tag-purple {
+        background: #f3f0ff;
+        color: #5f3dc4;
+    }
+
+    .back-link {
+        color: #666;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 30px;
+        font-size: 14px;
+    }
+
     /* チェックボックス */
-    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="header-row">
@@ -65,21 +194,29 @@
                 <div class="worker-info-cell">
                     <!-- 顔写真の反映 -->
                     {% if match.worker.workerprofile.face_photo %}
-                        <img src="{{ match.worker.workerprofile.face_photo.url }}" class="worker-img">
+                    <img src="{{ match.worker.workerprofile.face_photo.url }}" class="worker-img">
                     {% else %}
-                        <div class="worker-img" style="display:flex; align-items:center; justify-content:center; background:#ffeb3b;">
-                            <i class="fa-solid fa-face-smile" style="color:white; font-size:24px;"></i>
-                        </div>
+                    <div class="worker-img"
+                        style="display:flex; align-items:center; justify-content:center; background:#ffeb3b;">
+                        <i class="fa-solid fa-face-smile" style="color:white; font-size:24px;"></i>
+                    </div>
                     {% endif %}
-                    
+
                     <div class="worker-name-box">
-                        <!-- 漢字氏名・カナ氏名の反映 -->
-                        <span class="name-kanji">{{ match.worker.workerprofile.last_name_kanji }} {{ match.worker.workerprofile.first_name_kanji }}</span>
-                        <span class="name-kana">{{ match.worker.workerprofile.last_name_kana }} {{ match.worker.workerprofile.first_name_kana }}</span>
-                        <div class="worker-meta">
-                            {{ match.worker_age }}歳 
-                            {% if match.worker.workerprofile.gender == '男性' %}男性{% elif match.worker.workerprofile.gender == '女性' %}女性{% else %}{{ match.worker.workerprofile.gender }}{% endif %}
-                        </div>
+                        <!-- リンクを追加 -->
+                        <a href="{% url 'biz_worker_detail' store.id match.worker.id %}"
+                            style="text-decoration: none; color: inherit;">
+                            <span class="name-kanji">{{ match.worker.workerprofile.last_name_kanji }} {{
+                                match.worker.workerprofile.first_name_kanji }}</span>
+                            <span class="name-kana">{{ match.worker.workerprofile.last_name_kana }} {{
+                                match.worker.workerprofile.first_name_kana }}</span>
+                            <div class="worker-meta">
+                                {{ match.worker_age }}歳
+                                {% if match.worker.workerprofile.gender == '男性' %}男性{% elif
+                                match.worker.workerprofile.gender == '女性' %}女性{% else %}{{
+                                match.worker.workerprofile.gender }}{% endif %}
+                            </div>
+                        </a>
                     </div>
                 </div>
                 <!-- スキルバッジ（固定サンプル） -->

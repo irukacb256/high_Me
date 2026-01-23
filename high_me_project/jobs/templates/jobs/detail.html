@@ -4,24 +4,51 @@
 <style>
     .detail-container {
         background: white;
-        min-height: 100%;
-        position: relative;
+        min-height: 100vh;
+        padding-bottom: 120px;
+        /* ボトムボタン用の余白 */
     }
 
-    /* ヘッダー画像 */
+    /* ヘッダー画像(カルーセル) */
     .header-img {
         width: 100%;
-        height: 220px;
+        height: 250px;
         background: #eee;
         position: relative;
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .header-img::-webkit-scrollbar {
+        display: none;
+    }
+
+    .header-img img {
+        width: 100%;
+        flex-shrink: 0;
+        height: 100%;
+        object-fit: cover;
+        scroll-snap-align: start;
+    }
+
+    .header-img-placeholder {
+        width: 100%;
+        flex-shrink: 0;
+        height: 100%;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .back-btn {
         position: absolute;
         top: 20px;
         left: 15px;
-        background: rgba(0, 0, 0, 0.3);
-        color: white;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
         width: 35px;
         height: 35px;
         border-radius: 50%;
@@ -29,127 +56,288 @@
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        z-index: 10;
+        z-index: 100;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .header-img img {
+    /* メイン情報 */
+    .detail-body {
+        padding: 20px 15px;
+    }
+
+    .category-text {
+        font-size: 13px;
+        color: #8E8E93;
+        margin-bottom: 8px;
+    }
+
+    .job-title {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.4;
+        margin-bottom: 15px;
+        color: #000;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .info-row i {
+        color: #8E8E93;
+        width: 16px;
+        text-align: center;
+    }
+
+    /* バッジエリア */
+    .badge-area {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .badge {
+        font-size: 11px;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 4px;
+        color: white;
+    }
+
+    .badge-red {
+        background: #FF3B30;
+    }
+
+    /* 報酬表示 */
+    .payment-section {
+        margin-bottom: 30px;
+    }
+
+    .total-amount {
+        font-size: 32px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 5px;
+    }
+
+    .breakdown-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .breakdown-row i {
+        color: #8E8E93;
+        width: 16px;
+    }
+
+    /* セクションタイトル */
+    .section-title {
+        font-weight: bold;
+        font-size: 17px;
+        margin: 40px 0 15px;
+        color: #000;
+    }
+
+    /* 待遇アイコン */
+    .treatment-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .treatment-item {
+        width: 65px;
+        text-align: center;
+        font-size: 10px;
+        color: #8E8E93;
+    }
+
+    .treatment-icon {
+        width: 60px;
+        height: 60px;
+        background: #F2F2F7;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #8E8E93;
+        margin: 0 auto 6px;
+    }
+
+    .content-text {
+        font-size: 15px;
+        color: #333;
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+
+    /* アコーディオン(書類) */
+    .accordion {
+        border-top: 1px solid #F2F2F7;
+        border-bottom: 1px solid #F2F2F7;
+        margin: 20px 0;
+    }
+
+    .accordion-header {
+        padding: 18px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+
+    .accordion-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .accordion-body {
+        display: none;
+        padding-bottom: 18px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* マップ */
+    .map-placeholder {
+        width: 100%;
+        height: 180px;
+        background: #F2F2F7;
+        border-radius: 12px;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8E8E93;
+        overflow: hidden;
+    }
+
+    .map-placeholder img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    /* ボディ（パディングを多めにとる：ナビ75px + ボタン約80px = 155px以上） */
-    .detail-body {
-        padding: 20px;
-        padding-bottom: 180px;
-    }
-
-    .category-text {
-        font-size: 11px;
-        color: #999;
-        margin-bottom: 8px;
-    }
-
-    .job-title {
-        font-size: 18px;
-        font-weight: bold;
-        line-height: 1.5;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .info-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        font-size: 14px;
-        color: #333;
-        margin-bottom: 12px;
-    }
-
-    .info-row i {
-        color: #666;
-        margin-top: 3px;
-        width: 16px;
+    /* 店舗詳細セクション */
+    .store-info-box {
         text-align: center;
+        padding: 40px 0;
+        border-top: 1px solid #F2F2F7;
     }
 
-    /* 報酬表示 */
-    .payment-box {
-        margin: 25px 0;
-        border-top: 1px dotted #eee;
-        border-bottom: 1px dotted #eee;
-        padding: 15px 0;
+    .store-logo {
+        width: 80px;
+        height: 80px;
+        background: #F2F2F7;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        color: #C7C7CC;
     }
 
-    .total-amount {
-        font-size: 30px;
+    .store-name {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .btn-outline {
+        display: inline-block;
+        padding: 8px 20px;
+        border: 1px solid #E5E5EA;
+        border-radius: 20px;
+        font-size: 14px;
         font-weight: bold;
         color: #333;
+        text-decoration: none;
     }
 
-    .breakdown {
-        font-size: 12px;
-        color: #666;
-        margin-top: 5px;
-    }
-
-    .section-title {
-        font-weight: bold;
-        font-size: 16px;
-        margin: 35px 0 15px;
-        border-left: 4px solid #FFD700;
-        padding-left: 12px;
-    }
-
-    .content-text {
-        font-size: 14px;
-        color: #444;
-        line-height: 1.8;
-        white-space: pre-wrap;
-    }
-
-    /* ★ 修正：ナビゲーションバー（75px）の上に配置される固定ボタン */
+    /* ボトム固定ボタン - 浮いているスタイル */
     .fixed-footer {
-        position: absolute;
+        position: fixed;
         bottom: 75px;
-        /* ボトムナビの高さ分だけ浮かせる */
-        left: 0;
-        width: 90%;
-        padding: 15px 20px;
+        /* ボトムナビの高さに合わせる */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 430px;
+        /* スマホサイズに制限 */
         background: rgba(255, 255, 255, 0.95);
         border-top: 1px solid #eee;
+        padding: 10px 15px;
         box-sizing: border-box;
         z-index: 1001;
-        /* コンテンツより上に表示 */
+        display: flex;
+        /* 横並び */
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-fav {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid #E5E5EA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #C7C7CC;
+        cursor: pointer;
+        flex-shrink: 0;
+        /* 縮小しない */
+    }
+
+    .btn-fav.active {
+        color: #E0245E;
+        border-color: #E0245E;
+        background: #FFF0F5;
     }
 
     .btn-apply {
-        display: block;
-        width: 100%;
-        padding: 16px;
+        flex: 1;
+        /* 残りの幅をすべて使う */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
         background: #007AFF;
-        /* タイミーブルー */
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: bold;
         font-size: 16px;
         text-align: center;
         text-decoration: none;
-        cursor: pointer;
         box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2);
     }
 
-    /* 状態別のボタン色 */
     .btn-verify {
-        background: #FFD700 !important;
-        color: #333 !important;
+        background: #FFD700;
+        color: #000;
     }
 
     .btn-closed {
-        background: #eee !important;
-        color: #aaa !important;
+        background: #E5E5EA;
+        color: #8E8E93;
+        box-shadow: none;
         cursor: not-allowed;
     }
 </style>
@@ -157,7 +345,13 @@
 <div class="detail-container">
     <div class="header-img">
         <a href="{% url 'index' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <img src="https://via.placeholder.com/400x250?text={{ job.template.occupation }}" alt="求人画像">
+        {% for photo in job.template.photos.all %}
+        <img src="{{ photo.image.url }}" alt="求人画像">
+        {% empty %}
+        <div class="header-img-placeholder">
+            <img src="https://via.placeholder.com/400x250?text={{ job.template.occupation }}" alt="求人画像">
+        </div>
+        {% endfor %}
     </div>
 
     <div class="detail-body">
@@ -167,47 +361,176 @@
         <div class="info-row">
             <i class="fa-regular fa-clock"></i>
             <div>
-                {{ job.work_date|date:"Y年m月d日(D)" }}<br>
-                {{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }}
+                {{ job.work_date|date:"Y年n月j日(D)" }} {{ job.start_time|time:"H:i" }}〜{{ job.end_time|time:"H:i" }} (休憩{{
+                job.break_duration }}分)
             </div>
         </div>
 
-        <div class="info-row">
-            <i class="fa-solid fa-location-dot"></i>
-            <div>{{ job.template.address }}</div>
+        <div class="badge-area">
+            {% if job.is_urgent %}
+            <div class="badge badge-red">あと少しで募集締め切り</div>
+            {% endif %}
+            <div class="badge badge-red">募集人数 {{ job.matched_count }}/{{ job.recruitment_count }}人</div>
         </div>
 
-        <div class="payment-box">
-            <div class="total-amount">¥{{ job.total_payment }}</div>
-            <div class="breakdown">
-                時給 ¥{{ job.hourly_wage|default:"1100" }} / 交通費 ¥{{ job.transportation_fee|default:"500" }}含む
+        <div class="payment-section">
+            <div class="total-amount">¥{{ job.total_payment|default:"2,565" }}</div>
+            <div class="breakdown-row">
+                <i class="fa-solid fa-yen-sign"></i>
+                <div>時給 ¥{{ job.hourly_wage|default:"1,140" }}</div>
             </div>
+            <div class="breakdown-row">
+                <i class="fa-solid fa-train"></i>
+                <div>交通費{% if job.transportation_fee > 0 %} ¥{{ job.transportation_fee }}{% else %}支給なし{% endif %}</div>
+            </div>
+        </div>
+
+        <div class="section-title">待遇</div>
+        <div class="treatment-list">
+            {% if job.template.has_unexperienced_welcome %}
+            <div class="treatment-item">
+                <div class="treatment-icon"><i class="fa-solid fa-user-plus"></i></div>
+                未経験者歓迎
+            </div>
+            {% endif %}
+            {% if job.template.has_meal %}
+            <div class="treatment-item">
+                <div class="treatment-icon"><i class="fa-solid fa-utensils"></i></div>
+                まかないあり
+            </div>
+            {% endif %}
+            {% if job.template.has_clothing_free %}
+            <div class="treatment-item">
+                <div class="treatment-icon"><i class="fa-solid fa-shirt"></i></div>
+                服装自由
+            </div>
+            {% endif %}
+            {% if job.template.has_transportation_allowance or job.transportation_fee > 0 %}
+            <div class="treatment-item">
+                <div class="treatment-icon"><i class="fa-solid fa-train"></i></div>
+                交通費支給
+            </div>
+            {% endif %}
         </div>
 
         <div class="section-title">業務内容</div>
         <div class="content-text">{{ job.template.work_content }}</div>
+
+        {% if job.template.precautions %}
+        <div class="section-title">注意事項</div>
+        <div class="content-text">{{ job.template.precautions }}</div>
+        {% endif %}
 
         <div class="section-title">持ち物</div>
         <div class="content-text">{{ job.template.belongings|default:"特になし" }}</div>
 
         <div class="section-title">働くための条件</div>
         <div class="content-text">{{ job.template.requirements|default:"特になし" }}</div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion('docs-body', 'docs-icon')">
+                <div class="accordion-title">
+                    <i class="fa-regular fa-file-lines"></i> 業務に関する書類
+                </div>
+                <i class="fa-solid fa-chevron-down" id="docs-icon" style="color: #C7C7CC; font-size: 14px;"></i>
+            </div>
+            <div id="docs-body" class="accordion-body">
+                {% if job.template.manual_pdf %}
+                <a href="{{ job.template.manual_pdf.url }}" target="_blank"
+                    style="color: #007AFF; text-decoration: none;">
+                    <i class="fa-solid fa-file-pdf"></i> マニュアルを確認する
+                </a>
+                {% else %}
+                書類はありません。
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section-title">働く場所</div>
+        <div class="map-placeholder">
+            <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ job.template.address|urlencode }}&zoom=15&size=600x300&key=YOUR_API_KEY&markers=color:red%7C{{ job.template.address|urlencode }}"
+                alt="地図">
+            <!-- 実際にはAPIキーがない場合、プレースホルダーとして表示 -->
+        </div>
+        <div class="content-text">{{ job.template.address }}</div>
+
+        {% if job.template.access %}
+        <div class="section-title">アクセス</div>
+        <div class="content-text">{{ job.template.access }}</div>
+        {% endif %}
+
+        <div class="store-info-box">
+            <div class="store-logo">
+                <i class="fa-solid fa-store"></i>
+            </div>
+            <div class="store-name">{{ job.template.store.store_name }}</div>
+            <a href="{% url 'store_profile' job.template.store.id %}" class="btn-outline">この店舗の募集状況</a>
+        </div>
     </div>
 </div>
 
-<!-- 固定ボタン（ナビの上） -->
+<!-- 固定ボタン -->
 <div class="fixed-footer">
+    <!-- ハートマーク -->
+    <div class="btn-fav {% if is_favorited %}active{% endif %}" onclick="toggleFav('{{ job.id }}', this)">
+        <i class="fa-{% if is_favorited %}solid{% else %}regular{% endif %} fa-heart"></i>
+    </div>
+
+    <!-- 申し込みボタン -->
     {% if not user.is_authenticated %}
     <a href="{% url 'gate' %}" class="btn-apply">ログインして申し込む</a>
     {% elif not user.workerprofile.is_identity_verified %}
-    <a href="{% url 'verify_identity_select' %}" class="btn-apply btn-verify">本人確認に進む</a>
+    <a href="{% url 'verify_identity_select' %}" class="btn-apply btn-verify">本人確認にすすむ</a>
     {% elif is_applied %}
     <div class="btn-apply btn-closed">申し込み済み</div>
     {% elif is_closed %}
     <div class="btn-apply btn-closed">募集を終了しました</div>
     {% else %}
-    <a href="{% url 'apply_step_1' job.pk %}" class="btn-apply">申し込みへ進む</a>
+    <a href="{% url 'apply_step_1' job.pk %}" class="btn-apply">申し込みにすすむ</a>
     {% endif %}
 </div>
+
+<script>
+    function toggleAccordion(bodyId, iconId) {
+        const body = document.getElementById(bodyId);
+        const icon = document.getElementById(iconId);
+        if (body.style.display === "block") {
+            body.style.display = "none";
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            body.style.display = "block";
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    }
+
+    function toggleFav(jobId, btnElement) {
+        fetch(`/favorites/toggle/job/${jobId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const icon = btnElement.querySelector('i');
+                    if (data.is_favorited) {
+                        btnElement.classList.add('active');
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                        icon.style.color = '#E0245E'; // ハートの色を赤くする
+                    } else {
+                        btnElement.classList.remove('active');
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                        icon.style.color = '#C7C7CC'; // 元の色に戻す
+                    }
+                }
+            });
+    }
+</script>
 
 {% endblock %}

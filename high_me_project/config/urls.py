@@ -56,6 +56,13 @@ urlpatterns = [
     path('favorites/', job_views.favorites, name='favorites'),      # ★追加
     path('schedule/', job_views.work_schedule, name='work_schedule'), # ★追加
     path('messages/', job_views.messages, name='messages'),          # ★追加
+    path('home/refine/keyword/', job_views.keyword_exclude, name='keyword_exclude'), # ★追加（NoReverseMatch対応）
+    path('badges/', job_views.badge_list, name='badge_list'),        # ★バッジ一覧
+    
+    # 店舗プロフィール & お気に入りAPI
+    path('store/<int:store_id>/', job_views.store_profile, name='store_profile'),
+    path('favorites/toggle/job/<int:job_id>/', job_views.toggle_favorite_job, name='toggle_favorite_job'),
+    path('favorites/toggle/store/<int:store_id>/', job_views.toggle_favorite_store, name='toggle_favorite_store'),
 
     # accountsアプリ関連
     path('mypage/', account_views.mypage, name='mypage'),            # ★追加
@@ -123,6 +130,8 @@ urlpatterns = [
     path('biz/store/<int:store_id>/postings/<int:pk>/', biz_views.job_posting_detail, name='biz_job_posting_detail'),
     #ワーカーの確認
     path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.job_worker_list, name='biz_job_worker_list'),
+    # ワーカー詳細(店舗向け)
+    path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.job_worker_detail, name='biz_worker_detail'),
 
     # 求人詳細画面
     path('job/<int:pk>/', job_views.job_detail, name='job_detail'),

@@ -485,3 +485,30 @@ def job_confirm(request):
         'store': store,
         'template': template
     })
+
+@login_required
+def job_worker_detail(request, store_id, worker_id):
+    """ワーカー詳細画面 (店舗向け)"""
+    from accounts.models import WorkerBadge  # ここでインポート
+    from .models import StoreWorkerGroup, StoreWorkerMemo # ここでインポート
+    
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
+    worker_user = get_object_or_404(User, id=worker_id)
+    
+    # ワーカーのバッジ獲得状況
+    worker_badges = WorkerBadge.objects.filter(worker=worker_user.workerprofile).select_related('badge')
+    
+    # この店舗でのグループ設定
+    groups = StoreWorkerGroup.objects.filter(store=store, worker=worker_user.workerprofile)
+    
+    # この店舗でのメモ
+    memo = StoreWorkerMemo.objects.filter(store=store, worker=worker_user.workerprofile).first()
+
+    return render(request, 'business/worker_detail.html', {
+        'store': store,
+        'worker': worker_user,
+        'worker_badges': worker_badges,
+        'groups': groups,
+        'memo': memo,
+    })

@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from accounts.models import WorkerProfile, Badge  # WorkerProfileとBadgeをインポート
 
 # --- 以前作成したモデル ---
 class BusinessProfile(models.Model):
@@ -36,6 +37,33 @@ class QualificationMaster(models.Model):
         return f"[{self.category}] {self.name}"
 
 # --- 今回追加するモデル ---
+class StoreWorkerGroup(models.Model):
+    """店舗がワーカーをグループ分けするためのモデル"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    GROUP_TYPE_CHOICES = [
+        ('favorite', 'お気に入り'),
+        ('worked', '稼働経験あり'),
+        ('blocked', 'ブロック'),
+        ('hall', 'ホール'),        # 画像3にあるグループ例
+        # 必要に応じて追加
+    ]
+    group_type = models.CharField("グループ種別", max_length=50, choices=GROUP_TYPE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('store', 'worker', 'group_type')
+
+class StoreWorkerMemo(models.Model):
+    """店舗がワーカーに付ける管理用メモ"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    memo = models.TextField("管理用メモ", blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('store', 'worker')
+
 class JobTemplate(models.Model):
     # 同じファイル内にあるので、そのまま Store を指定すればOK
     store = models.ForeignKey(Store, on_delete=models.CASCADE) 

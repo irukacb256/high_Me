@@ -1,108 +1,474 @@
-{% extends 'base.html' %}
+{% extends 'base_main.html' %}
+{% load static %}
+{% load humanize %}
 
 {% block content %}
 <style>
-    /* 全体コンテナ */
-    .search-container { background-color: #F8F8F8; min-height: 100vh; position: relative; }
-
-    /* 1. ヘッダー固定エリア */
-    .sticky-header { position: sticky; top: 0; z-index: 1000; background: white; border-bottom: 1px solid #eee; }
-    
-    .location-bar { 
-        display: flex; align-items: center; padding: 10px 15px; background: #f2f2f2; 
-        margin: 10px 15px; border-radius: 10px; font-size: 14px; font-weight: bold; 
-        cursor: pointer; text-decoration: none; color: #333; 
+    /* 全体の背景 */
+    .home-container {
+        background-color: #F8F8F8;
+        min-height: 100vh;
+        padding-bottom: 80px;
+        /* ボトムナビ分 */
     }
-    .location-bar i { margin-right: 10px; font-size: 16px; }
 
-    /* 2. 日付ナビ (スライド可能) */
-    .date-scroll { display: flex; overflow-x: auto; padding: 5px 15px 15px; gap: 8px; -webkit-overflow-scrolling: touch; }
-    .date-scroll::-webkit-scrollbar { display: none; }
-    
-    .date-link { text-decoration: none; color: inherit; flex-shrink: 0; }
-    .date-item { 
-        min-width: 55px; height: 75px; border: 1px solid #eee; border-radius: 12px; 
-        display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        background: white; transition: 0.2s; 
+    /* 1. 場所バー */
+    .location-bar {
+        background: white;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 1px solid #f0f0f0;
     }
-    .date-item.active { background: #FFD700; border: none; }
-    .date-item .day-text { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 4px; }
-    .date-item.active .day-text { color: #333; }
-    .date-item .date-num { font-size: 19px; font-weight: bold; }
-    
-    /* 曜日色設定 */
-    .date-item.sun .date-num { color: #ff3b30; }
-    .date-item.sat .date-num { color: #007AFF; }
 
-    .sort-label-bar { padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: bold; border-top: 1px solid #f2f2f2; background: white; color: #333; }
+    .location-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-    /* 3. 求人リストエリア */
-    .job-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 15px 120px; }
-    .job-card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .card-img { height: 110px; background: #eee; }
-    .card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .card-body { padding: 10px; flex: 1; }
-    .job-title { font-size: 12px; font-weight: bold; line-height: 1.4; height: 2.8em; overflow: hidden; margin-bottom: 8px; color: #333; }
-    .job-price { font-size: 16px; font-weight: bold; color: #333; }
+    .location-arrow {
+        color: #ccc;
+    }
 
-    .empty-state { grid-column: 1 / -1; text-align: center; padding: 150px 20px; color: #999; font-size: 15px; font-weight: bold; }
+    /* 2. 日付ナビゲーション */
+    .date-section {
+        background: white;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
 
-    /* 4. フローティングボタン (絞り込み) */
-    .floating-filter { 
-        position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); 
-        background: #FFD700; padding: 12px 30px; border-radius: 30px; 
-        font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-        border: none; z-index: 500; cursor: pointer; display: flex; align-items: center; 
-        gap: 8px; text-decoration: none; color: #333; font-size: 14px;
+    .date-scroll {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 10px;
+        gap: 8px;
+        scrollbar-width: none;
+    }
+
+    .date-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .date-chip {
+        width: 48px;
+        height: 60px;
+        border-radius: 8px;
+        background: white;
+        /* デフォルト白 */
+        border: 1px solid #eee;
+        /* 枠線あり */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #333;
+        flex-shrink: 0;
+    }
+
+    /* 選択中の日付: 背景黄色、文字黒、枠線なし */
+    .date-chip.active {
+        background: var(--timee-yellow);
+        border: none;
+        font-weight: bold;
+    }
+
+    .date-chip.active .date-weekday {
+        color: #333;
+    }
+
+    .date-label-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.2;
+    }
+
+    .date-label-today {
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
+
+    .date-day {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .date-weekday {
+        font-size: 10px;
+        color: #999;
+    }
+
+    .date-chip.active .date-weekday {
+        color: #333;
+    }
+
+
+    /* 3. ソート・フィルタバー */
+    .sort-bar {
+        background: white;
+        padding: 10px 15px;
+        border-top: 1px solid #f0f0f0;
+        /* 日付との区切り */
+        margin-bottom: 1px;
+        /* 隙間用 */
+    }
+
+    .sort-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: bold;
+        color: #333;
+        background: none;
+        border: none;
+        width: 100%;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    /* 4. 日付ヘッダーと通知スイッチ */
+    .list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        color: #666;
+        font-size: 12px;
+        background: #F8F8F8;
+    }
+
+    .list-date-title {
+        font-weight: bold;
+        color: #333;
+        font-size: 13px;
+    }
+
+    .notification-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .toggle-switch-off {
+        background: #eee;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: bold;
+        color: #999;
+    }
+
+    /* 5. 求人グリッド (2カラム) */
+    .job-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* 2列 */
+        gap: 12px;
+        padding: 0 15px 15px;
+    }
+
+    .job-card-grid {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+    }
+
+    .card-img-area {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        /* 画像比率 */
+        background: #eee;
+    }
+
+    .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* カウントダウン (左上) */
+    .badge-timer {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(224, 36, 94, 0.9);
+        /* 赤 */
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 3px 6px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    /* お気に入りハート (右上) */
+    .btn-fav-circle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #ccc;
+        z-index: 5;
+    }
+
+    .btn-fav-circle.active {
+        color: #E0245E;
+    }
+
+    /* 画像内タグ (左下) */
+    .img-tag {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background: white;
+        font-size: 9px;
+        font-weight: bold;
+        color: #333;
+        padding: 2px 5px;
+        border-radius: 2px;
+    }
+
+    .card-content {
+        padding: 10px;
+    }
+
+    .card-title {
+        font-size: 13px;
+        font-weight: bold;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 3.6em;
+        /* 3行分確保 */
+    }
+
+    .card-meta {
+        font-size: 11px;
+        color: #666;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .card-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-top: 4px;
+    }
+
+    /* フローティングボタン (黄色) */
+    .floating-refine-btn {
+        position: fixed;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--timee-yellow);
+        /* 黄色 */
+        color: #333;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 12px 24px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        z-index: 1000;
+    }
+
+    .empty-msg {
+        grid-column: 1 / -1;
+        text-align: center;
+        color: #999;
+        font-size: 14px;
+        padding: 40px;
     }
 </style>
 
-<div class="search-container">
-    <!-- ヘッダー：場所を指定 -->
-    <div class="sticky-header">
-        <a href="{% url 'location_home' %}" class="location-bar">
-            <i class="fa-solid fa-location-dot"></i> 
-            <span>{% if selected_prefs %}{{ selected_prefs|join:", " }}{% else %}場所を指定{% endif %}</span>
-        </a>
-        
-        <!-- 日付ナビ -->
+<div class="home-container">
+    <!-- 1. 場所バー -->
+    <a href="{% url 'location_home' %}" class="location-bar" style="text-decoration:none;">
+        <div class="location-left">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>{{ selected_prefs|join:"・"|default:"エリアを選択" }}</span>
+        </div>
+        <i class="fa-solid fa-chevron-right location-arrow"></i>
+    </a>
+
+    <!-- 2. 日付ナビ -->
+    <div class="date-section">
         <div class="date-scroll">
             {% for d in date_list %}
-            <a href="?date={{ d|date:'Y-m-d' }}" class="date-link">
-                <div class="date-item {% if d == selected_date %}active{% endif %} {% if d.weekday == 6 %}sun{% elif d.weekday == 5 %}sat{% endif %}">
-                    <span class="day-text">{% if d == today %}今日{% else %}{{ d|date:"D" }}{% endif %}</span>
-                    <span class="date-num">{{ d|date:"j" }}</span>
-                </div>
+            <a href="?date={{ d|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
+                class="date-chip {% if d == selected_date %}active{% endif %}">
+
+                {% if d == today %}
+                <div class="date-label-today">今日</div>
+                {% else %}
+                <div class="date-weekday">{{ d|date:"D" }}</div>
+                <div class="date-day">{{ d|date:"j" }}</div>
+                {% endif %}
             </a>
             {% endfor %}
         </div>
+    </div>
 
-        <div class="sort-label-bar">
-            <span><i class="fa-solid fa-bars-staggered"></i> 締切時刻が近い順</span>
-            <i class="fa-solid fa-chevron-down" style="color:#ccc; font-size: 12px;"></i>
+    <!-- 3. ソートバー -->
+    <div class="sort-bar">
+        <button class="sort-btn">
+            <span><i class="fa-solid fa-arrow-down-short-wide"></i> 締切時刻が近い順</span>
+            <i class="fa-solid fa-chevron-down" style="font-size:10px; color:#999;"></i>
+        </button>
+    </div>
+
+    <!-- 4. リストヘッダー -->
+    <div class="list-header">
+        <div class="list-date-title">{{ selected_date|date:"Y年n月j日" }}</div>
+        <div class="notification-toggle">
+            <span>この日の新しい仕事を通知</span>
+            <span class="toggle-switch-off">OFF</span>
         </div>
     </div>
 
-    <!-- お仕事リスト -->
+    <!-- 5. 求人グリッド -->
     <div class="job-grid">
         {% for job in main_jobs %}
-        <a href="{% url 'job_detail' job.pk %}" class="job-card">
-            <div class="card-img">
-                <img src="https://via.placeholder.com/200x120?text={{ job.template.occupation }}">
+        <a href="{% url 'job_detail' job.pk %}" class="job-card-grid">
+            <div class="card-img-area">
+                {% if job.template.photos.first %}
+                <img src="{{ job.template.photos.first.image.url }}" class="card-img">
+                {% else %}
+                <div class="card-img"
+                    style="background:{{ job.image_color|default:'#eee' }}; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-briefcase" style="color:rgba(255,255,255,0.5); font-size:32px;"></i>
+                </div>
+                {% endif %}
+
+                <!-- カウントダウン -->
+                <div class="badge-timer">
+                    <i class="fa-regular fa-clock"></i>
+                    <span class="timer"
+                        data-deadline="{{ job.work_date|date:'Y/m/d' }} {{ job.start_time|date:'H:i' }}">計算中</span>
+                </div>
+
+                <!-- お気に入り -->
+                <div class="btn-fav-circle {% if job.id in user_fav_job_ids %}active{% endif %}"
+                    onclick="event.preventDefault(); toggleFav({{ job.pk }}, this)">
+                    <i class="fa-{% if job.id in user_fav_job_ids %}solid{% else %}regular{% endif %} fa-heart"></i>
+                </div>
+
+                <!-- 未経験歓迎などのタグ (静的に1つ例示) -->
+                {% if job.template.has_unexperienced_welcome %}
+                <div class="img-tag">未経験歓迎</div>
+                {% endif %}
             </div>
-            <div class="card-body">
-                <div class="job-title">{{ job.title }}</div>
-                <div class="job-price">¥{{ job.total_payment }}</div>
+
+            <div class="card-content">
+                <div class="card-title">{{ job.title }}</div>
+                <div class="card-meta">
+                    <i class="fa-regular fa-clock"></i> {{ job.start_time|date:"H:i" }}〜{{ job.end_time|date:"H:i" }}
+                </div>
+                <div class="card-meta">
+                    <i class="fa-solid fa-location-dot"></i> {{ job.template.store.city }}
+                </div>
+                <div class="card-price">¥{{ job.total_payment|intcomma }}</div>
             </div>
         </a>
         {% empty %}
-        <div class="empty-state">この日の仕事はまだありません</div>
+        <div class="empty-msg">
+            この日の求人はまだありません<br>
+            <span style="font-size:12px;">日付を変更して探してみてください</span>
+        </div>
         {% endfor %}
     </div>
 </div>
 
-<!-- 絞り込みボタン (別ページへ遷移) -->
-<a href="{% url 'refine_home' %}" class="floating-filter">
+<!-- 絞り込みボタン (黄色) -->
+<a href="{% url 'refine_home' %}" class="floating-refine-btn">
     <i class="fa-solid fa-sliders"></i> 絞りこみ
 </a>
+
+<script>
+    function toggleFav(jobId, btnElement) {
+        fetch(`/favorites/toggle/job/${jobId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const icon = btnElement.querySelector('i');
+                    if (data.is_favorited) {
+                        btnElement.classList.add('active');
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                    } else {
+                        btnElement.classList.remove('active');
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                    }
+                }
+            });
+    }
+
+    // カウントダウン
+    function updateTimers() {
+        const now = new Date();
+        document.querySelectorAll('.timer').forEach(el => {
+            const deadlineStr = el.getAttribute('data-deadline');
+            const deadline = new Date(deadlineStr);
+            const diff = deadline - now;
+
+            if (diff > 0) {
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                // タイミー画像では「00:23:48」のように秒まで出ている
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const hStr = String(hours).padStart(2, '0');
+                const mStr = String(minutes).padStart(2, '0');
+                const sStr = String(seconds).padStart(2, '0');
+                el.innerText = `${hStr}:${mStr}:${sStr}`;
+            } else {
+                el.innerText = '締切';
+                el.parentElement.style.background = '#999';
+            }
+        });
+    }
+
+    setInterval(updateTimers, 1000);
+    updateTimers();
+</script>
 {% endblock %}
