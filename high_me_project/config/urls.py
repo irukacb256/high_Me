@@ -103,6 +103,7 @@ urlpatterns = [
     path('biz/business-register/', biz_views.business_register, name='biz_business_register'), # 追加
     path('biz/verify/', biz_views.verify_docs, name='biz_verify'), # 画像6
     path('biz/store-setup/', biz_views.store_setup, name='biz_store_setup'), # 画像7
+    path('biz/complete/', biz_views.biz_signup_complete, name='biz_signup_complete'), # 完了画面
     # --- 登録・ログイン ---
     path('biz/login/', biz_views.biz_login, name='biz_login'), # 修正
     # --- 企業用マイページ（画像1：企業・店舗一覧） ---

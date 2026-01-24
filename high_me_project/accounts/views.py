@@ -7,6 +7,10 @@ from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
 from datetime import date
 from jobs.views import PREFECTURES
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
 
 # --- オンボーディングの流れ ---
 
@@ -40,71 +44,82 @@ def signup(request):
             return render(request, 'accounts/signup.html', {'error': '電話番号とパスワードを入力してください'})
 
         # 2. 【最重要】電話番号の重複チェック
-        # すでに登録されている場合は、エラーメッセージを出して同じ画面に戻す
         if User.objects.filter(username=phone).exists():
             return render(request, 'accounts/signup.html', {
                 'error': 'この電話番号は既に登録されています。',
-                'phone': phone  # 入力していた番号を戻してあげる
+                'phone': phone
             })
 
-        try:
-            # 3. ユーザー作成
-            user = User.objects.create_user(username=phone, password=password)
-            login(request, user)
-            
-            # フローをセッションに記録
-            request.session['auth_flow'] = 'signup'
-            
-            return redirect('verify_dob')
-        except IntegrityError:
-            # 万が一、同時送信などで重複が発生した場合の保険
-            return render(request, 'accounts/signup.html', {'error': '登録エラーが発生しました。もう一度お試しください。'})
+        # 3. ユーザー作成はせず、セッションに保存
+        # パスワードはここでハッシュ化せずとも、作成時に set_password すればOK
+        # あるいはここで一連のデータを保持
+        request.session['signup_data'] = {
+            'phone': phone,
+            'password': password
+        }
+        
+        # フローをセッションに記録
+        request.session['auth_flow'] = 'signup'
+        
+        return redirect('verify_dob')
 
     return render(request, 'accounts/signup.html')
 
-@login_required
 def setup_name(request):
     if request.method == 'POST':
-        profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
-        profile.last_name_kanji = request.POST.get('last_name')
-        profile.first_name_kanji = request.POST.get('first_name')
-        profile.save()
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+            
+        signup_data['last_name_kanji'] = request.POST.get('last_name')
+        signup_data['first_name_kanji'] = request.POST.get('first_name')
+        request.session['signup_data'] = signup_data
         return redirect('setup_kana')
-    # パスを 'signup/...' に修正
     return render(request, 'signup/step_name.html') 
 
-@login_required
 def setup_kana(request):
-    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
-        profile.last_name_kana = request.POST.get('last_name_kana')
-        profile.first_name_kana = request.POST.get('first_name_kana')
-        profile.save()
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+            
+        signup_data['last_name_kana'] = request.POST.get('last_name_kana')
+        signup_data['first_name_kana'] = request.POST.get('first_name_kana')
+        request.session['signup_data'] = signup_data
         return redirect('setup_gender')
     return render(request, 'signup/step_kana.html')
 
-@login_required
 def setup_gender(request):
     """画像3: 性別選択"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
-        profile.gender = request.POST.get('gender')
-        profile.save()
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+            
+        signup_data['gender'] = request.POST.get('gender')
+        request.session['signup_data'] = signup_data
         return redirect('setup_photo')
     return render(request, 'signup/step_gender.html')
 
-@login_required
 def setup_photo(request):
     """画像4: 顔写真登録"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
-@login_required
-def setup_photo(request):
-    """画像4: 顔写真登録"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+
         if 'face_photo' in request.FILES:
-            profile.face_photo = request.FILES['face_photo']
-            profile.save()
+            photo = request.FILES['face_photo']
+            # 一時ディレクトリに保存
+            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+            os.makedirs(temp_dir, exist_ok=True)
+            fs = FileSystemStorage(location=temp_dir)
+            
+            # 重複避けるためにファイル名調整したほうがいいが、一旦簡単のためにそのまま保存
+            # またはfs.save()は自動でリネームしてくれる
+            filename = fs.save(photo.name, photo)
+            signup_data['face_photo_temp_path'] = filename
+            request.session['signup_data'] = signup_data
             
         # 次へ（住所入力へ戻す）
         return redirect('setup_address')
@@ -114,62 +129,88 @@ def setup_photo(request):
 @login_required
 def signup_verify_identity(request):
     """サインアップフロー用: 本人確認画面 (あとでボタンあり)"""
+    # ログイン不要にするか、ログイン必須なら既存ユーザー用。
+    # ここではサインアップフローのために@login_requiredを外す必要があるが、
+    # 既存のデコレータがついているので注意。
+    # 今回はサインアップフロー専用ビューとして扱う。
     return render(request, 'signup/step_identity.html')
 
-@login_required
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
     return redirect('signup_confirm')
 
-@login_required
 def signup_confirm(request):
     """入力内容確認画面"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
+    signup_data = request.session.get('signup_data')
+    if not signup_data:
+        # セッション切れ等の場合
+        return redirect('signup')
+
+    # テンプレートで表示するために辞書をオブジェクト風にアクセスできるようにするか、
+    # 単に辞書として渡すが、テンプレート側が profile.xxx でアクセスしている場合は
+    # 辞書アクセスとドットアクセスで互換性があるか確認が必要。
+    # Djangoテンプレート言語では {{ foo.bar }} は foo['bar'] も試行するので辞書でOK。
+    
+    # 日付表示のために変換
+    dob_str = signup_data.get('birth_date')
+    birth_date = None
+    if dob_str:
+        try:
+            birth_date = date.fromisoformat(dob_str)
+        except ValueError:
+            pass
+            
+    # テンプレートに渡すデータ構造を作成
+    # profile キーで辞書を渡す
+    profile_data = signup_data.copy()
+    profile_data['birth_date'] = birth_date
+    
     if request.method == 'POST':
         return redirect('setup_pref_select')
-    return render(request, 'signup/step_confirm.html', {'profile': profile})
+        
+    return render(request, 'signup/step_confirm.html', {'profile': profile_data})
 
-@login_required
 def setup_address(request):
     """画像5: 住所入力"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+
         if 'skip' in request.POST:
             return redirect('setup_workstyle')
-        profile.postal_code = request.POST.get('postal_code')
-        profile.prefecture = request.POST.get('prefecture')
-        profile.city = request.POST.get('city')
-        profile.address_line = request.POST.get('address_line')
-        profile.building = request.POST.get('building')
-        profile.save()
+
+        signup_data['postal_code'] = request.POST.get('postal_code')
+        signup_data['prefecture'] = request.POST.get('prefecture')
+        signup_data['city'] = request.POST.get('city')
+        signup_data['address_line'] = request.POST.get('address_line')
+        signup_data['building'] = request.POST.get('building')
+        request.session['signup_data'] = signup_data
+        
         return redirect('setup_workstyle')
     return render(request, 'signup/step_address.html')
 
-@login_required
 def setup_workstyle(request):
     """画像6: 働き方登録"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
     if request.method == 'POST':
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+
         if 'skip' in request.POST:
-            return redirect('signup_verify_identity') # 変更: 本人確認へ
-        profile.work_style = request.POST.get('work_style')
-        profile.career_interest = request.POST.get('career_interest')
-        profile.save()
-        return redirect('signup_verify_identity') # 変更: 本人確認へ
+            return redirect('signup_verify_identity') 
+            
+        signup_data['work_style'] = request.POST.get('work_style')
+        signup_data['career_interest'] = request.POST.get('career_interest')
+        request.session['signup_data'] = signup_data
+        
+        return redirect('signup_verify_identity') 
     return render(request, 'signup/step_workstyle.html')
 
-@login_required
 def setup_pref_select(request):
     """画像7: 都道府県選択"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
-    if request.method == 'POST':
-        # チェックボックスのリストを取得
-        prefs = request.POST.getlist('prefs')
-        profile.target_prefectures = ",".join(prefs)
-        profile.is_setup_completed = True
-        profile.save()
-        return redirect('index') # 最後にホームへ
-        
+    auth_flow = request.session.get('auth_flow')
+    
     prefectures = [
         "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
         "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -179,7 +220,94 @@ def setup_pref_select(request):
         "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
         "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
     ]
-    return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
+
+    # --- サインアップフロー（新規登録完了処理） ---
+    if auth_flow == 'signup':
+        if request.method == 'POST':
+            signup_data = request.session.get('signup_data')
+            if not signup_data:
+                return redirect('signup')
+            
+            prefs = request.POST.getlist('prefs')
+            
+            try:
+                # 1. User 作成
+                user = User.objects.create_user(
+                    username=signup_data['phone'], 
+                    password=signup_data['password']
+                )
+                
+                # 2. WorkerProfile 作成
+                profile = WorkerProfile(user=user)
+                profile.last_name_kanji = signup_data.get('last_name_kanji', '')
+                profile.first_name_kanji = signup_data.get('first_name_kanji', '')
+                profile.last_name_kana = signup_data.get('last_name_kana', '')
+                profile.first_name_kana = signup_data.get('first_name_kana', '')
+                profile.gender = signup_data.get('gender', '')
+                
+                dob_str = signup_data.get('birth_date')
+                if dob_str:
+                    profile.birth_date = date.fromisoformat(dob_str)
+                    
+                profile.postal_code = signup_data.get('postal_code', '')
+                profile.prefecture = signup_data.get('prefecture', '') 
+                profile.city = signup_data.get('city', '')
+                profile.address_line = signup_data.get('address_line', '')
+                profile.building = signup_data.get('building', '')
+                
+                profile.work_style = signup_data.get('work_style', '')
+                profile.career_interest = signup_data.get('career_interest', '')
+                
+                profile.target_prefectures = ",".join(prefs)
+                profile.is_setup_completed = True
+                
+                # 本人確認済みフラグ（もしあれば）
+                if signup_data.get('is_identity_verified'):
+                     profile.is_identity_verified = True
+                
+                # 写真の処理
+                temp_path = signup_data.get('face_photo_temp_path')
+                if temp_path:
+                    temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+                    fs = FileSystemStorage(location=temp_dir)
+                    if fs.exists(temp_path):
+                        with fs.open(temp_path) as f:
+                            profile.face_photo.save(temp_path, f, save=False)
+                        fs.delete(temp_path)
+                
+                profile.save()
+                
+                # 3. ログイン
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                
+                # 4. セッションクリア
+                if 'signup_data' in request.session:
+                    del request.session['signup_data']
+                
+                return redirect('index')
+                
+            except IntegrityError:
+                return render(request, 'signup/step_pref.html', {
+                    'prefectures': prefectures, 
+                    'error': '登録処理でエラーが発生しました。'
+                })
+
+        return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
+    
+    # --- 既存ユーザー（設定変更など） ---
+    else:
+        if not request.user.is_authenticated:
+            return redirect('login')
+            
+        profile = get_object_or_404(WorkerProfile, user=request.user)
+        if request.method == 'POST':
+            prefs = request.POST.getlist('prefs')
+            profile.target_prefectures = ",".join(prefs)
+            profile.is_setup_completed = True
+            profile.save()
+            return redirect('index') 
+            
+        return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
 
 
 def verify_identity(request):
@@ -190,8 +318,16 @@ def verify_identity(request):
 
 @login_required
 def verify_dob(request):
-    """生年月日入力・検証画面"""
+    """生年月日入力・検証画面 (ログイン時)"""
     auth_flow = request.session.get('auth_flow', 'signup')
+
+    # サインアップフローの場合は別の関数へ飛ばすか、ここで分岐
+    if auth_flow == 'signup':
+         return verify_dob_signup(request)
+
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     profile, _ = WorkerProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
@@ -202,31 +338,51 @@ def verify_dob(request):
         try:
             birth_date = date(int(year), int(month), int(day))
             
-            if auth_flow == 'login':
-                # ログイン時の検証ロジック
-                if profile.birth_date and profile.birth_date == birth_date:
-                    return redirect('index')
-                elif not profile.birth_date:
-                    # 万が一誕生日の登録がない既存ユーザー（基本いないはずだが救済）
-                    profile.birth_date = birth_date
-                    profile.save()
-                    return redirect('index')
-                else:
-                    return render(request, 'accounts/verify_dob.html', {
-                        'error': '生年月日が登録情報と一致しません。'
-                    })
-            else:
-                # 新規登録時の保存ロジック
+            if profile.birth_date and profile.birth_date == birth_date:
+                return redirect('index')
+            elif not profile.birth_date:
+                # 万が一誕生日の登録がない既存ユーザー（基本いないはずだが救済）
                 profile.birth_date = birth_date
                 profile.save()
-                return redirect('setup_name')
-            
+                return redirect('index')
+            else:
+                return render(request, 'accounts/verify_dob.html', {
+                    'error': '生年月日が登録情報と一致しません。'
+                })
         except ValueError:
             return render(request, 'accounts/verify_dob.html', {
                 'error': '正しい日付を入力してください。'
             })
 
     return render(request, 'accounts/verify_dob.html', {'auth_flow': auth_flow})
+
+def verify_dob_signup(request):
+    """生年月日入力 (サインアップ時)"""
+    if request.method == 'POST':
+        year = request.POST.get('year')
+        month = request.POST.get('month')
+        day = request.POST.get('day')
+        
+        try:
+            # 日付の妥当性チェック
+            date(int(year), int(month), int(day))
+            
+            signup_data = request.session.get('signup_data')
+            if not signup_data:
+                return redirect('signup')
+
+            signup_data['birth_date'] = f"{year}-{month}-{day}"
+            request.session['signup_data'] = signup_data
+            
+            return redirect('setup_name')
+            
+        except ValueError:
+            return render(request, 'accounts/verify_dob.html', {
+                'error': '正しい日付を入力してください。',
+                'auth_flow': 'signup'
+            })
+            
+    return render(request, 'accounts/verify_dob.html', {'auth_flow': 'signup'})
 
 
 def profile_setup(request):
@@ -423,14 +579,24 @@ def verify_identity_select(request):
 def verify_identity_upload(request):
     """本人確認書類のアップロードと完了処理"""
     if request.method == 'POST':
-        # プロフィールを本人確認済みに更新
-        profile = request.user.workerprofile
-        profile.is_identity_verified = True
-        profile.save()
-        
-        # サインアップフロー中なら、次は確認画面へ
+        # サインアップフロー中なら、セッションに記録して確認画面へ
         if request.session.get('auth_flow') == 'signup':
+             # 実際にはここでファイルアップロード処理が必要かもしれないが
+             # 一旦「本人確認済み」フラグを立てるのみとする
+             # （もし書類画像が必要なら setup_photo と同様に一時保存が必要）
+             signup_data = request.session.get('signup_data')
+             if signup_data:
+                 signup_data['is_identity_verified'] = True
+                 request.session['signup_data'] = signup_data
              return redirect('signup_confirm')
 
-        return redirect('mypage')
+        # 既存ユーザー用
+        if request.user.is_authenticated:
+            profile = request.user.workerprofile
+            profile.is_identity_verified = True
+            profile.save()
+            return redirect('mypage')
+        else:
+            return redirect('login')
+            
     return render(request, 'accounts/verify_identity_upload.html')

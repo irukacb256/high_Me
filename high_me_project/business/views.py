@@ -17,93 +17,150 @@ def signup(request):
     """ステップ1: メールアドレス入力"""
     if request.method == 'POST':
         email = request.POST.get('email')
+        consent = request.POST.get('consent') # 同意チェックボックス
+        biz_type_radio = request.POST.get('p')
+
+        errors = []
+        # バリデーション
         if not email:
-            # メールアドレスが空の場合はエラーを表示
-            return render(request, 'business/signup.html', {'error': 'メールアドレスを入力してください'})
+             errors.append('メールアドレスを入力してください')
         
-        # セッションにメールを保存
-        request.session['signup_email'] = email
+        if not consent:
+             errors.append('利用規約等への同意が必要です')
+        
+        if errors:
+             return render(request, 'business/signup.html', {
+                 'errors': errors,
+                 'email': email,
+                 'p_val': biz_type_radio
+             })
+        
+        # セッションにメールを保存して次へ
+        # 既存データの初期化も兼ねて辞書を作成
+        request.session['biz_signup_data'] = {'email': email}
         return redirect('biz_account_register')
+
     return render(request, 'business/signup.html')
 
 def account_register(request):
     """画像1: 管理者情報登録"""
-    # セッションから取得。取れない場合は登録の最初(signup)へ戻す
-    email = request.session.get('signup_email')
-    
-    if not email:
+    signup_data = request.session.get('biz_signup_data')
+    if not signup_data:
         return redirect('biz_signup')
+    
+    email = signup_data.get('email')
 
     if request.method == 'POST':
         last_name = request.POST.get('last_name', "")
         first_name = request.POST.get('first_name', "")
         password = request.POST.get('password', "")
+        # ここでメールアドレスの変更を受け付ける場合
+        input_email = request.POST.get('email')
         
-        if not last_name or not first_name or not password:
+        if not last_name or not first_name or not password or not input_email:
              return render(request, 'business/account_register.html', {
-                 'email': email,
+                 'email': input_email or email,
                  'error': '全ての項目を入力してください'
              })
 
-        # 既に同じメールアドレスのユーザーがいないかチェック（念のため）
-        if User.objects.filter(username=email).exists():
+        # メールアドレスが変更されている可能性があるのでチェック
+        if User.objects.filter(username=input_email).exists():
              return render(request, 'business/account_register.html', {
-                 'email': email,
+                 'email': input_email,
                  'error': 'このメールアドレスは既に登録されています。'
              })
 
-        # DjangoのUser作成
-        # usernameにemailを割り当てています
-        user = User.objects.create_user(
-            username=email, # ここが空だとエラーになる
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-        login(request, user)
+        # セッションに保存
+        signup_data['last_name'] = last_name
+        signup_data['first_name'] = first_name
+        signup_data['password'] = password
+        signup_data['email'] = input_email # 更新
+        request.session['biz_signup_data'] = signup_data
+
         return redirect('biz_business_register')
         
     return render(request, 'business/account_register.html', {'email': email})
 
-@login_required
 def business_register(request):
     """画像2・3: 事業者登録（BusinessProfile作成）"""
+    signup_data = request.session.get('biz_signup_data')
+    if not signup_data:
+        return redirect('biz_signup')
+
     if request.method == 'POST':
-        BusinessProfile.objects.create(
-            user=request.user,
-            company_name=request.user.last_name + "株式会社", # 簡易生成
-            business_type=request.POST.get('biz_type'),
-        )
+        # セッションに保存
+        signup_data['business_type'] = request.POST.get('biz_type')
+        signup_data['industry'] = request.POST.get('industry') # 業種も保存
+        
+        # 所在地情報の保存
+        signup_data['biz_post_code'] = request.POST.get('post_code')
+        signup_data['biz_prefecture'] = request.POST.get('prefecture')
+        signup_data['biz_city'] = request.POST.get('city')
+        signup_data['biz_address_line'] = request.POST.get('address_line')
+        signup_data['biz_building'] = request.POST.get('building')
+        
+        request.session['biz_signup_data'] = signup_data
         return redirect('biz_verify')
+
     return render(request, 'business/business_register.html')
 
-@login_required
 def verify_docs(request):
     """画像6: 書類提出"""
+    # ここでもセッションチェックしても良いが、POSTのみ処理なので
     if request.method == 'POST':
         return redirect('biz_store_setup')
     return render(request, 'business/verify_docs.html')
 
-@login_required
 def store_setup(request):
-    """画像7: 店舗登録（Store作成）"""
-    if request.method == 'POST':
-        try:
-            biz_profile = BusinessProfile.objects.get(user=request.user)
-            
-            # フォームから値を取得
-            store_name = request.POST.get('store_name')
-            post_code = request.POST.get('post_code')
-            
-            # ★ バリデーション：店舗名が空ならエラーメッセージを出して再表示
-            if not store_name:
-                return render(request, 'business/store_setup.html', {'error': '店舗名を入力してください'})
+    """画像7: 店舗登録（Store作成）と完了処理"""
+    signup_data = request.session.get('biz_signup_data')
+    if not signup_data:
+        # 基本的にはsignupに戻すべきだが、既存ユーザーの追加フローの場合もあり得る
+        pass # ここでは新規登録フロー前提で進める
 
-            # 保存
+    if request.method == 'POST':
+        store_name = request.POST.get('store_name')
+        post_code = request.POST.get('post_code')
+        
+        if not store_name:
+            return render(request, 'business/store_setup.html', {'error': '店舗名を入力してください'})
+
+        # ---- data saving ----
+        # 1. User
+        email = signup_data['email']
+        password = signup_data['password']
+        last_name = signup_data['last_name']
+        first_name = signup_data['first_name']
+
+        try:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+            
+            # 2. BusinessProfile
+            company_name = last_name + "株式会社" # 簡易生成ロジック維持
+            biz_profile = BusinessProfile.objects.create(
+                user=user,
+                company_name=company_name,
+                business_type=signup_data.get('business_type', 'corporation'),
+                industry=signup_data.get('industry'), # 業種保存
+                # 所在地情報の保存
+                post_code=signup_data.get('biz_post_code'),
+                prefecture=signup_data.get('biz_prefecture'),
+                city=signup_data.get('biz_city'),
+                address_line=signup_data.get('biz_address_line'),
+                building=signup_data.get('biz_building'),
+            )
+            
+            # 3. Store
             Store.objects.create(
                 business=biz_profile,
                 store_name=store_name,
+                industry=request.POST.get('industry'), # 画像準拠で追加
                 post_code=post_code,
                 prefecture=request.POST.get('prefecture'),
                 city=request.POST.get('city'),
@@ -111,15 +168,22 @@ def store_setup(request):
                 building=request.POST.get('building'),
             )
             
-            # 登録完了後、一度ログアウトしてログイン画面へ（前回の指示通り）
-            from django.contrib.auth import logout
-            logout(request)
-            return redirect('biz_login')
+            # セッションクリア
+            del request.session['biz_signup_data']
             
-        except BusinessProfile.DoesNotExist:
-            return redirect('biz_business_register')
+            # 完了後、完了画面へ (ログイン画面ではなく)
+            return redirect('biz_signup_complete')
             
-    return render(request, 'business/store_setup.html')
+        except Exception:
+             # エラーハンドリング（重複など）
+            return render(request, 'business/store_setup.html', {'error': '登録処理中にエラーが発生しました。', 'biz_data': signup_data})
+
+            
+    return render(request, 'business/store_setup.html', {'biz_data': signup_data})
+
+def biz_signup_complete(request):
+    """登録完了画面"""
+    return render(request, 'business/signup_complete.html')
 
 def biz_login(request):
     """事業者用ログイン画面"""
