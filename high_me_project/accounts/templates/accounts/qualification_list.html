@@ -1,0 +1,140 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .description {
+        padding: 20px;
+        font-size: 13px;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .help-link-area {
+        text-align: right;
+        padding: 0 20px 20px;
+    }
+
+    .help-link {
+        font-size: 12px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .section-title {
+        background: #f8f8f8;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .qualification-list {
+        background: white;
+        min-height: 100px;
+    }
+
+    .empty-msg {
+        text-align: center;
+        padding: 40px 0;
+        color: #ccc;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .qualification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .bottom-btn-area {
+        position: fixed;
+        bottom: calc(85px + env(safe-area-inset-bottom));
+        /* ナビの高さ(75px) + 余白(10px) + セーフエリア */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 430px;
+        padding: 20px;
+        box-sizing: border-box;
+        pointer-events: none;
+        z-index: 2000;
+        /* ナビより上にする */
+    }
+
+    .btn-add {
+        display: block;
+        background: #007AFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+        pointer-events: auto;
+        /* ボタン部分はクリック可能に */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">保有資格</div>
+    </div>
+
+    <div class="description">
+        保有資格の証明書をご登録いただくと、資格が必要なお仕事に申し込むことが可能になります。
+    </div>
+
+    <div class="help-link-area">
+        <a href="#" class="help-link"><i class="fa-regular fa-circle-question"></i> 資格情報の登録について</a>
+    </div>
+
+    <div class="section-title">登録済みの資格</div>
+
+    <div class="qualification-list">
+        {% if qualifications %}
+        {% for q in qualifications %}
+        <div class="qualification-item">
+            <div>{{ q.qualification.name }}</div>
+            <!-- 審査ステータス等があれば表示 -->
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-msg">登録された資格はありません</div>
+        {% endif %}
+    </div>
+
+    <div style="height: 100px;"></div>
+
+    <div class="bottom-btn-area">
+        <a href="{% url 'qualification_create' %}?clear=1" class="btn-add">資格を追加する</a>
+    </div>
+</div>
+{% endblock %}

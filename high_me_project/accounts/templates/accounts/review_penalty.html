@@ -1,0 +1,155 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 40px 10px;
+        background: white;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .stat-box {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .stat-unit {
+        font-size: 16px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 10px;
+    }
+
+    .btn-detail {
+        display: inline-block;
+        border: 1px solid #007AFF;
+        color: #007AFF;
+        background: white;
+        padding: 5px 20px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .section-header {
+        background: #f8f8f8;
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #666;
+        font-weight: bold;
+    }
+
+    .review-list {
+        background: white;
+    }
+
+    .review-item {
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .review-store {
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .review-date {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 10px;
+    }
+
+    .review-content {
+        font-size: 14px;
+        line-height: 1.5;
+        color: #333;
+    }
+
+    .no-review {
+        padding: 40px 20px;
+        text-align: center;
+        color: #888;
+        font-size: 14px;
+    }
+</style>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">レビューとペナルティ</div>
+    </div>
+
+    <!-- ペナルティステータスエリア -->
+    <div class="stats-container">
+        <!-- ペナルティ -->
+        <div class="stat-box">
+            <div class="stat-value">{{ profile.penalty_points }}<span class="stat-unit">P</span></div>
+            <div class="stat-label">ペナルティ</div>
+            <a href="{% url 'penalty_detail' %}" class="btn-detail">詳細</a>
+        </div>
+
+        <!-- キャンセル率 -->
+        <div class="stat-box">
+            <div class="stat-value">{{ cancel_rate }}<span class="stat-unit">%</span></div>
+            <div class="stat-label">キャンセル率</div>
+        </div>
+
+        <!-- 直前キャンセル率 -->
+        <div class="stat-box">
+            <div class="stat-value">{{ lastminute_cancel_rate }}<span class="stat-unit">%</span></div>
+            <div class="stat-label">直前キャンセル率</div>
+        </div>
+    </div>
+
+    <!-- レビュー一覧セクション -->
+    <div class="section-header">店舗からのレビュー</div>
+    <div class="review-list">
+        {% if reviews %}
+        {% for review in reviews %}
+        <div class="review-item">
+            <div class="review-store">{{ review.store_name }}</div>
+            <div class="review-date">{{ review.created_at|date:"Y/m/d" }}</div>
+            <div class="review-content">{{ review.comment|linebreaksbr }}</div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-review">まだあなたへのレビューがありません</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

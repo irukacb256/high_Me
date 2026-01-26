@@ -47,6 +47,12 @@ class WorkerProfile(models.Model):
     is_setup_completed = models.BooleanField("セットアップ完了", default=False)
     is_identity_verified = models.BooleanField("本人確認済み", default=False)
 
+    # ペナルティ・キャンセル情報 (画像1参照)
+    penalty = models.CharField("ペナルティ", max_length=50, null=True, blank=True) # テキスト用？
+    penalty_points = models.IntegerField("ペナルティポイント", default=0)
+    cancellations = models.IntegerField("キャンセル数", default=0)
+    lastminute_cancel = models.IntegerField("直前キャンセル数", default=0)
+
     def __str__(self):
         return f"{self.user.username} のプロフィール"
 
@@ -92,3 +98,41 @@ class WalletTransaction(models.Model):
 
     def __str__(self):
         return f"{self.get_transaction_type_display()}: {self.amount}円 ({self.created_at})"
+
+class Review(models.Model):
+    """店舗からのレビュー"""
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='reviews')
+    # Storeモデルが明確でないため、一旦店舗名は文字列で保持、将来的にForeignKey
+    store_name = models.CharField("店舗名", max_length=100) 
+    comment = models.TextField("コメント", blank=True, null=True)
+    created_at = models.DateTimeField("作成日", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.store_name} -> {self.worker.user.username}"
+
+class QualificationCategory(models.Model):
+    """資格分野マスター"""
+    name = models.CharField("分野名", max_length=100)
+    display_order = models.IntegerField("表示順", default=0)
+
+    def __str__(self):
+        return self.name
+
+class QualificationItem(models.Model):
+    """資格名称マスター"""
+    category = models.ForeignKey(QualificationCategory, on_delete=models.CASCADE, related_name='items')
+    name = models.CharField("資格名", max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class WorkerQualification(models.Model):
+    """ワーカー保有資格"""
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='qualifications')
+    qualification = models.ForeignKey(QualificationItem, on_delete=models.CASCADE)
+    # 画像1の wk_qualification (PATH)
+    certificate_image = models.ImageField("資格証明書", upload_to='qualifications/')
+    created_at = models.DateTimeField("登録日時", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.worker.user.username} - {self.qualification.name}"

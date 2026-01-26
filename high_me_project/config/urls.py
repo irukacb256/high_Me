@@ -77,6 +77,18 @@ urlpatterns = [
     path('rewards/history/', account_views.wallet_history, name='wallet_history'),
     path('rewards/bank-account/', account_views.bank_account_edit, name='bank_account_edit'),
     path('rewards/withdraw/', account_views.withdraw_application, name='withdraw_application'),
+    
+    # レビュー・ペナルティ
+    path('rewards/reviews/', account_views.review_penalty, name='review_penalty'),
+    path('rewards/penalty-detail/', account_views.penalty_detail, name='penalty_detail'),
+
+    # 保有資格
+    path('qualifications/', account_views.qualification_list, name='qualification_list'),
+    path('qualifications/create/', account_views.qualification_create, name='qualification_create'),
+    path('qualifications/upload/', account_views.qualification_photo_upload, name='qualification_photo_upload'),
+    path('qualifications/confirm/', account_views.qualification_photo_confirm, name='qualification_photo_confirm'),
+    path('qualifications/categories/', account_views.qualification_category_select, name='qualification_category_select'),
+    path('qualifications/categories/<int:category_id>/items/', account_views.qualification_item_select, name='qualification_item_select'),
 
     path('settings/', account_views.account_settings, name='account_settings'), # 設定一覧
     path('settings/profile/', account_views.profile_edit, name='profile_edit'), # ★プロフィール編集画面

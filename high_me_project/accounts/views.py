@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import WorkerProfile, WorkerBankAccount, WalletTransaction
+from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
 from datetime import date
@@ -681,6 +681,11 @@ def withdraw_application(request):
     profile = get_object_or_404(WorkerProfile, user=request.user)
     
     balance = sum(t.amount for t in profile.wallet_transactions.all())
+
+    try:
+        bank_account = profile.bank_account
+    except WorkerBankAccount.DoesNotExist:
+        bank_account = None
     
     if request.method == 'POST':
         # 全額出金処理
@@ -691,6 +696,176 @@ def withdraw_application(request):
                 transaction_type='withdrawal',
                 description='振込申請'
             )
+            # 成功時はその場で完了画面を出すために success フラグを渡す
+            return render(request, 'accounts/withdraw_application.html', {'success': True})
+        # 残高0などでPOSTされた場合はリダイレクトまたはエラー表示（今回はリダイレクト）
         return redirect('reward_management')
         
-    return render(request, 'accounts/withdraw_application.html', {'balance': balance})
+    return render(request, 'accounts/withdraw_application.html', {
+        'balance': balance,
+        'bank_account': bank_account
+    })
+
+@login_required
+def review_penalty(request):
+    """画像3: レビューとペナルティ画面"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    reviews = profile.reviews.all().order_by('-created_at') # Reviewモデルのrelated_name='reviews'を想定
+
+    # キャンセル率計算 (簡易ロジック: cancellations / (completed + cancellations) などだが、
+    # 今回はモデルに保存された値をそのまま表示する形にする)
+    # ※ 本来はジョブ履歴から計算するが、要件としてフィールド追加したのでそれを使う
+    
+    # 完了数(completed_jobs)などがモデルにないので、一旦キャンセル系は直接フィールドを表示
+    # 率（％）を計算して渡すか、テンプレートで計算するか。
+    # ここでは仮に全案件数を「完了数+キャンセル数」として計算してみるが、
+    # 完了数を持っていないため、モデルの数値をそのまま「率」として扱うか、
+    # あるいはダミー計算を入れる。
+    # 画像では「10%」「3%」となっている。
+    # ひとまずモデルのint値をそのまま%として扱う。（仕様が不明確なため）
+    
+    cancel_rate = profile.cancellations # 仮: そのままパーセントとして表示
+    lastminute_cancel_rate = profile.lastminute_cancel # 仮
+
+    return render(request, 'accounts/review_penalty.html', {
+        'profile': profile,
+        'reviews': reviews,
+        'cancel_rate': cancel_rate,
+        'lastminute_cancel_rate': lastminute_cancel_rate
+    })
+
+@login_required
+def penalty_detail(request):
+    """画像4: ペナルティ詳細画面"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    return render(request, 'accounts/penalty_detail.html', {'profile': profile})
+
+@login_required
+def qualification_list(request):
+    """画像3: 保有資格一覧"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    qualifications = profile.qualifications.all().select_related('qualification')
+    return render(request, 'accounts/qualification_list.html', {'qualifications': qualifications})
+
+@login_required
+def qualification_category_select(request):
+    """画像5: 資格分野選択"""
+    categories = QualificationCategory.objects.all().order_by('display_order')
+    return render(request, 'accounts/qualification_category_select.html', {'categories': categories})
+
+@login_required
+def qualification_item_select(request, category_id):
+    """資格名称選択"""
+    category = get_object_or_404(QualificationCategory, pk=category_id)
+    items = category.items.all()
+    return render(request, 'accounts/qualification_item_select.html', {'category': category, 'items': items})
+
+@login_required
+def qualification_create(request):
+    """画像4: 資格登録フォーム"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+
+    # 一覧から「追加する」できた場合（clear=1）はセッションをクリアして初期化
+    if request.GET.get('clear'):
+        if 'qualification_item_id' in request.session:
+            del request.session['qualification_item_id']
+        if 'temp_qualification_image' in request.session:
+            # 実ファイルも消すならここで行うが、tempの管理は定期的削除等に任せる実装も多い
+            # 今回はセッション参照のみ切る
+            del request.session['temp_qualification_image']
+        return redirect('qualification_create') # クエリパラメータを外してリダイレクト（スッキリさせる）
+
+    # 選択された資格IDをクエリパラメータから取得
+    # セッションに保存されている場合はそれを優先（アップロードフローからの戻り）
+    item_id = request.GET.get('item_id') or request.session.get('qualification_item_id')
+    
+    selected_item = None
+    if item_id:
+        selected_item = get_object_or_404(QualificationItem, pk=item_id)
+        # セッションにも保存しておく（アップロードフロー用）
+        request.session['qualification_item_id'] = item_id
+    
+    # 仮保存された画像パスを取得
+    curr_temp_path = request.session.get('temp_qualification_image')
+    
+    if request.method == 'POST':
+        # 最終登録処理
+        if selected_item and curr_temp_path:
+            # セッションの実画像を保存先にコピーなどしてから保存
+            # ここではシンプルに FileSystemStorage で別名保存するか、ポインタを渡す
+            # Base64ではなくファイルパスで管理している前提
+            
+            # tempパスは MEDIA_ROOT からの相対パス想定
+            # shutil move 等が必要だが、DjangoのFileFieldにパスから保存するのは少し手間。
+            # 簡易実装として、FileObjを開いて保存し直す。
+            
+            fs = FileSystemStorage()
+            # full path
+            abs_path = os.path.join(settings.MEDIA_ROOT, curr_temp_path)
+            
+            if os.path.exists(abs_path):
+                with open(abs_path, 'rb') as f:
+                    from django.core.files import File
+                    django_file = File(f)
+                    django_file.name = os.path.basename(abs_path) # ファイル名のみを設定
+                    
+                    WorkerQualification.objects.create(
+                        worker=profile,
+                        qualification=selected_item,
+                        certificate_image=django_file
+                    )
+                
+                # 後始末
+                os.remove(abs_path)
+                if 'temp_qualification_image' in request.session:
+                    del request.session['temp_qualification_image']
+                if 'qualification_item_id' in request.session:
+                    del request.session['qualification_item_id']
+                
+                return render(request, 'accounts/qualification_form.html', {
+                    'selected_item': selected_item,
+                    'success': True 
+                })
+
+    return render(request, 'accounts/qualification_form.html', {
+        'selected_item': selected_item,
+        'temp_image_url': f"{settings.MEDIA_URL}{curr_temp_path}" if curr_temp_path else None
+    })
+
+@login_required
+def qualification_photo_upload(request):
+    """写真アップロード処理（一時保存） -> 確認画面へ"""
+    if request.method == 'POST' and request.FILES.get('certificate_image'):
+        image_file = request.FILES['certificate_image']
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'temp'))
+        filename = fs.save(image_file.name, image_file)
+        
+        # 相対パスをセッションに保存 (temp/filename)
+        request.session['temp_qualification_image'] = os.path.join('temp', filename)
+        
+        return redirect('qualification_photo_confirm')
+    
+    # GETでアクセスされたら作成画面に戻す
+    return redirect('qualification_create')
+
+@login_required
+def qualification_photo_confirm(request):
+    """画像追加1: 写真確認画面"""
+    temp_path = request.session.get('temp_qualification_image')
+    item_id = request.session.get('qualification_item_id')
+    
+    if not temp_path:
+        return redirect('qualification_create')
+        
+    selected_item = None
+    if item_id:
+        selected_item = QualificationItem.objects.filter(pk=item_id).first()
+
+    if request.method == 'POST':
+        # OKボタン押下時 -> 作成画面に戻る
+        return redirect('qualification_create')
+
+    return render(request, 'accounts/qualification_photo_confirm.html', {
+        'temp_image_url': f"{settings.MEDIA_URL}{temp_path}",
+        'selected_item': selected_item
+    })

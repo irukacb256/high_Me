@@ -1,0 +1,204 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .main-score {
+        padding: 40px 20px;
+        text-align: center;
+        background: white;
+    }
+
+    .score-val {
+        font-size: 40px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .score-unit {
+        font-size: 24px;
+    }
+
+    .score-label {
+        color: #888;
+        font-size: 12px;
+        margin-bottom: 30px;
+    }
+
+    .description {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        text-align: left;
+        margin-bottom: 20px;
+    }
+
+    .help-link {
+        color: #888;
+        font-size: 13px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    .history-section {
+        padding: 20px;
+        background: white;
+    }
+
+    .history-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .history-list {
+        /* */
+    }
+
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .pt-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+    }
+
+    .pt-badge-0 {
+        background: white;
+        border: 2px solid #ddd;
+        color: #333;
+    }
+
+    .pt-badge-1 {
+        background: #FFCDD2;
+        color: white;
+    }
+
+    /* 薄い赤 */
+    .pt-badge-2 {
+        background: #EF9A9A;
+        color: white;
+    }
+
+    .pt-badge-3 {
+        background: #EF5350;
+        color: white;
+    }
+
+    /* 濃い赤 */
+    /* 画像に合わせて適当に配色 */
+
+    .history-content {
+        flex: 1;
+    }
+
+    .history-date {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .history-desc {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .history-points {
+        font-size: 14px;
+        color: #888;
+        margin-top: 5px;
+        text-align: right;
+    }
+</style>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'review_penalty' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">ペナルティ詳細</div>
+    </div>
+
+    <div class="main-score">
+        <div class="score-val">{{ profile.penalty_points }}<span class="score-unit">P</span></div>
+        <div class="score-label">あなたのペナルティポイント</div>
+
+        <div class="description">
+            キャンセルポリシーにより付与されるポイントです。8ポイントになると一時利用停止となります。
+        </div>
+        <a href="#" class="help-link"><i class="fa-regular fa-circle-question"></i> キャンセルポリシーとは？</a>
+    </div>
+
+    <div style="height: 10px; background: #f8f8f8;"></div>
+
+    <div class="history-section">
+        <div class="history-title">ペナルティポイントの推移</div>
+
+        <div class="history-list">
+            <!-- ダミーデータまたは将来的なペナルティ履歴モデルからの表示 -->
+            <!-- 今回は画像に合わせて静的にいくつか表示するか、ループ構造だけ作っておく -->
+
+            <!-- ここでは仮に履歴がない場合でも画像の雰囲気を出すためダミーを表示します -->
+            <div class="history-item">
+                <div class="pt-badge pt-badge-0">0</div>
+                <div class="history-content">
+                    <div class="history-date">2023/03/18 (株)タイミーにて業務完了のため</div>
+                </div>
+                <div class="history-points">-1</div>
+            </div>
+
+            <div class="history-item">
+                <div class="pt-badge pt-badge-1" style="background: #FFECB3; color: white;">1</div>
+                <!-- 色は適当 -->
+                <div class="history-content">
+                    <div class="history-date">2023/02/20 (株)タイミーにて業務完了のため</div>
+                </div>
+                <div class="history-points">-1</div>
+            </div>
+
+            <!-- 実際は penalty_history などのモデルが必要そうですが、要件に含まれていないため、
+                 「詳細は後で実装します」とあるペナルティポイントの詳細部分については
+                 この画面枠と、現在のポイント表示のみを正とし、履歴はダミーまたは空にしておきます。
+            -->
+            <div style="text-align:center; padding: 20px; color:#888; font-size:12px;">
+                ※履歴データはまだありません（ダミー表示中）
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

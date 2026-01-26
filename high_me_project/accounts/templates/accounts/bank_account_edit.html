@@ -1,82 +1,200 @@
 {% extends 'base_main.html' %}
 {% block content %}
 <style>
-    .form-group {
-        margin-bottom: 20px;
+    .page-header {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
     }
 
-    .form-label {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 8px;
-        display: block;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
+    .page-title {
         font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .edit-list {
+        background: white;
+        margin-top: 20px;
+    }
+
+    .edit-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+    }
+
+    .edit-item:last-child {
+        border-bottom: none;
+    }
+
+    .edit-label {
+        font-size: 14px;
+        color: #333;
+        flex-shrink: 0;
+        width: 100px;
+    }
+
+    .edit-value-container {
+        flex-grow: 1;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    /* Input styling to look like text but be editable */
+    .edit-input {
+        border: none;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
+        /* 入力値の色 */
+        width: 100%;
+        outline: none;
+        background: transparent;
+    }
+
+    .edit-input::placeholder {
+        color: #ccc;
+    }
+
+    .edit-input-select {
+        border: none;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
+        outline: none;
+        background: transparent;
+        appearance: none;
+        /* デフォルトの矢印を消すなど */
+        direction: rtl;
+        /* selectの文字を右寄せ */
+    }
+
+    .arrow-icon {
+        color: #ccc;
+        font-size: 12px;
+    }
+
+    .help-link-area {
+        margin-top: 10px;
+        text-align: right;
+        padding-right: 20px;
+    }
+
+    .help-link {
+        font-size: 12px;
+        color: #888;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .btn-save-container {
+        padding: 20px;
+        margin-top: 20px;
     }
 
     .btn-save {
-        background: #FF3B30;
-        color: white;
+        background: #FDD835;
+        /* 黄色 */
+        color: #333;
         width: 100%;
         padding: 15px;
         border: none;
         border-radius: 30px;
         font-weight: bold;
         font-size: 16px;
-        margin-top: 20px;
+        cursor: pointer;
     }
 </style>
 
-<div style="padding: 20px;">
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'reward_management' %}" style="color:black;"><i class="fa-solid fa-arrow-left"></i> 戻る</a>
+<div style="background: #f8f8f8; min-height: 100vh;">
+    <div class="page-header">
+        <a href="{% url 'reward_management' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">振込口座を編集</div>
     </div>
-
-    <h2 style="font-size:20px; margin-bottom:30px;">振込先口座</h2>
 
     <form method="post">
         {% csrf_token %}
+        <div class="edit-list">
+            <!-- 銀行 -->
+            <div class="edit-item">
+                <div class="edit-label">銀行</div>
+                <div class="edit-value-container">
+                    <input type="text" name="bank_name" class="edit-input" placeholder="銀行名"
+                        value="{{ account.bank_name|default:'' }}" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">銀行名</label>
-            <input type="text" name="bank_name" class="form-input" placeholder="例：みずほ銀行"
-                value="{{ account.bank_name|default:'' }}" required>
+            <!-- 口座種別 -->
+            <div class="edit-item">
+                <div class="edit-label">口座種別</div>
+                <div class="edit-value-container">
+                    <select name="account_type" class="edit-input-select">
+                        <option value="普通" {% if account.account_type=='普通' %}selected{% endif %}>普通</option>
+                        <option value="当座" {% if account.account_type=='当座' %}selected{% endif %}>当座</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 支店 -->
+            <div class="edit-item">
+                <div class="edit-label">支店</div>
+                <div class="edit-value-container">
+                    <input type="text" name="branch_name" class="edit-input" placeholder="本店"
+                        value="{{ account.branch_name|default:'' }}" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 口座番号 -->
+            <div class="edit-item">
+                <div class="edit-label">口座番号</div>
+                <div class="edit-value-container">
+                    <input type="text" name="account_number" class="edit-input" placeholder="0000000"
+                        value="{{ account.account_number|default:'' }}" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 口座名義 -->
+            <div class="edit-item">
+                <div class="edit-label">口座名義</div>
+                <div class="edit-value-container">
+                    <input type="text" name="account_holder_name" class="edit-input" placeholder="タイミー タロウ"
+                        value="{{ account.account_holder_name|default:'' }}" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">口座種別</label>
-            <select name="account_type" class="form-input">
-                <option value="普通" {% if account.account_type=='普通' %}selected{% endif %}>普通</option>
-                <option value="当座" {% if account.account_type=='当座' %}selected{% endif %}>当座</option>
-            </select>
+        <div class="help-link-area">
+            <a href="#" class="help-link">口座情報について <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></a>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">支店名</label>
-            <input type="text" name="branch_name" class="form-input" placeholder="例：本店"
-                value="{{ account.branch_name|default:'' }}" required>
+        <div class="btn-save-container">
+            <button type="submit" class="btn-save">保存する</button>
         </div>
-
-        <div class="form-group">
-            <label class="form-label">口座番号 (7桁)</label>
-            <input type="text" name="account_number" class="form-input" placeholder="1234567"
-                value="{{ account.account_number|default:'' }}" required>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">口座名義 (カタカナ)</label>
-            <input type="text" name="account_holder_name" class="form-input" placeholder="ヤマダ タロウ"
-                value="{{ account.account_holder_name|default:'' }}" required>
-        </div>
-
-        <button type="submit" class="btn-save">保存</button>
     </form>
 </div>
 {% endblock %}

@@ -1,0 +1,264 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .section-label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .item-select-btn {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #999;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    /* 選択時の赤枠を削除し、黒枠またはデフォルト(#333)に変更 */
+    .item-select-btn.selected {
+        color: #333;
+        border: 1px solid #333;
+    }
+
+    .upload-area {
+        border: 2px dashed #ddd;
+        background: #f9f9f9;
+        text-align: center;
+        padding: 40px 20px;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .upload-btn {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px 30px;
+        border-radius: 30px;
+        font-weight: bold;
+        color: #333;
+        display: inline-block;
+        margin-top: 20px;
+        pointer-events: none;
+    }
+
+    .policy-text {
+        font-size: 14px;
+        margin: 20px 0;
+        line-height: 1.6;
+    }
+
+    .check-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .check-area input[type=checkbox] {
+        transform: scale(1.5);
+    }
+
+    .check-label {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .btn-submit {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        border-radius: 30px;
+        border: none;
+        font-size: 16px;
+        font-weight: bold;
+        background: #ccc;
+        color: white;
+        cursor: not-allowed;
+    }
+
+    /* 活性化時の色を青(#007AFF)に変更 */
+    .btn-submit.active {
+        background: #007AFF;
+        color: white;
+        cursor: pointer;
+    }
+
+    /* 完了ポップアップ */
+    .success-popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 3000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .popup-box {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .popup-msg {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .btn-popup-ok {
+        background: #007AFF;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+
+<!-- 別フォーム: 画像アップロード用 (非表示) -->
+<form id="uploadForm" action="{% url 'qualification_photo_upload' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" id="fileInput" name="certificate_image" accept="image/*" style="display: none;"
+        onchange="document.getElementById('uploadForm').submit();">
+</form>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'qualification_list' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">保有資格の登録</div>
+    </div>
+
+    <!-- メインフォーム (最終登録用) -->
+    <form id="mainForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="item_id" value="{{ selected_item.id|default:'' }}">
+
+        <!-- 資格選択 -->
+        <div class="form-section">
+            <div class="section-label">登録する資格</div>
+            <a href="{% url 'qualification_category_select' %}"
+                class="item-select-btn {% if selected_item %}selected{% endif %}">
+                {% if selected_item %}
+                {{ selected_item.name }}
+                {% else %}
+                項目を選択してください
+                {% endif %}
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <!-- 写真アップロード -->
+        <div class="form-section">
+            <div class="section-label">写真アップロード</div>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                {% if temp_image_url %}
+                <!-- 画像がある場合 -->
+                <img src="{{ temp_image_url }}"
+                    style="max-width:100px; max-height:100px; margin: 0 auto 10px; display: block;">
+                <div class="upload-btn">写真を変更</div>
+                {% else %}
+                <!-- 初期表示 -->
+                <div style="font-size: 40px; color: #ccc; margin-bottom: 15px;"><i class="fa-regular fa-file-image"></i>
+                </div>
+                <div class="upload-btn">写真を選択</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 注意事項 -->
+        <div class="form-section">
+            <div class="section-label">注意事項</div>
+            <div class="policy-text">
+                登録された資格証明書は、資格情報の確認等のために、タイミーが保有し、マッチングした事業者に提供する場合があります。
+            </div>
+
+            <div class="check-area">
+                <input type="checkbox" id="policyCheck">
+                <label for="policyCheck" class="check-label">注意事項に同意する</label>
+            </div>
+
+            <div class="submit-btn-area">
+                <button type="submit" id="submitBtn" class="btn-submit" disabled>登録する</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 完了ポップアップ -->
+{% if success %}
+<div class="success-popup" style="display: flex;">
+    <div class="popup-box">
+        <div class="popup-msg">保有資格を登録しました</div>
+        <a href="{% url 'qualification_list' %}" class="btn-popup-ok">OK</a>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    const policyCheck = document.getElementById('policyCheck');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 画像があるかどうか
+    const hasImage = {% if temp_image_url %}true{% else %} false{% endif %};
+
+    function updateSubmitBtn() {
+        const isAgreed = policyCheck.checked;
+        const hasItem = document.querySelector('input[name="item_id"]').value !== '';
+
+        if (hasImage && isAgreed && hasItem) {
+            submitBtn.disabled = false;
+            submitBtn.classList.add('active');
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('active');
+        }
+    }
+
+    policyCheck.addEventListener('change', updateSubmitBtn);
+    updateSubmitBtn();
+</script>
+{% endblock %}

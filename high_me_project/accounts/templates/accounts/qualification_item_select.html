@@ -1,0 +1,63 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .item-list {
+        background: white;
+    }
+
+    .item-link {
+        display: block;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+    }
+
+    .item-link:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'qualification_category_select' %}" class="back-btn"><i
+                class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">{{ category.name }}</div>
+    </div>
+
+    <div class="item-list">
+        {% for item in items %}
+        <!-- 選択したらフォームに戻る（item_idを渡す） -->
+        <a href="{% url 'qualification_create' %}?item_id={{ item.id }}" class="item-link">
+            {{ item.name }}
+        </a>
+        {% empty %}
+        <div style="padding:20px; text-align:center;">資格が登録されていません</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

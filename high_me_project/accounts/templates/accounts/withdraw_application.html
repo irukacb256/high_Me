@@ -1,28 +1,284 @@
 {% extends 'base_main.html' %}
 {% block content %}
-<div style="padding: 20px;">
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'reward_management' %}" style="color:black;"><i class="fa-solid fa-close"></i></a>
+<style>
+    /* 共通スタイル */
+    .container-pad {
+        padding: 20px;
+    }
+
+    .header-nav {
+        margin-bottom: 20px;
+    }
+
+    .close-icon {
+        color: black;
+        font-size: 20px;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: left;
+        /* 画像1では左寄せ */
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 30px;
+        margin-bottom: 10px;
+    }
+
+    .bank-info-box {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .bank-info-row {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .bank-info-account {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+    .amount-display {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .fee-note {
+        font-size: 12px;
+        font-weight: bold;
+        /* 画像1では太字っぽい */
+        margin-bottom: 30px;
+    }
+
+    .btn-apply {
+        background: #007AFF;
+        /* 青色指定 */
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    /* 完了画面スタイル */
+    .success-container {
+        padding: 40px 20px;
+        text-align: left;
+    }
+
+    .success-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .success-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .success-icon-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .success-icon {
+        font-size: 80px;
+        color: #E6CD50;
+        /* アイコンの色は適当、画像に合わせて */
+    }
+
+    .btn-ok {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    /* モーダル */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-box {
+        background: white;
+        width: 80%;
+        max-width: 320px;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .modal-msg {
+        font-size: 16px;
+        margin-bottom: 25px;
+        font-weight: bold;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .btn-modal-cancel {
+        background: #EEE;
+        color: #333;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-modal-confirm {
+        background: #007AFF;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+{% if success %}
+<!-- 完了画面 (画像2) -->
+<div class="success-container">
+    <div class="header-nav" style="margin-bottom: 20px;">
+        <i class="fa-solid fa-xmark close-icon" onclick="location.href='{% url 'reward_management' %}'"
+            style="cursor:pointer;"></i>
     </div>
 
-    <h2 style="font-size:20px; text-align:center; margin-bottom:40px;">振込申請</h2>
+    <div class="success-title">振り込み申請が完了しました</div>
 
-    <div style="text-align:center; margin-bottom:40px;">
-        <div style="font-size:14px; color:#888;">振込申請可能額</div>
-        <div style="font-size:36px; font-weight:bold;">¥{{ balance }}</div>
+    <div class="success-text">
+        振り込み先の銀行のメンテナンス等で、入金に時間がかかることがあります。<br><br>
+        24時間以上経っても入金がない場合、タイミーカスタマーサポートまでお問い合わせください。
     </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <p style="font-size:12px; color:#666; text-align:center; margin-bottom:30px;">
-            ※申請ボタンを押すと、登録済みの口座へ即時振り込み処理が開始されます。<br>
-            手数料はかかりません。
-        </p>
+    <div class="success-icon-area">
+        <!-- 円マークのアイコンなどを表示、ここではFontAwesomeで代用 -->
+        <div style="position: relative; width: 100px; height: 100px;">
+            <i class="fa-solid fa-rotate" style="font-size: 100px; color: #FDD835;"></i>
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; font-weight: bold;">
+                ¥</div>
+        </div>
+    </div>
 
-        <button type="submit"
-            style="background:#FF3B30; color:white; width:100%; padding:15px; border:none; border-radius:30px; font-weight:bold; font-size:16px;">
-            申請する
-        </button>
-    </form>
+    <div style="position: fixed; bottom: 20px; left: 20px; right: 20px;">
+        <a href="{% url 'reward_management' %}" class="btn-ok">OK</a>
+    </div>
 </div>
+
+{% else %}
+<!-- 申請画面 (画像1) -->
+<div class="container-pad">
+    <div class="header-nav">
+        <a href="{% url 'reward_management' %}"><i class="fa-solid fa-chevron-left close-icon"></i></a>
+    </div>
+
+    <div class="page-title">振り込み申請</div>
+
+    <div style="font-size: 14px; margin-bottom: 30px;">
+        以下の内容で振り込みを申請します。
+    </div>
+
+    <div class="section-title">振込先口座</div>
+    <div class="bank-info-box">
+        {% if bank_account %}
+        <div class="bank-info-row">{{ bank_account.bank_name }}</div>
+        <div class="bank-info-row">{{ bank_account.branch_name }}</div>
+        <div class="bank-info-account">{{ bank_account.account_type }} {{ bank_account.account_number }}</div>
+        {% else %}
+        <div style="color: red;">口座情報がありません</div>
+        {% endif %}
+    </div>
+
+    <div class="section-title">振込金額</div>
+    <div class="amount-display">¥{{ balance }}</div>
+    <div class="fee-note">(手数料 ¥0)</div>
+
+    <!-- アクションボタンエリア -->
+    <div
+        style="position: fixed; bottom: 20px; left: 20px; right: 20px; border-top: 1px solid #eee; padding-top: 10px; background: white;">
+        <button id="openConfirmBtn" type="button" class="btn-apply">申請</button>
+    </div>
+</div>
+
+<!-- モーダル -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-msg">この内容で振り込み申請をしますか？</div>
+        <div class="modal-actions">
+            <button type="button" class="btn-modal-cancel" id="cancelBtn">キャンセル</button>
+            <form method="post" action="" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-modal-confirm">OK</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const openBtn = document.getElementById('openConfirmBtn');
+    const modal = document.getElementById('confirmModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    if (openBtn) {
+        openBtn.addEventListener('click', function () {
+            modal.style.display = 'flex';
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+    }
+
+    // Modal外クリックで閉じる挙動を入れる場合は追加
+</script>
+{% endif %}
 {% endblock %}

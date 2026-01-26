@@ -1,0 +1,71 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .header-nav {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .category-list {
+        background: white;
+    }
+
+    .category-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+    }
+
+    .category-item:last-child {
+        border-bottom: none;
+    }
+
+    .chevron {
+        color: #bbb;
+    }
+</style>
+
+<div>
+    <div class="header-nav">
+        <a href="{% url 'qualification_create' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">資格の分野</div>
+    </div>
+
+    <div class="category-list">
+        {% for category in categories %}
+        <a href="{% url 'qualification_item_select' category.id %}" class="category-item">
+            <span>{{ category.name }}</span>
+            <i class="fa-solid fa-chevron-right chevron"></i>
+        </a>
+        {% empty %}
+        <div style="padding:20px; text-align:center;">
+            分野マスタが登録されていません。<br>
+            (開発用: 管理画面で QualificationCategory を追加してください)
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
