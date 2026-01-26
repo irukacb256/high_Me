@@ -203,6 +203,13 @@ def biz_login(request):
             
     return render(request, 'business/login.html')
 
+def biz_password_reset(request):
+    """事業者用パスワード再設定画面"""
+    if request.method == 'POST':
+        # 実際にはここでパスワード更新処理を行う
+        return redirect('biz_login')
+    return render(request, 'business/password_reset.html')
+
 @login_required
 def biz_portal(request):
     """画像1: 企業 / 店舗一覧（ログイン後の初期画面）"""

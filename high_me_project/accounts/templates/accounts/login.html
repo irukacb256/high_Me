@@ -40,6 +40,20 @@
 
     .input-group {
         margin-bottom: 30px;
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 0;
+        bottom: 12px;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.3s;
+    }
+
+    .password-toggle:hover {
+        color: #666;
     }
 
     .input-group label {
@@ -108,7 +122,11 @@
 
         <div class="input-group">
             <label>パスワード</label>
-            <input type="password" name="password" id="passInput" required autocomplete="current-password">
+            <input type="password" name="password" id="passInput" required autocomplete="current-password" style="padding-right: 30px;">
+            <svg id="togglePass" class="password-toggle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
         </div>
 
         <button type="submit" class="btn-submit" id="submitBtn" disabled>ログイン</button>
@@ -135,6 +153,18 @@
 
     phoneInput.addEventListener('input', checkInputs);
     passInput.addEventListener('input', checkInputs);
+
+    const togglePass = document.getElementById('togglePass');
+    togglePass.addEventListener('click', function() {
+        const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passInput.setAttribute('type', type);
+        // Toggle icon opacity or color to indicate state if desired, but simple toggle for now
+        if (type === 'text') {
+            this.style.color = '#333';
+        } else {
+            this.style.color = '#999';
+        }
+    });
 </script>
 
 {% endblock %}

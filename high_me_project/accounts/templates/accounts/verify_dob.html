@@ -112,15 +112,18 @@
         <div class="dob-input-row">
             <div class="dob-field">
                 <label>年</label>
-                <input type="number" name="year" id="yy" placeholder="2000" required>
+                <input type="tel" pattern="\d*" name="year" id="yy" placeholder="2000" maxlength="4"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); checkForm();" required>
             </div>
             <div class="dob-field">
                 <label>月</label>
-                <input type="number" name="month" id="mm" placeholder="01" required>
+                <input type="tel" pattern="\d*" name="month" id="mm" placeholder="01" maxlength="2"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); checkForm();" required>
             </div>
             <div class="dob-field">
                 <label>日</label>
-                <input type="number" name="day" id="dd" placeholder="01" required>
+                <input type="tel" pattern="\d*" name="day" id="dd" placeholder="01" maxlength="2"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); checkForm();" required>
             </div>
         </div>
 
@@ -131,7 +134,7 @@
 </div>
 
 <script>
-    const inputs = document.querySelectorAll('input[type="number"]');
+    const inputs = document.querySelectorAll('input[type="tel"]');
     const btn = document.getElementById('confirmBtn');
 
     function checkForm() {

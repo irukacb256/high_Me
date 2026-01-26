@@ -106,6 +106,7 @@ urlpatterns = [
     path('biz/complete/', biz_views.biz_signup_complete, name='biz_signup_complete'), # 完了画面
     # --- 登録・ログイン ---
     path('biz/login/', biz_views.biz_login, name='biz_login'), # 修正
+    path('biz/password-reset/', biz_views.biz_password_reset, name='biz_password_reset'), # パスワード再設定
     # --- 企業用マイページ（画像1：企業・店舗一覧） ---
     path('biz/portal/', biz_views.biz_portal, name='biz_portal'),
 
