@@ -106,7 +106,7 @@
                 <i class="fa-regular fa-copy" style="cursor:pointer;"></i>
             </div>
         </div>
-        <a href="#" class="link-action">公開設定を変更 ＞</a>
+        <a href="{% url 'biz_job_visibility_edit' store.id posting.id %}" class="link-action">公開設定を変更 ＞</a>
     </div>
 
     <!-- マッチングカード -->
@@ -207,5 +207,35 @@
         </div>
     </div>
 </div>
+
+
+<!-- Job Created Popup -->
+<div id="createdPopup"
+    style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 20px 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 1000; align-items: center; gap: 15px; width: 90%; max-width: 600px;">
+    <div
+        style="background: #34C759; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="fa-solid fa-check" style="font-size: 18px;"></i>
+    </div>
+    <div style="font-weight: bold; font-size: 18px; color: #34C759; flex: 1;">求人を作成しました</div>
+    <i class="fa-solid fa-xmark" onclick="closePopup()" style="color: #ccc; font-size: 24px; cursor: pointer;"></i>
+</div>
+
+<script>
+    // Check URL for status=created
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status') === 'created') {
+        const popup = document.getElementById('createdPopup');
+        popup.style.display = 'flex';
+
+        // Optional: Clean URL
+        const url = new URL(window.location);
+        url.searchParams.delete('status');
+        window.history.replaceState({}, '', url);
+    }
+
+    function closePopup() {
+        document.getElementById('createdPopup').style.display = 'none';
+    }
+</script>
 
 {% endblock %}

@@ -182,10 +182,15 @@ class JobPosting(models.Model):
     break_start = models.TimeField("休憩開始時間", null=True, blank=True)
     break_duration = models.IntegerField("休憩時間(分)", default=0)
     
+    # 応募締切日時 (計算して保存)
+    application_deadline = models.DateTimeField("応募締切日時", null=True, blank=True)
+    
     VISIBILITY_CHOICES = [
         ('public', '一般公開'),
         ('badge', 'バッジ限定'),
         ('group', 'グループ限定'),
+        ('first_time', '初回ワーカー限定'),
+        ('url', 'URL限定'),
     ]
     visibility = models.CharField("公開範囲", max_length=20, choices=VISIBILITY_CHOICES, default='public')
 

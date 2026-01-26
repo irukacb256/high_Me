@@ -1,0 +1,82 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .btn-save {
+        background: #FF3B30;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+</style>
+
+<div style="padding: 20px;">
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'reward_management' %}" style="color:black;"><i class="fa-solid fa-arrow-left"></i> 戻る</a>
+    </div>
+
+    <h2 style="font-size:20px; margin-bottom:30px;">振込先口座</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">銀行名</label>
+            <input type="text" name="bank_name" class="form-input" placeholder="例：みずほ銀行"
+                value="{{ account.bank_name|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">口座種別</label>
+            <select name="account_type" class="form-input">
+                <option value="普通" {% if account.account_type=='普通' %}selected{% endif %}>普通</option>
+                <option value="当座" {% if account.account_type=='当座' %}selected{% endif %}>当座</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">支店名</label>
+            <input type="text" name="branch_name" class="form-input" placeholder="例：本店"
+                value="{{ account.branch_name|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">口座番号 (7桁)</label>
+            <input type="text" name="account_number" class="form-input" placeholder="1234567"
+                value="{{ account.account_number|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">口座名義 (カタカナ)</label>
+            <input type="text" name="account_holder_name" class="form-input" placeholder="ヤマダ タロウ"
+                value="{{ account.account_holder_name|default:'' }}" required>
+        </div>
+
+        <button type="submit" class="btn-save">保存</button>
+    </form>
+</div>
+{% endblock %}

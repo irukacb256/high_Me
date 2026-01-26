@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import WorkerProfile
+from .models import WorkerProfile, WorkerBankAccount, WalletTransaction
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
 from datetime import date
@@ -440,7 +440,15 @@ def login_view(request):
 # accounts/views.py 内に追加
 def mypage(request):
     """マイページ画面 (画像5)"""
-    return render(request, 'accounts/mypage.html')
+    balance = 0
+    if request.user.is_authenticated:
+        try:
+            profile = request.user.workerprofile
+            balance = sum(t.amount for t in profile.wallet_transactions.all())
+        except:
+            pass
+            
+    return render(request, 'accounts/mypage.html', {'balance': balance})
 
 # アカウント設定
 @login_required
@@ -600,3 +608,89 @@ def verify_identity_upload(request):
             return redirect('login')
             
     return render(request, 'accounts/verify_identity_upload.html')
+
+
+# --- 報酬管理 (ウォレット) ---
+
+@login_required
+def reward_management(request):
+    """画像2: 報酬管理画面"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    
+    # 残高計算
+    transactions = profile.wallet_transactions.all()
+    balance = sum(t.amount for t in transactions)
+    
+    # 銀行口座確認
+    try:
+        bank_account = profile.bank_account
+    except WorkerBankAccount.DoesNotExist:
+        bank_account = None
+        
+    return render(request, 'accounts/reward_management.html', {
+        'balance': balance,
+        'bank_account': bank_account,
+        'profile': profile
+    })
+
+@login_required
+def wallet_history(request):
+    """画像3: 入出金履歴"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    transactions = profile.wallet_transactions.all().order_by('-created_at')
+    
+    return render(request, 'accounts/wallet_history.html', {
+        'transactions': transactions
+    })
+
+@login_required
+def bank_account_edit(request):
+    """画像4: 振込先口座登録"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    
+    # POST処理
+    if request.method == 'POST':
+        bank_name = request.POST.get('bank_name')
+        account_type = request.POST.get('account_type')
+        branch_name = request.POST.get('branch_name')
+        account_number = request.POST.get('account_number')
+        account_holder_name = request.POST.get('account_holder_name')
+        
+        WorkerBankAccount.objects.update_or_create(
+            worker=profile,
+            defaults={
+                'bank_name': bank_name,
+                'account_type': account_type,
+                'branch_name': branch_name,
+                'account_number': account_number,
+                'account_holder_name': account_holder_name,
+            }
+        )
+        return redirect('reward_management')
+
+    try:
+        account = profile.bank_account
+    except WorkerBankAccount.DoesNotExist:
+        account = None
+        
+    return render(request, 'accounts/bank_account_edit.html', {'account': account})
+
+@login_required
+def withdraw_application(request):
+    """画像5: 振込申請"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    
+    balance = sum(t.amount for t in profile.wallet_transactions.all())
+    
+    if request.method == 'POST':
+        # 全額出金処理
+        if balance > 0:
+            WalletTransaction.objects.create(
+                worker=profile,
+                amount=-balance,
+                transaction_type='withdrawal',
+                description='振込申請'
+            )
+        return redirect('reward_management')
+        
+    return render(request, 'accounts/withdraw_application.html', {'balance': balance})

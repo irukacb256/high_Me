@@ -1,0 +1,172 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .visibility-form-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 25px;
+        cursor: pointer;
+    }
+
+    .option-radio {
+        margin-top: 5px;
+        margin-right: 15px;
+        transform: scale(1.5);
+        /* Make radio larger */
+        accent-color: #007AFF;
+    }
+
+    .option-content {
+        flex: 1;
+    }
+
+    .option-label {
+        font-size: 16px;
+        font-weight: bold;
+        /* Bold not strictly in image but good for readability */
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .option-description {
+        font-size: 13px;
+        color: #888;
+        margin-top: 5px;
+        line-height: 1.5;
+    }
+
+    .help-icon {
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .btn-save {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        margin: 40px auto 0;
+        text-align: center;
+    }
+
+    .btn-save:hover {
+        background: #0066cc;
+    }
+</style>
+
+<style>
+    .breadcrumb {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="breadcrumb">
+    <a href="{% url 'biz_job_posting_list' store.id %}">求人一覧</a> &gt; <a
+        href="{% url 'biz_job_posting_detail' store.id posting.id %}">求人詳細</a> &gt; 公開設定
+</div>
+
+<div class="visibility-form-container">
+    <h2 class="form-title">公開設定</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- 一般公開 -->
+        <label class="option-item">
+            <input type="radio" name="visibility" value="public" class="option-radio" {% if posting.visibility=='public'
+                %}checked{% endif %}>
+            <div class="option-content">
+                <div class="option-label">一般公開</div>
+            </div>
+        </label>
+
+        <!-- バッジ限定公開 -->
+        <label class="option-item">
+            <input type="radio" name="visibility" value="badge" class="option-radio" {% if posting.visibility=='badge'
+                %}checked{% endif %}>
+            <div class="option-content">
+                <div class="option-label">バッジ限定公開 <i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-description">
+                    経験豊富なワーカーに働いてほしい求人におすすめです。<br>
+                    設定可能な時給：1,300円以上
+                </div>
+            </div>
+        </label>
+
+        <!-- グループ限定公開 -->
+        <label class="option-item">
+            <input type="radio" name="visibility" value="group" class="option-radio" {% if posting.visibility=='group'
+                %}checked{% endif %}>
+            <div class="option-content">
+                <div class="option-label">グループ限定公開（20個のグループあり）</div>
+                <!-- Note: (20個のグループあり) is static for now as mock data per instruction/image unless dynamic count is passed -->
+            </div>
+        </label>
+
+        <!-- 初回ワーカー限定公開 -->
+        <label class="option-item">
+            <input type="radio" name="visibility" value="first_time" class="option-radio" {% if
+                posting.visibility=='first_time' %}checked{% endif %}>
+            <div class="option-content">
+                <div class="option-label">初回ワーカー限定公開 <i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-description">
+                    この店舗で直近の2年間、一度も勤務経験がないワーカーだけに求人が表示されます。
+                </div>
+            </div>
+        </label>
+
+        <!-- URL限定公開 -->
+        <label class="option-item">
+            <input type="radio" name="visibility" value="url" class="option-radio" {% if posting.visibility=='url'
+                %}checked{% endif %}>
+            <div class="option-content">
+                <div class="option-label">URL限定公開</div>
+                <div class="option-description">
+                    求人詳細ページの「共有URL」を知っているワーカーだけに求人が表示されます。
+                </div>
+            </div>
+        </label>
+
+        <button type="submit" class="btn-save">設定を保存する</button>
+
+    </form>
+</div>
+
+{% endblock %}

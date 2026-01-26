@@ -158,8 +158,15 @@
 
 <!-- カレンダー表示エリア -->
 <div id="calendar-view" class="visible">
-    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #eee;">
-        <div id="calendar"></div>
+    <div class="calendar-card">
+        <div class="calendar-top" style="justify-content:center; margin-bottom:15px;">
+            <button onclick="navigateCalendar(-1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">＜</button>
+            <span class="calendar-title" style="margin:0 15px;">{{ current_year }}年{{ current_month }}月</span>
+            <button onclick="navigateCalendar(1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">＞</button>
+        </div>
+        {% include 'business/components/calendar_grid.html' %}
     </div>
 </div>
 
@@ -205,6 +212,72 @@
     </table>
 </div>
 
+<!-- Copy Modal Logic from Dashboard -->
+<!-- Day Detail Modal (Image 2) -->
+<div id="dayModal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+    <div
+        style="background:white; width:90%; max-width:500px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
+        <!-- Modal Header -->
+        <div
+            style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024年1月20日（土）</div>
+            <button onclick="closeDayModal()"
+                style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div id="modalContent" style="padding:20px; overflow-y:auto; flex:1;"></div>
+
+        <div style="padding:15px; border-top:1px solid #eee; text-align:center;">
+            <button onclick="closeDayModal()"
+                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">閉じる</button>
+        </div>
+    </div>
+</div>
+
+<template id="jobItemTemplate">
+    <div style="margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0;">
+        <a href="#" class="job-link"
+            style="color:#007AFF; font-weight:bold; font-size:15px; text-decoration:underline; display:block; margin-bottom:10px;">TITLE_HERE</a>
+
+        <div
+            style="display:grid; grid-template-columns: 80px 1fr; gap:10px; font-size:13px; color:#666; margin-bottom:8px;">
+            <div>時間</div>
+            <div><i class="fa-regular fa-clock"></i> TIME_HERE</div>
+
+            <div>求人の状態</div>
+            <div><span class="status-badge BADGE_CLASS">STATUS_HERE</span></div>
+
+            <div>公開設定</div>
+            <div>VISIBILITY_HERE</div>
+
+            <div>募集人数</div>
+            <div><i class="fa-solid fa-user"></i> PEOPLE_HERE</div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .badge-active {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+
+    .badge-done {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+</style>
+
 <script>
     function switchView(view) {
         document.getElementById('calendar-view').classList.remove('visible');
@@ -221,22 +294,42 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth', locale: 'ja',
-            events: [
-                {% for job in postings %}
-                {
-                title: '{{ job.start_time|time:"H:i" }} 👤{{ job.matched_count }}/{{ job.recruitment_count }}',
-                start: '{{ job.work_date|date:"Y-m-d" }}',
-                url: "{% if not job.is_old_posting %}{% url 'biz_job_posting_detail' store.id job.id %}{% endif %}",
-                className: "{% if job.is_old_posting %}event-old{% endif %}"
-            },
-            {% endfor %}
-            ]
-        });
-    calendar.render();
+    function openDayModal(dateYMD, dateFormatted, dayOfWeekIdx) {
+        const days = ['（日）', '（月）', '（火）', '（水）', '（木）', '（金）', '（土）'];
+        const dayStr = days[dayOfWeekIdx] || '';
+        document.getElementById('modalDate').innerText = dateFormatted + ' ' + dayStr;
+
+        const dataContainer = document.getElementById('data-' + dateYMD);
+        const modalContent = document.getElementById('modalContent');
+        const template = document.getElementById('jobItemTemplate').innerHTML;
+
+        modalContent.innerHTML = '';
+
+        if (dataContainer && dataContainer.children.length > 0) {
+            Array.from(dataContainer.children).forEach(item => {
+                let html = template
+                    .replace('TITLE_HERE', item.dataset.title)
+                    .replace('TIME_HERE', item.dataset.time)
+                    .replace('STATUS_HERE', item.dataset.status)
+                    .replace('BADGE_CLASS', item.dataset.statusClass)
+                    .replace('VISIBILITY_HERE', item.dataset.visibility)
+                    .replace('PEOPLE_HERE', item.dataset.people)
+                    .replace('href="#"', 'href="' + item.dataset.detailUrl + '"'); // Updated link
+                modalContent.innerHTML += html;
+            });
+        } else {
+            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">予定はありません</div>';
+        }
+
+        document.getElementById('dayModal').style.display = 'flex';
+    }
+
+    function closeDayModal() {
+        document.getElementById('dayModal').style.display = 'none';
+    }
+
+    document.getElementById('dayModal').addEventListener('click', function (e) {
+        if (e.target === this) closeDayModal();
     });
 </script>
 {% endblock %}

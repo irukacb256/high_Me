@@ -71,6 +71,13 @@ urlpatterns = [
 
     # accountsアプリ関連
     path('mypage/', account_views.mypage, name='mypage'),            # ★追加
+    
+    # 報酬管理 (ウォレット)
+    path('rewards/', account_views.reward_management, name='reward_management'),
+    path('rewards/history/', account_views.wallet_history, name='wallet_history'),
+    path('rewards/bank-account/', account_views.bank_account_edit, name='bank_account_edit'),
+    path('rewards/withdraw/', account_views.withdraw_application, name='withdraw_application'),
+
     path('settings/', account_views.account_settings, name='account_settings'), # 設定一覧
     path('settings/profile/', account_views.profile_edit, name='profile_edit'), # ★プロフィール編集画面
     path('settings/profile/address/', account_views.profile_address_edit, name='profile_address_edit'), # ★住所変更専用画面
@@ -132,6 +139,7 @@ urlpatterns = [
     path('biz/templates/<int:pk>/delete/', biz_views.template_delete, name='biz_template_delete'),
     # このひな形を元に求人作成（勤務日時入力画面へ）
     path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
+    path('biz/job/<int:store_id>/<int:pk>/visibility/', biz_views.job_posting_visibility_edit, name='biz_job_visibility_edit'),
     path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
     path('biz/store/<int:store_id>/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
     path('biz/store/<int:store_id>/postings/<int:pk>/', biz_views.job_posting_detail, name='biz_job_posting_detail'),

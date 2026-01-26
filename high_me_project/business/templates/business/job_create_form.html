@@ -285,37 +285,33 @@
     <!-- ひな形プレビュー -->
     <div class="card">
         <div class="card-header">求人のひな形</div>
-        <div class="card-body">
-            <div class="template-preview">
-                <div class="template-img">
+        <!-- Image 2 Style -->
+        <div style="padding: 20px;">
+            <div style="display:flex; gap:20px;">
+                <div style="width:240px; height:160px; background:#eee; flex-shrink:0;">
                     {% if template.photos.first %}
-                    <img src="{{ template.photos.first.image.url }}">
+                    <img src="{{ template.photos.first.image.url }}" style="width:100%; height:100%; object-fit:cover;">
                     {% else %}
-                    <img src="https://via.placeholder.com/300x180?text=No+Image">
+                    <img src="https://via.placeholder.com/240x160?text=No+Image"
+                        style="width:100%; height:100%; object-fit:cover;">
                     {% endif %}
                 </div>
-                <div class="template-info">
-                    <div class="template-meta">{{ template.industry }} / {{ template.occupation }}</div>
-                    <div class="template-title" style="color: #007AFF;">{{ template.title }}</div>
-                    <div class="template-address">
+                <div style="flex:1;">
+                    <div style="font-size:12px; color:#666; margin-bottom:5px;">{{ template.industry }} / {{
+                        template.occupation }}</div>
+                    <div style="font-weight:bold; font-size:16px; margin-bottom:10px; line-height:1.4;">{{
+                        template.title }}</div>
+                    <div style="font-size:13px; font-weight:bold; display:flex; align-items:center; gap:5px;">
                         <i class="fa-solid fa-location-dot"></i> {{ template.address }}
                     </div>
                 </div>
             </div>
 
-            <div class="template-detail-section">
-                <div class="template-detail-row">
-                    <div class="template-detail-label">募集内容</div>
-                    <div class="template-detail-value">{{ template.work_content|linebreaksbr }}</div>
-                </div>
-                <div class="template-detail-row">
-                    <div class="template-detail-label">注意事項</div>
-                    <div class="template-detail-value">{{ template.precautions|linebreaksbr }}</div>
-                </div>
-                <div class="template-detail-row">
-                    <div class="template-detail-label">持ち物</div>
-                    <div class="template-detail-value">{{ template.belongings|default:"特になし" }}</div>
-                </div>
+            <!-- Admin Label Section (Below Card Content) -->
+            <div style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
+                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">管理用ラベル</div>
+                <div style="font-size:11px; color:#666;">※ワーカーには公開されません</div>
+                <div style="margin-top:5px; font-size:14px;">{{ template.title }}</div>
             </div>
         </div>
     </div>
@@ -331,21 +327,21 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <div class="label-row"><span class="label-text">求人日</span></div>
-                        <input type="date" name="work_date" id="work_date" value="2025-04-29" required>
+                        <input type="date" name="work_date" id="work_date" value="{{ tomorrow|date:'Y-m-d' }}" required>
                     </div>
                     <div class="form-group">
                         <div class="label-row"><span class="label-text">開始〜終了</span></div>
                         <div class="time-range">
                             <div class="input-with-icon">
-                                <input type="time" name="start_time" id="start_time" value="16:00" required>
+                                <input type="time" name="start_time" id="start_time" required>
                                 <i class="fa-regular fa-clock"></i>
                             </div>
                             <span>〜</span>
                             <div class="input-with-icon">
-                                <input type="time" name="end_time" id="end_time" value="20:00" required>
+                                <input type="time" name="end_time" id="end_time" required>
                                 <i class="fa-regular fa-clock"></i>
                             </div>
-                            <span class="duration-text" id="duration_display">(4時間0分)</span>
+                            <span class="duration-text" id="duration_display"></span>
                         </div>
                     </div>
                 </div>
@@ -376,11 +372,17 @@
 
                 <div class="form-group" style="margin-top: 20px;">
                     <div class="label-row"><span class="label-text">求人の締切時間</span></div>
-                    <select name="deadline" style="max-width: 300px;">
+                    <select name="deadline"
+                        style="max-width: 300px; padding:10px; border-radius:8px; border:1px solid #ccc;">
                         <option value="start">【推奨】開始時刻と同時</option>
-                        <option value="1h">1時間前</option>
-                        <option value="2h">2時間前</option>
-                        <option value="day_before">前日同時刻</option>
+                        <option value="1h">開始時刻の1時間前</option>
+                        <option value="2h">開始時刻の2時間前</option>
+                        <option value="3h">開始時刻の3時間前</option>
+                        <option value="5h">開始時刻の5時間前</option>
+                        <option value="8h">開始時刻の8時間前</option>
+                        <option value="12h">開始時刻の12時間前</option>
+                        <option value="day_before">開始時刻の1日（24時間）前</option>
+                        <option value="2days_before">開始時刻の2日（48時間）前</option>
                     </select>
                 </div>
 
@@ -401,12 +403,15 @@
         <div class="card">
             <div class="card-header">公開設定</div>
             <div class="card-body">
+                <!-- 1. 一般 -->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="public" checked>
                     <div class="option-content">
                         <div class="option-title">一般公開</div>
                     </div>
                 </label>
+
+                <!-- 2. バッジ -->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="badge">
                     <div class="option-content">
@@ -415,7 +420,9 @@
                         <div class="option-desc">経験豊富なワーカーに働いてほしい求人におすすめです。<br>設定可能な時給：1,363円以上</div>
                     </div>
                 </label>
-                <label class="radio-option" style="margin-bottom: 0;">
+
+                <!-- 3. グループ -->
+                <label class="radio-option">
                     <input type="radio" name="visibility" value="group">
                     <div class="option-content">
                         <div class="option-title">グループ限定公開 (59個のグループあり)</div>
@@ -424,15 +431,27 @@
                             <span>自動で「一般公開」に切り替える（ベータ版）</span>
                         </div>
                         <div class="option-desc" style="margin-left: 20px;">
-                            「グループ限定公開」で募集人数を満たせない場合に自動で「一般公開」に切り替えて、マッチングの機会を増やします。<br>
-                            ※求人の締め切りまでの期間が「24時間以内」に設定されたときは、自動でチェックが入ります。<br>
-                            ※切り替えのタイミングは、求人の公開から締め切りまでの期間によって変動します。
+                            「グループ限定公開」で募集人数を満たせない場合に自動で「一般公開」に切り替えて、マッチングの機会を増やします。
                         </div>
-                        <div class="nested-options">
-                            <label class="checkbox-item"><input type="checkbox"> 稼働経験あり (271人)</label>
-                            <label class="checkbox-item"><input type="checkbox"> お気に入り (86人)</label>
-                            <label class="checkbox-item"><input type="checkbox"> レジ経験者 (13人)</label>
-                        </div>
+                    </div>
+                </label>
+
+                <!-- 4. 初回限定 -->
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="first_time">
+                    <div class="option-content">
+                        <div class="option-title">初回ワーカー限定公開 <i class="fa-regular fa-circle-question"
+                                style="color:#C7C7CC; cursor:pointer;"></i></div>
+                        <div class="option-desc">この店舗で直近の2年間、一度も勤務経験がないワーカーだけに求人が表示されます。</div>
+                    </div>
+                </label>
+
+                <!-- 5. URL限定 -->
+                <label class="radio-option" style="margin-bottom: 0;">
+                    <input type="radio" name="visibility" value="url">
+                    <div class="option-content">
+                        <div class="option-title">URL限定公開</div>
+                        <div class="option-desc">求人詳細ページの「共有URL」を知っているワーカーだけに求人が表示されます。</div>
                     </div>
                 </label>
             </div>
@@ -504,7 +523,7 @@
             </div>
         </div>
 
-        <div class="footer-bar">
+        <div class="form-container" style="text-align:center; padding-top:40px; border-top:1px solid #eee;">
             <button type="submit" class="btn-submit">入力した求人内容を確認</button>
         </div>
     </form>

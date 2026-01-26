@@ -63,3 +63,32 @@ class WorkerBadge(models.Model):
 
     def __str__(self):
         return f"{self.worker.user.username} - {self.badge.name}"
+
+class WorkerBankAccount(models.Model):
+    """画像1: ワーカーの振込先口座情報"""
+    worker = models.OneToOneField(WorkerProfile, on_delete=models.CASCADE, related_name='bank_account')
+    bank_name = models.CharField("銀行名", max_length=100)
+    account_type = models.CharField("口座種別", max_length=20, default='普通') # 普通, 当座 など
+    branch_name = models.CharField("支店名", max_length=100)
+    account_number = models.CharField("口座番号", max_length=20) # 0落ちを防ぐため文字列
+    account_holder_name = models.CharField("口座名義", max_length=100)
+
+    def __str__(self):
+        return f"{self.bank_name} - {self.worker.user.username}"
+
+class WalletTransaction(models.Model):
+    """画像3/5: ウォレット取引履歴"""
+    TRANSACTION_TYPES = (
+        ('reward', '報酬'),
+        ('withdrawal', '出金'),
+        ('bonus', 'ボーナス'), # 仮
+    )
+    
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='wallet_transactions')
+    amount = models.IntegerField("金額") # プラスは入金、マイナスは出金
+    transaction_type = models.CharField("取引種別", max_length=20, choices=TRANSACTION_TYPES)
+    description = models.CharField("内容", max_length=200) # 例: "2024/01/26 〇〇店 報酬"
+    created_at = models.DateTimeField("日時", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.get_transaction_type_display()}: {self.amount}円 ({self.created_at})"

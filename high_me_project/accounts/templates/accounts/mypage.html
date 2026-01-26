@@ -225,9 +225,9 @@
     <div class="wallet-card">
         <div>
             <div style="font-size:12px; margin-bottom:5px; opacity:0.9;">ウォレット残高</div>
-            <div class="wallet-balance">¥ 0</div>
+            <div class="wallet-balance">¥ {{ balance }}</div>
         </div>
-        <div class="btn-withdraw">引き出す</div>
+        <a href="{% url 'reward_management' %}" class="btn-withdraw">引き出す</a>
     </div>
 
     <!-- 本人確認誘導バナー (未確認時のみ表示) -->

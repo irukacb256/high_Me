@@ -6,19 +6,105 @@
         max-width: 900px;
         margin: 20px auto;
         padding-bottom: 40px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        font-size: 13px;
+        color: #007AFF;
+        margin-bottom: 15px;
+    }
+
+    .breadcrumb a {
+        text-decoration: none;
+        color: #007AFF;
+    }
+
+    .breadcrumb span {
+        color: #666;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1c1c1e;
+        margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        color: #666;
     }
 
     .detail-card {
         background: white;
-        padding: 40px;
-        border-radius: 8px;
+        border-radius: 12px;
         border: 1px solid #eee;
+        overflow: hidden;
+    }
+
+    .card-header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-action-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        color: #333;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-action-outline:hover {
+        background: #f5f5f5;
+    }
+
+    .btn-action-outline i {
+        color: #666;
     }
 
     .detail-row {
         display: flex;
-        border-bottom: 1px solid #f5f5f5;
-        padding: 20px 0;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Zebra striping: Odd rows gray, Even rows white */
+    .detail-row:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .detail-row:nth-child(odd) {
+        background-color: #fff;
     }
 
     .detail-label {
@@ -26,6 +112,7 @@
         font-weight: bold;
         color: #666;
         font-size: 14px;
+        flex-shrink: 0;
     }
 
     .detail-value {
@@ -35,11 +122,22 @@
         white-space: pre-wrap;
     }
 
-    .header-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
+    .btn-primary {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px 80px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #005bb5;
     }
 
     .tag-blue {
@@ -53,14 +151,32 @@
 </style>
 
 <div class="detail-container">
-    <div class="header-actions">
-        <a href="{% url 'biz_template_list' store.id %}" style="text-decoration:none; color:#666;">＜ 一覧に戻る</a>
-        <a href="{% url 'biz_template_edit' template.pk %}" class="btn-blue">このひな形を編集する</a>
+    <div class="breadcrumb">
+        <a href="{% url 'biz_template_list' store.id %}">求人のひな形一覧</a>
+        <span>&gt;</span>
+        <span style="color:#666;">求人のひな形詳細</span>
+    </div>
+
+    <div class="page-header">
+        <div class="page-title">求人のひな形詳細</div>
+        <div class="page-subtitle">求人のひな形を確認できます</div>
     </div>
 
     <div class="detail-card">
-        <h1 style="font-size: 22px; margin-bottom: 30px; border-bottom: 2px solid #007AFF; padding-bottom: 10px;">
-            ひな形の詳細確認</h1>
+        <div class="card-header-actions">
+            <div class="card-title">求人のひな形</div>
+            <div class="action-buttons">
+                <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action-outline">
+                    <i class="fa-regular fa-pen-to-square"></i> 編集する
+                </a>
+                <a href="#" class="btn-action-outline">
+                    <i class="fa-regular fa-copy"></i> 複製する
+                </a>
+                <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action-outline">
+                    <i class="fa-regular fa-trash-can"></i> 削除する
+                </a>
+            </div>
+        </div>
 
         <div class="detail-row">
             <div class="detail-label">求人タイトル</div>
@@ -166,16 +282,16 @@
             </div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-row" style="border-bottom: none;">
             <div class="detail-label">自動送信メッセージ</div>
-            <div class="detail-value" style="background:#f9f9f9; padding:15px; border-radius:4px;">
+            <div class="detail-value">
                 {{ template.auto_message|default:"未設定" }}
             </div>
         </div>
     </div>
 
-    <div style="margin-top: 30px; text-align: center;">
-        <a href="{% url 'biz_job_create' template.pk %}" class="btn-blue" style="padding: 15px 100px; font-size: 18px;">
+    <div style="margin-top: 40px; text-align: center;">
+        <a href="{% url 'biz_job_create' template.pk %}" class="btn-primary">
             この内容で求人を募集する
         </a>
     </div>

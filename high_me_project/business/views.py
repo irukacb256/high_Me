@@ -244,13 +244,73 @@ def dashboard(request, store_id):
     biz_profile = get_object_or_404(BusinessProfile, user=request.user)
     store = get_object_or_404(Store, id=store_id, business=biz_profile)
     
-    # この店舗の全求人を取得
-    postings = JobPosting.objects.filter(template__store=store)
+    # カレンダーデータの取得
+    year = int(request.GET.get('year', timezone.now().year))
+    month = int(request.GET.get('month', timezone.now().month))
+    calendar_data = get_biz_calendar(store, year, month)
 
     return render(request, 'business/dashboard.html', {
         'store': store,
-        'postings': postings,
+        'calendar_data': calendar_data,
+        'current_year': year,
+        'current_month': month,
+        'today': timezone.now().date(),
     })
+
+def get_biz_calendar(store, year, month):
+    """カレンダー表示用のデータを生成するヘルパー関数"""
+    import calendar
+    from datetime import date, timedelta
+    
+    # 月の初日と末日
+    first_day = date(year, month, 1)
+    # カレンダーの開始日（前の月の最後の日曜日、または1日）
+    # weekday()は月曜=0, 日曜=6。日曜始まりにしたいので調整
+    start_offset = (first_day.weekday() + 1) % 7
+    calendar_start = first_day - timedelta(days=start_offset)
+    
+    # 6週間分のデータを確保（最大ケースに対応）
+    weeks = []
+    current_day = calendar_start
+    
+    # 求人データの取得（前後含む範囲で）
+    calendar_end = calendar_start + timedelta(days=42)
+    postings = JobPosting.objects.filter(
+        template__store=store,
+        work_date__gte=calendar_start,
+        work_date__lte=calendar_end
+    ).order_by('start_time')
+    
+    # 日付ごとのマップ作成
+    posting_map = {}
+    for p in postings:
+        d_str = p.work_date.strftime('%Y-%m-%d')
+        if d_str not in posting_map:
+            posting_map[d_str] = []
+        posting_map[d_str].append(p)
+    
+    today = timezone.now().date()
+
+    for _ in range(6): # 6週間固定
+        week = []
+        for _ in range(7):
+            d_str = current_day.strftime('%Y-%m-%d')
+            day_data = {
+                'date': current_day,
+                'day': current_day.day,
+                'is_today': current_day == today,
+                'is_current_month': current_day.month == month,
+                'postings': posting_map.get(d_str, [])
+            }
+            week.append(day_data)
+            current_day += timedelta(days=1)
+        weeks.append(week)
+        # 次の週の開始月が翌月を超えていたら終了（ただし最低5週は表示などが一般的だが6週固定でシンプルに）
+        if weeks[-1][0]['date'].month != month and weeks[-1][0]['date'] > first_day:
+             # 一旦6週固定で返す
+             pass
+
+    return weeks
 
 @login_required
 def add_store(request):
@@ -442,13 +502,19 @@ def job_create_from_template(request, template_pk):
             'wage': request.POST.get('wage'),
             'transport': request.POST.get('transport'),
             'visibility': request.POST.get('visibility'),
+            'deadline': request.POST.get('deadline'), # 追加
             'auto_message': request.POST.get('auto_message'),
             'msg_send': request.POST.get('msg_send') == 'true',
             'count': request.POST.get('count', 1),
         }
         return redirect('biz_job_confirm')
     
-    return render(request, 'business/job_create_form.html', {'template': template, 'store': store})
+    tomorrow = timezone.now().date() + timezone.timedelta(days=1)
+    return render(request, 'business/job_create_form.html', {
+        'template': template, 
+        'store': store,
+        'tomorrow': tomorrow
+    })
 
 @login_required
 def job_posting_list(request, store_id): # ★ store_id を引数に追加
@@ -457,12 +523,21 @@ def job_posting_list(request, store_id): # ★ store_id を引数に追加
     biz_profile = get_object_or_404(BusinessProfile, user=request.user)
     store = get_object_or_404(Store, id=store_id, business=biz_profile)
     
-    # この店舗（store）に紐づく求人のみを取得
+    # カレンダーデータの取得
+    year = int(request.GET.get('year', timezone.now().year))
+    month = int(request.GET.get('month', timezone.now().month))
+    calendar_data = get_biz_calendar(store, year, month)
+    
+    # リスト表示用の全求人（既存ロジック維持）
     postings = JobPosting.objects.filter(template__store=store).order_by('-work_date', '-start_time')
     
     return render(request, 'business/job_posting_list.html', {
         'store': store,      # サイドバーのURL生成に必要
-        'postings': postings
+        'postings': postings,
+        'calendar_data': calendar_data,
+        'current_year': year,
+        'current_month': month,
+        'today': timezone.now().date(),
     })
 
 @login_required
@@ -525,37 +600,66 @@ def job_confirm(request):
             # セッションデータからひな形を取得
             template = get_object_or_404(JobTemplate, pk=pending_data['template_id'])
             
+            # 締切日時の計算
+            work_dt = timezone.datetime.combine(
+                timezone.datetime.strptime(pending_data['work_date'], '%Y-%m-%d').date(),
+                timezone.datetime.strptime(pending_data['start_time'], '%H:%M').time()
+            )
+            # タイムゾーンを考慮（settings.TIME_ZONEに従う）
+            work_dt = timezone.make_aware(work_dt)
+            
+            deadline_offset = pending_data.get('deadline', 'start')
+            app_deadline = work_dt # default: start time
+            
+            if deadline_offset == '1h':
+                app_deadline = work_dt - timezone.timedelta(hours=1)
+            elif deadline_offset == '2h':
+                app_deadline = work_dt - timezone.timedelta(hours=2)
+            elif deadline_offset == '3h':
+                app_deadline = work_dt - timezone.timedelta(hours=3)
+            elif deadline_offset == '5h':
+                app_deadline = work_dt - timezone.timedelta(hours=5)
+            elif deadline_offset == '8h':
+                app_deadline = work_dt - timezone.timedelta(hours=8)
+            elif deadline_offset == '12h':
+                app_deadline = work_dt - timezone.timedelta(hours=12)
+            elif deadline_offset == 'day_before':
+                app_deadline = work_dt - timezone.timedelta(hours=24)
+            elif deadline_offset == '2days_before':
+                app_deadline = work_dt - timezone.timedelta(hours=48)
+            
             # 求人をDBに保存
-            JobPosting.objects.create(
+            posting = JobPosting.objects.create(
                 template=template,
                 title=pending_data.get('title') or template.title,
                 work_date=pending_data['work_date'],
                 start_time=pending_data['start_time'],
                 end_time=pending_data['end_time'],
                 work_content=template.work_content,
-                # 新規項目
+                
                 hourly_wage=pending_data.get('wage', 1100),
                 transportation_fee=pending_data.get('transport', 500),
                 recruitment_count=pending_data.get('count', 1),
                 break_start=pending_data.get('break_start'),
                 break_duration=pending_data.get('break_duration', 0),
                 visibility=pending_data.get('visibility', 'public'),
+                application_deadline=app_deadline, # 保存
                 is_published=True
             )
             
-            # 完了したのでセッションを削除
             del request.session['pending_job']
             
-            # 完了後の遷移先：この店舗の「求人一覧」へ
-            return redirect('biz_job_posting_list', store_id=store.id)
+            from django.urls import reverse
+            url = reverse('biz_job_posting_detail', kwargs={'store_id': store.id, 'pk': posting.pk})
+            return redirect(f"{url}?status=created")
         else:
-            # チェック漏れがある場合
             return render(request, 'business/job_confirm.html', {
                 'error': 'チェックがされていません。確認をお願いします。',
                 'data': pending_data,
-                'store': store  # ★追加
+                'store': store,
+                'template': get_object_or_404(JobTemplate, pk=pending_data['template_id'])
             })
-
+            
     # GET時の表示
     template = None
     if pending_data:
@@ -592,4 +696,24 @@ def job_worker_detail(request, store_id, worker_id):
         'worker_badges': worker_badges,
         'groups': groups,
         'memo': memo,
+    })
+
+@login_required
+def job_posting_visibility_edit(request, store_id, pk):
+    """求人の公開設定変更"""
+    biz_profile = get_object_or_404(BusinessProfile, user=request.user)
+    store = get_object_or_404(Store, id=store_id, business=biz_profile)
+    posting = get_object_or_404(JobPosting, pk=pk, template__store=store)
+
+    if request.method == 'POST':
+        new_visibility = request.POST.get('visibility')
+        if new_visibility in dict(JobPosting.VISIBILITY_CHOICES):
+            posting.visibility = new_visibility
+            posting.save()
+            messages.success(request, '公開設定を変更しました。')
+            return redirect('biz_job_posting_detail', store_id=store.id, pk=posting.id)
+            
+    return render(request, 'business/job_posting_visibility_edit.html', {
+        'store': store,
+        'posting': posting
     })
