@@ -7,41 +7,43 @@ from jobs import views as job_views
 from business import views as biz_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # --- オンボーディング ---
-    path('', account_views.onboarding1, name='onboarding1'),
-    path('step2/', account_views.onboarding2, name='onboarding2'),
-    path('step3/', account_views.onboarding3, name='onboarding3'),
-    path('gate/', account_views.gate, name='gate'),
+    path('', TemplateView.as_view(template_name='accounts/onboarding1.html'), name='onboarding1'),
+    path('step2/', TemplateView.as_view(template_name='accounts/onboarding2.html'), name='onboarding2'),
+    path('step3/', TemplateView.as_view(template_name='accounts/onboarding3.html'), name='onboarding3'),
+    path('gate/', TemplateView.as_view(template_name='accounts/gate.html'), name='gate'),
 
     # --- 会員登録フロー ---
-    path('signup/', account_views.signup, name='signup'),
-    path('signup/name/', account_views.setup_name, name='setup_name'),
-    path('signup/kana/', account_views.setup_kana, name='setup_kana'),
-    path('signup/gender/', account_views.setup_gender, name='setup_gender'),
-    path('signup/photo/', account_views.setup_photo, name='setup_photo'),
-    path('signup/address/', account_views.setup_address, name='setup_address'),
-    path('signup/workstyle/', account_views.setup_workstyle, name='setup_workstyle'),
-    path('signup/pref-select/', account_views.setup_pref_select, name='setup_pref_select'),
+    # --- 会員登録フロー ---
+    path('signup/', account_views.SignupView.as_view(), name='signup'),
+    path('signup/name/', account_views.SetupNameView.as_view(), name='setup_name'),
+    path('signup/kana/', account_views.SetupKanaView.as_view(), name='setup_kana'),
+    path('signup/gender/', account_views.SetupGenderView.as_view(), name='setup_gender'),
+    path('signup/photo/', account_views.SetupPhotoView.as_view(), name='setup_photo'),
+    path('signup/address/', account_views.SetupAddressView.as_view(), name='setup_address'),
+    path('signup/workstyle/', account_views.SetupWorkstyleView.as_view(), name='setup_workstyle'),
+    path('signup/pref-select/', account_views.SetupPrefSelectView.as_view(), name='setup_pref_select'),
     
     # 新規本人確認フロー (サインアップ用)
-    path('signup/identity/', account_views.signup_verify_identity, name='signup_verify_identity'),
+    path('signup/identity/', account_views.SignupVerifyIdentityView.as_view(), name='signup_verify_identity'),
     path('signup/identity/skip/', account_views.signup_verify_identity_skip, name='signup_verify_identity_skip'),
-    path('signup/confirm/', account_views.signup_confirm, name='signup_confirm'),
+    path('signup/confirm/', account_views.SignupConfirmView.as_view(), name='signup_confirm'),
     
     # ★ ここが足りなかったためにエラーが出ていました
     path('verify/', account_views.verify_identity, name='verify_identity'), 
     path('verify/select/', account_views.verify_identity_select, name='verify_identity_select'), 
     path('verify/upload/', account_views.verify_identity_upload, name='verify_identity_upload'), 
-    path('verify/dob/', account_views.verify_dob, name='verify_dob'),
+    path('verify/dob/', account_views.VerifyDobView.as_view(), name='verify_dob'),
     path('profile-setup/', account_views.profile_setup, name='profile_setup'),
 
     # --- その他 ---
-    path('login/', account_views.login_view, name='login'),
-    path('home/', job_views.index, name='index'), # 登録完了後の「さがす」画面
+    path('login/', account_views.CustomLoginView.as_view(), name='login'),
+    # path('home/', job_views.index, name='index'), # 登録完了後の「さがす」画面
 
      # jobsアプリ関連
     path('home/', job_views.index, name='index'),
@@ -70,9 +72,9 @@ urlpatterns = [
     path('favorites/toggle/store/<int:store_id>/', job_views.toggle_favorite_store, name='toggle_favorite_store'),
 
     # accountsアプリ関連
-    path('mypage/', account_views.mypage, name='mypage'),            # ★追加
-    path('achievements/', account_views.achievements, name='achievements'), # ★実績画面追加
-    path('past-jobs/', account_views.past_jobs, name='past_jobs'),   # ★これまでの仕事画面
+    path('mypage/', account_views.MypageView.as_view(), name='mypage'),            # ★追加
+    path('achievements/', account_views.AchievementsView.as_view(), name='achievements'), # ★実績画面追加
+    path('past-jobs/', account_views.PastJobsView.as_view(), name='past_jobs'),   # ★これまでの仕事画面
     
     # 報酬管理 (ウォレット)
     path('rewards/', account_views.reward_management, name='reward_management'),

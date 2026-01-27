@@ -12,7 +12,28 @@ from datetime import date
 from jobs.views import PREFECTURES
 import os
 from django.conf import settings
+from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.views import LoginView
+from django.views.generic import FormView, TemplateView, CreateView, DetailView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from .forms import (
+    SignupForm, NameForm, KanaForm, GenderForm, PhotoForm, AddressForm, WorkstyleForm, VerifyDobForm, PrefectureSelectForm
+)
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+    def form_valid(self, form):
+        # ログイン処理は親クラスで行われる
+        response = super().form_valid(form)
+        # セッションに auth_flow = 'login' をセット
+        self.request.session['auth_flow'] = 'login'
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('verify_dob')
 
 
 # --- オンボーディングの流れ ---
@@ -33,52 +54,83 @@ def gate(request):
     """画像2: はじめる / ログイン選択画面"""
     return render(request, 'accounts/gate.html')
 
+class SignupView(FormView):
+    template_name = 'accounts/signup.html'
+    form_class = SignupForm
+    success_url = reverse_lazy('verify_dob')
 
-# --- 会員登録・本人確認の流れ ---
-
-def signup(request):
-    """画像3: アカウント作成（電話番号とパスワード入力）"""
-    if request.method == 'POST':
-        phone = request.POST.get('phone')
-        password = request.POST.get('password')
-
-        # 1. 未入力チェック
-        if not phone or not password:
-            return render(request, 'accounts/signup.html', {'error': '電話番号とパスワードを入力してください'})
-
-        # 2. 【最重要】電話番号の重複チェック
-        if User.objects.filter(username=phone).exists():
-            return render(request, 'accounts/signup.html', {
-                'error': 'この電話番号は既に登録されています。',
-                'phone': phone
-            })
-
-        # 3. ユーザー作成はせず、セッションに保存
-        # パスワードはここでハッシュ化せずとも、作成時に set_password すればOK
-        # あるいはここで一連のデータを保持
-        request.session['signup_data'] = {
+    def form_valid(self, form):
+        # フォームバリデーション済みデータ
+        phone = form.cleaned_data['phone']
+        password = form.cleaned_data['password']
+        
+        # セッションに保存
+        self.request.session['signup_data'] = {
             'phone': phone,
             'password': password
         }
-        
-        # フローをセッションに記録
-        request.session['auth_flow'] = 'signup'
-        
-        return redirect('verify_dob')
+        self.request.session['auth_flow'] = 'signup'
+        return super().form_valid(form)
 
-    return render(request, 'accounts/signup.html')
+class VerifyDobView(FormView):
+    template_name = 'accounts/verify_dob.html'
+    form_class = VerifyDobForm
 
-def setup_name(request):
-    if request.method == 'POST':
-        signup_data = request.session.get('signup_data')
-        if not signup_data:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['auth_flow'] = self.request.session.get('auth_flow', 'signup')
+        return context
+
+    def form_valid(self, form):
+        year = form.cleaned_data['year']
+        month = form.cleaned_data['month']
+        day = form.cleaned_data['day']
+        
+        try:
+            birth_date = date(year, month, day)
+            auth_flow = self.request.session.get('auth_flow', 'signup')
+
+            if auth_flow == 'signup':
+                signup_data = self.request.session.get('signup_data')
+                if not signup_data:
+                    return redirect('signup')
+                signup_data['birth_date'] = birth_date.isoformat()
+                self.request.session['signup_data'] = signup_data
+                return redirect('setup_name')
+            else:
+                # Login flow
+                profile, _ = WorkerProfile.objects.get_or_create(user=self.request.user)
+                if profile.birth_date and profile.birth_date == birth_date:
+                    return redirect('index')
+                elif not profile.birth_date:
+                    profile.birth_date = birth_date
+                    profile.save()
+                    return redirect('index')
+                else:
+                    form.add_error(None, '生年月日が登録情報と一致しません。')
+                    return self.form_invalid(form)
+
+        except ValueError:
+            form.add_error(None, '正しい日付を入力してください。')
+            return self.form_invalid(form)
+
+
+class SetupNameView(FormView):
+    template_name = 'signup/step_name.html'
+    form_class = NameForm
+    success_url = reverse_lazy('setup_kana')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
             return redirect('signup')
-            
-        signup_data['last_name_kanji'] = request.POST.get('last_name')
-        signup_data['first_name_kanji'] = request.POST.get('first_name')
-        request.session['signup_data'] = signup_data
-        return redirect('setup_kana')
-    return render(request, 'signup/step_name.html') 
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['last_name_kanji'] = form.cleaned_data['last_name']
+        signup_data['first_name_kanji'] = form.cleaned_data['first_name']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form) 
 
 def setup_kana(request):
     if request.method == 'POST':
@@ -129,110 +181,198 @@ def setup_photo(request):
             
     return render(request, 'signup/step_photo.html')
 
-@login_required
-def signup_verify_identity(request):
-    """サインアップフロー用: 本人確認画面 (あとでボタンあり)"""
-    # ログイン不要にするか、ログイン必須なら既存ユーザー用。
-    # ここではサインアップフローのために@login_requiredを外す必要があるが、
-    # 既存のデコレータがついているので注意。
-    # 今回はサインアップフロー専用ビューとして扱う。
-    return render(request, 'signup/step_identity.html')
+class SetupKanaView(FormView):
+    template_name = 'signup/step_kana.html'
+    form_class = KanaForm
+    success_url = reverse_lazy('setup_gender')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['last_name_kana'] = form.cleaned_data['last_name_kana']
+        signup_data['first_name_kana'] = form.cleaned_data['first_name_kana']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form)
+
+class SetupGenderView(FormView):
+    template_name = 'signup/step_gender.html'
+    form_class = GenderForm
+    success_url = reverse_lazy('setup_photo')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['gender'] = form.cleaned_data['gender']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form)
+
+class SetupPhotoView(FormView):
+    template_name = 'signup/step_photo.html'
+    form_class = PhotoForm
+    success_url = reverse_lazy('setup_address')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        
+        # 写真の保存処理
+        if self.request.FILES.get('face_photo'):
+            photo = self.request.FILES['face_photo']
+            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+            os.makedirs(temp_dir, exist_ok=True)
+            fs = FileSystemStorage(location=temp_dir)
+            
+            filename = fs.save(photo.name, photo)
+            signup_data['face_photo_temp_path'] = filename
+            self.request.session['signup_data'] = signup_data
+            
+        return super().form_valid(form)
+    
+    # フォームを使わないスキップボタン等の対応が必要な場合、postメソッドをオーバーライドするか
+    # フォームにrequired=Falseをつける (PhotoFormはrequired=Falseにしてある)
+
+class SignupVerifyIdentityView(TemplateView):
+    template_name = 'signup/step_identity.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        # 既存のデコレータ @login_required がついていたが、signupフローでは不要
+        # ただし view単位で適用するなら mixinが必要だが、ここでは素のTemplateView
+        return super().dispatch(request, *args, **kwargs)
 
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
     return redirect('signup_confirm')
 
-def signup_confirm(request):
-    """入力内容確認画面"""
-    signup_data = request.session.get('signup_data')
-    if not signup_data:
-        # セッション切れ等の場合
-        return redirect('signup')
+class SignupConfirmView(TemplateView):
+    template_name = 'signup/step_confirm.html'
 
-    # テンプレートで表示するために辞書をオブジェクト風にアクセスできるようにするか、
-    # 単に辞書として渡すが、テンプレート側が profile.xxx でアクセスしている場合は
-    # 辞書アクセスとドットアクセスで互換性があるか確認が必要。
-    # Djangoテンプレート言語では {{ foo.bar }} は foo['bar'] も試行するので辞書でOK。
-    
-    # 日付表示のために変換
-    dob_str = signup_data.get('birth_date')
-    birth_date = None
-    if dob_str:
-        try:
-            birth_date = date.fromisoformat(dob_str)
-        except ValueError:
-            pass
-            
-    # テンプレートに渡すデータ構造を作成
-    # profile キーで辞書を渡す
-    profile_data = signup_data.copy()
-    profile_data['birth_date'] = birth_date
-    
-    if request.method == 'POST':
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        signup_data = self.request.session.get('signup_data')
+        
+        if not signup_data:
+            return context # 実際にはdispatchで弾くべき
+
+        profile_data = signup_data.copy()
+        
+        dob_str = signup_data.get('birth_date')
+        birth_date = None
+        if dob_str:
+            try:
+                birth_date = date.fromisoformat(dob_str)
+            except ValueError:
+                pass
+        profile_data['birth_date'] = birth_date
+        context['profile'] = profile_data
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
         return redirect('setup_pref_select')
-        
-    return render(request, 'signup/step_confirm.html', {'profile': profile_data})
 
-def setup_address(request):
-    """画像5: 住所入力"""
-    if request.method == 'POST':
-        signup_data = request.session.get('signup_data')
-        if not signup_data:
+class SetupAddressView(FormView):
+    template_name = 'signup/step_address.html'
+    form_class = AddressForm
+    success_url = reverse_lazy('setup_workstyle')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
             return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
         if 'skip' in request.POST:
-            return redirect('setup_workstyle')
+            return redirect(self.success_url)
+        return super().post(request, *args, **kwargs)
 
-        signup_data['postal_code'] = request.POST.get('postal_code')
-        signup_data['prefecture'] = request.POST.get('prefecture')
-        signup_data['city'] = request.POST.get('city')
-        signup_data['address_line'] = request.POST.get('address_line')
-        signup_data['building'] = request.POST.get('building')
-        request.session['signup_data'] = signup_data
-        
-        return redirect('setup_workstyle')
-    return render(request, 'signup/step_address.html')
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['postal_code'] = form.cleaned_data['postal_code']
+        signup_data['prefecture'] = form.cleaned_data['prefecture']
+        signup_data['city'] = form.cleaned_data['city']
+        signup_data['address_line'] = form.cleaned_data['address_line']
+        signup_data['building'] = form.cleaned_data['building']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form)
 
-def setup_workstyle(request):
-    """画像6: 働き方登録"""
-    if request.method == 'POST':
-        signup_data = request.session.get('signup_data')
-        if not signup_data:
+class SetupWorkstyleView(FormView):
+    template_name = 'signup/step_workstyle.html'
+    form_class = WorkstyleForm
+    success_url = reverse_lazy('signup_verify_identity')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
             return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
         if 'skip' in request.POST:
-            return redirect('signup_verify_identity') 
-            
-        signup_data['work_style'] = request.POST.get('work_style')
-        signup_data['career_interest'] = request.POST.get('career_interest')
-        request.session['signup_data'] = signup_data
-        
-        return redirect('signup_verify_identity') 
-    return render(request, 'signup/step_workstyle.html')
+            return redirect(self.success_url)
+        return super().post(request, *args, **kwargs)
 
-def setup_pref_select(request):
-    """画像7: 都道府県選択"""
-    auth_flow = request.session.get('auth_flow')
-    
-    prefectures = [
-        "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
-        "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
-        "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
-        "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
-        "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
-        "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
-        "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
-    ]
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['work_style'] = form.cleaned_data['work_style']
+        signup_data['career_interest'] = form.cleaned_data['career_interest']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form)
 
-    # --- サインアップフロー（新規登録完了処理） ---
-    if auth_flow == 'signup':
-        if request.method == 'POST':
-            signup_data = request.session.get('signup_data')
-            if not signup_data:
+class SetupPrefSelectView(FormView):
+    template_name = 'signup/step_pref.html'
+    form_class = PrefectureSelectForm
+    success_url = reverse_lazy('index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 都道府県リスト (forms.pyのchoicesではなく、viewで渡すか、formのinitでセットするか)
+        # ここではテンプレートがループで表示する形式に合わせて context にリストを渡す
+        prefectures = [
+            "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+            "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+            "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+            "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
+            "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+            "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
+            "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+        ]
+        context['prefectures'] = prefectures
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        auth_flow = request.session.get('auth_flow')
+        if auth_flow == 'signup':
+             if not request.session.get('signup_data'):
                 return redirect('signup')
-            
-            prefs = request.POST.getlist('prefs')
-            
+        else:
+             # 既存ユーザーの場合
+             if not request.user.is_authenticated:
+                 return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        auth_flow = self.request.session.get('auth_flow')
+        prefectures = self.get_context_data()['prefectures'] 
+        
+        prefs = self.request.POST.getlist('prefs')
+
+        if auth_flow == 'signup':
+            signup_data = self.request.session.get('signup_data')
             try:
                 # 1. User 作成
                 user = User.objects.create_user(
@@ -281,36 +421,26 @@ def setup_pref_select(request):
                 profile.save()
                 
                 # 3. ログイン
-                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
                 
                 # 4. セッションクリア
-                if 'signup_data' in request.session:
-                    del request.session['signup_data']
+                if 'signup_data' in self.request.session:
+                    del self.request.session['signup_data']
                 
-                return redirect('index')
+                return redirect(self.success_url)
                 
             except IntegrityError:
-                return render(request, 'signup/step_pref.html', {
-                    'prefectures': prefectures, 
-                    'error': '登録処理でエラーが発生しました。'
-                })
+                context = self.get_context_data()
+                context['error'] = '登録処理でエラーが発生しました。'
+                return self.render_to_response(context)
 
-        return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
-    
-    # --- 既存ユーザー（設定変更など） ---
-    else:
-        if not request.user.is_authenticated:
-            return redirect('login')
-            
-        profile = get_object_or_404(WorkerProfile, user=request.user)
-        if request.method == 'POST':
-            prefs = request.POST.getlist('prefs')
+        else:
+            # 既存ユーザー
+            profile = get_object_or_404(WorkerProfile, user=self.request.user)
             profile.target_prefectures = ",".join(prefs)
             profile.is_setup_completed = True
             profile.save()
-            return redirect('index') 
-            
-        return render(request, 'signup/step_pref.html', {'prefectures': prefectures})
+            return redirect(self.success_url)
 
 
 def verify_identity(request):
@@ -441,130 +571,119 @@ def login_view(request):
     return render(request, 'accounts/login.html')
 
 # accounts/views.py 内に追加
-def mypage(request):
-    """マイページ画面 (画像5)"""
-    balance = 0
-    membership = None
-    if request.user.is_authenticated:
-        try:
-            profile = request.user.workerprofile
-            balance = sum(t.amount for t in profile.wallet_transactions.all())
-            membership, _ = WorkerMembership.objects.get_or_create(worker=profile)
-        except:
-            pass
+class MypageView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/mypage.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        balance = 0
+        membership = None
+        if self.request.user.is_authenticated:
+            try:
+                profile = self.request.user.workerprofile
+                balance = sum(t.amount for t in profile.wallet_transactions.all())
+                membership, _ = WorkerMembership.objects.get_or_create(worker=profile)
+            except:
+                pass
+        context['balance'] = balance
+        context['membership'] = membership
+        return context
+
+class AchievementsView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/achievements.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = get_object_or_404(WorkerProfile, user=self.request.user)
+        membership, created = WorkerMembership.objects.get_or_create(worker=profile)
+
+        past_apps = JobApplication.objects.filter(
+            worker=self.request.user,
+            status='確定済み',
+            job_posting__work_date__lt=date.today()
+        )
+        
+        work_count = past_apps.count()
+        
+        total_minutes = 0
+        for app in past_apps:
+            jp = app.job_posting
+            d = date.today()
+            start_dt = datetime.combine(d, jp.start_time)
+            end_dt = datetime.combine(d, jp.end_time)
+            duration = (end_dt - start_dt).total_seconds() / 60
+            duration -= jp.break_duration
+            if duration < 0: duration = 0
+            total_minutes += duration
             
-    return render(request, 'accounts/mypage.html', {'balance': balance, 'membership': membership})
+        work_hours = int(total_minutes / 60)
+        
+        reviews = profile.reviews.all()
+        if reviews.exists():
+            good_count = reviews.filter(is_good=True).count()
+            good_rate = int((good_count / reviews.count()) * 100)
+        else:
+            good_rate = 0
+            
+        context['profile'] = profile
+        context['membership'] = membership
+        context['work_count'] = work_count
+        context['work_hours'] = work_hours
+        context['good_rate'] = good_rate
+        context['exp_history'] = profile.exp_histories.all().order_by('-created_at')
+        
+        next_level_threshold = (membership.level + 1) * 1000
+        needed_exp = next_level_threshold - membership.current_exp
+        if needed_exp < 0: needed_exp = 0
+        
+        prev_threshold = membership.level * 1000
+        level_range = next_level_threshold - prev_threshold
+        current_in_level = membership.current_exp - prev_threshold
+        progress_percent = int((current_in_level / level_range) * 100) if level_range > 0 else 0
+        
+        context['needed_exp'] = needed_exp
+        context['progress_percent'] = progress_percent
+        
+        return context
 
-@login_required
-def achievements(request):
-    """あなたの実績画面 (画像2)"""
-    profile = get_object_or_404(WorkerProfile, user=request.user)
-    membership, created = WorkerMembership.objects.get_or_create(worker=profile)
 
-    # 実績集計（過去の完了した仕事）
-    # status='確定済み' かつ 日付が過去のもの
-    past_apps = JobApplication.objects.filter(
-        worker=request.user,
-        status='確定済み',
-        job_posting__work_date__lt=date.today()
-    )
-    
-    work_count = past_apps.count()
-    
-    total_minutes = 0
-    for app in past_apps:
-        jp = app.job_posting
-        # 時間計算 (簡易)
-        d = date.today()
-        start_dt = datetime.combine(d, jp.start_time)
-        end_dt = datetime.combine(d, jp.end_time)
-        duration = (end_dt - start_dt).total_seconds() / 60
-        duration -= jp.break_duration
-        if duration < 0: duration = 0
-        total_minutes += duration
-        
-    work_hours = int(total_minutes / 60)
-    
-    # Good率
-    reviews = profile.reviews.all()
-    if reviews.exists():
-        good_count = reviews.filter(is_good=True).count()
-        good_rate = int((good_count / reviews.count()) * 100)
-    else:
-        good_rate = 0 # 表示上はハイフンなどにするかも
-        
-    exp_history = profile.exp_histories.all().order_by('-created_at')
-    
-    # レベル計算ロジック (簡易実装: Lv * 1000 を次のレベルへの閾値とする)
-    # 例: Lv0 -> Lv1 (閾値1000), Lv1 -> Lv2 (閾値2000) ...
-    # 累積経験値で管理している前提
-    next_level_threshold = (membership.level + 1) * 1000
-    needed_exp = next_level_threshold - membership.current_exp
-    if needed_exp < 0: needed_exp = 0
-    
-    prev_threshold = membership.level * 1000
-    level_range = next_level_threshold - prev_threshold
-    current_in_level = membership.current_exp - prev_threshold
-    progress_percent = int((current_in_level / level_range) * 100) if level_range > 0 else 0
-    
-    return render(request, 'accounts/achievements.html', {
-        'profile': profile,
-        'membership': membership,
-        'work_count': work_count,
-        'work_hours': work_hours,
-        'good_rate': good_rate,
-        'exp_history': exp_history,
-        'needed_exp': needed_exp,
-        'progress_percent': progress_percent
-    })
+class PastJobsView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/past_jobs.html'
 
-@login_required
-def past_jobs(request):
-    """これまでの仕事 (画像: 過去の業務と報酬)"""
-    # 完了した仕事を取得
-    apps = JobApplication.objects.filter(
-        worker=request.user,
-        status='確定済み',
-        job_posting__work_date__lt=date.today()
-    ).select_related('job_posting').order_by('-job_posting__work_date')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        apps = JobApplication.objects.filter(
+            worker=self.request.user,
+            status='確定済み',
+            job_posting__work_date__lt=date.today()
+        ).select_related('job_posting').order_by('-job_posting__work_date')
 
-    # 年・月ごとに集計
-    # 構造: { 2023: [ {month: 5, count: 2}, ... ], 2022: ... }
-    # OrderedDictを使うか、リストで管理してテンプレートで回すか。
-    # テンプレートで扱いやすいように:
-    # yearly_data = [
-    #    {'year': 2023, 'months': [{'month': 5, 'count': 2}, ...] },
-    #    ...
-    # ]
-    
-    from collections import defaultdict
-    
-    # 1. (Year, Month) -> Count に集計
-    agg = defaultdict(int)
-    for app in apps:
-        d = app.job_posting.work_date
-        agg[(d.year, d.month)] += 1
+        from collections import defaultdict
+        agg = defaultdict(int)
+        for app in apps:
+            d = app.job_posting.work_date
+            agg[(d.year, d.month)] += 1
+            
+        sorted_keys = sorted(agg.keys(), key=lambda x: (x[0], x[1]), reverse=True)
         
-    # 2. ソートして整形
-    # 年の降順 -> 月の降順
-    sorted_keys = sorted(agg.keys(), key=lambda x: (x[0], x[1]), reverse=True)
-    
-    yearly_data = []
-    current_year = None
-    current_year_entry = None
-    
-    for y, m in sorted_keys:
-        if current_year != y:
-            current_year = y
-            current_year_entry = {'year': y, 'months': []}
-            yearly_data.append(current_year_entry)
+        yearly_data = []
+        current_year = None
+        current_year_entry = None
         
-        current_year_entry['months'].append({
-            'month': m,
-            'count': agg[(y, m)]
-        })
-        
-    return render(request, 'accounts/past_jobs.html', {'yearly_data': yearly_data})
+        for y, m in sorted_keys:
+            if current_year != y:
+                current_year = y
+                current_year_entry = {'year': y, 'months': []}
+                yearly_data.append(current_year_entry)
+            
+            current_year_entry['months'].append({
+                'month': m,
+                'count': agg[(y, m)]
+            })
+            
+        context['yearly_data'] = yearly_data
+        return context
 
 # アカウント設定
 @login_required
