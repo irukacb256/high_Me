@@ -36,8 +36,8 @@ urlpatterns = [
     
     # ★ ここが足りなかったためにエラーが出ていました
     path('verify/', account_views.verify_identity, name='verify_identity'), 
-    path('verify/select/', account_views.verify_identity_select, name='verify_identity_select'), 
-    path('verify/upload/', account_views.verify_identity_upload, name='verify_identity_upload'), 
+    path('verify/select/', account_views.VerifyIdentitySelectView.as_view(), name='verify_identity_select'), 
+    path('verify/upload/', account_views.VerifyIdentityUploadView.as_view(), name='verify_identity_upload'), 
     path('verify/dob/', account_views.VerifyDobView.as_view(), name='verify_dob'),
     path('profile-setup/', account_views.profile_setup, name='profile_setup'),
 

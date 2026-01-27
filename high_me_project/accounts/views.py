@@ -251,6 +251,34 @@ class SignupVerifyIdentityView(TemplateView):
         # ただし view単位で適用するなら mixinが必要だが、ここでは素のTemplateView
         return super().dispatch(request, *args, **kwargs)
 
+class VerifyIdentitySelectView(TemplateView):
+    template_name = 'accounts/verify_identity_select.html'
+
+class VerifyIdentityUploadView(TemplateView):
+    template_name = 'accounts/verify_identity_upload.html'
+
+    def post(self, request, *args, **kwargs):
+        signup_data = request.session.get('signup_data')
+        if not signup_data:
+            return redirect('signup')
+
+        if request.FILES.get('doc_file'):
+            doc = request.FILES['doc_file']
+            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+            os.makedirs(temp_dir, exist_ok=True)
+            fs = FileSystemStorage(location=temp_dir)
+            
+            # ファイル名にランダムな文字列を入れるなどするとより安全だが、
+            # ここではシンプルに
+            filename = fs.save(f"doc_{doc.name}", doc)
+            signup_data['identity_doc_temp_path'] = filename
+            signup_data['is_identity_verified'] = True # 仮認証
+            request.session['signup_data'] = signup_data
+            
+            return redirect('signup_confirm')
+            
+        return self.render_to_response(self.get_context_data())
+
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
     return redirect('signup_confirm')
@@ -338,11 +366,8 @@ class SetupPrefSelectView(FormView):
     form_class = PrefectureSelectForm
     success_url = reverse_lazy('index')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # 都道府県リスト (forms.pyのchoicesではなく、viewで渡すか、formのinitでセットするか)
-        # ここではテンプレートがループで表示する形式に合わせて context にリストを渡す
-        prefectures = [
+    def get_prefectures(self):
+        return [
             "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
             "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
             "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
@@ -351,8 +376,18 @@ class SetupPrefSelectView(FormView):
             "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
             "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
         ]
-        context['prefectures'] = prefectures
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 都道府県リスト
+        context['prefectures'] = self.get_prefectures()
         return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        prefectures = self.get_prefectures()
+        form.fields['prefs'].choices = [(p, p) for p in prefectures]
+        return form
 
     def dispatch(self, request, *args, **kwargs):
         auth_flow = request.session.get('auth_flow')
