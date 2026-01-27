@@ -71,6 +71,8 @@ urlpatterns = [
 
     # accountsアプリ関連
     path('mypage/', account_views.mypage, name='mypage'),            # ★追加
+    path('achievements/', account_views.achievements, name='achievements'), # ★実績画面追加
+    path('past-jobs/', account_views.past_jobs, name='past_jobs'),   # ★これまでの仕事画面
     
     # 報酬管理 (ウォレット)
     path('rewards/', account_views.reward_management, name='reward_management'),

@@ -1,0 +1,94 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .past-jobs-container {
+        background-color: white;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .header-area {
+        position: relative;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .year-header {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        /* 年ごとの区切りが見やすいように */
+        padding-bottom: 10px;
+    }
+
+    .month-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .month-label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .count-label {
+        font-size: 14px;
+        color: #999;
+        display: flex;
+        align-items: center;
+    }
+
+    .chevron {
+        margin-left: 10px;
+        font-size: 12px;
+        color: #ccc;
+    }
+</style>
+
+<div class="past-jobs-container">
+    <div class="header-area">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">過去の業務と報酬</div>
+    </div>
+
+    {% for year_data in yearly_data %}
+    <div class="year-header">{{ year_data.year }}年</div>
+
+    {% for month_data in year_data.months %}
+    <a href="#" class="month-item">
+        <div class="month-label">{{ month_data.month }}月</div>
+        <div class="count-label">
+            {{ month_data.count }}件 <i class="fa-solid fa-chevron-right chevron"></i>
+        </div>
+    </a>
+    {% endfor %}
+    {% empty %}
+    <div style="text-align:center; padding: 40px; color:#999;">
+        まだ履歴がありません
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

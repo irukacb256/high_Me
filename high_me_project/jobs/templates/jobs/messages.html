@@ -1,32 +1,95 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-    .msg-header { background: white; padding: 15px; text-align: center; font-weight: bold; border-bottom: 1px solid #eee; }
-    .msg-notif { background: white; padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid #eee; position: relative; }
-    .msg-icon { width: 45px; height: 45px; background: var(--timee-yellow); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 20px; }
-    .msg-text { font-size: 13px; font-weight: bold; flex: 1; }
-    .badge { position: absolute; top: 8px; left: 50px; width: 10px; height: 10px; background: #ff3b30; border-radius: 50%; }
+    .msg-header {
+        background: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+    }
 
-    .empty-state { text-align: center; padding-top: 80px; color: #333; }
-    .empty-icon { font-size: 80px; color: #ccc; margin-bottom: 20px; }
-    .btn-search { background: var(--ios-blue); color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+    .msg-notif {
+        background: white;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        position: relative;
+    }
+
+    .msg-icon {
+        width: 45px;
+        height: 45px;
+        background: var(--timee-yellow);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 20px;
+    }
+
+    .msg-text {
+        font-size: 13px;
+        font-weight: bold;
+        flex: 1;
+    }
+
+    .badge {
+        position: absolute;
+        top: 8px;
+        left: 50px;
+        width: 10px;
+        height: 10px;
+        background: #ff3b30;
+        border-radius: 50%;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding-top: 80px;
+        color: #333;
+    }
+
+    .empty-icon {
+        font-size: 80px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+
+    .btn-search {
+        background: var(--ios-blue);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 20px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="msg-header">メッセージ</div>
 
+{% if has_requests %}
 <div class="msg-notif">
     <div class="msg-icon"><i class="fa-regular fa-envelope"></i></div>
     <div class="badge"></div>
     <div class="msg-text">お仕事リクエストが届いています</div>
     <i class="fa-solid fa-chevron-right" style="color:#ccc"></i>
 </div>
+{% endif %}
 
+{% if has_long_term %}
 <div class="msg-notif">
     <div class="msg-icon"><i class="fa-regular fa-id-badge"></i></div>
     <div class="msg-text">長期バイトの募集が届いています</div>
     <i class="fa-solid fa-chevron-right" style="color:#ccc"></i>
 </div>
+{% endif %}
 
+{% if show_empty %}
 <div class="empty-state">
     <div class="empty-icon"><i class="fa-regular fa-comments"></i></div>
     <div style="font-weight: bold; font-size: 18px;">メッセージはありません</div>
@@ -35,4 +98,12 @@
     </p>
     <button class="btn-search" onclick="location.href='{% url 'index' %}'">仕事を探す</button>
 </div>
+{% endif %}
+
+{% if has_matches %}
+<!-- マッチング中のメッセージリストを表示する場合のプレースホルダー -->
+<div style="padding: 20px; text-align: center; color: #666;">
+    （マッチング中のやりとりがここに表示されます）
+</div>
+{% endif %}
 {% endblock %}

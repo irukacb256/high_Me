@@ -173,6 +173,9 @@ class JobPosting(models.Model):
     # ★ ここに work_content を追加
     work_content = models.TextField("業務内容", blank=True, null=True)
     
+    # 長期バイトフラグ
+    is_long_term = models.BooleanField("長期バイト募集", default=False)
+
     # 時給・交通費（以前追加したもの）
     hourly_wage = models.IntegerField("時給", default=1100)
     transportation_fee = models.IntegerField("交通費", default=500)

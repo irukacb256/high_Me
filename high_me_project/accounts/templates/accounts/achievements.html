@@ -1,0 +1,265 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    .achievements-container {
+        background-color: white;
+        min-height: 100vh;
+        padding-bottom: 30px;
+    }
+
+    .achievements-header {
+        text-align: center;
+        padding: 30px 20px;
+        background: white;
+    }
+
+    .page-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    /* 六角形アイコン */
+    .hexagon-wrapper {
+        width: 120px;
+        height: 130px;
+        margin: 0 auto 20px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ff4d4f; /* 赤色 */
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .hexagon-inner {
+        width: 110px;
+        height: 120px;
+        background-color: #ff4d4f;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid white; /* 内側の白枠風 */
+    }
+    
+    .grade-initial {
+        font-size: 50px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .membership-label {
+        font-size: 14px;
+        color: #666;
+        font-weight: bold;
+    }
+
+    .grade-title {
+        font-size: 32px;
+        font-weight: 900;
+        margin: 5px 0 10px;
+        letter-spacing: 1px;
+    }
+
+    .level-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 14px;
+        color: #999;
+        margin-top: 10px;
+    }
+
+    .level-number {
+        font-size: 28px;
+        color: #333;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+
+    /* プログレスバー */
+    .progress-container {
+        width: 100%;
+        background-color: #eee;
+        border-radius: 10px;
+        height: 8px;
+        margin: 10px 0 20px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: #ff4d4f;
+        border-radius: 10px;
+        width: 0%; /* JS or Inline CSS for width */
+    }
+
+    .desc-text {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 30px;
+        text-align: left;
+        line-height: 1.5;
+    }
+
+    /* スタッツカード */
+    .stats-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0 20px 40px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .stat-unit {
+        font-size: 12px;
+        margin-left: 2px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+    }
+
+    /* 履歴リスト */
+    .history-section {
+        padding: 0 20px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #999;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f9f9f9;
+        font-size: 14px;
+    }
+
+    .history-date {
+        color: #aaa;
+        font-size: 12px;
+        width: 80px;
+    }
+
+    .history-reason {
+        flex-grow: 1;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .history-exp {
+        font-weight: bold;
+        color: #333;
+    }
+
+</style>
+
+<div class="achievements-container">
+    <div class="achievements-header" style="position: relative;">
+        <!-- バックボタン -->
+        <a href="{% url 'mypage' %}" style="position: absolute; left: 20px; top: 30px; color: #333; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <div class="page-title">あなたの実績</div>
+
+        <!-- 六角形グレードアイコン -->
+        <div class="hexagon-wrapper">
+            <div class="grade-initial">
+                {% if membership.grade == 'MASTER' %}M
+                {% elif membership.grade == 'REGULAR' %}R
+                {% else %}R{% endif %}
+            </div>
+        </div>
+
+        <div class="membership-label">Timee Membership <span>?</span></div>
+        <div class="grade-title">{{ membership.grade }}</div>
+
+        <div style="padding: 0 20px;">
+            <div class="level-info">
+                <span>次のレベルまで {{ needed_exp }}EXP</span>
+                <span>Lv <span class="level-number">{{ membership.level }}</span></span>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" style="width: {{ progress_percent }}%;"></div>
+            </div>
+
+            <div class="desc-text">
+                あなたの獲得したEXPにもとづいて、Lvとグレードが決まります。
+            </div>
+        </div>
+    </div>
+
+    <!-- スタッツ -->
+    <div class="stats-card">
+        <div class="stat-item">
+            <div class="stat-value">{{ work_count }}<span class="stat-unit">回</span></div>
+            <div class="stat-label">働いた回数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ work_hours }}<span class="stat-unit">h</span></div>
+            <div class="stat-label">働いた時間</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ good_rate }}<span class="stat-unit">%</span></div>
+            <div class="stat-label">Good率</div>
+        </div>
+    </div>
+
+    <!-- 履歴 -->
+    <div class="history-section">
+        <div class="section-title">EXP獲得履歴</div>
+        
+        <div class="history-header">
+            <span style="width: 80px;">日付</span>
+            <span style="flex-grow: 1;">獲得理由</span>
+            <span>EXP</span>
+        </div>
+
+        {% for item in exp_history %}
+        <div class="history-item">
+            <div class="history-date">{{ item.created_at|date:"Y/n/j" }}</div>
+            <div class="history-reason">{{ item.reason }}</div>
+            <div class="history-exp">+{{ item.amount }}</div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 20px; color: #999;">
+            まだ履歴がありません
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

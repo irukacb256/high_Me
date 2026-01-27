@@ -105,6 +105,7 @@ class Review(models.Model):
     # Storeモデルが明確でないため、一旦店舗名は文字列で保持、将来的にForeignKey
     store_name = models.CharField("店舗名", max_length=100) 
     comment = models.TextField("コメント", blank=True, null=True)
+    is_good = models.BooleanField("Good評価", default=True) # Good率計算用
     created_at = models.DateTimeField("作成日", auto_now_add=True)
 
     def __str__(self):
@@ -136,3 +137,32 @@ class WorkerQualification(models.Model):
 
     def __str__(self):
         return f"{self.worker.user.username} - {self.qualification.name}"
+
+class WorkerMembership(models.Model):
+    """画像1: メンバーシップレベル・経験値"""
+    worker = models.OneToOneField(WorkerProfile, on_delete=models.CASCADE, related_name='membership')
+    GRADE_CHOICES = (
+        ('ROOKIE', 'ROOKIE'),
+        ('REGULAR', 'REGULAR'),
+        ('MASTER', 'MASTER'),
+    )
+    grade = models.CharField("グレード", max_length=20, choices=GRADE_CHOICES, default='ROOKIE')
+    level = models.IntegerField("レベル", default=0)
+    current_exp = models.IntegerField("現在の経験値", default=0)
+    
+    # 次のレベルまでの必要経験値などを計算するロジックが必要だが、
+    # 一旦View側で定数管理か、ここでメソッド化する。
+    # 仮にレベル * 100 + 200 とか。
+    
+    def __str__(self):
+        return f"{self.worker.user.username} - {self.grade} Lv.{self.level}"
+
+class ExpHistory(models.Model):
+    """画像2: EXP獲得履歴"""
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='exp_histories')
+    amount = models.IntegerField("獲得EXP")
+    reason = models.CharField("獲得理由", max_length=100) # "お仕事完了", "入店マナーの確認" 等
+    created_at = models.DateTimeField("獲得日時", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.worker.user.username} +{self.amount}EXP ({self.reason})"

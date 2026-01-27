@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from business.models import JobPosting, JobApplication, Store
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from django.db.models import Q
 from .models import FavoriteJob, FavoriteStore
 from django.http import JsonResponse
@@ -262,7 +262,29 @@ def work_schedule(request):
 
 def messages(request):
     """メッセージ画面 (画像4)"""
-    return render(request, 'jobs/messages.html')
+    has_requests = False # お仕事リクエスト（仮：現在は機能がないためFalse）
+    
+    # 長期バイトの募集があるか
+    # is_long_term=True の求人が存在し、かつ掲載中であること
+    has_long_term = JobPosting.objects.filter(is_long_term=True, is_published=True, work_date__gte=date.today()).exists()
+    
+    # マッチング中の仕事があるか（メッセージやりとり用）
+    # status='確定済み' で、かつ未来の仕事、あるいは完了後レビュー待ちなど
+    # ここでは簡易的に「確定済み」のApplicationがあればメッセージ対象とする
+    # (本来はチャットルームの有無などで判定)
+    has_matches = False
+    if request.user.is_authenticated:
+        has_matches = JobApplication.objects.filter(worker=request.user, status='確定済み').exists()
+    
+    show_empty = not (has_requests or has_long_term or has_matches)
+    print(f"DEBUG: matches={has_matches}, show_empty={show_empty}")
+
+    return render(request, 'jobs/messages.html', {
+        'has_requests': has_requests,
+        'has_long_term': has_long_term,
+        'has_matches': has_matches,
+        'show_empty': show_empty
+    })
 
 
 @login_required

@@ -215,8 +215,13 @@
             </a>
             <div class="rank-info">
                 <span class="rank-label">Timee Membership</span>
-                <span class="rank-name">MASTER <span style="font-size:14px; font-weight:normal; margin-left:8px;">Lv
-                        16</span></span>
+                <span class="rank-name">
+                    {% if membership %}{{ membership.grade }}{% else %}ROOKIE{% endif %}
+                    <span style="font-size:14px; font-weight:normal; margin-left:8px;">Lv {% if membership %}{{
+                        membership.level }}{% else %}0{% endif %}</span>
+                </span>
+                <a href="{% url 'achievements' %}"
+                    style="display:inline-block; margin-top:5px; padding:4px 12px; border:1px solid #ccc; border-radius:15px; text-decoration:none; font-size:11px; color:#333; font-weight:bold; width: fit-content;">あなたの実績</a>
             </div>
         </div>
     </div>
@@ -268,7 +273,7 @@
     <!-- 2. お仕事 -->
     <div class="menu-group">
         <div class="menu-title">お仕事</div>
-        <a href="#" class="menu-item">
+        <a href="{% url 'past_jobs' %}" class="menu-item">
             <div class="menu-label-wrapper"><i class="fa-solid fa-briefcase"></i> これまでの仕事</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>

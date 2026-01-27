@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification
+from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification, WorkerMembership, ExpHistory
+from business.models import JobApplication
+from django.utils import timezone
+from datetime import datetime, timedelta
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login
 from datetime import date
@@ -441,14 +444,127 @@ def login_view(request):
 def mypage(request):
     """マイページ画面 (画像5)"""
     balance = 0
+    membership = None
     if request.user.is_authenticated:
         try:
             profile = request.user.workerprofile
             balance = sum(t.amount for t in profile.wallet_transactions.all())
+            membership, _ = WorkerMembership.objects.get_or_create(worker=profile)
         except:
             pass
             
-    return render(request, 'accounts/mypage.html', {'balance': balance})
+    return render(request, 'accounts/mypage.html', {'balance': balance, 'membership': membership})
+
+@login_required
+def achievements(request):
+    """あなたの実績画面 (画像2)"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+    membership, created = WorkerMembership.objects.get_or_create(worker=profile)
+
+    # 実績集計（過去の完了した仕事）
+    # status='確定済み' かつ 日付が過去のもの
+    past_apps = JobApplication.objects.filter(
+        worker=request.user,
+        status='確定済み',
+        job_posting__work_date__lt=date.today()
+    )
+    
+    work_count = past_apps.count()
+    
+    total_minutes = 0
+    for app in past_apps:
+        jp = app.job_posting
+        # 時間計算 (簡易)
+        d = date.today()
+        start_dt = datetime.combine(d, jp.start_time)
+        end_dt = datetime.combine(d, jp.end_time)
+        duration = (end_dt - start_dt).total_seconds() / 60
+        duration -= jp.break_duration
+        if duration < 0: duration = 0
+        total_minutes += duration
+        
+    work_hours = int(total_minutes / 60)
+    
+    # Good率
+    reviews = profile.reviews.all()
+    if reviews.exists():
+        good_count = reviews.filter(is_good=True).count()
+        good_rate = int((good_count / reviews.count()) * 100)
+    else:
+        good_rate = 0 # 表示上はハイフンなどにするかも
+        
+    exp_history = profile.exp_histories.all().order_by('-created_at')
+    
+    # レベル計算ロジック (簡易実装: Lv * 1000 を次のレベルへの閾値とする)
+    # 例: Lv0 -> Lv1 (閾値1000), Lv1 -> Lv2 (閾値2000) ...
+    # 累積経験値で管理している前提
+    next_level_threshold = (membership.level + 1) * 1000
+    needed_exp = next_level_threshold - membership.current_exp
+    if needed_exp < 0: needed_exp = 0
+    
+    prev_threshold = membership.level * 1000
+    level_range = next_level_threshold - prev_threshold
+    current_in_level = membership.current_exp - prev_threshold
+    progress_percent = int((current_in_level / level_range) * 100) if level_range > 0 else 0
+    
+    return render(request, 'accounts/achievements.html', {
+        'profile': profile,
+        'membership': membership,
+        'work_count': work_count,
+        'work_hours': work_hours,
+        'good_rate': good_rate,
+        'exp_history': exp_history,
+        'needed_exp': needed_exp,
+        'progress_percent': progress_percent
+    })
+
+@login_required
+def past_jobs(request):
+    """これまでの仕事 (画像: 過去の業務と報酬)"""
+    # 完了した仕事を取得
+    apps = JobApplication.objects.filter(
+        worker=request.user,
+        status='確定済み',
+        job_posting__work_date__lt=date.today()
+    ).select_related('job_posting').order_by('-job_posting__work_date')
+
+    # 年・月ごとに集計
+    # 構造: { 2023: [ {month: 5, count: 2}, ... ], 2022: ... }
+    # OrderedDictを使うか、リストで管理してテンプレートで回すか。
+    # テンプレートで扱いやすいように:
+    # yearly_data = [
+    #    {'year': 2023, 'months': [{'month': 5, 'count': 2}, ...] },
+    #    ...
+    # ]
+    
+    from collections import defaultdict
+    
+    # 1. (Year, Month) -> Count に集計
+    agg = defaultdict(int)
+    for app in apps:
+        d = app.job_posting.work_date
+        agg[(d.year, d.month)] += 1
+        
+    # 2. ソートして整形
+    # 年の降順 -> 月の降順
+    sorted_keys = sorted(agg.keys(), key=lambda x: (x[0], x[1]), reverse=True)
+    
+    yearly_data = []
+    current_year = None
+    current_year_entry = None
+    
+    for y, m in sorted_keys:
+        if current_year != y:
+            current_year = y
+            current_year_entry = {'year': y, 'months': []}
+            yearly_data.append(current_year_entry)
+        
+        current_year_entry['months'].append({
+            'month': m,
+            'count': agg[(y, m)]
+        })
+        
+    return render(request, 'accounts/past_jobs.html', {'yearly_data': yearly_data})
 
 # アカウント設定
 @login_required
