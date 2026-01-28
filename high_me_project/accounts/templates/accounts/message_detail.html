@@ -3,125 +3,217 @@
 
 {% block content %}
 <style>
+    /* Reset & Base */
+    * {
+        box-sizing: border-box;
+    }
+
     .chat-container {
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 120px);
-        /* ヘッダー・フッター分を引く */
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: #f8f9fa;
+        height: 100%;
+        /* base.htmlのcontent-areaに合わせる */
+        background-color: #f5f5f5;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
+    /* Header */
     .chat-header {
         background-color: #fff;
-        padding: 10px 15px;
-        border-bottom: 1px solid #dee2e6;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
+        height: 50px;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
     }
 
+    .header-left,
+    .header-right {
+        width: 40px;
+        /* バランス用 */
+        display: flex;
+        align-items: center;
+    }
+
+    .header-title {
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .back-btn {
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    /* Messages Area */
     .chat-messages {
         flex-grow: 1;
         overflow-y: auto;
         padding: 15px;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
     }
 
-    .message-bubble {
-        max-width: 85%;
-        padding: 10px 14px;
-        border-radius: 12px;
-        position: relative;
-        font-size: 0.95rem;
-        word-wrap: break-word;
+    /* Message Bubbles */
+    .message-row {
+        display: flex;
+        flex-direction: column;
+        max-width: 80%;
     }
 
-    /* 自分のメッセージ (ワーカー) */
-    .message-mine {
+    .message-row.mine {
         align-self: flex-end;
-        background-color: #007bff;
-        /* Primary Blue */
-        color: white;
-        border-bottom-right-radius: 2px;
+        align-items: flex-end;
     }
 
-    /* 相手のメッセージ (店舗) */
-    .message-other {
+    .message-row.other {
         align-self: flex-start;
-        background-color: #fff;
-        border: 1px solid #e9ecef;
-        color: #333;
-        border-bottom-left-radius: 2px;
-    }
-
-    .message-time {
-        font-size: 0.7rem;
-        margin-top: 4px;
-        opacity: 0.8;
-    }
-
-    .message-mine .message-time {
-        text-align: right;
-    }
-
-    .message-other .message-time {
-        text-align: left;
-    }
-
-    .chat-input-area {
-        background-color: #fff;
-        border-top: 1px solid #dee2e6;
-        padding: 10px;
-        position: sticky;
-        bottom: 0;
+        align-items: flex-start;
     }
 
     .sender-name {
-        font-size: 0.75rem;
-        color: #6c757d;
-        margin-bottom: 2px;
+        font-size: 11px;
+        color: #999;
+        margin-bottom: 4px;
         margin-left: 2px;
     }
 
-    .date-separator {
-        text-align: center;
-        margin: 15px 0;
+    .message-bubble {
+        padding: 10px 14px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        word-wrap: break-word;
         position: relative;
     }
 
+    .message-row.mine .message-bubble {
+        background-color: #007AFF;
+        /* iOS Blue */
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message-row.other .message-bubble {
+        background-color: #fff;
+        color: #333;
+        border: 1px solid #ddd;
+        border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+        font-size: 10px;
+        margin-top: 4px;
+        opacity: 0.7;
+    }
+
+    .message-row.mine .message-time {
+        text-align: right;
+        color: #666;
+    }
+
+    .message-row.other .message-time {
+        text-align: left;
+        color: #999;
+    }
+
+    /* Date Separator */
+    .date-separator {
+        text-align: center;
+        margin: 10px 0;
+    }
+
     .date-separator span {
-        background-color: #e9ecef;
-        padding: 4px 12px;
+        background-color: rgba(0, 0, 0, 0.1);
+        color: #666;
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 100px;
+    }
+
+    /* Input Area */
+    .chat-input-area {
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
+        padding: 10px;
+        flex-shrink: 0;
+    }
+
+    .input-form {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+    .chat-textarea {
+        flex-grow: 1;
+        border: 1px solid #ddd;
         border-radius: 20px;
-        font-size: 0.75rem;
-        color: #6c757d;
+        padding: 10px 15px;
+        font-size: 14px;
+        resize: none;
+        outline: none;
+        background: #fff;
+        font-family: inherit;
+        min-height: 40px;
+        /* 1行分の高さ確保 */
+        max-height: 100px;
+    }
+
+    .chat-textarea:focus {
+        border-color: #007AFF;
+    }
+
+    .send-btn {
+        background: none;
+        border: none;
+        color: #007AFF;
+        font-weight: bold;
+        font-size: 15px;
+        padding: 0 10px 10px 0;
+        /* Align with bottom of textarea */
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .send-btn:hover {
+        opacity: 0.8;
     }
 </style>
 
 <div class="chat-container">
     <!-- ヘッダー -->
-    <div class="chat-header d-flex align-items-center justify-content-between p-3 bg-white border-bottom">
-        <a href="{% url 'worker_message_list' %}" class="text-decoration-none text-dark">
-            <i class="fa-solid fa-chevron-left fa-lg"></i>
-        </a>
-        <div class="fw-bold fs-5">
+    <div class="chat-header">
+        <div class="header-left">
+            <a href="{% url 'worker_message_list' %}" class="back-btn">
+                <i class="fa-solid fa-chevron-left fa-lg"></i>
+            </a>
+        </div>
+        <div class="header-title">
             {{ application.job_posting.template.store.store_name }}
         </div>
-        <div style="width: 20px;">
-            <!-- 右側のバランス調整用、必要なら情報アイコンなど -->
-            <i class="fa-solid fa-circle-info text-secondary fa-lg"></i>
+        <div class="header-right">
+            <!-- 情報アイコン -->
+            <i class="fa-solid fa-circle-info fa-lg" style="color:#ccc;"></i>
         </div>
     </div>
 
-    <!-- メッセージエリア (top padding調整) -->
+    <!-- コンテンツ部分 -->
     <div class="chat-messages" id="chatMessages">
         {% if not messages %}
-        <div class="text-center text-muted my-5">
-            <small>まだメッセージはありません。<br>不明点があれば質問してみましょう。</small>
+        <div style="text-align:center; color:#999; margin-top:40px; font-size:13px;">
+            まだメッセージはありません。<br>不明点があれば質問してみましょう。
         </div>
         {% endif %}
 
@@ -134,18 +226,20 @@
 
         {% if msg.sender == user %}
         <!-- 自分 -->
-        <div class="message-mine message-bubble">
-            {{ msg.content|linebreaksbr }}
+        <div class="message-row mine">
+            <div class="message-bubble">
+                {{ msg.content|linebreaksbr }}
+            </div>
             <div class="message-time">{{ msg.created_at|date:"H:i" }}</div>
         </div>
         {% else %}
         <!-- 相手 -->
-        <div class="align-self-start">
+        <div class="message-row other">
             <div class="sender-name">{{ msg.sender.businessprofile.company_name|default:"店舗" }}</div>
-            <div class="message-other message-bubble">
+            <div class="message-bubble">
                 {{ msg.content|linebreaksbr }}
-                <div class="message-time">{{ msg.created_at|date:"H:i" }}</div>
             </div>
+            <div class="message-time">{{ msg.created_at|date:"H:i" }}</div>
         </div>
         {% endif %}
         {% endfor %}
@@ -153,17 +247,10 @@
 
     <!-- 入力エリア -->
     <div class="chat-input-area">
-        <form method="post" class="d-flex gap-2 align-items-center"
-            style="background: #f0f0f0; padding: 10px; border-radius: 0;">
+        <form method="post" class="input-form">
             {% csrf_token %}
-            <div class="flex-grow-1 position-relative">
-                <textarea name="content" class="form-control border-0" rows="1" placeholder="メッセージを入力"
-                    style="resize: none; border-radius: 20px; padding: 10px 15px; font-size: 1rem; box-shadow: none;"></textarea>
-            </div>
-            <button type="submit" class="btn btn-link text-primary fw-bold text-decoration-none p-0"
-                style="white-space: nowrap;">
-                送信
-            </button>
+            <textarea name="content" class="chat-textarea" rows="1" placeholder="メッセージを入力"></textarea>
+            <button type="submit" class="send-btn">送信</button>
         </form>
     </div>
 </div>
@@ -172,7 +259,9 @@
     // 自動スクロール
     window.onload = function () {
         var chatDiv = document.getElementById("chatMessages");
-        chatDiv.scrollTop = chatDiv.scrollHeight;
+        if (chatDiv) {
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
     }
 </script>
 {% endblock %}

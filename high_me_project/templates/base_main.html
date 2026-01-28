@@ -101,8 +101,8 @@
                 class="nav-item {% if request.resolver_match.url_name == 'work_schedule' %}active{% endif %}">
                 <i class="fa-solid fa-briefcase"></i>はたらく
             </a>
-            <a href="{% url 'messages' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+            <a href="{% url 'worker_message_list' %}"
+                class="nav-item {% if request.resolver_match.url_name == 'worker_message_list' %}active{% endif %}">
                 <i class="fa-regular fa-comment-dots"></i>メッセージ
             </a>
             <a href="{% url 'mypage' %}"

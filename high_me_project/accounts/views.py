@@ -939,6 +939,10 @@ def phone_confirm_password(request):
             # 電話番号（username）を更新
             user.username = new_phone
             user.save()
+            
+            # セッション無効化を防ぐために再ログイン
+            login(request, user)
+            
             del request.session['pending_new_phone']
             return redirect('account_settings') # 完了後、設定トップへ戻る
         else:
