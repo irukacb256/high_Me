@@ -116,12 +116,31 @@
 </div>
 
 <div class="section-box">
-    <form method="POST">
+    <form method="POST" class="h-adr">
+        <span class="p-country-name" style="display:none;">Japan</span>
         {% csrf_token %}
+
+        {% if form.errors %}
+        <div
+            style="background:#ffebee; color:#d32f2f; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold;">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            {% if field != '__all__' %}
+            <div>{{ field }}: {{ error }}</div>
+            {% else %}
+            <div>{{ error }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="section-title">事業形態</div>
         <div class="radio-list">
-            <label class="radio-label"><input type="radio" name="biz_type" value="corp" checked> 法人</label>
-            <label class="radio-label"><input type="radio" name="biz_type" value="indiv"> 個人事業主</label>
+            <label class="radio-label"><input type="radio" name="business_type" value="corp" {% if
+                    form.business_type.value=='corp' or not form.business_type.value %}checked{% endif %}> 法人</label>
+            <label class="radio-label"><input type="radio" name="business_type" value="indiv" {% if
+                    form.business_type.value=='indiv' %}checked{% endif %}> 個人事業主</label>
         </div>
 
         <div class="section-title">事業者の業務内容</div>
@@ -137,17 +156,51 @@
             <option value="その他">その他</option>
         </select>
 
+        <script>
+            // Simple script to restore select values if present
+            document.addEventListener('DOMContentLoaded', function () {
+                // Industry
+                var selectedIndustry = "{{ form.industry.value|default:'' }}";
+                if (selectedIndustry) {
+                    var sel = document.getElementById('industrySelect');
+                    for (var i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].value === selectedIndustry) {
+                            sel.options[i].selected = true;
+                            sel.classList.add('selected');
+                            break;
+                        }
+                    }
+                }
+
+                // Prefecture
+                var selectedPref = "{{ form.prefecture.value|default:'' }}";
+                if (selectedPref) {
+                    var prefSel = document.querySelector('select[name="prefecture"]');
+                    if (prefSel) {
+                        for (var i = 0; i < prefSel.options.length; i++) {
+                            if (prefSel.options[i].value === selectedPref) {
+                                prefSel.options[i].selected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+
         <div class="section-title" style="margin-top: 40px;">事業者の所在地</div>
 
         <div style="margin-bottom: 20px;">
             <label class="industry-label">郵便番号</label>
-            <input type="text" name="post_code" placeholder="例: 1234567"
+            <input type="text" name="post_code" class="p-postal-code" placeholder="例: 1234567"
+                value="{{ form.post_code.value|default:'' }}"
                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
         </div>
 
         <div style="margin-bottom: 20px;">
             <label class="industry-label">都道府県</label>
-            <select name="prefecture"
+            <select name="prefecture" class="p-region"
                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
                 <option value="">選択してください</option>
                 <option value="北海道">北海道</option>
@@ -162,8 +215,8 @@
                 <option value="群馬県">群馬県</option>
                 <option value="埼玉県">埼玉県</option>
                 <option value="千葉県">千葉県</option>
-                <option value="東京都">東京都</option>
-                <option value="神奈川県">神奈川県</option>
+                <option value="東京都" {% if form.prefecture.value=='東京都' %}selected{% endif %}>東京都</option>
+                <option value="神奈川県" {% if form.prefecture.value=='神奈川県' %}selected{% endif %}>神奈川県</option>
                 <option value="新潟県">新潟県</option>
                 <option value="富山県">富山県</option>
                 <option value="石川県">石川県</option>
@@ -202,19 +255,22 @@
 
         <div style="margin-bottom: 20px;">
             <label class="industry-label">市区町村名</label>
-            <input type="text" name="city" placeholder="例: 渋谷区"
+            <input type="text" name="city" class="p-locality" placeholder="例: 渋谷区"
+                value="{{ form.city.value|default:'' }}"
                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
         </div>
 
         <div style="margin-bottom: 20px;">
             <label class="industry-label">町域・番地</label>
-            <input type="text" name="address_line" placeholder="例: 道玄坂1-1-1"
+            <input type="text" name="address_line" class="p-street-address" placeholder="例: 道玄坂1-1-1"
+                value="{{ form.address_line.value|default:'' }}"
                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
         </div>
 
         <div style="margin-bottom: 20px;">
             <label class="industry-label">建物名など</label>
-            <input type="text" name="building" placeholder="例: タイミービル 3F"
+            <input type="text" name="building" class="p-extended-address" placeholder="例: タイミービル 3F"
+                value="{{ form.building.value|default:'' }}"
                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
         </div>
 

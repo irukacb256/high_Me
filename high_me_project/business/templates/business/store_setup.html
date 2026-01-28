@@ -111,15 +111,32 @@
 </div>
 
 <div class="form-body">
-    <form method="POST">
+    <form method="POST" class="h-adr">
+        <span class="p-country-name" style="display:none;">Japan</span>
         {% csrf_token %}
+
+        {% if form.errors %}
+        <div
+            style="background:#ffebee; color:#d32f2f; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold;">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            {% if field != '__all__' %}
+            <div>{{ field }}: {{ error }}</div>
+            {% else %}
+            <div>{{ error }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="section-header">
             <span class="section-title">店舗の基本情報</span>
         </div>
         <div class="form-item">
             <label>店舗名</label>
-            <input type="text" name="store_name" placeholder="例: タイミー 汐留店" required>
+            <input type="text" name="store_name" placeholder="例: タイミー 汐留店"
+                value="{{ form.store_name.value|default:'' }}" required>
         </div>
 
         <div class="section-header" style="margin-top: 40px;">
@@ -127,7 +144,7 @@
         </div>
         <div class="form-item">
             <label>業種</label>
-            <select name="industry" required>
+            <select name="industry" id="industrySelect" required>
                 <option value="">選択してください</option>
                 <option value="飲食・フード">飲食・フード</option>
                 <option value="販売・接客">販売・接客</option>
@@ -144,12 +161,13 @@
 
         <div class="form-item">
             <label>郵便番号</label>
-            <input type="text" name="post_code" placeholder="例: 1700013" required>
+            <input type="text" name="post_code" class="p-postal-code" placeholder="例: 1700013"
+                value="{{ form.post_code.value|default:'' }}" required>
         </div>
 
         <div class="form-item">
             <label>都道府県</label>
-            <select name="prefecture">
+            <select name="prefecture" class="p-region">
                 <option value="">選択してください</option>
                 <option value="北海道">北海道</option>
                 <option value="青森県">青森県</option>
@@ -203,17 +221,20 @@
 
         <div class="form-item">
             <label>市区町村名</label>
-            <input type="text" name="city" placeholder="例: 豊島区">
+            <input type="text" name="city" class="p-locality" placeholder="例: 豊島区"
+                value="{{ form.city.value|default:'' }}">
         </div>
 
         <div class="form-item">
             <label>町域・番地</label>
-            <input type="text" name="address_line" placeholder="例: 東池袋1-18-1">
+            <input type="text" name="address_line" class="p-street-address" placeholder="例: 東池袋1-1-18-1"
+                value="{{ form.address_line.value|default:'' }}">
         </div>
 
         <div class="form-item">
             <label>建物名など</label>
-            <input type="text" name="building" placeholder="例: Hareza Tower 27階">
+            <input type="text" name="building" class="p-extended-address" placeholder="例: Hareza Tower 27階"
+                value="{{ form.building.value|default:'' }}">
         </div>
 
         <button type="submit" class="btn-register">店舗を登録する</button>
@@ -235,6 +256,37 @@
         if (bizCity) document.querySelector('input[name="city"]').value = bizCity;
         if (bizAddressLine) document.querySelector('input[name="address_line"]').value = bizAddressLine;
         if (bizBuilding) document.querySelector('input[name="building"]').value = bizBuilding;
+    });
+
+    // Restore form values on error
+    document.addEventListener('DOMContentLoaded', function () {
+        // Industry
+        var selectedIndustry = "{{ form.industry.value|default:'' }}";
+        if (selectedIndustry) {
+            var sel = document.getElementById('industrySelect');
+            if (sel) {
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === selectedIndustry) {
+                        sel.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Prefecture
+        var selectedPref = "{{ form.prefecture.value|default:'' }}";
+        if (selectedPref) {
+            var prefSel = document.querySelector('select[name="prefecture"]');
+            if (prefSel) {
+                for (var i = 0; i < prefSel.options.length; i++) {
+                    if (prefSel.options[i].value === selectedPref) {
+                        prefSel.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+        }
     });
 </script>
 {% endblock %}

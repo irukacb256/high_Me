@@ -46,6 +46,7 @@ class WorkerProfile(models.Model):
     # 状態管理
     is_setup_completed = models.BooleanField("セットアップ完了", default=False)
     is_identity_verified = models.BooleanField("本人確認済み", default=False)
+    identity_document1 = models.ImageField("本人確認書類1", upload_to='profiles/identity/', null=True, blank=True)
 
     # ペナルティ・キャンセル情報 (画像1参照)
     penalty = models.CharField("ペナルティ", max_length=50, null=True, blank=True) # テキスト用？

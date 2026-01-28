@@ -140,6 +140,63 @@
     .selected-info i {
         margin-right: 5px;
     }
+
+    /* モーダルスタイル */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        width: 85%;
+        max-width: 320px;
+        border-radius: 12px;
+        text-align: center;
+        padding: 30px 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-icon {
+        font-size: 50px;
+        color: #007AFF;
+        margin-bottom: 20px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .modal-text {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    .modal-btn {
+        display: block;
+        width: 100%;
+        padding: 14px 0;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+    }
 </style>
 
 <div class="upload-wrapper">
@@ -184,6 +241,21 @@
         <button type="submit" class="btn-submit" id="submitBtn" disabled>本人確認を完了する</button>
     </form>
 </div>
+
+<!-- 完了モーダル -->
+{% if show_popup %}
+<div class="modal-overlay" id="completionModal" style="display: flex;">
+    <div class="modal-content">
+        <div class="modal-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="modal-title">提出が完了しました</div>
+        <p class="modal-text">
+            本人確認書類の提出ありがとうございます。<br>
+            内容の確認を行います。
+        </p>
+        <a href="{{ next_url }}" class="modal-btn">OK</a>
+    </div>
+</div>
+{% endif %}
 
 <script>
     function handleFileSelect(input, type) {

@@ -82,20 +82,26 @@
                 <form method="POST">
                     {% csrf_token %}
 
-                    {% if errors %}
+                    {% if form.errors %}
                     <div
                         style="background:#ffebee; color:#d32f2f; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold;">
+                        {% for field, errors in form.errors.items %}
                         {% for error in errors %}
+                        {% if field != '__all__' %}
+                        <div>{{ field }}: {{ error }}</div>
+                        {% else %}
                         <div>{{ error }}</div>
+                        {% endif %}
+                        {% endfor %}
                         {% endfor %}
                     </div>
                     {% endif %}
 
                     <p><b>ご利用目的を選択してください</b></p>
-                    <label class="radio-item"><input type="radio" name="p" value="biz" {% if p_val=='biz' %}checked{%
-                            endif %}> 求人を掲載したい（事業者の方）</label>
-                    <label class="radio-item"><input type="radio" name="p" value="worker" {% if p_val=='worker'
-                            %}checked{% endif %}> 働く仕事を探したい（ワーカーの方）</label>
+                    <label class="radio-item"><input type="radio" name="p" value="biz" {% if request.GET.p=='biz' or
+                            request.POST.p=='biz' %}checked{% endif %}> 求人を掲載したい（事業者の方）</label>
+                    <label class="radio-item"><input type="radio" name="p" value="worker" {% if request.GET.p=='worker'
+                            or request.POST.p=='worker' %}checked{% endif %}> 働く仕事を探したい（ワーカーの方）</label>
 
                     <hr>
 
@@ -109,13 +115,14 @@
                                 <li>サービス利用料は日当と交通費の30%です。</li>
                             </ul>
                             <label style="display:block; margin-bottom:15px; font-weight:bold; cursor:pointer;">
-                                <input type="checkbox" name="consent" value="true"> 上記の各事項の内容に同意する
+                                <input type="checkbox" name="consent" value="true" {% if form.consent.value %}checked{%
+                                    endif %}> 上記の各事項の内容に同意する
                             </label>
                         </div>
 
                         <p><b>登録するメールアドレス</b></p>
                         <input type="email" name="email" class="email-input" placeholder="example@timee.co.jp"
-                            value="{{ email|default:'' }}">
+                            value="{{ form.email.value|default:'' }}">
                         <button type="submit" class="btn-submit">求人掲載用アカウントを開設</button>
                     </div>
 

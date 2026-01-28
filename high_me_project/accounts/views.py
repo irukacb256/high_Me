@@ -259,24 +259,44 @@ class VerifyIdentityUploadView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         signup_data = request.session.get('signup_data')
-        if not signup_data:
-            return redirect('signup')
+        
+        # サインアップフローの場合
+        if signup_data:
+            if request.FILES.get('doc_file'):
+                doc = request.FILES['doc_file']
+                temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+                os.makedirs(temp_dir, exist_ok=True)
+                fs = FileSystemStorage(location=temp_dir)
+                filename = fs.save(f"doc_{doc.name}", doc)
+                signup_data['identity_doc_temp_path'] = filename
+                signup_data['is_identity_verified'] = True 
+                request.session['signup_data'] = signup_data
+                
+                # ポップアップを表示するためのフラグと次へ進むURLを渡す
+                context = self.get_context_data()
+                context['show_popup'] = True
+                context['next_url'] = reverse_lazy('setup_workstyle')
+                return self.render_to_response(context)
+        
+        # ログイン済みユーザーの場合
+        elif request.user.is_authenticated:
+            if request.FILES.get('doc_file'):
+                doc = request.FILES['doc_file']
+                profile = request.user.workerprofile
+                # 直接保存
+                profile.identity_document1 = doc
+                profile.is_identity_verified = True
+                profile.save()
+                
+                context = self.get_context_data()
+                context['show_popup'] = True
+                # 提出完了後はマイページへ戻る
+                context['next_url'] = reverse_lazy('mypage') 
+                return self.render_to_response(context)
+        
+        else:
+             return redirect('signup')
 
-        if request.FILES.get('doc_file'):
-            doc = request.FILES['doc_file']
-            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
-            os.makedirs(temp_dir, exist_ok=True)
-            fs = FileSystemStorage(location=temp_dir)
-            
-            # ファイル名にランダムな文字列を入れるなどするとより安全だが、
-            # ここではシンプルに
-            filename = fs.save(f"doc_{doc.name}", doc)
-            signup_data['identity_doc_temp_path'] = filename
-            signup_data['is_identity_verified'] = True # 仮認証
-            request.session['signup_data'] = signup_data
-            
-            return redirect('signup_confirm')
-            
         return self.render_to_response(self.get_context_data())
 
 def signup_verify_identity_skip(request):
@@ -317,7 +337,7 @@ class SignupConfirmView(TemplateView):
 class SetupAddressView(FormView):
     template_name = 'signup/step_address.html'
     form_class = AddressForm
-    success_url = reverse_lazy('setup_workstyle')
+    success_url = reverse_lazy('signup_verify_identity')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.session.get('signup_data'):
@@ -342,7 +362,7 @@ class SetupAddressView(FormView):
 class SetupWorkstyleView(FormView):
     template_name = 'signup/step_workstyle.html'
     form_class = WorkstyleForm
-    success_url = reverse_lazy('signup_verify_identity')
+    success_url = reverse_lazy('signup_confirm')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.session.get('signup_data'):
@@ -452,6 +472,16 @@ class SetupPrefSelectView(FormView):
                         with fs.open(temp_path) as f:
                             profile.face_photo.save(temp_path, f, save=False)
                         fs.delete(temp_path)
+                
+                # 本人確認書類の処理 (signup_dataから)
+                doc_temp_path = signup_data.get('identity_doc_temp_path')
+                if doc_temp_path:
+                    temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_signup')
+                    fs = FileSystemStorage(location=temp_dir)
+                    if fs.exists(doc_temp_path):
+                        with fs.open(doc_temp_path) as f:
+                            profile.identity_document1.save(doc_temp_path, f, save=False)
+                        fs.delete(doc_temp_path)
                 
                 profile.save()
                 

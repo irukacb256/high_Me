@@ -45,31 +45,31 @@ urlpatterns = [
     path('login/', account_views.CustomLoginView.as_view(), name='login'),
     # path('home/', job_views.index, name='index'), # 登録完了後の「さがす」画面
 
-     # jobsアプリ関連
-    path('home/', job_views.index, name='index'),
+      # jobsアプリ関連
+    path('home/', job_views.IndexView.as_view(), name='index'),
     # 場所フロー
-    path('home/location/', job_views.location_home, name='location_home'),
-    path('home/location/prefs/', job_views.pref_select, name='pref_select'),
-    path('home/location/map/', job_views.map_view, name='map_view'),
+    path('home/location/', job_views.LocationHomeView.as_view(), name='location_home'),
+    path('home/location/prefs/', job_views.PrefSelectView.as_view(), name='pref_select'),
+    path('home/location/map/', job_views.MapView.as_view(), name='map_view'),
     # 絞り込みフロー
-    path('home/refine/', job_views.refine_home, name='refine_home'),
-    path('home/refine/occupation/', job_views.occupation_select, name='occupation_select'),
-    path('home/refine/reward/', job_views.reward_select, name='reward_select'),
+    path('home/refine/', job_views.RefineHomeView.as_view(), name='refine_home'),
+    path('home/refine/occupation/', job_views.OccupationSelectView.as_view(), name='occupation_select'),
+    path('home/refine/reward/', job_views.RewardSelectView.as_view(), name='reward_select'),
 
     # ★ ここから下の3行が不足していたためエラーになっていました
-    path('home/refine/time/', job_views.time_select, name='time_select'),
-    path('home/refine/treatment/', job_views.treatment_select, name='treatment_select'),
-    path('working/<int:pk>/', job_views.job_working_detail, name='job_working_detail'),
-    path('favorites/', job_views.favorites, name='favorites'),      # ★追加
-    path('schedule/', job_views.work_schedule, name='work_schedule'), # ★追加
-    path('messages/', job_views.messages, name='messages'),          # ★追加
-    path('home/refine/keyword/', job_views.keyword_exclude, name='keyword_exclude'), # ★追加（NoReverseMatch対応）
-    path('badges/', job_views.badge_list, name='badge_list'),        # ★バッジ一覧
+    path('home/refine/time/', job_views.TimeSelectView.as_view(), name='time_select'),
+    path('home/refine/treatment/', job_views.TreatmentSelectView.as_view(), name='treatment_select'),
+    path('working/<int:pk>/', job_views.JobWorkingDetailView.as_view(), name='job_working_detail'),
+    path('favorites/', job_views.FavoritesView.as_view(), name='favorites'),      # ★追加
+    path('schedule/', job_views.WorkScheduleView.as_view(), name='work_schedule'), # ★追加
+    path('messages/', job_views.MessagesView.as_view(), name='messages'),          # ★追加
+    path('home/refine/keyword/', job_views.KeywordExcludeView.as_view(), name='keyword_exclude'), # ★追加（NoReverseMatch対応）
+    path('badges/', job_views.BadgeListView.as_view(), name='badge_list'),        # ★バッジ一覧
     
     # 店舗プロフィール & お気に入りAPI
-    path('store/<int:store_id>/', job_views.store_profile, name='store_profile'),
-    path('favorites/toggle/job/<int:job_id>/', job_views.toggle_favorite_job, name='toggle_favorite_job'),
-    path('favorites/toggle/store/<int:store_id>/', job_views.toggle_favorite_store, name='toggle_favorite_store'),
+    path('store/<int:store_id>/', job_views.StoreProfileView.as_view(), name='store_profile'),
+    path('favorites/toggle/job/<int:job_id>/', job_views.ToggleFavoriteJobView.as_view(), name='toggle_favorite_job'),
+    path('favorites/toggle/store/<int:store_id>/', job_views.ToggleFavoriteStoreView.as_view(), name='toggle_favorite_store'),
 
     # accountsアプリ関連
     path('mypage/', account_views.MypageView.as_view(), name='mypage'),            # ★追加
@@ -120,56 +120,51 @@ urlpatterns = [
     path('settings/phone/', account_views.phone_change_confirm, name='phone_change'),
 
     # 事業者登録フロー
-    path('biz/', biz_views.landing, name='biz_landing'), # 画像3
-    path('biz/signup/', biz_views.signup, name='biz_signup'), # 画像4, 5
-    path('biz/account-register/', biz_views.account_register, name='biz_account_register'), # 追加
-    path('biz/business-register/', biz_views.business_register, name='biz_business_register'), # 追加
-    path('biz/verify/', biz_views.verify_docs, name='biz_verify'), # 画像6
-    path('biz/store-setup/', biz_views.store_setup, name='biz_store_setup'), # 画像7
-    path('biz/complete/', biz_views.biz_signup_complete, name='biz_signup_complete'), # 完了画面
+    path('biz/', biz_views.LandingView.as_view(), name='biz_landing'),
+    path('biz/signup/', biz_views.SignupView.as_view(), name='biz_signup'),
+    path('biz/account-register/', biz_views.AccountRegisterView.as_view(), name='biz_account_register'),
+    path('biz/business-register/', biz_views.BusinessRegisterView.as_view(), name='biz_business_register'),
+    path('biz/verify/', biz_views.VerifyDocsView.as_view(), name='biz_verify'),
+    path('biz/store-setup/', biz_views.StoreSetupView.as_view(), name='biz_store_setup'),
+    path('biz/complete/', biz_views.SignupCompleteView.as_view(), name='biz_signup_complete'),
     # --- 登録・ログイン ---
-    path('biz/login/', biz_views.biz_login, name='biz_login'), # 修正
-    path('biz/password-reset/', biz_views.biz_password_reset, name='biz_password_reset'), # パスワード再設定
-    # --- 企業用マイページ（画像1：企業・店舗一覧） ---
-    path('biz/portal/', biz_views.biz_portal, name='biz_portal'),
+    path('biz/login/', biz_views.BizLoginView.as_view(), name='biz_login'),
+    path('biz/password-reset/', biz_views.BizPasswordResetView.as_view(), name='biz_password_reset'),
+    # --- 企業用マイページ ---
+    path('biz/portal/', biz_views.BizPortalView.as_view(), name='biz_portal'),
 
-    
     # 事業者ダッシュボード
-    # --- 各店舗ごとの管理画面（URLにIDを入れる） ---
-    path('biz/store/<int:store_id>/home/', biz_views.dashboard, name='biz_dashboard'),
-    path('biz/store/<int:store_id>/templates/', biz_views.template_list, name='biz_template_list'),
-    path('biz/store/<int:store_id>/templates/create/', biz_views.template_create, name='biz_template_create'),
-
-    # config/urls.py の urlpatterns 内に追加
-    path('biz/templates/', biz_views.template_list, name='biz_template_list'),      # ひな形一覧
-   path('biz/store/<int:store_id>/templates/create/', biz_views.template_create, name='biz_template_create'),
+    path('biz/store/<int:store_id>/home/', biz_views.DashboardView.as_view(), name='biz_dashboard'),
+    path('biz/store/<int:store_id>/templates/', biz_views.TemplateListView.as_view(), name='biz_template_list'),
+    path('biz/store/<int:store_id>/templates/create/', biz_views.TemplateCreateView.as_view(), name='biz_template_create'),
 
     # --- 店舗追加機能 ---
-    path('biz/portal/add-store/', biz_views.add_store, name='biz_add_store'),
+    path('biz/portal/add-store/', biz_views.AddStoreView.as_view(), name='biz_add_store'),
 
     # 詳細画面
-    path('biz/templates/<int:pk>/', biz_views.template_detail, name='biz_template_detail'),
+    path('biz/templates/<int:pk>/', biz_views.TemplateDetailView.as_view(), name='biz_template_detail'),
     # 編集画面
-    path('biz/templates/<int:pk>/edit/', biz_views.template_edit, name='biz_template_edit'),
+    path('biz/templates/<int:pk>/edit/', biz_views.TemplateUpdateView.as_view(), name='biz_template_edit'),
     # 削除画面
-    path('biz/templates/<int:pk>/delete/', biz_views.template_delete, name='biz_template_delete'),
-    # このひな形を元に求人作成（勤務日時入力画面へ）
-    path('biz/templates/<int:template_pk>/post/', biz_views.job_create_from_template, name='biz_job_create'),
-    path('biz/job/<int:store_id>/<int:pk>/visibility/', biz_views.job_posting_visibility_edit, name='biz_job_visibility_edit'),
-    path('biz/job/confirm/', biz_views.job_confirm, name='biz_job_confirm'),
-    path('biz/store/<int:store_id>/postings/', biz_views.job_posting_list, name='biz_job_posting_list'),
-    path('biz/store/<int:store_id>/postings/<int:pk>/', biz_views.job_posting_detail, name='biz_job_posting_detail'),
+    path('biz/templates/<int:pk>/delete/', biz_views.TemplateDeleteView.as_view(), name='biz_template_delete'),
+    # このひな形を元に求人作成
+    path('biz/templates/<int:template_pk>/post/', biz_views.JobCreateFromTemplateView.as_view(), name='biz_job_create'),
+    path('biz/job/<int:store_id>/<int:pk>/visibility/', biz_views.JobPostingVisibilityEditView.as_view(), name='biz_job_visibility_edit'),
+    path('biz/job/confirm/', biz_views.JobConfirmView.as_view(), name='biz_job_confirm'),
+    path('biz/store/<int:store_id>/postings/', biz_views.JobPostingListView.as_view(), name='biz_job_posting_list'),
+    path('biz/store/<int:store_id>/postings/<int:pk>/', biz_views.JobPostingDetailView.as_view(), name='biz_job_posting_detail'),
     #ワーカーの確認
-    path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.job_worker_list, name='biz_job_worker_list'),
+    path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.JobWorkerListView.as_view(), name='biz_job_worker_list'),
     # ワーカー詳細(店舗向け)
-    path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.job_worker_detail, name='biz_worker_detail'),
+    path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.JobWorkerDetailView.as_view(), name='biz_worker_detail'),
 
     # 求人詳細画面
-    path('job/<int:pk>/', job_views.job_detail, name='job_detail'),
+    # 求人詳細画面
+    path('job/<int:pk>/', job_views.JobDetailView.as_view(), name='job_detail'),
     # 申込画面一連フロー
-    path('job/<int:pk>/apply/belongings/', job_views.apply_step_1_belongings, name='apply_step_1'),
-    path('job/<int:pk>/apply/conditions/', job_views.apply_step_2_conditions, name='apply_step_2_conditions'), # 修正
-    path('job/<int:pk>/apply/documents/', job_views.apply_step_3_documents, name='apply_step_3_documents'),   # 修正
-    path('job/<int:pk>/apply/policy/', job_views.apply_step_4_policy, name='apply_step_4_policy'),             # 修正
-    path('job/<int:pk>/apply/review/', job_views.apply_step_5_review, name='apply_step_5_review'),             # 修正
+    path('job/<int:pk>/apply/belongings/', job_views.ApplyStep1BelongingsView.as_view(), name='apply_step_1'),
+    path('job/<int:pk>/apply/conditions/', job_views.ApplyStep2ConditionsView.as_view(), name='apply_step_2_conditions'),
+    path('job/<int:pk>/apply/documents/', job_views.ApplyStep3DocumentsView.as_view(), name='apply_step_3_documents'),
+    path('job/<int:pk>/apply/policy/', job_views.ApplyStep4PolicyView.as_view(), name='apply_step_4_policy'),
+    path('job/<int:pk>/apply/review/', job_views.ApplyStep5ReviewView.as_view(), name='apply_step_5_review'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
