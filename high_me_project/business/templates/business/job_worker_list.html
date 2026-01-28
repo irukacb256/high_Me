@@ -193,8 +193,8 @@
             <td>
                 <div class="worker-info-cell">
                     <!-- 顔写真の反映 -->
-                    {% if match.worker.workerprofile.face_photo %}
-                    <img src="{{ match.worker.workerprofile.face_photo.url }}" class="worker-img">
+                    {% if match.safe_profile and match.safe_profile.face_photo %}
+                    <img src="{{ match.safe_profile.face_photo.url }}" class="worker-img">
                     {% else %}
                     <div class="worker-img"
                         style="display:flex; align-items:center; justify-content:center; background:#ffeb3b;">
@@ -206,16 +206,22 @@
                         <!-- リンクを追加 -->
                         <a href="{% url 'biz_worker_detail' store.id match.worker.id %}"
                             style="text-decoration: none; color: inherit;">
-                            <span class="name-kanji">{{ match.worker.workerprofile.last_name_kanji }} {{
-                                match.worker.workerprofile.first_name_kanji }}</span>
-                            <span class="name-kana">{{ match.worker.workerprofile.last_name_kana }} {{
-                                match.worker.workerprofile.first_name_kana }}</span>
+                            {% if match.safe_profile %}
+                            <span class="name-kanji">{{ match.safe_profile.last_name_kanji }} {{
+                                match.safe_profile.first_name_kanji }}</span>
+                            <span class="name-kana">{{ match.safe_profile.last_name_kana }} {{
+                                match.safe_profile.first_name_kana }}</span>
                             <div class="worker-meta">
                                 {{ match.worker_age }}歳
-                                {% if match.worker.workerprofile.gender == '男性' %}男性{% elif
-                                match.worker.workerprofile.gender == '女性' %}女性{% else %}{{
-                                match.worker.workerprofile.gender }}{% endif %}
+                                {% if match.safe_profile.gender == '男性' %}男性{% elif match.safe_profile.gender == '女性'
+                                %}女性{% else %}{{ match.safe_profile.gender }}{% endif %}
                             </div>
+                            {% else %}
+                            <span class="name-kanji">プロフィール未設定</span>
+                            <div class="worker-meta">
+                                {{ match.worker.username }}
+                            </div>
+                            {% endif %}
                         </a>
                     </div>
                 </div>
@@ -236,7 +242,10 @@
             </td>
             <td>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-tool" style="padding: 8px 12px;"><i class="fa-regular fa-envelope"></i></button>
+                    <a href="{% url 'biz_message_detail' match.id %}" class="btn-tool"
+                        style="padding: 8px 12px; text-decoration: none; color: inherit;">
+                        <i class="fa-regular fa-envelope"></i>
+                    </a>
                     <button class="btn-tool">その他 <i class="fa-solid fa-chevron-down"></i></button>
                 </div>
             </td>

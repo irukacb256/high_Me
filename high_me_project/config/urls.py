@@ -86,6 +86,10 @@ urlpatterns = [
     path('rewards/reviews/', account_views.review_penalty, name='review_penalty'),
     path('rewards/penalty-detail/', account_views.penalty_detail, name='penalty_detail'),
 
+    # ワーカーメッセージ機能
+    path('accounts/messages/', account_views.WorkerMessageListView.as_view(), name='worker_message_list'),
+    path('accounts/messages/<int:application_id>/', account_views.WorkerMessageDetailView.as_view(), name='worker_message_detail'),
+
     # 保有資格
     path('qualifications/', account_views.qualification_list, name='qualification_list'),
     path('qualifications/create/', account_views.qualification_create, name='qualification_create'),
@@ -156,7 +160,12 @@ urlpatterns = [
     #ワーカーの確認
     path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.JobWorkerListView.as_view(), name='biz_job_worker_list'),
     # ワーカー詳細(店舗向け)
+    # ワーカー詳細(店舗向け)
     path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.JobWorkerDetailView.as_view(), name='biz_worker_detail'),
+
+    # メッセージ機能
+    path('biz/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),
+    path('biz/messages/<int:application_id>/', biz_views.BizMessageDetailView.as_view(), name='biz_message_detail'),
 
     # 求人詳細画面
     # 求人詳細画面

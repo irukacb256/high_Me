@@ -10,9 +10,11 @@ from datetime import datetime, date, timedelta
 
 from .models import (
     BusinessProfile, Store, JobTemplate, JobPosting, JobApplication,
-    JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo
+    JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo,
+    Message
 )
 from accounts.models import WorkerProfile, WorkerBadge # 必要に応じて
+from .mixins import BusinessLoginRequiredMixin
 
 from .forms import (
     SignupForm, AccountRegisterForm, BusinessRegisterForm, StoreSetupForm,
@@ -227,7 +229,7 @@ class BizPasswordResetView(TemplateView):
 
 # --- 業務画面 ---
 
-class BizPortalView(LoginRequiredMixin, TemplateView):
+class BizPortalView(BusinessLoginRequiredMixin, TemplateView):
     template_name = 'business/portal.html'
 
     def get(self, request, *args, **kwargs):
@@ -244,7 +246,7 @@ class BizPortalView(LoginRequiredMixin, TemplateView):
         context['stores'] = Store.objects.filter(business=biz_profile)
         return context
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+class DashboardView(BusinessLoginRequiredMixin, TemplateView):
     template_name = 'business/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -265,7 +267,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         })
         return context
 
-class AddStoreView(LoginRequiredMixin, CreateView):
+class AddStoreView(BusinessLoginRequiredMixin, CreateView):
     # StoreSetupForm を再利用できるが、BusinessProfileとの紐付けが必要
     template_name = 'business/store_setup.html'
     form_class = StoreSetupForm
@@ -286,7 +288,7 @@ class AddStoreView(LoginRequiredMixin, CreateView):
         )
         return redirect(self.success_url)
 
-class TemplateListView(LoginRequiredMixin, ListView):
+class TemplateListView(BusinessLoginRequiredMixin, ListView):
     model = JobTemplate
     template_name = 'business/template_list.html'
     context_object_name = 'templates'
@@ -301,7 +303,7 @@ class TemplateListView(LoginRequiredMixin, ListView):
         context['store'] = self.store
         return context
 
-class TemplateCreateView(LoginRequiredMixin, CreateView):
+class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
     model = JobTemplate
     form_class = JobTemplateForm
     template_name = 'business/template_form.html'
@@ -343,7 +345,7 @@ class TemplateCreateView(LoginRequiredMixin, CreateView):
 
         return redirect('biz_template_list', store_id=store.id)
 
-class TemplateDetailView(LoginRequiredMixin, DetailView):
+class TemplateDetailView(BusinessLoginRequiredMixin, DetailView):
     model = JobTemplate
     template_name = 'business/template_detail.html'
     context_object_name = 'template'
@@ -362,7 +364,7 @@ class TemplateDetailView(LoginRequiredMixin, DetailView):
         context['store'] = self.object.store
         return context
 
-class TemplateUpdateView(LoginRequiredMixin, UpdateView):
+class TemplateUpdateView(BusinessLoginRequiredMixin, UpdateView):
     model = JobTemplate
     form_class = JobTemplateForm
     template_name = 'business/template_form.html'
@@ -392,7 +394,7 @@ class TemplateUpdateView(LoginRequiredMixin, UpdateView):
 
         return redirect('biz_template_list', store_id=template.store.id)
 
-class TemplateDeleteView(LoginRequiredMixin, DeleteView):
+class TemplateDeleteView(BusinessLoginRequiredMixin, DeleteView):
     model = JobTemplate
     template_name = 'business/template_delete_confirm.html'
     context_object_name = 'template'
@@ -408,7 +410,7 @@ class TemplateDeleteView(LoginRequiredMixin, DeleteView):
         context['store'] = self.object.store
         return context
 
-class JobCreateFromTemplateView(LoginRequiredMixin, FormView):
+class JobCreateFromTemplateView(BusinessLoginRequiredMixin, FormView):
     template_name = 'business/job_create_form.html'
     form_class = JobCreateFromTemplateForm
     success_url = reverse_lazy('biz_job_confirm')
@@ -447,7 +449,7 @@ class JobCreateFromTemplateView(LoginRequiredMixin, FormView):
         self.request.session['pending_job'] = session_data
         return redirect(self.success_url)
 
-class JobConfirmView(LoginRequiredMixin, TemplateView):
+class JobConfirmView(BusinessLoginRequiredMixin, TemplateView):
     template_name = 'business/job_confirm.html'
 
     def get_context_data(self, **kwargs):
@@ -521,7 +523,7 @@ class JobConfirmView(LoginRequiredMixin, TemplateView):
         del request.session['pending_job']
         return redirect(reverse('biz_job_posting_detail', kwargs={'store_id': template.store.id, 'pk': posting.pk}) + "?status=created")
 
-class JobPostingListView(LoginRequiredMixin, ListView):
+class JobPostingListView(BusinessLoginRequiredMixin, ListView):
     model = JobPosting
     template_name = 'business/job_posting_list.html'
     context_object_name = 'postings'
@@ -542,7 +544,7 @@ class JobPostingListView(LoginRequiredMixin, ListView):
         context['today'] = timezone.now().date()
         return context
 
-class JobPostingDetailView(LoginRequiredMixin, DetailView):
+class JobPostingDetailView(BusinessLoginRequiredMixin, DetailView):
     model = JobPosting
     template_name = 'business/job_posting_detail.html'
     context_object_name = 'posting'
@@ -557,7 +559,7 @@ class JobPostingDetailView(LoginRequiredMixin, DetailView):
         context['store'] = self.store
         return context
 
-class JobWorkerListView(LoginRequiredMixin, ListView):
+class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
     model = JobApplication
     template_name = 'business/job_worker_list.html'
     context_object_name = 'matched_workers'
@@ -566,15 +568,23 @@ class JobWorkerListView(LoginRequiredMixin, ListView):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
         self.posting = get_object_or_404(JobPosting, pk=self.kwargs['pk'], template__store=self.store)
-        return JobApplication.objects.filter(job_posting=self.posting).select_related('worker', 'worker__workerprofile')
+        # select_related('worker__workerprofile') は逆参照のため動作が不安定になる可能性があるため除外
+        return JobApplication.objects.filter(job_posting=self.posting).select_related('worker')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # 年齢計算ロジック
+        # 年齢計算 & プロフィール安全取得
         today = timezone.now().date()
         applications = context['matched_workers']
         for app in applications:
-            profile = getattr(app.worker, 'workerprofile', None)
+            # プロフィールを安全に取得してセット
+            try:
+                profile = app.worker.workerprofile
+                app.safe_profile = profile
+            except WorkerProfile.DoesNotExist:
+                app.safe_profile = None
+                profile = None
+
             if profile and profile.birth_date:
                 age = today.year - profile.birth_date.year - ((today.month, today.day) < (profile.birth_date.month, profile.birth_date.day))
                 app.worker_age = age
@@ -585,7 +595,7 @@ class JobWorkerListView(LoginRequiredMixin, ListView):
         context['posting'] = self.posting
         return context
 
-class JobWorkerDetailView(LoginRequiredMixin, DetailView):
+class JobWorkerDetailView(BusinessLoginRequiredMixin, DetailView):
     model = User
     template_name = 'business/worker_detail.html'
     context_object_name = 'worker'
@@ -596,6 +606,42 @@ class JobWorkerDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        # 安全にWorkerProfileを取得
+        try:
+            profile = self.object.workerprofile
+            context['profile'] = profile
+        except WorkerProfile.DoesNotExist:
+            context['profile'] = None
+
+        # バッジ取得 (直近の実装に合わせて調整)
+        if context['profile']:
+            from accounts.models import WorkerBadge
+            worker_badges = WorkerBadge.objects.filter(worker=profile).select_related('badge')
+            context['badges'] = [wb.badge for wb in worker_badges]
+        else:
+            context['badges'] = []
+            
+        context['store'] = self.store
+        
+        # この店舗でのこのワーカーのメモを取得
+        from .models import StoreWorkerMemo, StoreWorkerGroup
+        try:
+             memo = StoreWorkerMemo.objects.get(store=self.store, worker=context['profile'])
+             context['memo'] = memo.memo
+        except (StoreWorkerMemo.DoesNotExist, AttributeError):
+             context['memo'] = ""
+
+        # グループ分け
+        try:
+            group = StoreWorkerGroup.objects.get(store=self.store, worker=context['profile'])
+            context['group_type'] = group.group_type
+        except (StoreWorkerGroup.DoesNotExist, AttributeError):
+            context['group_type'] = ""
+
+        return context
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
         
@@ -609,21 +655,94 @@ class JobWorkerDetailView(LoginRequiredMixin, DetailView):
         context['memo'] = memo
         return context
 
-class JobPostingVisibilityEditView(LoginRequiredMixin, UpdateView):
+class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
     model = JobPosting
     form_class = JobPostingVisibilityForm
     template_name = 'business/job_posting_visibility_edit.html'
 
     def get_queryset(self):
+        # 自分の店舗の求人のみ編集可能にする
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
-        return JobPosting.objects.filter(template__store=store)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        return JobPosting.objects.filter(template__store=self.store)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['store'] = self.object.template.store
+        context['store'] = self.store
         return context
 
     def get_success_url(self):
         messages.success(self.request, '公開設定を変更しました。')
         return reverse('biz_job_posting_detail', kwargs={'store_id': self.object.template.store.id, 'pk': self.object.id})
+
+class BizMessageListView(BusinessLoginRequiredMixin, ListView):
+    """メッセージ一覧 (マッチング済みのワーカー一覧)"""
+    model = JobApplication
+    template_name = 'business/message_list.html'
+    context_object_name = 'applications'
+
+    def get_queryset(self):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        # 自分のビジネスに紐づく店舗の求人への応募を取得
+        queryset = JobApplication.objects.filter(
+            job_posting__template__store__business=biz_profile,
+            status='確定済み' # マッチング済みのみ
+        ).select_related('worker', 'job_posting', 'job_posting__template__store').order_by('-applied_at')
+
+        q = self.request.GET.get('q')
+        if q:
+            # ワーカーの名前で検索 (姓 or 名 contains)
+            from django.db.models import Q
+            queryset = queryset.filter(Q(worker__last_name__icontains=q) | Q(worker__first_name__icontains=q))
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # サイドバー表示のために、ビジネスの最初の店舗を取得してセットする
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        context['store'] = Store.objects.filter(business=biz_profile).first()
+        return context
+
+class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):
+    """メッセージ詳細 (チャット画面)"""
+    template_name = 'business/message_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        
+        # 権限チェック込みで取得
+        self.application = get_object_or_404(
+            JobApplication, 
+            id=application_id, 
+            job_posting__template__store__business=biz_profile
+        )
+        
+        context['application'] = self.application
+        context['messages'] = self.application.messages.all().select_related('sender')
+        # サイドバー表示用に店舗情報をセット
+        context['store'] = self.application.job_posting.template.store
+        return context
+
+    def post(self, request, *args, **kwargs):
+        application_id = self.kwargs['application_id']
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        
+        application = get_object_or_404(
+            JobApplication, 
+            id=application_id, 
+            job_posting__template__store__business=biz_profile
+        )
+        
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(
+                application=application,
+                sender=request.user,
+                content=content,
+                is_read=False
+            )
+        
+        return redirect('biz_message_detail', application_id=application_id)

@@ -242,3 +242,17 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.worker.last_name} - {self.job_posting.title}"
+
+class Message(models.Model):
+    """求人申し込みに関するメッセージ"""
+    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    content = models.TextField("メッセージ内容")
+    is_read = models.BooleanField("既読", default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Message from {self.sender} at {self.created_at}"
