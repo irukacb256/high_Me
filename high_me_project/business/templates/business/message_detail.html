@@ -245,34 +245,25 @@
     <!-- Info Card -->
     <div class="info-card">
         <div class="worker-icon-large">
-            {% if application.worker.workerprofile.face_photo %}
-            <img src="{{ application.worker.workerprofile.face_photo.url }}"
+            {% if room.worker.workerprofile.face_photo %}
+            <img src="{{ room.worker.workerprofile.face_photo.url }}"
                 style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
             {% else %}
             🐻
             {% endif %}
         </div>
         <div>
-            <a href="{% url 'biz_worker_detail' store.id application.worker.id %}" class="worker-name-link">
-                {{ application.worker.workerprofile.last_name_kanji }} {{
-                application.worker.workerprofile.first_name_kanji }}
+            <a href="{% url 'biz_worker_detail' store.id room.worker.id %}" class="worker-name-link">
+                {{ room.worker.workerprofile.last_name_kanji }} {{ room.worker.workerprofile.first_name_kanji }}
             </a>
-            <div class="job-meta-info">
-                <i class="fa-regular fa-calendar"></i>
-                <a href="{% url 'biz_job_posting_detail' store.id application.job_posting.id %}" class="job-meta-link">
-                    {{ application.job_posting.work_date|date:"n月j日 (D)" }}
-                    {{ application.job_posting.start_time|time:"H:i" }} ~ {{ application.job_posting.end_time|time:"H:i"
-                    }}
-                    【{{ application.job_posting.template.store.store_name }}】 {{ application.job_posting.title }}
-                </a>
-            </div>
+            <!-- Job info removed as chat is persistent across jobs -->
         </div>
     </div>
 
     <!-- Chat Box -->
     <div class="chat-box" id="chatLog">
         {% if not messages %}
-        <div style="text-center: center; color: #aaa; margin-top: 40px; text-align: center;">
+        <div style="text-align: center; color: #aaa; margin-top: 40px;">
             <p>メッセージはまだありません。</p>
         </div>
         {% endif %}
@@ -297,8 +288,8 @@
         <!-- Others -->
         <div class="message-row others">
             <div class="other-icon mb-1">
-                {% if application.worker.workerprofile.face_photo %}
-                <img src="{{ application.worker.workerprofile.face_photo.url }}"
+                {% if room.worker.workerprofile.face_photo %}
+                <img src="{{ room.worker.workerprofile.face_photo.url }}"
                     style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                 {% else %}
                 🐻

@@ -245,27 +245,60 @@
     <div class="check-status-area">
         <div class="status-item">
             <div class="status-label">チェックイン</div>
-            <div class="status-date">-月-日 (-)</div>
-            <div class="status-time">--:--</div>
+            <div class="status-date">
+                {% if app.attendance_at %}
+                {{ app.attendance_at|date:"n月j日 (D)" }}
+                {% else %}
+                -月-日 (-)
+                {% endif %}
+            </div>
+            <div class="status-time">
+                {% if app.attendance_at %}
+                <span style="color:#333;">{{ app.attendance_at|date:"H:i" }}</span>
+                {% else %}
+                --:--
+                {% endif %}
+            </div>
         </div>
         <div class="arrow-icon">
             <i class="fa-solid fa-caret-right"></i>
         </div>
         <div class="status-item">
             <div class="status-label">チェックアウト</div>
-            <div class="status-date">-月-日 (-)</div>
-            <div class="status-time">--:--</div>
+            <div class="status-date">
+                {% if app.leaving_at %}
+                {{ app.leaving_at|date:"n月j日 (D)" }}
+                {% else %}
+                -月-日 (-)
+                {% endif %}
+            </div>
+            <div class="status-time">
+                {% if app.leaving_at %}
+                <span style="color:#333;">{{ app.leaving_at|date:"H:i" }}</span>
+                {% else %}
+                --:--
+                {% endif %}
+            </div>
         </div>
     </div>
 
     <div class="action-area">
+        {% if not app.attendance_at or not app.leaving_at %}
         <p class="instruction">仕事をはじめる/おわるときに、タップしてください</p>
-        <button class="btn-qr">
+        <a href="{% url 'job_qr_reader' app.job_posting.pk %}" class="btn-qr" style="text-decoration:none;">
             <i class="fa-solid fa-qrcode"></i> QRを読み込む
-        </button>
+        </a>
         <div class="btn-cant-check">
             チェックイン/アウトできなかった場合 <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
         </div>
+        {% else %}
+        <div style="text-align:center; padding: 20px; background:#f9f9f9; border-radius:12px; margin-bottom:15px;">
+            <div style="font-weight:bold; color:#007AFF; margin-bottom:10px;">業務完了</div>
+            <p style="font-size:12px; color:#666; margin:0;">
+                お疲れ様でした。<br>退勤処理が完了しています。
+            </p>
+        </div>
+        {% endif %}
     </div>
 
     <!-- メニューリスト -->
@@ -280,7 +313,7 @@
             <span class="menu-text">業務に関する書類</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{% url 'attendance_step2' app.id %}" class="menu-item">
             <i class="fa-solid fa-envelope menu-icon"></i>
             <span class="menu-text">修正依頼</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>

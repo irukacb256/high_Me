@@ -1,0 +1,68 @@
+{% extends 'business/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-header"
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="font-size: 20px; font-weight: bold;">勤怠修正依頼一覧</h2>
+</div>
+
+<div style="background: white; border-radius: 8px; border: 1px solid #ddd; overflow: hidden;">
+    {% if corrections %}
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead style="background: #f9f9f9; border-bottom: 1px solid #ddd;">
+            <tr>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">申請日時</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">ワーカー名</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">対象求人</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">理由</th>
+                <th style="padding: 12px 20px; text-align: center; font-weight: bold; color: #666;">ステータス</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for correction in corrections %}
+            <tr style="border-bottom: 1px solid #eee; cursor: pointer;"
+                onclick="window.location.href='{% url 'biz_attendance_correction_detail' store.id correction.id %}'"
+                onmouseover="this.style.background='#f5faff'" onmouseout="this.style.background='white'">
+                <td style="padding: 15px 20px; color: #333;">
+                    {{ correction.created_at|date:"Y/m/d H:i" }}
+                </td>
+                <td style="padding: 15px 20px; font-weight: bold; color: #007bff;">
+                    {{ correction.application.worker.workerprofile.last_name_kanji }} {{
+                    correction.application.worker.workerprofile.first_name_kanji }}
+                </td>
+                <td style="padding: 15px 20px;">
+                    {{ correction.application.job_posting.title }}<br>
+                    <span style="font-size: 12px; color: #888;">{{
+                        correction.application.job_posting.work_date|date:"m/d" }} 勤務</span>
+                </td>
+                <td style="padding: 15px 20px;">
+                    {% if correction.lateness_reason %}
+                    {{ correction.get_lateness_reason_display }}
+                    {% else %}
+                    報酬変動など
+                    {% endif %}
+                </td>
+                <td style="padding: 15px 20px; text-align: center;">
+                    {% if correction.status == 'pending' %}
+                    <span
+                        style="background: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">申請中</span>
+                    {% elif correction.status == 'approved' %}
+                    <span
+                        style="background: #e8f5e9; color: #388e3c; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">承認済み</span>
+                    {% else %}
+                    <span
+                        style="background: #ffebee; color: #d32f2f; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">却下</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="padding: 40px; text-align: center; color: #666;">
+        <p>現在、勤怠修正依頼はありません。</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

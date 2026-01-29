@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <!-- Header -->
+    <div style="margin-bottom: 20px;">
+        <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 10px;">業務開始・業務終了した<br>日時を入力してください</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 30px;">入力した日時で報酬が算出されます。</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Input Section -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px;">
+            <!-- Start -->
+            <div style="width: 45%;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px; text-align: left;">業務開始</label>
+                <div style="position: relative;">
+                    <input type="date" id="id_attendance_date" name="attendance_date"
+                        value="{{ initial.attendance_date }}"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom: none; text-align: center; background: #fff; box-sizing: border-box; font-size: 14px;">
+                    <div style="height: 1px; background: #eee; width: 90%; margin: 0 auto;"></div>
+                    <input type="time" id="id_attendance_time" name="attendance_time"
+                        value="{{ initial.attendance_time }}"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-top: none; font-size: 20px; font-weight: bold; text-align: center; background: #fff; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="color: #ddd; margin-top: 25px;">
+                <i class="fa-solid fa-play"></i>
+            </div>
+
+            <!-- End -->
+            <div style="width: 45%;">
+                <label style="font-weight: bold; display: block; margin-bottom: 5px; text-align: right;">業務終了</label>
+                <div style="position: relative;">
+                    <input type="date" id="id_leaving_date" name="leaving_date" value="{{ initial.leaving_date }}"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom: none; text-align: center; background: #fff; box-sizing: border-box; font-size: 14px;">
+                    <div style="height: 1px; background: #eee; width: 90%; margin: 0 auto;"></div>
+                    <input type="time" id="id_leaving_time" name="leaving_time" value="{{ initial.leaving_time }}"
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-top: none; font-size: 20px; font-weight: bold; text-align: center; background: #fff; box-sizing: border-box;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Row (Left: Start Status, Right: End Status) -->
+        <div
+            style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 13px; padding: 0 5px;">
+            <!-- Start Status -->
+            <div style="text-align: left; flex: 1;">
+                <span id="start-status" style="color: #666;">定刻通り</span>
+            </div>
+            <!-- End Status -->
+            <div style="text-align: right; flex: 1;">
+                <span id="end-status" style="color: #666;">定刻通り</span>
+            </div>
+        </div>
+
+        <!-- Checkin/Out Log Display -->
+        <div
+            style="display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+            <!-- Start Display -->
+            <div style="flex: 1; text-align: left;">
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">チェックイン日時</div>
+                <div style="font-size: 12px; color: #666;">{{ application.attendance_at|date:"n月j日(D)
+                    H:i"|default:"履歴なし" }}</div>
+            </div>
+
+            <!-- End Display -->
+            <div style="flex: 1; text-align: right;">
+                <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">チェックアウト日時</div>
+                <div style="font-size: 12px; color: #666;">{{ application.leaving_at|date:"n月j日(D) H:i"|default:"履歴なし"
+                    }}</div>
+            </div>
+        </div>
+
+        <!-- Scheduled Info -->
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">予定されていた業務時間</div>
+            <div style="font-size: 14px;">
+                {{ application.job_posting.work_date|date:"n月j日(D)" }} {{ application.job_posting.start_time|date:"H:i"
+                }} ~ {{ application.job_posting.end_time|date:"H:i" }}<br>
+                休憩{{ application.job_posting.break_duration }}分
+            </div>
+        </div>
+
+        <div style="text-align: right;">
+            <button type="submit"
+                style="width: 100%; background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
+                次へ
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Data for JS -->
+<div id="schedule-data" data-start-date="{{ application.job_posting.work_date|date:'Y-m-d' }}"
+    data-start-time="{{ application.job_posting.start_time|date:'H:i' }}"
+    data-end-date="{{ application.job_posting.work_date|date:'Y-m-d' }}"
+    data-end-time="{{ application.job_posting.end_time|date:'H:i' }}" style="display:none;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Elements
+        const attDateInput = document.getElementById('id_attendance_date');
+        const attTimeInput = document.getElementById('id_attendance_time');
+        const leaveDateInput = document.getElementById('id_leaving_date');
+        const leaveTimeInput = document.getElementById('id_leaving_time');
+
+        const startStatusDiv = document.getElementById('start-status');
+        const endStatusDiv = document.getElementById('end-status');
+
+        const scheduleData = document.getElementById('schedule-data');
+
+        // Helper: Format minutes to "X時間Y分"
+        function formatDuration(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            if (h > 0) {
+                return `${h}時間${m}分`;
+            } else {
+                return `${m}分`;
+            }
+        }
+
+        function checkStatus() {
+            // --- Check Start Time (Lateness/Early Arrival) ---
+            const sDate = attDateInput.value;
+            const sTime = attTimeInput.value;
+
+            if (sDate && sTime) {
+                const inputStart = new Date(sDate + 'T' + sTime);
+                const schStartStr = scheduleData.dataset.startDate + 'T' + scheduleData.dataset.startTime;
+                const scheduledStart = new Date(schStartStr);
+
+                // Diff in minutes
+                const diffStartMs = inputStart - scheduledStart;
+                const diffStartMin = Math.floor(diffStartMs / (1000 * 60));
+
+                if (diffStartMin > 0) {
+                    startStatusDiv.textContent = formatDuration(diffStartMin) + '遅刻';
+                    startStatusDiv.style.color = '#ff5252';
+                    startStatusDiv.style.fontWeight = 'bold';
+                } else if (diffStartMin < 0) {
+                    startStatusDiv.textContent = formatDuration(Math.abs(diffStartMin)) + '早出勤';
+                    // Keeping Red for consistency in "Correction Attention"
+                    startStatusDiv.style.color = '#ff5252';
+                    startStatusDiv.style.fontWeight = 'bold';
+                } else {
+                    startStatusDiv.textContent = '定刻通り';
+                    startStatusDiv.style.color = '#666';
+                    startStatusDiv.style.fontWeight = 'normal';
+                }
+            }
+
+            // --- Check End Time (Overtime/Early Departure) ---
+            const lDate = leaveDateInput.value;
+            const lTime = leaveTimeInput.value;
+
+            if (lDate && lTime) {
+                const inputLeave = new Date(lDate + 'T' + lTime);
+                const schEndStr = scheduleData.dataset.endDate + 'T' + scheduleData.dataset.endTime;
+                const scheduledEnd = new Date(schEndStr);
+
+                // Diff in minutes
+                const diffEndMs = inputLeave - scheduledEnd;
+                const diffEndMin = Math.floor(diffEndMs / (1000 * 60));
+
+                if (diffEndMin > 0) {
+                    endStatusDiv.textContent = formatDuration(diffEndMin) + '残業';
+                    endStatusDiv.style.color = '#ff5252';
+                    endStatusDiv.style.fontWeight = 'bold';
+                } else if (diffEndMin < 0) {
+                    endStatusDiv.textContent = formatDuration(Math.abs(diffEndMin)) + '早上がり';
+                    endStatusDiv.style.color = '#ff5252';
+                    endStatusDiv.style.fontWeight = 'bold';
+                } else {
+                    endStatusDiv.textContent = '定刻通り';
+                    endStatusDiv.style.color = '#666';
+                    endStatusDiv.style.fontWeight = 'normal';
+                }
+            }
+        }
+
+        // Listeners for all inputs
+        [attDateInput, attTimeInput, leaveDateInput, leaveTimeInput].forEach(el => {
+            el.addEventListener('input', checkStatus);
+            el.addEventListener('change', checkStatus);
+        });
+
+        // Initial check
+        checkStatus();
+    });
+</script>
+{% endblock %}

@@ -29,6 +29,10 @@ class Store(models.Model):
     city = models.CharField("市区町村名", max_length=100)
     address_line = models.CharField("町域・番地", max_length=100)
     building = models.CharField("建物名など", max_length=100, blank=True)
+    
+    # マップ表示用
+    latitude = models.FloatField("緯度", null=True, blank=True)
+    longitude = models.FloatField("経度", null=True, blank=True)
 
     @property
     def full_address(self):
@@ -235,6 +239,8 @@ class JobApplication(models.Model):
     worker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='job_applications')
     status = models.CharField("状態", max_length=20, default="確定済み")
     applied_at = models.DateTimeField(auto_now_add=True)
+    attendance_at = models.DateTimeField("出勤日時", null=True, blank=True) # チェックイン
+    leaving_at = models.DateTimeField("退勤日時", null=True, blank=True)     # チェックアウト
 
     class Meta:
         # 同じ人が同じ求人に二重に申し込めないように設定
@@ -243,9 +249,23 @@ class JobApplication(models.Model):
     def __str__(self):
         return f"{self.worker.last_name} - {self.job_posting.title}"
 
+
+class ChatRoom(models.Model):
+    """店舗とワーカーのチャットルーム（1対1）"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='chat_rooms')
+    worker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_rooms')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('store', 'worker')
+
+    def __str__(self):
+        return f"{self.store.store_name} - {self.worker.get_full_name()}"
+
 class Message(models.Model):
-    """求人申し込みに関するメッセージ"""
-    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name='messages')
+    """チャットメッセージ"""
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages', null=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     content = models.TextField("メッセージ内容")
     is_read = models.BooleanField("既読", default=False)
@@ -256,3 +276,34 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender} at {self.created_at}"
+
+
+class AttendanceCorrection(models.Model):
+    """勤怠修正依頼"""
+    application = models.ForeignKey(JobApplication, on_delete=models.CASCADE, related_name='corrections')
+    
+    # 修正後の時刻
+    correction_attendance_at = models.DateTimeField("修正出勤日時")
+    correction_leaving_at = models.DateTimeField("修正退勤日時")
+    correction_break_time = models.IntegerField("修正休憩時間(分)", default=0)
+    
+    # 遅刻理由 (選択式 + 詳細)
+    LATENESS_REASON_CHOICES = [
+        ('workplace', '働き先の都合'),
+        ('personal', 'ご自身の都合'),
+        ('disaster', '自然災害・交通遅延など'),
+        ('other', 'その他'),
+    ]
+    lateness_reason = models.CharField("遅刻理由", max_length=20, choices=LATENESS_REASON_CHOICES, blank=True, null=True)
+    lateness_reason_detail = models.TextField("遅刻理由詳細", blank=True, null=True)
+    
+    STATUS_CHOICES = [
+        ('pending', '申請中'),
+        ('approved', '承認済み'),
+        ('rejected', '却下'),
+    ]
+    status = models.CharField("ステータス", max_length=20, default='pending', choices=STATUS_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Correction for {self.application}"

@@ -1,0 +1,86 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .qr-success-container {
+        height: 100vh;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .success-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .success-desc {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .success-img-area {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 40px;
+        border: 1px solid #007AFF;
+        /* Placeholder border */
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ok-btn {
+        width: 100%;
+        max-width: 300px;
+        padding: 16px;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+        display: block;
+    }
+</style>
+
+<div class="qr-success-container">
+    <div class="success-title">
+        {% if is_checkin %}
+        チェックインしました
+        {% else %}
+        チェックアウトしました
+        {% endif %}
+    </div>
+
+    <div class="success-desc">
+        {% if is_checkin %}
+        仕事が終わるときにもQRコードを読み込んで、<br>チェックアウトしましょう。
+        {% else %}
+        お疲れ様でした！<br>報酬の確定をお待ちください。
+        {% endif %}
+    </div>
+
+    <div class="success-img-area" style="border: none;">
+        <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="75" cy="75" r="75" fill="#E8F5E9" />
+            <circle cx="75" cy="75" r="60" fill="#4CAF50" />
+            <path d="M45 75L65 95L105 55" stroke="white" stroke-width="8" stroke-linecap="round"
+                stroke-linejoin="round" />
+        </svg>
+    </div>
+
+    <a href="{% url 'job_working_detail' app.job_posting.pk %}" class="ok-btn">OK</a>
+</div>
+{% endblock %}

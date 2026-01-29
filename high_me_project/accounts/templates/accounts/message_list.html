@@ -109,42 +109,41 @@
     <h2 class="page-title">メッセージ</h2>
 
     <div class="message-list">
-        {% for app in applications %}
-        <a href="{% url 'worker_message_detail' app.id %}" class="message-item">
-            <div class="message-item-content">
-                <!-- 店舗画像/アイコン (プレースホルダー) -->
-                <div class="store-icon">
-                    <i class="fa-solid fa-store fa-lg"></i>
-                </div>
-
-                <!-- メッセージ概要 -->
-                <div class="message-info">
-                    <div class="message-header">
-                        <h6 class="store-name">{{ app.job_posting.template.store.store_name }}</h6>
-                        <span class="message-date">
-                            {% if app.latest_message %}
-                            {{ app.latest_message.created_at|date:"n月j日" }}
-                            {% else %}
-                            {{ app.applied_at|date:"n月j日" }}
-                            {% endif %}
-                        </span>
+        <div class="message-list">
+            {% for room in rooms %}
+            <a href="{% url 'worker_message_detail' room.id %}" class="message-item">
+                <div class="message-item-content">
+                    <!-- 店舗画像/アイコン (プレースホルダー) -->
+                    <div class="store-icon">
+                        <i class="fa-solid fa-store fa-lg"></i>
                     </div>
-                    <p class="message-preview">
-                        {% if app.latest_message %}
-                        {{ app.latest_message.content|truncatechars:30 }}
-                        {% else %}
-                        まだメッセージはありません
-                        {% endif %}
-                    </p>
+
+                    <!-- メッセージ概要 -->
+                    <div class="message-info">
+                        <div class="message-header">
+                            <h6 class="store-name">{{ room.store.store_name }}</h6>
+                            <span class="message-date">
+                                {{ room.updated_at|date:"n月j日" }}
+                            </span>
+                        </div>
+                        <p class="message-preview">
+                            {% with last_msg=room.messages.last %}
+                            {% if last_msg %}
+                            {{ last_msg.content|truncatechars:30 }}
+                            {% else %}
+                            まだメッセージはありません
+                            {% endif %}
+                            {% endwith %}
+                        </p>
+                    </div>
                 </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fa-regular fa-comments"></i>
+                <p>メッセージはありません</p>
             </div>
-        </a>
-        {% empty %}
-        <div class="empty-state">
-            <i class="fa-regular fa-comments"></i>
-            <p>メッセージはありません</p>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

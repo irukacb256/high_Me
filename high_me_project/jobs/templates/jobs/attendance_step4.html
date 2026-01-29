@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <!-- Header -->
+    <div style="margin-bottom: 20px;">
+        <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 10px;">実際に休憩した時間を入力し<br>てください</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-top: 40px; margin-bottom: 40px;">
+            <div style="font-weight: bold;">休憩時間</div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="number" name="break_time" value="{{ break_time }}" min="0"
+                    style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 18px; text-align: right;">
+                <span style="font-weight: bold;">分</span>
+            </div>
+        </div>
+
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">予定されていた業務時間</div>
+            <div style="font-size: 14px;">
+                {{ application.job_posting.work_date|date:"n月j日(D)" }} {{ application.job_posting.start_time|date:"H:i"
+                }} ~ {{ application.job_posting.end_time|date:"H:i" }}<br>
+                休憩{{ application.job_posting.break_duration }}分
+            </div>
+        </div>
+
+        <div style="text-align: right;">
+            <button type="submit"
+                style="background: #007bff; color: white; border: none; padding: 12px 30px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer;">
+                次へ
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

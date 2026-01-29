@@ -60,6 +60,17 @@ urlpatterns = [
     path('home/refine/time/', job_views.TimeSelectView.as_view(), name='time_select'),
     path('home/refine/treatment/', job_views.TreatmentSelectView.as_view(), name='treatment_select'),
     path('working/<int:pk>/', job_views.JobWorkingDetailView.as_view(), name='job_working_detail'),
+    path('working/<int:pk>/qr/', job_views.QRScanView.as_view(), name='job_qr_scan'), # ★追加
+    path('working/<int:pk>/reader/', job_views.JobQRReaderView.as_view(), name='job_qr_reader'), # ★追加
+    
+    # 勤怠修正フロー
+    path('attendance/<int:application_id>/step1/', job_views.AttendanceStep1CheckView.as_view(), name='attendance_step1'),
+    path('attendance/<int:application_id>/step2/', job_views.AttendanceStep2GuideView.as_view(), name='attendance_step2'),
+    path('attendance/<int:application_id>/step3/', job_views.AttendanceStep3TimeView.as_view(), name='attendance_step3'),
+    path('attendance/<int:application_id>/step4/', job_views.AttendanceStep4BreakView.as_view(), name='attendance_step4'),
+    path('attendance/<int:application_id>/step5/', job_views.AttendanceStep5LatenessView.as_view(), name='attendance_step5'),
+    path('attendance/<int:application_id>/step6/', job_views.AttendanceStep6ConfirmView.as_view(), name='attendance_step6'),
+    path('attendance/<int:application_id>/step7/', job_views.AttendanceStep7FinishView.as_view(), name='attendance_step7'),
     path('favorites/', job_views.FavoritesView.as_view(), name='favorites'),      # ★追加
     path('schedule/', job_views.WorkScheduleView.as_view(), name='work_schedule'), # ★追加
     path('messages/', job_views.MessagesView.as_view(), name='messages'),          # ★追加
@@ -88,7 +99,7 @@ urlpatterns = [
 
     # ワーカーメッセージ機能
     path('accounts/messages/', account_views.WorkerMessageListView.as_view(), name='worker_message_list'),
-    path('accounts/messages/<int:application_id>/', account_views.WorkerMessageDetailView.as_view(), name='worker_message_detail'),
+    path('accounts/messages/<int:room_id>/', account_views.WorkerMessageDetailView.as_view(), name='worker_message_detail'),
 
     # 保有資格
     path('qualifications/', account_views.qualification_list, name='qualification_list'),
@@ -165,8 +176,15 @@ urlpatterns = [
 
     # メッセージ機能
     path('biz/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),
-    path('biz/messages/<int:application_id>/', biz_views.BizMessageDetailView.as_view(), name='biz_message_detail'),
+    path('biz/messages/<int:room_id>/', biz_views.BizMessageDetailView.as_view(), name='biz_message_detail'),
+    
+    # チェックイン/アウト管理 (店舗QR表示)
+    path('biz/checkin-management/', biz_views.BizCheckinManagementView.as_view(), name='biz_checkin_management'), 
 
+    # 勤怠修正依頼 (店舗承認フロー)
+    path('biz/store/<int:store_id>/corrections/', biz_views.AttendanceCorrectionListView.as_view(), name='biz_attendance_correction_list'),
+    path('biz/store/<int:store_id>/corrections/<int:pk>/', biz_views.AttendanceCorrectionDetailView.as_view(), name='biz_attendance_correction_detail'),
+    
     # 求人詳細画面
     # 求人詳細画面
     path('job/<int:pk>/', job_views.JobDetailView.as_view(), name='job_detail'),

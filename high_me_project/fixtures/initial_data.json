@@ -1,0 +1,1184 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$Z5bkvSOC7bDrn8tn8ilXJ3$bSkR7WQWi44LCv6VRSzh98x0moGBk27EOzF7LJpstAY=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@example.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:00.958Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$yNsAebgIMwMzRC1zBkIfCy$UaAnOOv+XV46C7PP3gs5WqCWttOBjMfY5tAU5hmRXFY=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "iruka",
+        "first_name": "",
+        "last_name": "",
+        "email": "iruka@example.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:01.463Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$xu4lQFwb6UZyPzciwT7w6d$YZUH7d6RvqHmXQAoGRa6FbDdKPFjBxmaogNklFlWtcE=",
+        "last_login": "2026-01-29T00:49:49.916Z",
+        "is_superuser": false,
+        "username": "chiba@example.com",
+        "first_name": "",
+        "last_name": "",
+        "email": "chiba@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:01.993Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$UYzdWycWMslCWr0sPP2RaB$YSXtrQNrxlzz54t8iaRkbsR+gdRK0ja+6E+CtV749qI=",
+        "last_login": "2026-01-28T02:58:03.476Z",
+        "is_superuser": false,
+        "username": "saitama@example.com",
+        "first_name": "",
+        "last_name": "",
+        "email": "saitama@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:02.665Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$bNBrU0JlGfBl9ddkD2aGsr$6RgoF1I8zn462jOb30W20GF7O00v3J3A8mdCTbu01fc=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "kanagawa@example.com",
+        "first_name": "",
+        "last_name": "",
+        "email": "kanagawa@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:03.314Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$5aw3POS7VDc2Qtd3SVv1bv$ZiXe35DEn6hIDYk6ObS/hJCDtHisDp+7cn5838k/I/s=",
+        "last_login": "2026-01-29T00:29:23.856Z",
+        "is_superuser": false,
+        "username": "09011112222",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:03.949Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$54zKOFWf2hmJkMkMFXAwU5$bvTKUMEoZtKy0ZwZOyYYejqCCMD4vn+909pElECVzDE=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "09033334444",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:04.526Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$uWrjob3T566qWEuBM6wWBd$vJmI5//oEomtN8chkcWAxwmlT+NYGa9Y9fzvO1GPWDY=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "08055556666",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2026-01-28T02:55:05.072Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "accounts.workerprofile",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "09011112222"
+        ],
+        "birth_date": "2003-03-09",
+        "last_name_kanji": "佐藤",
+        "first_name_kanji": "健",
+        "last_name_kana": "サトウ",
+        "first_name_kana": "タケル",
+        "gender": "男性",
+        "face_photo": "",
+        "postal_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null,
+        "work_style": null,
+        "career_interest": null,
+        "target_prefectures": "千葉県",
+        "is_setup_completed": true,
+        "is_identity_verified": true,
+        "identity_document1": "",
+        "penalty": null,
+        "penalty_points": 0,
+        "cancellations": 0,
+        "lastminute_cancel": 0
+    }
+},
+{
+    "model": "accounts.workerprofile",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "09033334444"
+        ],
+        "birth_date": "1986-05-19",
+        "last_name_kanji": "鈴木",
+        "first_name_kanji": "花子",
+        "last_name_kana": "スズキ",
+        "first_name_kana": "ハナコ",
+        "gender": "女性",
+        "face_photo": "",
+        "postal_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null,
+        "work_style": null,
+        "career_interest": null,
+        "target_prefectures": null,
+        "is_setup_completed": true,
+        "is_identity_verified": true,
+        "identity_document1": "",
+        "penalty": null,
+        "penalty_points": 0,
+        "cancellations": 0,
+        "lastminute_cancel": 0
+    }
+},
+{
+    "model": "accounts.workerprofile",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "08055556666"
+        ],
+        "birth_date": "2003-03-21",
+        "last_name_kanji": "田中",
+        "first_name_kanji": "一郎",
+        "last_name_kana": "タナカ",
+        "first_name_kana": "イチロウ",
+        "gender": "男性",
+        "face_photo": "",
+        "postal_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null,
+        "work_style": null,
+        "career_interest": null,
+        "target_prefectures": null,
+        "is_setup_completed": true,
+        "is_identity_verified": false,
+        "identity_document1": "",
+        "penalty": null,
+        "penalty_points": 0,
+        "cancellations": 0,
+        "lastminute_cancel": 0
+    }
+},
+{
+    "model": "accounts.workerprofile",
+    "pk": 4,
+    "fields": {
+        "user": [
+            "chiba@example.com"
+        ],
+        "birth_date": null,
+        "last_name_kanji": null,
+        "first_name_kanji": null,
+        "last_name_kana": null,
+        "first_name_kana": null,
+        "gender": null,
+        "face_photo": "",
+        "postal_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null,
+        "work_style": null,
+        "career_interest": null,
+        "target_prefectures": null,
+        "is_setup_completed": false,
+        "is_identity_verified": false,
+        "identity_document1": "",
+        "penalty": null,
+        "penalty_points": 0,
+        "cancellations": 0,
+        "lastminute_cancel": 0
+    }
+},
+{
+    "model": "accounts.workermembership",
+    "pk": 1,
+    "fields": {
+        "worker": 1,
+        "grade": "ROOKIE",
+        "level": 0,
+        "current_exp": 0
+    }
+},
+{
+    "model": "accounts.workermembership",
+    "pk": 2,
+    "fields": {
+        "worker": 4,
+        "grade": "ROOKIE",
+        "level": 0,
+        "current_exp": 0
+    }
+},
+{
+    "model": "business.businessprofile",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "chiba@example.com"
+        ],
+        "company_name": "千葉ロジスティクス",
+        "business_type": "物流",
+        "industry": null,
+        "is_verified": false,
+        "verification_document": "",
+        "post_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null
+    }
+},
+{
+    "model": "business.businessprofile",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "saitama@example.com"
+        ],
+        "company_name": "埼玉カフェグループ",
+        "business_type": "飲食",
+        "industry": null,
+        "is_verified": false,
+        "verification_document": "",
+        "post_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null
+    }
+},
+{
+    "model": "business.businessprofile",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "kanagawa@example.com"
+        ],
+        "company_name": "横浜イベント株式会社",
+        "business_type": "イベント",
+        "industry": null,
+        "is_verified": false,
+        "verification_document": "",
+        "post_code": null,
+        "prefecture": null,
+        "city": null,
+        "address_line": null,
+        "building": null
+    }
+},
+{
+    "model": "business.store",
+    "pk": 1,
+    "fields": {
+        "business": 1,
+        "store_name": "船橋倉庫",
+        "industry": null,
+        "post_code": "273-0001",
+        "prefecture": "千葉県",
+        "city": "テスト市",
+        "address_line": "1-1",
+        "building": "",
+        "latitude": 35.91450248015114,
+        "longitude": 139.6079149001363
+    }
+},
+{
+    "model": "business.store",
+    "pk": 2,
+    "fields": {
+        "business": 2,
+        "store_name": "大宮カフェテラス",
+        "industry": null,
+        "post_code": "273-0001",
+        "prefecture": "埼玉県",
+        "city": "テスト市",
+        "address_line": "1-1",
+        "building": "",
+        "latitude": 35.92074063383409,
+        "longitude": 139.63478701366748
+    }
+},
+{
+    "model": "business.store",
+    "pk": 3,
+    "fields": {
+        "business": 3,
+        "store_name": "横浜アリーナ整理",
+        "industry": null,
+        "post_code": "273-0001",
+        "prefecture": "神奈川県",
+        "city": "テスト市",
+        "address_line": "1-1",
+        "building": "",
+        "latitude": 35.934186293821185,
+        "longitude": 139.6166550420514
+    }
+},
+{
+    "model": "business.jobtemplate",
+    "pk": 1,
+    "fields": {
+        "store": 1,
+        "title": "船橋倉庫 スタッフ募集",
+        "industry": "物流",
+        "occupation": "軽作業",
+        "work_content": "誰でも簡単な軽作業です",
+        "precautions": "",
+        "has_unexperienced_welcome": true,
+        "has_bike_car_commute": false,
+        "has_clothing_free": false,
+        "has_coupon_get": false,
+        "has_meal": false,
+        "has_hair_color_free": false,
+        "has_bike_bicycle_commute": false,
+        "has_bicycle_commute": false,
+        "has_transportation_allowance": false,
+        "belongings": null,
+        "requirements": null,
+        "manual_pdf": "",
+        "address": "千葉県 テスト市 1-1",
+        "access": null,
+        "contact_number": "090-0000-0000",
+        "smoking_prevention": "indoor_no_smoking",
+        "has_smoking_area": false,
+        "requires_qualification": false,
+        "qualification_type": "none",
+        "qualification": null,
+        "qualification_notes": null,
+        "skills": null,
+        "other_conditions": null,
+        "auto_message": null,
+        "created_at": "2026-01-28T02:55:02.553Z"
+    }
+},
+{
+    "model": "business.jobtemplate",
+    "pk": 2,
+    "fields": {
+        "store": 2,
+        "title": "大宮カフェテラス スタッフ募集",
+        "industry": "飲食",
+        "occupation": "軽作業",
+        "work_content": "誰でも簡単な軽作業です",
+        "precautions": "",
+        "has_unexperienced_welcome": true,
+        "has_bike_car_commute": false,
+        "has_clothing_free": false,
+        "has_coupon_get": false,
+        "has_meal": false,
+        "has_hair_color_free": false,
+        "has_bike_bicycle_commute": false,
+        "has_bicycle_commute": false,
+        "has_transportation_allowance": false,
+        "belongings": null,
+        "requirements": null,
+        "manual_pdf": "",
+        "address": "埼玉県 テスト市 1-1",
+        "access": null,
+        "contact_number": "090-0000-0000",
+        "smoking_prevention": "indoor_no_smoking",
+        "has_smoking_area": false,
+        "requires_qualification": false,
+        "qualification_type": "none",
+        "qualification": null,
+        "qualification_notes": null,
+        "skills": null,
+        "other_conditions": null,
+        "auto_message": null,
+        "created_at": "2026-01-28T02:55:03.219Z"
+    }
+},
+{
+    "model": "business.jobtemplate",
+    "pk": 3,
+    "fields": {
+        "store": 3,
+        "title": "横浜アリーナ整理 スタッフ募集",
+        "industry": "イベント",
+        "occupation": "軽作業",
+        "work_content": "誰でも簡単な軽作業です",
+        "precautions": "",
+        "has_unexperienced_welcome": true,
+        "has_bike_car_commute": false,
+        "has_clothing_free": false,
+        "has_coupon_get": false,
+        "has_meal": false,
+        "has_hair_color_free": false,
+        "has_bike_bicycle_commute": false,
+        "has_bicycle_commute": false,
+        "has_transportation_allowance": false,
+        "belongings": null,
+        "requirements": null,
+        "manual_pdf": "",
+        "address": "神奈川県 テスト市 1-1",
+        "access": null,
+        "contact_number": "090-0000-0000",
+        "smoking_prevention": "indoor_no_smoking",
+        "has_smoking_area": false,
+        "requires_qualification": false,
+        "qualification_type": "none",
+        "qualification": null,
+        "qualification_notes": null,
+        "skills": null,
+        "other_conditions": null,
+        "auto_message": null,
+        "created_at": "2026-01-28T02:55:03.861Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 1,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-01-28",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 1日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.571Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 2,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-01-29",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 2日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.586Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 3,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-01-30",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 3日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.601Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 4,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-01-31",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 4日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.615Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 5,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-02-01",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 5日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.628Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 6,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-02-02",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 6日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.641Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 7,
+    "fields": {
+        "template": 1,
+        "work_date": "2026-02-03",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "船橋倉庫 募集 7日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:02.653Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 8,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-01-28",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 1日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.230Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 9,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-01-29",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 2日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.240Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 10,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-01-30",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 3日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.252Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 11,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-01-31",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 4日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.263Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 12,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-02-01",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 5日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.275Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 13,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-02-02",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 6日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.287Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 14,
+    "fields": {
+        "template": 2,
+        "work_date": "2026-02-03",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "大宮カフェテラス 募集 7日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.299Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 15,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-01-28",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 1日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.872Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 16,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-01-29",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 2日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.883Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 17,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-01-30",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 3日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.894Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 18,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-01-31",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 4日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.905Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 19,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-02-01",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 5日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.916Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 20,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-02-02",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 6日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.927Z"
+    }
+},
+{
+    "model": "business.jobposting",
+    "pk": 21,
+    "fields": {
+        "template": 3,
+        "work_date": "2026-02-03",
+        "start_time": "09:00:00",
+        "end_time": "18:00:00",
+        "title": "横浜アリーナ整理 募集 7日目",
+        "work_content": null,
+        "is_long_term": false,
+        "hourly_wage": 1200,
+        "transportation_fee": 500,
+        "recruitment_count": 5,
+        "break_start": null,
+        "break_duration": 0,
+        "application_deadline": null,
+        "visibility": "public",
+        "is_published": true,
+        "created_at": "2026-01-28T02:55:03.939Z"
+    }
+},
+{
+    "model": "business.jobapplication",
+    "pk": 1,
+    "fields": {
+        "job_posting": 1,
+        "worker": [
+            "09011112222"
+        ],
+        "status": "確定済み",
+        "applied_at": "2026-01-28T02:55:05.636Z",
+        "attendance_at": "2026-01-29T00:56:22.448Z",
+        "leaving_at": "2026-01-29T00:56:27.026Z"
+    }
+},
+{
+    "model": "business.jobapplication",
+    "pk": 2,
+    "fields": {
+        "job_posting": 2,
+        "worker": [
+            "09033334444"
+        ],
+        "status": "確定済み",
+        "applied_at": "2026-01-28T02:55:05.650Z",
+        "attendance_at": null,
+        "leaving_at": null
+    }
+},
+{
+    "model": "business.jobapplication",
+    "pk": 3,
+    "fields": {
+        "job_posting": 3,
+        "worker": [
+            "08055556666"
+        ],
+        "status": "確定済み",
+        "applied_at": "2026-01-28T02:55:05.664Z",
+        "attendance_at": null,
+        "leaving_at": null
+    }
+},
+{
+    "model": "business.jobapplication",
+    "pk": 4,
+    "fields": {
+        "job_posting": 3,
+        "worker": [
+            "09011112222"
+        ],
+        "status": "確定済み",
+        "applied_at": "2026-01-29T01:00:39.325Z",
+        "attendance_at": "2026-01-29T01:00:47.890Z",
+        "leaving_at": "2026-01-29T01:01:06.921Z"
+    }
+},
+{
+    "model": "business.jobapplication",
+    "pk": 5,
+    "fields": {
+        "job_posting": 4,
+        "worker": [
+            "09011112222"
+        ],
+        "status": "確定済み",
+        "applied_at": "2026-01-29T02:04:02.210Z",
+        "attendance_at": "2026-01-29T02:04:16.717Z",
+        "leaving_at": "2026-01-29T02:05:00.553Z"
+    }
+},
+{
+    "model": "business.chatroom",
+    "pk": 1,
+    "fields": {
+        "store": 1,
+        "worker": [
+            "09011112222"
+        ],
+        "created_at": "2026-01-29T01:29:26.245Z",
+        "updated_at": "2026-01-29T01:35:27.299Z"
+    }
+},
+{
+    "model": "business.chatroom",
+    "pk": 2,
+    "fields": {
+        "store": 1,
+        "worker": [
+            "09033334444"
+        ],
+        "created_at": "2026-01-29T01:29:26.257Z",
+        "updated_at": "2026-01-29T01:29:26.257Z"
+    }
+},
+{
+    "model": "business.chatroom",
+    "pk": 3,
+    "fields": {
+        "store": 1,
+        "worker": [
+            "08055556666"
+        ],
+        "created_at": "2026-01-29T01:29:26.268Z",
+        "updated_at": "2026-01-29T01:29:26.268Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 1,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "船橋駅南口でお待ちしております",
+        "is_read": false,
+        "created_at": "2026-01-28T03:00:51.211Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 2,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "船橋駅南口でお待ちしております",
+        "is_read": false,
+        "created_at": "2026-01-28T03:08:27.926Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 3,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "船橋駅南口でお待ちしております",
+        "is_read": false,
+        "created_at": "2026-01-28T03:12:12.339Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 4,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "こんにちは",
+        "is_read": false,
+        "created_at": "2026-01-28T03:17:20.943Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 5,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "aa",
+        "is_read": false,
+        "created_at": "2026-01-28T03:25:23.205Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 6,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "qq",
+        "is_read": false,
+        "created_at": "2026-01-28T03:29:55.710Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 7,
+    "fields": {
+        "room": null,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "aa",
+        "is_read": false,
+        "created_at": "2026-01-28T03:40:50.806Z"
+    }
+},
+{
+    "model": "business.message",
+    "pk": 8,
+    "fields": {
+        "room": 1,
+        "sender": [
+            "chiba@example.com"
+        ],
+        "content": "お申込みいただきありがとうございます\r\n本日もお待ちしております",
+        "is_read": false,
+        "created_at": "2026-01-29T01:35:27.286Z"
+    }
+},
+{
+    "model": "business.attendancecorrection",
+    "pk": 1,
+    "fields": {
+        "application": 1,
+        "correction_attendance_at": "2026-01-27T23:45:00Z",
+        "correction_leaving_at": "2026-01-29T09:00:00Z",
+        "correction_break_time": 15,
+        "lateness_reason": null,
+        "lateness_reason_detail": "",
+        "status": "pending",
+        "created_at": "2026-01-29T02:58:37.179Z"
+    }
+}
+]

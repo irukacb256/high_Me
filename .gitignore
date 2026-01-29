@@ -6,3 +6,7 @@ __pycache__/
 # IDE files (optional, but recommended)
 .idea/
 .vscode/
+
+# Database
+db.sqlite3
+*.sqlite3

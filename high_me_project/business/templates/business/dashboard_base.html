@@ -14,6 +14,17 @@
             --sidebar-width: 260px;
         }
 
+        .notification-badge {
+            background-color: #ff5252;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+
         body {
             display: flex;
             margin: 0;
@@ -203,13 +214,19 @@
             </a>
 
             <!-- チェックイン/アウト管理 -->
-            <a href="#" class="nav-item">
+            <a href="{% url 'biz_checkin_management' %}" class="nav-item">
                 <i class="fa-solid fa-qrcode"></i> チェックイン/アウト管理
             </a>
 
             <!-- 修正依頼 -->
-            <a href="#" class="nav-item">
+            <a href="{% url 'biz_attendance_correction_list' store.id %}" class="nav-item">
                 <i class="fa-solid fa-circle-exclamation"></i> 修正依頼
+                {% load business_tags %}
+                {% with count=store|get_pending_correction_count %}
+                {% if count > 0 %}
+                <span class="notification-badge">{{ count }}</span>
+                {% endif %}
+                {% endwith %}
             </a>
 
             <!-- ワーカー評価 -->

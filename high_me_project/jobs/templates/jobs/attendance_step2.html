@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .step-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .step-card {
+        background: #F9F9F9;
+        padding: 24px 20px;
+        border-radius: 6px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+    }
+
+    .step-icon-area {
+        position: relative;
+        width: 60px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .big-icon {
+        font-size: 50px;
+        color: #E0E0E0;
+        /* Light grey icon color */
+    }
+
+    .big-icon.gold {
+        color: #FDD835;
+    }
+
+    .check-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border: 2px solid #fff;
+    }
+
+    .step-content {
+        flex: 1;
+    }
+
+    .step-title {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .warning-text {
+        color: #ff5252;
+        font-weight: bold;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .note-text {
+        font-size: 11px;
+        color: #888;
+        line-height: 1.4;
+    }
+
+    .flow-arrow {
+        color: #E0E0E0;
+        font-size: 20px;
+        margin: 5px 0;
+    }
+</style>
+
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <!-- Header -->
+    <div style="margin-bottom: 20px;">
+        <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">修正依頼の流れ</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 30px;">以下の流れを確認して次へ進んでください。</p>
+
+    <!-- Steps -->
+    <div class="step-container">
+
+        <!-- Step 1 -->
+        <div class="step-card">
+            <div class="step-icon-area">
+                <i class="fa-solid fa-envelope big-icon"></i>
+            </div>
+            <div class="step-content">
+                <div class="step-title">① 修正依頼を提出</div>
+                <div class="warning-text">内容は店舗の方と話し合いましょう</div>
+                <div class="note-text">※故意的な虚偽の修正依頼は重大なペナルティの対象になります。ご注意ください。</div>
+            </div>
+        </div>
+
+        <!-- Arrow -->
+        <i class="fa-solid fa-caret-down flow-arrow"></i>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+            <div class="step-icon-area">
+                <i class="fa-solid fa-envelope-open-text big-icon"></i>
+                <div class="check-badge"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="step-content">
+                <div class="step-title">② 店舗が内容をチェックして承認</div>
+            </div>
+        </div>
+
+        <!-- Arrow -->
+        <i class="fa-solid fa-caret-down flow-arrow"></i>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+            <div class="step-icon-area">
+                <div
+                    style="width: 50px; height: 50px; background: #FDD835; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="font-size: 30px; font-weight: bold; color: #333;">¥</span>
+                </div>
+                <div class="check-badge" style="top: 0; right: 0;"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="step-content">
+                <div class="step-title">③ 報酬確定</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Next Button -->
+    <div style="margin-top: 40px; text-align: right;">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit"
+                style="width: 100%; background: #2F6CE5; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
+                次へ
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

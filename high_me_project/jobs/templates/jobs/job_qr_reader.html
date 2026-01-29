@@ -1,0 +1,179 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 全画面カメラ風UI */
+    .camera-container {
+        height: 100vh;
+        background-color: #000;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /* カメラ映像の代わりとしての背景画像 (オプション) */
+    .camera-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #222;
+        z-index: 0;
+        opacity: 0.5;
+    }
+
+    /* スキャン枠 */
+    .scan-area {
+        width: 250px;
+        height: 250px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        /* 周りを暗くする */
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.1);
+        /* Slightly distinct from overlay */
+    }
+
+    /* 角のガイド */
+    .scan-corner {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-color: #007AFF;
+        border-style: solid;
+    }
+
+    .tl {
+        top: 0;
+        left: 0;
+        border-width: 4px 0 0 4px;
+        border-top-left-radius: 12px;
+    }
+
+    .tr {
+        top: 0;
+        right: 0;
+        border-width: 4px 4px 0 0;
+        border-top-right-radius: 12px;
+    }
+
+    .bl {
+        bottom: 0;
+        left: 0;
+        border-width: 0 0 4px 4px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .br {
+        bottom: 0;
+        right: 0;
+        border-width: 0 4px 4px 0;
+        border-bottom-right-radius: 12px;
+    }
+
+    /* 読み取り対象のQR (ボタンとして機能) */
+    .target-qr-btn {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        /* To contain absolute children if any */
+    }
+
+    .target-qr-img {
+        width: 180px;
+        height: 180px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 10h30v30h-30zM50 10h40v40h-40zM10 50h30v40h-30z' fill='white'/%3E%3Cpath d='M50 60h10v10h-10zM70 60h20v10h-20zM50 80h10v10h-10zM70 80h20v10h-20z' fill='white'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+
+        50% {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+    }
+
+    /* テキスト */
+    .tips-text {
+        position: absolute;
+        bottom: 100px;
+        color: white;
+        z-index: 10;
+        font-size: 14px;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* 戻るボタン */
+    .btn-close {
+        position: absolute;
+        top: 40px;
+        left: 20px;
+        color: white;
+        z-index: 20;
+        font-size: 24px;
+        background: rgba(0, 0, 0, 0.3);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none;
+    }
+</style>
+
+<div class="camera-container">
+    <a href="javascript:history.back()" class="btn-close">
+        <i class="fa-solid fa-xmark"></i>
+    </a>
+
+    <div class="camera-bg"></div>
+
+    <div class="scan-area">
+        <div class="scan-corner tl"></div>
+        <div class="scan-corner tr"></div>
+        <div class="scan-corner bl"></div>
+        <div class="scan-corner br"></div>
+
+        <!-- このQRコードをクリックすると読み取り成功としてPOSTする -->
+        <form method="post" action="{% url 'job_qr_scan' job.pk %}" style="width:100%; height:100%;">
+            {% csrf_token %}
+            <button type="submit" class="target-qr-btn">
+                <div class="target-qr-img"></div>
+            </button>
+        </form>
+    </div>
+
+    <div class="tips-text">
+        店舗のQRコードを枠内に合わせてください<br>
+        (QRコードをタップしてスキャン)
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <!-- Header -->
+    <div style="margin-bottom: 20px;">
+        <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 10px;">修正依頼の理由を<br>入力してください</h2>
+
+    <p style="font-size: 14px; color: #666; margin-bottom: 30px;">
+        業務時間・休憩時間を修正する理由を10文字以上で入力してください。入力内容は店舗の方が確認します。
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="lateness_reason_detail" rows="5" placeholder=""
+            style="width: 100%; padding: 15px; border: 2px solid #ff5252; border-radius: 8px; font-size: 16px; margin-bottom: 40px; resize: none;"></textarea>
+
+        <div style="text-align: right;">
+            <button type="submit"
+                style="background: #007bff; color: white; border: none; padding: 12px 30px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer;">
+                次へ
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

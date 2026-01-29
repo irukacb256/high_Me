@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container"
+    style="padding: 20px; max-width: 600px; text-align: center; display: flex; flex-direction: column; height: 80vh;">
+
+    <div style="text-align: left; margin-bottom: 30px;">
+        <a href="{% url 'mypage' %}" style="color: #333; text-decoration: none; font-size: 24px;">
+            <i class="fa-solid fa-times"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: left;">修正依頼を送信しました</h2>
+
+    <p style="text-align: left; font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 50px;">
+        店舗の承認をお待ちください。<br>
+        修正依頼の承認状況は、この求人の「おしごと画面」の〔修正依頼〕から確認できます。
+    </p>
+
+    <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+        <div style="font-size: 100px; color: #e91e63;">
+            <i class="fa-solid fa-envelope-open-text"></i> <!-- Placeholder for mailbox image -->
+        </div>
+    </div>
+
+    <a href="{% url 'mypage' %}"
+        style="width: 100%; background: #fdd835; color: #333; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; text-decoration: none; display: block; box-sizing: border-box;">
+        OK
+    </a>
+</div>
+{% endblock %}

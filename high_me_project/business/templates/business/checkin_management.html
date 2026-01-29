@@ -1,0 +1,265 @@
+{% extends 'business/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 画面全体を黄色くする */
+    .qr-management-container {
+        background-color: #FFD700;
+        /* Timee Yellow */
+        min-height: calc(100vh - 80px);
+        /* Adjust for header if needed */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .qr-title {
+        font-size: 60px;
+        font-weight: 900;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        color: #333;
+    }
+
+    .qr-label-capsule {
+        background: #333;
+        color: white;
+        padding: 10px 40px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 40px;
+        display: inline-block;
+    }
+
+    .company-name {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .qr-box {
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .qr-placeholder {
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 10h30v30h-30zM50 10h40v40h-40zM10 50h30v40h-30z' fill='%23333'/%3E%3Cpath d='M50 60h10v10h-10zM70 60h20v10h-20zM50 80h10v10h-10zM70 80h20v10h-20z' fill='%23333'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        /* Note: For a real app, use a real QR code library */
+    }
+
+    .instruction-text {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 40px;
+    }
+
+    .instruction-box {
+        display: inline-block;
+        border: 2px solid #333;
+        padding: 2px 10px;
+        background: white;
+        margin: 0 5px;
+    }
+
+    /* パンダのイラスト (CSSで簡易再現 or 画像推奨) */
+    .panda-area {
+        margin-top: 20px;
+    }
+
+    .panda-face {
+        width: 200px;
+        height: 100px;
+        /* 半円 */
+        background: #f8c67d;
+        /* 顔の色 (仮) */
+        border-radius: 100px 100px 0 0;
+        margin: 0 auto;
+        position: relative;
+        border: 3px solid #333;
+        border-bottom: none;
+        background-color: #eecfa1;
+    }
+
+    .ear {
+        width: 60px;
+        height: 60px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: -20px;
+        z-index: -1;
+    }
+
+    .ear.left {
+        left: -10px;
+    }
+
+    .ear.right {
+        right: -10px;
+    }
+
+    .eye {
+        width: 20px;
+        height: 20px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: 40px;
+    }
+
+    .eye.left {
+        left: 50px;
+    }
+
+    .eye.right {
+        right: 50px;
+    }
+
+    .nose {
+        width: 15px;
+        height: 10px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* フッターアクション (セクションに変更) */
+    .footer-actions {
+        /* position: fixed; removed */
+        /* bottom: 0; removed */
+        /* left: 260px; removed */
+        /* right: 0; removed */
+        width: 100%;
+        background: white;
+        padding: 20px;
+        /* border-top: 1px solid #ddd; removed border to look like part of content if needed, or keep */
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        box-sizing: border-box;
+        /* Ensure padding doesn't overflow width */
+        margin-top: auto;
+        /* Push to bottom if container has height */
+        border-radius: 12px;
+        /* Optional: Make it look like a card if floating */
+        /* Adjusting to sit inside the container or below based on request. 
+           User said "make it a section". I will put it inside the container for better flow or just below.
+           Let's place it inside the yellow background but as a white card, or a full width section below.
+           Given the design "Timee" style often has a white area at bottom.
+        */
+    }
+
+    .footer-section-container {
+        background: white;
+        width: 100%;
+        padding: 15px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .note-box {
+        font-size: 11px;
+        color: #666;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-action {
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-blue {
+        background: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-white {
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<div class="qr-management-container">
+    <div class="qr-title">Timee</div>
+
+    <div class="qr-label-capsule">
+        チェックイン / チェックアウト用QRコード
+    </div>
+
+    <div class="company-name">(株)タイミー</div>
+
+    <div class="qr-box">
+        <!-- QRコード画像 (本来は動的生成) -->
+        <i class="fa-solid fa-qrcode fa-10x" style="font-size: 200px; color:#333;"></i>
+    </div>
+
+    <div class="instruction-text">
+        業務開始時 <span class="instruction-box">チェックイン</span> と 業務終了時 <span class="instruction-box">チェックアウト</span> に<br>
+        この <span style="text-decoration: underline;">QRコード</span> をアプリから読み込んでください！
+    </div>
+
+    <div class="panda-area">
+        <div style="position:relative; width: 220px; margin: 0 auto;">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+            <div class="panda-face">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="nose"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- セクションとして配置 -->
+<div class="footer-section-container">
+    <div class="note-box">
+        <div><i class="fa-solid fa-circle-question text-secondary"></i> 読み取りを忘れた</div>
+        <div><i class="fa-solid fa-rotate-left text-secondary"></i> 遅刻・延長・早上がりで報酬の変更が必要</div>
+        <div style="margin-left: 20px; color:#999;">上記の場合、ワーカーから「修正依頼」が届きます。</div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-action btn-blue">修正依頼を確認する</button>
+        <button class="btn-action btn-white">QRコードを印刷する</button>
+    </div>
+</div>
+<div style="text-align:right; padding: 10px 40px; background:white;">
+    <a href="#" style="font-size:12px;">チェックイン/アウト用QRコードを更新する</a>
+</div>
+{% endblock %}

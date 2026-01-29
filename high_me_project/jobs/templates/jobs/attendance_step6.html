@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <!-- Header -->
+    <div style="margin-bottom: 20px;">
+        <a href="javascript:history.back()" style="color: #333; text-decoration: none; font-size: 20px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
+    <h2 style="font-size: 22px; font-weight: bold; margin-bottom: 20px;">修正依頼の確認</h2>
+
+    <!-- Summary -->
+    <div style="margin-bottom: 30px;">
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 13px; color: #666;">業務開始</div>
+            <div style="font-weight: bold;">{{ data.attendance_date }} {{ data.attendance_time }}</div>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 13px; color: #666;">業務終了</div>
+            <div style="font-weight: bold;">{{ data.leaving_date }} {{ data.leaving_time }}</div>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 13px; color: #666;">休憩時間</div>
+            <div style="font-weight: bold;">{{ data.break_time }}分</div>
+        </div>
+        {% if data.lateness_reason_detail %}
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 13px; color: #666;">修正理由</div>
+            <div style="font-weight: bold; white-space: pre-wrap;">{{ data.lateness_reason_detail }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <form method="post" id="confirmForm">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="confirmCheck" required style="width: 24px; height: 24px; cursor: pointer;">
+            <label for="confirmCheck" style="font-size: 16px; cursor: pointer;">修正依頼内容を確認しました</label>
+        </div>
+
+        <button type="submit"
+            style="width: 100%; background: #fdd835; color: #333; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            修正依頼を送信
+        </button>
+    </form>
+</div>
+{% endblock %}

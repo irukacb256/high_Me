@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding: 20px; max-width: 600px;">
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">就業時間は予定通りでしたか？</h2>
+
+    <!-- Alert Box -->
+    <div
+        style="background-color: #fff8e1; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 30px; display: flex; align-items: flex-start; gap: 10px;">
+        <i class="fa-solid fa-circle-info" style="margin-top: 3px;"></i>
+        <div>
+            <div style="font-weight: bold; margin-bottom: 5px;">終了予定時刻を過ぎています</div>
+            <div style="font-size: 13px;">残業や休憩時間の変更があった場合は、修正依頼の提出が必要です。</div>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <button type="submit" name="action" value="changed"
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 15px; background: white; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                変更があった
+                <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
+            </button>
+
+            <button type="submit" name="action" value="as_scheduled"
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 15px; background: white; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                予定通りだった
+                <i class="fa-solid fa-chevron-right" style="color: #ccc;"></i>
+            </button>
+        </div>
+    </form>
+
+    <div style="margin-top: 40px;">
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">予定されていた就業時間</h3>
+        <p style="font-size: 15px;">
+            {{ application.job_posting.work_date|date:"n月j日(D)" }} {{ application.job_posting.start_time|date:"H:i" }} ~
+            {{ application.job_posting.work_date|date:"n月j日(D)" }} {{ application.job_posting.end_time|date:"H:i" }}
+        </p>
+        <p style="font-size: 14px; color: #666;">休憩{{ application.job_posting.break_duration }}分</p>
+    </div>
+</div>
+{% endblock %}

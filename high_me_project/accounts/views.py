@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification, WorkerMembership, ExpHistory
-from business.models import JobApplication
+from business.models import JobApplication, ChatRoom
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db import IntegrityError
@@ -806,30 +806,17 @@ def profile_address_edit(request):
 
 class WorkerMessageListView(LoginRequiredMixin, ListView):
     """ワーカー用メッセージ一覧"""
-    model = JobApplication
+    model = ChatRoom
     template_name = 'accounts/message_list.html'
-    context_object_name = 'applications'
+    context_object_name = 'rooms'
 
     def get_queryset(self):
-        # 自分が応募した、かつマッチング済み(確定済み)の案件を取得
-        # 最新のメッセージ順に並べたいが、DjangoのORMだけでやるにはSubqueryが必要
-        # 簡易的に、応募日時順か、Python側でソートする
+        # 自分が参加しているチャットルームを取得
+        queryset = ChatRoom.objects.filter(
+            worker=self.request.user
+        ).select_related('store').prefetch_related('messages').order_by('-updated_at')
         
-        apps = JobApplication.objects.filter(
-            worker=self.request.user,
-            status='確定済み'
-        ).select_related('job_posting', 'job_posting__template__store').prefetch_related('messages')
-        
-        # 各appに最新メッセージをアタッチしてソートする（簡易実装）
-        app_list = []
-        for app in apps:
-            latest_msg = app.messages.order_by('-created_at').first()
-            app.latest_message = latest_msg
-            app_list.append(app)
-            
-        # 最新メッセージの日時、なければ応募日時で降順ソート
-        app_list.sort(key=lambda x: x.latest_message.created_at if x.latest_message else x.applied_at, reverse=True)
-        return app_list
+        return queryset
 
 class WorkerMessageDetailView(LoginRequiredMixin, TemplateView):
     """ワーカー用メッセージ詳細 (チャット)"""
@@ -837,39 +824,43 @@ class WorkerMessageDetailView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        application_id = self.kwargs['application_id']
+        room_id = self.kwargs['room_id'] # URLパラメータ名変更
         
-        # 自分の応募のみアクセス可
-        self.application = get_object_or_404(
-            JobApplication, 
-            id=application_id, 
+        # 自分のルームのみアクセス可
+        self.room = get_object_or_404(
+            ChatRoom, 
+            id=room_id, 
             worker=self.request.user
         )
         
-        context['application'] = self.application
-        context['messages'] = self.application.messages.all().select_related('sender').order_by('created_at')
+        context['room'] = self.room
+        context['messages'] = self.room.messages.all().select_related('sender').order_by('created_at')
+        # 互換性のため
+        context['application'] = None 
         return context
 
     def post(self, request, *args, **kwargs):
-        application_id = self.kwargs['application_id']
-        # 権限チェック
-        application = get_object_or_404(
-            JobApplication, 
-            id=application_id, 
+        room_id = self.kwargs['room_id']
+        
+        room = get_object_or_404(
+            ChatRoom, 
+            id=room_id, 
             worker=request.user
         )
         
         content = request.POST.get('content')
         if content:
-            from business.models import Message # 循環インポート回避のためここで
+            from business.models import Message 
             Message.objects.create(
-                application=application,
+                room=room,
                 sender=request.user,
                 content=content,
                 is_read=False
             )
+            room.updated_at = timezone.now()
+            room.save()
         
-        return redirect('worker_message_detail', application_id=application_id)
+        return redirect('worker_message_detail', room_id=room_id)
 
 
 @login_required

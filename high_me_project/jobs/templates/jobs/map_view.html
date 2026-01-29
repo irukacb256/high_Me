@@ -1,7 +1,536 @@
 {% extends 'base_auth.html' %}
+{% load static %}
+
 {% block content %}
-<div style="position:relative; width:100%; height:100%;">
-    <a href="{% url 'location_home' %}" style="position:absolute; top:20px; left:15px; z-index:10; background:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.2); text-decoration:none; color:#333;">×</a>
-    <iframe src="https://www.google.com/maps/embed?..." width="100%" height="100%" style="border:0;"></iframe>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<style>
+    /* ベーススタイル */
+    /* body style removed */
+
+    .screen-container {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        background: #f5f5f5;
+        /* 背景色はこちらに適用 */
+    }
+
+    /* マップエリア (全画面) */
+    .map-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* ボトムシート (下部オーバーレイ) */
+    .bottom-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 45vh;
+        /* 画面の45% */
+        background: white;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    /* 日付選択 (固定) */
+    .date-scroll-container {
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .date-scroll-inner {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 20px;
+        gap: 15px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .date-scroll-inner::-webkit-scrollbar {
+        display: none;
+    }
+
+    .date-item {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        padding: 5px 5px;
+        min-width: 30px;
+    }
+
+    .date-item.active .date-circle {
+        background: #FFD700;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .date-day {
+        font-size: 11px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .date-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #333;
+        transition: 0.2s;
+    }
+
+    /* フィルタチップ (横スクロール) */
+    .filter-chips-container {
+        padding: 10px 20px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-chips-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chip {
+        padding: 6px 14px;
+        border-radius: 20px;
+        background: #F2F2F7;
+        color: #666;
+        font-size: 12px;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .chip.active {
+        background: #FFF9C4;
+        /* Yellow tint */
+        border-color: #FFD700;
+        color: #333;
+        font-weight: bold;
+    }
+
+
+    /* 求人リストエリア (スクロール) */
+    .job-list-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 20px 80px 20px;
+        /* 下部は余裕を持たせる */
+        background: #f9f9f9;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .job-card-item {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        color: inherit;
+        border: 2px solid transparent;
+        /* Highlight用 */
+        transition: 0.2s;
+    }
+
+    .job-card-item.highlight {
+        border-color: #FFD700;
+        background-color: #fffeec;
+    }
+
+    .job-thumb {
+        width: 60px;
+        height: 60px;
+        background: #eee;
+        border-radius: 8px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .job-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .job-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .job-title {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1.4;
+        margin-bottom: 5px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .job-meta {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .job-wage {
+        font-weight: bold;
+        color: #333;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+
+    .expired-badge {
+        display: inline-block;
+        background: #ccc;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+    }
+
+
+    /* オーバーレイ UI (ボタンなど) */
+    .btn-close {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        color: #333;
+        text-decoration: none;
+    }
+
+    .toggle-area {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: white;
+        padding: 5px 12px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 20px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked+.slider {
+        background-color: #007AFF;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(16px);
+    }
+
+    .btn-location {
+        position: absolute;
+        bottom: 47vh;
+        /* BottomSheetの上あたりに配置 (45vh + margin) */
+        right: 20px;
+        z-index: 900;
+        background: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        color: #333;
+        transition: bottom 0.3s ease;
+    }
+
+    /* マーカー */
+    .custom-marker {
+        background: none;
+        border: none;
+    }
+
+    .pin-label {
+        background: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: bold;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        white-space: nowrap;
+        position: absolute;
+        bottom: 38px;
+        right: -50%;
+        transform: translateX(50%);
+        pointer-events: none;
+    }
+</style>
+
+<div class="screen-container">
+    <!-- 上部: マップエリア (全画面) -->
+    <div class="map-area">
+        <div id="map"></div>
+
+        <a href="{% url 'location_home' %}" class="btn-close">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+
+        <div class="toggle-area">
+            <span>募集中のみ</span>
+            <label class="switch">
+                <input type="checkbox" id="recruitOnlyToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="btn-location" onclick="moveToCurrentLocation()">
+            <i class="fa-solid fa-location-crosshairs"></i>
+        </div>
+    </div>
+
+    <!-- 下部: ボトムシート (オーバーレイ) -->
+    <div class="bottom-sheet">
+        <!-- 日付選択 -->
+        <div class="date-scroll-container">
+            <div class="date-scroll-inner">
+                {% for d in date_list %}
+                <div class="date-item {% if d|date:'Y-m-d' == today_str %}active{% endif %}"
+                    onclick="selectDate(this, '{{ d|date:'Y-m-d' }}')">
+                    <div class="date-day">{{ d|date:"D" }}</div>
+                    <div class="date-circle">{{ d.day }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- フィルタチップ (ダミー) -->
+        <div class="filter-chips-container">
+            <div class="chip active"><i class="fa-solid fa-sliders"></i> 全て</div>
+            <div class="chip">軽作業</div>
+            <div class="chip">飲食</div>
+            <div class="chip">介護</div>
+            <div class="chip">配達・運転</div>
+            <div class="chip">販売</div>
+        </div>
+
+        <!-- 求人リスト -->
+        <div class="job-list-container" id="jobListContainer">
+            <!-- JSで動的に挿入 -->
+            <div style="text-align:center; color:#999; margin-top:20px; font-size:12px;">データ読み込み中...</div>
+        </div>
+    </div>
 </div>
+
+<script>
+    const allJobs = {{ jobs_json| safe }};
+    let currentDate = "{{ today_str }}";
+    let isRecruitOnly = true;
+
+    // 大宮駅周辺
+    const map = L.map('map', { zoomControl: false }).setView([35.9063, 139.6240], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    let markers = [];
+
+    // --- アイコン生成 ---
+    function createIcon(job, isActive) {
+        const timeLabel = `${job.start_time}〜${job.end_time}`;
+        let color = isActive ? '#FFD700' : '#ccc';
+        let labelHtml = isActive ? `<div class="pin-label">${timeLabel}</div>` : '';
+
+        // font-size adjust for pin
+        const html = `
+            <div style="position:relative; width:40px; height:50px; display:flex; flex-direction:column; align-items:center;">
+                ${labelHtml}
+                <div style="width:36px; height:36px; background:${color}; border-radius:50% 50% 50% 0; 
+                    transform:rotate(-45deg); display:flex; align-items:center; justify-content:center;
+                    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); border:2px solid white;">
+                    <i class="fa-solid fa-paw" style="transform:rotate(45deg); font-size:16px; color:white;"></i>
+                </div>
+            </div>
+        `;
+        return L.divIcon({ className: 'custom-marker', html: html, iconSize: [40, 50], iconAnchor: [20, 50] });
+    }
+
+    // --- メイン描画処理 ---
+    function render() {
+        // 1. マーカークリア
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        // 2. フィルタリング
+        const filteredJobs = allJobs.filter(job => {
+            if (job.work_date !== currentDate) return false;
+            if (isRecruitOnly && job.is_expired) return false;
+            return true;
+        });
+
+        // 3. リスト生成 & マーカー配置
+        const listContainer = document.getElementById('jobListContainer');
+        listContainer.innerHTML = '';
+
+        if (filteredJobs.length === 0) {
+            listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">この日の求人はありません</div>';
+            return;
+        }
+
+        filteredJobs.forEach(job => {
+            // マーカー追加
+            const marker = L.marker([job.lat, job.lng], {
+                icon: createIcon(job, !job.is_expired),
+                zIndexOffset: job.is_expired ? 0 : 1000 // 募集中を手前に
+            }).addTo(map);
+
+            marker.on('click', () => {
+                highlightJob(job.id);
+            });
+            markers.push(marker);
+
+            // リストアイテム追加
+            const item = document.createElement('a');
+            item.className = 'job-card-item';
+            item.id = `job-card-${job.id}`;
+            item.href = `/job/${job.id}/`;
+
+            const wage = (job.hourly_wage * 5).toLocaleString(); // 簡易計算
+            const expiredBadge = job.is_expired ? '<span class="expired-badge">締切</span>' : '';
+
+            item.innerHTML = `
+                <div class="job-thumb">
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#ddd; color:white;">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                </div>
+                <div class="job-info">
+                    <div class="job-title">${expiredBadge}${job.title}</div>
+                    <div class="job-meta">
+                        <span>${job.start_time}〜${job.end_time}</span>
+                        <span class="job-wage">¥${wage}</span>
+                    </div>
+                    <div style="font-size:10px; color:#999; margin-top:4px;"><i class="fa-solid fa-location-dot"></i> ${job.store_name}</div>
+                </div>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    // --- ピン選択時の処理 ---
+    function highlightJob(jobId) {
+        // リスト内の全ハイライト解除
+        document.querySelectorAll('.job-card-item').forEach(el => el.classList.remove('highlight'));
+
+        // 対象を検索
+        const target = document.getElementById(`job-card-${jobId}`);
+        if (target) {
+            target.classList.add('highlight');
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // --- イベントリスナー ---
+    window.selectDate = function (el, dateStr) {
+        document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+        currentDate = dateStr;
+        render();
+    };
+
+    document.getElementById('recruitOnlyToggle').addEventListener('change', (e) => {
+        isRecruitOnly = e.target.checked;
+        render();
+    });
+
+    window.moveToCurrentLocation = function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                map.flyTo([pos.coords.latitude, pos.coords.longitude], 14);
+            });
+        }
+    };
+
+    // 初期実行
+    render();
+</script>
 {% endblock %}

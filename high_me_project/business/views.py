@@ -11,7 +11,7 @@ from datetime import datetime, date, timedelta
 from .models import (
     BusinessProfile, Store, JobTemplate, JobPosting, JobApplication,
     JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo,
-    Message
+    Message, ChatRoom, AttendanceCorrection
 )
 from accounts.models import WorkerProfile, WorkerBadge # 必要に応じて
 from .mixins import BusinessLoginRequiredMixin
@@ -576,6 +576,12 @@ class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
         # 年齢計算 & プロフィール安全取得
         today = timezone.now().date()
         applications = context['matched_workers']
+        
+        # チャットルームの一括取得
+        worker_ids = [app.worker.id for app in applications]
+        chat_rooms = ChatRoom.objects.filter(store=self.store, worker_id__in=worker_ids)
+        room_map = {room.worker_id: room.id for room in chat_rooms}
+
         for app in applications:
             # プロフィールを安全に取得してセット
             try:
@@ -590,6 +596,9 @@ class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
                 app.worker_age = age
             else:
                 app.worker_age = "不明"
+            
+            # ルームIDをセット
+            app.room_id = room_map.get(app.worker.id)
         
         context['store'] = self.store
         context['posting'] = self.posting
@@ -676,30 +685,30 @@ class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
         return reverse('biz_job_posting_detail', kwargs={'store_id': self.object.template.store.id, 'pk': self.object.id})
 
 class BizMessageListView(BusinessLoginRequiredMixin, ListView):
-    """メッセージ一覧 (マッチング済みのワーカー一覧)"""
-    model = JobApplication
+    """メッセージ一覧 (チャットルーム一覧)"""
+    model = ChatRoom
     template_name = 'business/message_list.html'
-    context_object_name = 'applications'
+    context_object_name = 'rooms'
 
     def get_queryset(self):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        # 自分のビジネスに紐づく店舗の求人への応募を取得
-        queryset = JobApplication.objects.filter(
-            job_posting__template__store__business=biz_profile,
-            status='確定済み' # マッチング済みのみ
-        ).select_related('worker', 'job_posting', 'job_posting__template__store').order_by('-applied_at')
+        # 自分のビジネスに紐づく店舗のチャットルームを取得
+        queryset = ChatRoom.objects.filter(
+            store__business=biz_profile
+        ).select_related('worker', 'store').prefetch_related('messages')
 
         q = self.request.GET.get('q')
         if q:
-            # ワーカーの名前で検索 (姓 or 名 contains)
             from django.db.models import Q
             queryset = queryset.filter(Q(worker__last_name__icontains=q) | Q(worker__first_name__icontains=q))
         
+        # 最新メッセージ順などでソートしたい場合はここで処理
+        # 単純に更新順(updated_at)でソート
+        queryset = queryset.order_by('-updated_at')
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # サイドバー表示のために、ビジネスの最初の店舗を取得してセットする
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         context['store'] = Store.objects.filter(business=biz_profile).first()
         return context
@@ -710,39 +719,124 @@ class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        application_id = self.kwargs['application_id']
+        room_id = self.kwargs['room_id']
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         
-        # 権限チェック込みで取得
-        self.application = get_object_or_404(
-            JobApplication, 
-            id=application_id, 
-            job_posting__template__store__business=biz_profile
+        self.room = get_object_or_404(
+            ChatRoom, 
+            id=room_id, 
+            store__business=biz_profile
         )
         
-        context['application'] = self.application
-        context['messages'] = self.application.messages.all().select_related('sender')
-        # サイドバー表示用に店舗情報をセット
-        context['store'] = self.application.job_posting.template.store
+        context['room'] = self.room
+        context['messages'] = self.room.messages.all().select_related('sender')
+        context['store'] = self.room.store
+        context['application'] = None # 互換性のためNoneまたは最新のApplicationを取得してもよい
         return context
 
     def post(self, request, *args, **kwargs):
-        application_id = self.kwargs['application_id']
+        room_id = self.kwargs['room_id']
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         
-        application = get_object_or_404(
-            JobApplication, 
-            id=application_id, 
-            job_posting__template__store__business=biz_profile
+        room = get_object_or_404(
+            ChatRoom, 
+            id=room_id, 
+            store__business=biz_profile
         )
         
         content = request.POST.get('content')
         if content:
             Message.objects.create(
-                application=application,
+                room=room,
                 sender=request.user,
                 content=content,
                 is_read=False
             )
+            # Roomの更新日時を更新
+            room.updated_at = timezone.now()
+            room.save()
         
-        return redirect('biz_message_detail', application_id=application_id)
+        return redirect('biz_message_detail', room_id=room_id)
+
+class BizCheckinManagementView(BusinessLoginRequiredMixin, TemplateView):
+    """チェックイン/アウト管理 (QRコード表示)"""
+    template_name = 'business/checkin_management.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # サイドバー表示用
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = Store.objects.filter(business=biz_profile).first()
+        context['store'] = store
+        return context
+
+# -----------------------------
+# 勤怠修正依頼 (店舗側)
+# -----------------------------
+
+class AttendanceCorrectionListView(BusinessLoginRequiredMixin, ListView):
+    model = AttendanceCorrection
+    template_name = 'business/attendance_correction_list.html'
+    context_object_name = 'corrections'
+
+    def get_queryset(self):
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(Store, id=store_id, business__user=self.request.user)
+        # 該当店舗の求人への応募に関連する修正依頼を取得
+        return AttendanceCorrection.objects.filter(
+            application__job_posting__template__store=store
+        ).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        store_id = self.kwargs['store_id']
+        context['store'] = get_object_or_404(Store, id=store_id, business__user=self.request.user)
+        return context
+
+class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
+    model = AttendanceCorrection
+    template_name = 'business/attendance_correction_detail.html'
+    context_object_name = 'correction'
+
+    def get_queryset(self):
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(Store, id=store_id, business__user=self.request.user)
+        return AttendanceCorrection.objects.filter(
+            application__job_posting__template__store=store
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        store_id = self.kwargs['store_id']
+        context['store'] = get_object_or_404(Store, id=store_id, business__user=self.request.user)
+        
+        # 差分計算などのロジックをViewで渡すか、テンプレートで計算するか
+        # ここではシンプルにそのまま渡す
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        action = request.POST.get('action') 
+        store_id = self.kwargs['store_id']
+
+        if action == 'approve':
+            self.object.status = 'approved'
+            self.object.save()
+            
+            # JobApplicationの情報を更新
+            application = self.object.application
+            application.attendance_at = self.object.correction_attendance_at
+            application.leaving_at = self.object.correction_leaving_at
+            # 休憩時間はJobApplicationにはないが、JobPostingのを参照しているので、本来は実績として持つべきかもしれない
+            # ここでは要件に従い、出勤・退勤日時を更新する
+            application.save()
+            
+            messages.success(request, '勤怠修正を承認しました。')
+            
+        elif action == 'reject':
+            self.object.status = 'rejected'
+            self.object.save()
+            messages.warning(request, '勤怠修正を却下しました。')
+
+        return redirect('biz_attendance_correction_list', store_id=store_id)
+
