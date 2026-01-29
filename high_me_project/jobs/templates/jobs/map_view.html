@@ -374,7 +374,7 @@
             <div class="date-scroll-inner">
                 {% for d in date_list %}
                 <div class="date-item {% if d|date:'Y-m-d' == today_str %}active{% endif %}"
-                    onclick="selectDate(this, '{{ d|date:'Y-m-d' }}')">
+                    data-date="{{ d|date:'Y-m-d' }}" onclick="selectDate(this)">
                     <div class="date-day">{{ d|date:"D" }}</div>
                     <div class="date-circle">{{ d.day }}</div>
                 </div>
@@ -400,13 +400,16 @@
     </div>
 </div>
 
+{{ jobs_data|json_script:"jobs-data" }}
 <script>
-    const allJobs = {{ jobs_json| safe }};
+    const allJobs = JSON.parse(document.getElementById('jobs-data').textContent);
     let currentDate = "{{ today_str }}";
     let isRecruitOnly = true;
 
-    // 大宮駅周辺
-    const map = L.map('map', { zoomControl: false }).setView([35.9063, 139.6240], 14);
+    // 初期表示設定 (求人がある場合は最初の求人の場所に、なければデフォルトで東京付近)
+    const initialLat = allJobs.length > 0 ? allJobs[0].lat : 35.6812;
+    const initialLng = allJobs.length > 0 ? allJobs[0].lng : 139.7671;
+    const map = L.map('map', { zoomControl: false }).setView([initialLat, initialLng], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
@@ -420,7 +423,6 @@
         let color = isActive ? '#FFD700' : '#ccc';
         let labelHtml = isActive ? `<div class="pin-label">${timeLabel}</div>` : '';
 
-        // font-size adjust for pin
         const html = `
             <div style="position:relative; width:40px; height:50px; display:flex; flex-direction:column; align-items:center;">
                 ${labelHtml}
@@ -510,10 +512,10 @@
     }
 
     // --- イベントリスナー ---
-    window.selectDate = function (el, dateStr) {
+    window.selectDate = function (el) {
         document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
         el.classList.add('active');
-        currentDate = dateStr;
+        currentDate = el.dataset.date;
         render();
     };
 

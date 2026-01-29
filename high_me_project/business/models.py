@@ -50,22 +50,60 @@ class QualificationMaster(models.Model):
         return f"[{self.category}] {self.name}"
 
 # --- 今回追加するモデル ---
+class StoreGroupDefinition(models.Model):
+    """店舗独自のグループ定義"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='group_definitions')
+    name = models.CharField("グループ名", max_length=100)
+    is_shared = models.BooleanField("企業内共有", default=False)
+    is_system = models.BooleanField("システム予約", default=False)  # お気に入りなど
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 class StoreWorkerGroup(models.Model):
     """店舗がワーカーをグループ分けするためのモデル"""
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE)
+    
+    # 後方互換性のため残すが、将来的には group_definition に移行
     GROUP_TYPE_CHOICES = [
         ('favorite', 'お気に入り'),
         ('worked', '稼働経験あり'),
         ('blocked', 'ブロック'),
-        ('hall', 'ホール'),        # 画像3にあるグループ例
-        # 必要に応じて追加
+        ('hall', 'ホール'),
     ]
-    group_type = models.CharField("グループ種別", max_length=50, choices=GROUP_TYPE_CHOICES)
+    group_type = models.CharField("グループ種別", max_length=50, choices=GROUP_TYPE_CHOICES, blank=True, null=True)
+    
+    # 新しい動的グループ定義へのリンク
+    group_definition = models.ForeignKey(StoreGroupDefinition, on_delete=models.CASCADE, null=True, blank=True, related_name='worker_groups')
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('store', 'worker', 'group_type')
+        unique_together = ('store', 'worker', 'group_type', 'group_definition')
+
+class WorkerReview(models.Model):
+    """ワーカーへの評価"""
+    # Circular import回避のため文字列で指定
+    job_application = models.OneToOneField('JobApplication', on_delete=models.CASCADE, related_name='worker_review')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    worker = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    REVIEW_TYPE_CHOICES = [
+        ('good', 'Good'),
+        ('bad', 'Bad'),
+    ]
+    review_type = models.CharField("評価", max_length=10, choices=REVIEW_TYPE_CHOICES)
+    
+    # JSONFieldを使用 (Django 3.1+)
+    skills = models.JSONField("評価スキル", default=list, blank=True)
+    message = models.TextField("感謝の言葉", blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.worker} - {self.review_type}"
 
 class StoreWorkerMemo(models.Model):
     """店舗がワーカーに付ける管理用メモ"""

@@ -5,9 +5,9 @@ from django.utils import timezone
 from datetime import timedelta, datetime, date
 from django.http import JsonResponse
 from django.db.models import Q
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
-from business.models import JobPosting, JobApplication, Store, AttendanceCorrection
+from business.models import JobPosting, JobApplication, Store, AttendanceCorrection, ChatRoom
 from .models import FavoriteJob, FavoriteStore
 from .constants import PREFECTURES, OCCUPATIONS, REWARDS
 # 循環参照回避のため、メソッド内でインポートするか、必要なモデルだけトップレベルで
@@ -16,6 +16,48 @@ from .constants import PREFECTURES, OCCUPATIONS, REWARDS
 from .forms import PrefectureForm
 
 # --- メイン：さがす画面 ---
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
+class MapSearchView(TemplateView):
+    template_name = 'jobs/map_search.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 対象都道府県
+        # 対象都道府県 (GETパラメータがあればそれを使用、なければデフォルト)
+        target_prefs = self.request.GET.getlist('pref')
+        if not target_prefs:
+            target_prefs = ['東京都', '神奈川県', '千葉県']
+        
+        # 有効な求人で、かつ緯度経度があるもの
+        jobs = JobPosting.objects.filter(
+            template__store__prefecture__in=target_prefs,
+            template__store__latitude__isnull=False,
+            template__store__longitude__isnull=False,
+            visibility='public'  # 公開中のみ
+        ).select_related('template__store')
+        
+        # マップ表示用データ作成
+        map_data = []
+        for job in jobs:
+            store = job.template.store
+            map_data.append({
+                'id': job.id,
+                'title': job.title,
+                'store_name': store.store_name,
+                'lat': store.latitude,
+                'lng': store.longitude,
+                'url': reverse('job_detail', kwargs={'pk': job.id}),
+                'salary': f"{job.get_reward_mode_display()}: {job.reward_amount}円",
+                'work_date': job.work_date.strftime('%m/%d') if job.work_date else '',
+                'time': f"{job.start_time.strftime('%H:%M')}~{job.end_time.strftime('%H:%M')}"
+            })
+            
+        context['map_data_json'] = json.dumps(map_data, cls=DjangoJSONEncoder)
+        return context
+
 class IndexView(ListView):
     model = JobPosting
     template_name = 'jobs/index.html'
@@ -131,18 +173,24 @@ class MapView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # 本日から2週間分の求人を取得
         today = timezone.localdate()
         date_list = [today + timedelta(days=i) for i in range(14)]
         
-        # 必要なデータを取得 (場所情報がある店舗の求人のみ)
-        # 締切後も含めて取得し、フロントエンドでグレー表示などの制御を行う
-        # ただし過去の日付は除外
+        # 対象都道府県 (GETパラメータがあればそれを使用、なければユーザーの登録設定)
+        target_prefs = self.request.GET.getlist('pref')
+        if not target_prefs and self.request.user.is_authenticated and hasattr(self.request.user, 'workerprofile'):
+            if self.request.user.workerprofile.target_prefectures:
+                target_prefs = [p for p in self.request.user.workerprofile.target_prefectures.split(',') if p]
         
+        if not target_prefs:
+            target_prefs = ['東京都', '神奈川県', '千葉県']
+
         qs = JobPosting.objects.filter(
+            visibility='public',
             is_published=True,
             work_date__gte=today, # 今日以降
             work_date__lte=today + timedelta(days=14),
+            template__store__prefecture__in=target_prefs,
             template__store__latitude__isnull=False,
             template__store__longitude__isnull=False
         ).select_related('template', 'template__store')
@@ -158,15 +206,15 @@ class MapView(TemplateView):
                 'work_date': job.work_date.strftime('%Y-%m-%d'),
                 'start_time': job.start_time.strftime('%H:%M'),
                 'end_time': job.end_time.strftime('%H:%M'),
-                'lat': job.template.store.latitude,
-                'lng': job.template.store.longitude,
+                'lat': float(job.template.store.latitude),
+                'lng': float(job.template.store.longitude),
                 'store_name': job.template.store.store_name,
-                'hourly_wage': job.hourly_wage,
-                'is_expired': is_expired,
-                'recruitment_count': job.recruitment_count,
+                'hourly_wage': int(job.hourly_wage),
+                'is_expired': bool(is_expired),
+                'recruitment_count': int(job.recruitment_count),
             })
             
-        context['jobs_json'] = json.dumps(jobs_data, cls=DjangoJSONEncoder)
+        context['jobs_data'] = jobs_data
         context['date_list'] = date_list
         context['today_str'] = today.strftime('%Y-%m-%d')
         return context
@@ -448,6 +496,15 @@ class ApplyStep5ReviewView(LoginRequiredMixin, TemplateView):
             job_posting=job,
             worker=request.user
         )
+
+        # マッチングした時点でチャットルームを作成する
+        # 店舗とワーカーの組み合わせで作成
+        store = job.template.store
+        ChatRoom.objects.get_or_create(
+            store=store,
+            worker=request.user
+        )
+
         return render(request, 'jobs/apply_complete.html', {'job': job})
 
 class JobWorkingDetailView(LoginRequiredMixin, TemplateView):
@@ -548,6 +605,11 @@ class AttendanceStep1CheckView(AttendanceStepBaseView):
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
+        
+        # 既に修正依頼が存在する場合（却下以外）は申請できないようにする
+        if AttendanceCorrection.objects.filter(application=application, status__in=['pending', 'approved']).exists():
+            return render(request, 'jobs/attendance_duplicate.html', {'application': application})
+            
         return render(request, self.template_name, {'application': application})
 
     def post(self, request, application_id):

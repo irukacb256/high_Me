@@ -1,0 +1,166 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    .content-card {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 30px;
+    }
+
+    .group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .group-count {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .btn-create {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .group-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .group-item:last-child {
+        border-bottom: none;
+    }
+
+    .group-info h3 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .group-info a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .group-info h3:hover {
+        text-decoration: underline;
+        color: #007AFF;
+    }
+
+    .group-meta {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .group-right {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .member-count {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .btn-action {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 6px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-action.disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .status-shared {
+        color: #007AFF;
+        font-weight: bold;
+        font-size: 12px;
+    }
+</style>
+
+<h1 class="page-title">グループ管理</h1>
+<p style="color:#666; font-size:14px; margin-bottom:20px;">ワーカーのグループを作成・編集ができます。</p>
+
+<div class="content-card">
+    <div class="group-header">
+        <h2 style="margin:0; font-size:20px;">グループ一覧</h2>
+        <button class="btn-create">グループの新規作成</button>
+    </div>
+
+    <!-- Header Row -->
+    <div
+        style="display:flex; justify-content:space-between; color:#999; font-size:12px; margin-bottom:10px; padding:0 10px;">
+        <div>グループ名</div>
+        <div style="display:flex; gap:80px; margin-right:50px;">
+            <div style="width:100px;">グループの企業内共有</div>
+            <div style="width:60px;">ワーカー数</div>
+            <div style="width:60px;"></div>
+        </div>
+    </div>
+
+    <div class="group-list">
+        {% for group in groups %}
+        <div class="group-item">
+            <div class="group-info">
+                <h3><a href="#">{{ group.name }}</a></h3>
+                <div class="group-meta">システムで作成されたグループ</div>
+            </div>
+
+            <div class="group-right">
+                <div style="width:100px; text-align:center;">
+                    {% if group.is_shared %}
+                    <span class="status-shared">共有中</span>
+                    {% else %}
+                    <span style="color:#ccc;">-</span>
+                    {% endif %}
+                </div>
+                <div class="member-count" style="width:60px; text-align:center;">{{ group.member_count }}人</div>
+
+                <div style="width:60px;">
+                    <button class="btn-action">
+                        操作 <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

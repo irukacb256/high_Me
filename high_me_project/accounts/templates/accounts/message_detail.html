@@ -235,7 +235,7 @@
         {% else %}
         <!-- 相手 -->
         <div class="message-row other">
-            <div class="sender-name">{{ msg.sender.businessprofile.company_name|default:"店舗" }}</div>
+            <div class="sender-name">{{ room.store.store_name|default:"店舗" }}</div>
             <div class="message-bubble">
                 {{ msg.content|linebreaksbr }}
             </div>

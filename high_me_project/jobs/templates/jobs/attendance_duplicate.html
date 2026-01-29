@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="padding: 20px; text-align: center; margin-top: 50px;">
+    <div style="font-size: 60px; color: #ff5252; margin-bottom: 20px;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">修正依頼は既に提出されています</h2>
+    <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">
+        この求人に対する勤怠修正依頼は既に提出済みです。<br>
+        店舗からの承認結果をお待ちください。
+    </p>
+
+    <a href="{% url 'mypage' %}"
+        style="display: block; width: 100%; background: #007bff; color: white; padding: 15px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+        マイページへ戻る
+    </a>
+</div>
+{% endblock %}

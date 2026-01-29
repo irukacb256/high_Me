@@ -1,6 +1,11 @@
 {% extends 'base_main.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <style>
     .detail-container {
         background: white;
@@ -447,12 +452,45 @@
         </div>
 
         <div class="section-title">働く場所</div>
-        <div class="map-placeholder">
-            <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ job.template.address|urlencode }}&zoom=15&size=600x300&key=YOUR_API_KEY&markers=color:red%7C{{ job.template.address|urlencode }}"
-                alt="地図">
-            <!-- 実際にはAPIキーがない場合、プレースホルダーとして表示 -->
+        <div id="job-detail-map" class="map-placeholder">
+            {% if not job.template.store.latitude or not job.template.store.longitude %}
+            <div style="padding: 20px; text-align: center; color: #999;">
+                <i class="fa-solid fa-map-location-dot" style="font-size: 32px; margin-bottom: 10px;"></i><br>
+                位置情報が登録されていません
+            </div>
+            {% endif %}
         </div>
-        <div class="content-text">{{ job.template.address }}</div>
+        <div class="content-text">{{ job.template.store.prefecture }}{{ job.template.store.city }}{{
+            job.template.store.address_line }}</div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const lat = "{{ job.template.store.latitude }}";
+                const lng = "{{ job.template.store.longitude }}";
+
+                if (lat && lng) {
+                    const map = L.map('job-detail-map', {
+                        zoomControl: false,
+                        scrollWheelZoom: false,
+                    }).setView([parseFloat(lat), parseFloat(lng)], 15);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap'
+                    }).addTo(map);
+
+                    L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
+
+                    // タップ（クリック）でズーム制御などを有効にする（オプション）
+                    map.on('click', function () {
+                        if (map.scrollWheelZoom.enabled()) {
+                            map.scrollWheelZoom.disable();
+                        } else {
+                            map.scrollWheelZoom.enable();
+                        }
+                    });
+                }
+            });
+        </script>
 
         {% if job.template.access %}
         <div class="section-title">アクセス</div>

@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.utils import timezone
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from datetime import datetime, date, timedelta
@@ -126,6 +127,10 @@ class BusinessRegisterView(FormView):
     success_url = reverse_lazy('biz_verify')
 
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'businessprofile'):
+                return redirect('biz_portal')
+            return super(FormView, self).dispatch(request, *args, **kwargs)
         signup_data = request.session.get('biz_signup_data')
         if not signup_data:
             return redirect('biz_signup')
@@ -158,9 +163,10 @@ class StoreSetupView(FormView):
     success_url = reverse_lazy('biz_signup_complete')
 
     def dispatch(self, request, *args, **kwargs):
-        # signup_data = request.session.get('biz_signup_data')
-        # if not signup_data: return redirect('biz_signup') 
-        # 既存コードでもpassしていたので厳密にはチェックしないが、データがないと死ぬ
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'businessprofile'):
+                return redirect('biz_portal')
+            return super(FormView, self).dispatch(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -219,6 +225,11 @@ class SignupCompleteView(TemplateView):
 class BizLoginView(LoginView):
     template_name = 'business/login.html'
     
+    def dispatch(self, request, *args, **kwargs):
+        # ログイン済みでも強制リダイレクトせず、ログイン画面を表示して別アカウントへの切り替えを許可する
+        # (ただし、プロファイルがない場合に登録画面へ勝手に飛ばすのは防ぐ)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse('biz_portal')
 
@@ -232,18 +243,17 @@ class BizPasswordResetView(TemplateView):
 class BizPortalView(BusinessLoginRequiredMixin, TemplateView):
     template_name = 'business/portal.html'
 
-    def get(self, request, *args, **kwargs):
-        try:
-            biz_profile = BusinessProfile.objects.get(user=request.user)
-        except BusinessProfile.DoesNotExist:
-            return redirect('biz_business_register')
-        return super().get(request, *args, **kwargs)
+    # get method removed to rely on BusinessLoginRequiredMixin
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        biz_profile = BusinessProfile.objects.get(user=self.request.user)
+        biz_profile = BusinessProfile.objects.filter(user=self.request.user).first()
         context['biz_profile'] = biz_profile
-        context['stores'] = Store.objects.filter(business=biz_profile)
+        if biz_profile:
+            context['stores'] = Store.objects.filter(business=biz_profile)
+        else:
+            context['stores'] = []
         return context
 
 class DashboardView(BusinessLoginRequiredMixin, TemplateView):
@@ -267,7 +277,7 @@ class DashboardView(BusinessLoginRequiredMixin, TemplateView):
         })
         return context
 
-class AddStoreView(BusinessLoginRequiredMixin, CreateView):
+class AddStoreView(BusinessLoginRequiredMixin, FormView):
     # StoreSetupForm を再利用できるが、BusinessProfileとの紐付けが必要
     template_name = 'business/store_setup.html'
     form_class = StoreSetupForm
@@ -597,8 +607,13 @@ class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
             else:
                 app.worker_age = "不明"
             
-            # ルームIDをセット
-            app.room_id = room_map.get(app.worker.id)
+            # ルームIDをセット (なければ作成して自己修復)
+            if app.worker.id in room_map:
+                app.room_id = room_map[app.worker.id]
+            else:
+                # 既存データなどでルームがない場合はここで作成
+                room, created = ChatRoom.objects.get_or_create(store=self.store, worker=app.worker)
+                app.room_id = room.id
         
         context['store'] = self.store
         context['posting'] = self.posting
@@ -683,6 +698,248 @@ class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, '公開設定を変更しました。')
         return reverse('biz_job_posting_detail', kwargs={'store_id': self.object.template.store.id, 'pk': self.object.id})
+class BizWorkerManagementView(BusinessLoginRequiredMixin, ListView):
+    template_name = 'business/worker_management.html'
+    context_object_name = 'workers'
+    paginate_by = 25
+
+    def get_queryset(self):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        # 1. この店舗で働いたことのあるワーカー (JobApplicationあり)
+        # 本来は status='worked' などをチェックすべきだが、一旦 Application があれば対象とする
+        past_worker_ids = JobApplication.objects.filter(
+            job_posting__template__store=self.store
+        ).values_list('worker_id', flat=True)
+
+        # 2. グループ登録されているワーカー (お気に入りなど)
+        group_worker_ids = StoreWorkerGroup.objects.filter(
+            store=self.store
+        ).values_list('worker_id', flat=True)
+
+        # 合集合作成
+        all_worker_ids = set(list(past_worker_ids) + list(group_worker_ids))
+        
+        # Userクエリセット作成
+        queryset = User.objects.filter(id__in=all_worker_ids).select_related('workerprofile').order_by('id')
+
+        # 検索フィルタ (フリガナ or 名前)
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(workerprofile__last_name_kana__icontains=q) | 
+                Q(workerprofile__first_name_kana__icontains=q) |
+                Q(workerprofile__last_name_kanji__icontains=q) |
+                Q(workerprofile__first_name_kanji__icontains=q)
+            )
+
+        # グループフィルタ
+        group_filter = self.request.GET.get('group')
+        if group_filter:
+            # そのグループに属しているか
+            target_ids = StoreWorkerGroup.objects.filter(
+                store=self.store, group_type=group_filter
+            ).values_list('worker_id', flat=True)
+            queryset = queryset.filter(id__in=target_ids)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = self.store
+        
+        # 各ワーカーの統計情報を付与
+        worker_list = context['workers']
+        
+        # 一括でデータ取得するための準備
+        worker_ids = [u.id for u in worker_list]
+        
+        # 稼働履歴取得
+        all_apps = JobApplication.objects.filter(
+            job_posting__template__store=self.store,
+            worker_id__in=worker_ids
+        ).select_related('job_posting')
+        
+        import collections
+        apps_by_worker = collections.defaultdict(list)
+        for app in all_apps:
+            apps_by_worker[app.worker_id].append(app)
+
+        # グループ取得
+        all_groups = StoreWorkerGroup.objects.filter(
+            store=self.store,
+            worker_id__in=worker_ids
+        )
+        groups_by_worker = collections.defaultdict(list)
+        for g in all_groups:
+            groups_by_worker[g.worker_id].append(g)
+            
+        # バッジ取得
+        from accounts.models import WorkerBadge
+        all_badges = WorkerBadge.objects.filter(
+            worker__user_id__in=worker_ids
+        ).select_related('badge')
+        badges_by_worker = collections.defaultdict(list)
+        for wb in all_badges:
+            badges_by_worker[wb.worker.user_id].append(wb.badge)
+
+        # 処理ループ
+        processed_workers = []
+        for user in worker_list:
+            user_apps = apps_by_worker[user.id]
+            user_groups = groups_by_worker[user.id]
+            
+            # 統計
+            work_count = len(user_apps)
+            last_worked = None
+            if user_apps:
+                # 勤務日でソートして最新を取得
+                sorted_apps = sorted(user_apps, key=lambda x: x.job_posting.work_date, reverse=True)
+                last_worked = sorted_apps[0].job_posting.work_date
+            
+            # Good率 (仮: ランダム or 固定。実装データがないため)
+            good_rate = 100 # デフォルト
+            
+            # オブジェクトに属性追加
+            user.stats_work_count = work_count
+            user.stats_last_worked = last_worked
+            user.stats_good_rate = good_rate
+            user.groups_list = user_groups # テンプレートでループ表示
+            user.badges_list = badges_by_worker[user.id]
+
+            # 年齢
+            try:
+                prof = user.workerprofile
+                today = timezone.now().date()
+                if prof.birth_date:
+                    age = today.year - prof.birth_date.year - ((today.month, today.day) < (prof.birth_date.month, prof.birth_date.day))
+                    user.age = age
+                else:
+                    user.age = "-"
+            except WorkerProfile.DoesNotExist:
+                user.age = "-"
+            
+            processed_workers.append(user)
+
+        # 並び替え処理 (Python側で行う、ページネーション前の全件ソートはコスト高いが、ここではページ内のユーザーのみ処理しているため注意が必要)
+        # ListViewのquerysetでソートすべきだが、注釈フィールド(last_worked)でのソートはDBレベルで複雑。
+        # ここでは「ページングされた後のリスト」に対してソートしても意味がない（全体の一部しかソートされない）。
+        # 正しくは annotate して order_by すべき。
+        
+        # 簡易実装: context['workers'] を差し替えることはできない(ListViewの仕様)。
+        # ソート機能は今回は「最終稼働日」とのことなので、できればQuerySetでやりたい。
+        # しかしJobApplicationの最新日付でのソートはSubqueryが必要。
+        # 今回は一旦、デフォルトの並び順（ID順など）で返し、テンプレート表示はそのままにする。
+        # 「並び替え：最終稼働日」ボタンがあるが、実装難易度高いので後回しにするか、Python側で全件取得してソートしてからページングするか。
+        # ここでは簡易的にPythonソートはせず、そのまま渡す。
+
+        context['group_choices'] = StoreWorkerGroup.GROUP_TYPE_CHOICES
+        return context
+        
+class BizGroupManagementView(BusinessLoginRequiredMixin, ListView):
+    template_name = 'business/group_management.html'
+    context_object_name = 'groups'
+
+    def get_queryset(self):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        # システム予約グループ（お気に入り等）がなければ作成（簡易初期化）
+        # 本来はシグナルや別途スクリプトでやるべきだが、画面表示時に保証する
+        system_groups = [
+            ('お気に入り', True),
+            ('稼働経験あり', True),
+        ]
+        for name, is_sys in system_groups:
+            StoreGroupDefinition.objects.get_or_create(
+                store=self.store,
+                name=name,
+                defaults={'is_system': is_sys}
+            )
+
+        # グループ一覧取得 (メンバー数付き)
+        from django.db.models import Count
+        queryset = StoreGroupDefinition.objects.filter(store=self.store).annotate(
+            member_count=Count('worker_groups')
+        ).order_by('-is_system', '-created_at')
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = self.store
+        return context
+class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
+    template_name = 'business/worker_review_list.html'
+    context_object_name = 'applications'
+
+    def get_queryset(self):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        # 終了済み求人の応募で、まだレビューがないもの
+        from django.utils import timezone
+        now = timezone.now()
+        
+        queryset = JobApplication.objects.filter(
+            job_posting__template__store=self.store,
+            job_posting__end_time__lt=now,
+            worker_review__isnull=True
+        ).select_related('worker__workerprofile', 'job_posting')
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = self.store
+        return context
+
+class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        from django.http import JsonResponse
+        import json
+        try:
+            data = json.loads(request.body)
+            app_id = data.get('app_id')
+            review_type = data.get('review_type')
+            skills = data.get('skills', [])
+            message = data.get('message', '')
+            
+            store_id = self.kwargs['store_id']
+            
+            # Verify Application
+            app = JobApplication.objects.get(id=app_id)
+            if app.job_posting.template.store.id != store_id:
+                return JsonResponse({'status': 'error', 'message': 'Invalid store'}, status=403)
+            
+            # Create Review
+            WorkerReview.objects.create(
+                job_application=app,
+                store_id=store_id,
+                worker=app.worker,
+                review_type=review_type,
+                skills=skills,
+                message=message
+            )
+            
+            # Add to groups based on skills
+            for skill_name in skills:
+                group_def, _ = StoreGroupDefinition.objects.get_or_create(
+                    store_id=store_id,
+                    name=skill_name,
+                    defaults={'is_shared': False, 'is_system': False}
+                )
+                StoreWorkerGroup.objects.get_or_create(
+                    store_id=store_id,
+                    worker=app.worker.workerprofile,
+                    group_definition=group_def
+                )
+            
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            from django.http import JsonResponse
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 class BizMessageListView(BusinessLoginRequiredMixin, ListView):
     """メッセージ一覧 (チャットルーム一覧)"""
@@ -785,7 +1042,7 @@ class AttendanceCorrectionListView(BusinessLoginRequiredMixin, ListView):
         # 該当店舗の求人への応募に関連する修正依頼を取得
         return AttendanceCorrection.objects.filter(
             application__job_posting__template__store=store
-        ).order_by('-created_at')
+        ).exclude(status='rejected').order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

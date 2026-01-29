@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}地図から探す{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+    #map {
+        height: calc(100vh - 120px);
+        /* ヘッダー・フッター分を引く(調整必要かも) */
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+
+    .leaflet-popup-content {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .popup-title {
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 5px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .popup-info {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 10px;">
+    <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center;">
+        <i class="fa-solid fa-map-location-dot" style="margin-right: 8px; color: #007bff;"></i>
+        地図から探す (関東エリア)
+    </h2>
+    <div id="map"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // マップ初期化 (東京中心)
+        var map = L.map('map').setView([35.6895, 139.6917], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // 求人データ
+        var jobs = {{ map_data_json| safe
+    }};
+
+    jobs.forEach(function (job) {
+        if (job.lat && job.lng) {
+            var marker = L.marker([job.lat, job.lng]).addTo(map);
+
+            var popupContent = `
+                    <div style="min-width: 200px;">
+                        <a href="${job.url}" class="popup-title">${job.title}</a>
+                        <div class="popup-info"><strong>${job.store_name}</strong></div>
+                        <div class="popup-info"><i class="fa-solid fa-yen-sign"></i> ${job.salary}</div>
+                        <div class="popup-info"><i class="fa-regular fa-clock"></i> ${job.work_date} ${job.time}</div>
+                        <div style="text-align: right; margin-top: 5px;">
+                            <a href="${job.url}" style="color: white; background: #007bff; padding: 4px 10px; text-decoration: none; border-radius: 4px; font-size: 11px;">詳細を見る</a>
+                        </div>
+                    </div>
+                `;
+
+            marker.bindPopup(popupContent);
+        }
+    });
+    });
+</script>
+{% endblock %}

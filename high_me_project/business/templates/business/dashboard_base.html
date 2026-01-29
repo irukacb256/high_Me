@@ -192,7 +192,8 @@
             </a>
 
             <!-- ワーカー管理 -->
-            <a href="#" class="nav-item">
+            <a href="{% url 'biz_worker_management' store.id %}"
+                class="nav-item {% if request.resolver_match.url_name == 'biz_worker_management' %}active{% endif %}">
                 <i class="fa-solid fa-user-group"></i> ワーカー管理
             </a>
 
@@ -230,8 +231,14 @@
             </a>
 
             <!-- ワーカー評価 -->
-            <a href="#" class="nav-item">
+            <!-- ワーカー評価 -->
+            <a href="{% url 'biz_worker_review_list' store.id %}" class="nav-item">
                 <i class="fa-solid fa-user-check"></i> ワーカー評価
+                {% with count=store|get_unreviewed_worker_count %}
+                {% if count > 0 %}
+                <span class="notification-badge">{{ count }}</span>
+                {% endif %}
+                {% endwith %}
             </a>
 
             <!-- 店舗へのレビュー -->
@@ -268,7 +275,8 @@
     <div class="main-wrapper">
         <div class="top-header">
             {% block header_actions %}
-            <a href="#" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト</a>
+            <a href="{% url 'biz_checkin_management' %}" class="btn-header-white"><i class="fa-solid fa-qrcode"></i>
+                チェックイン/アウト</a>
             <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">ひな形から求人を募集</a>
             {% endblock %}
         </div>

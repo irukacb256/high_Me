@@ -1,0 +1,446 @@
+{% extends 'business/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .page-desc {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    /* Top Action Cards */
+    .action-cards {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .action-card {
+        flex: 1;
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 30px 10px;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: box-shadow 0.2s;
+    }
+
+    .action-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-icon {
+        font-size: 32px;
+        margin-bottom: 5px;
+    }
+
+    .card-title {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    /* Filters */
+    .filter-section {
+        background: #fff;
+        /* or transparent */
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .search-box {
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 30px;
+        align-items: flex-end;
+        margin-bottom: 30px;
+    }
+
+    .filter-group label {
+        display: block;
+        font-weight: bold;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .filter-select {
+        min-width: 200px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .sort-btn-group {
+        display: flex;
+    }
+
+    .sort-btn {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .sort-btn:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        border-right: none;
+    }
+
+    .sort-btn:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .sort-btn.active {
+        background: #e6f7ff;
+        color: #007AFF;
+        border-color: #1890ff;
+    }
+
+    /* Pagination Info */
+    .pagination-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .page-nums {
+        display: flex;
+        gap: 5px;
+    }
+
+    .page-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .page-circle.active {
+        background: #333;
+        color: white;
+    }
+
+    /* List Header */
+    .list-header {
+        display: flex;
+        justify-content: flex-end;
+        gap: 40px;
+        padding: 10px 20px;
+        background: #fafafa;
+        color: #888;
+        font-size: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .header-item {
+        width: 80px;
+        text-align: right;
+    }
+
+    /* Worker Item */
+    .worker-card {
+        background: white;
+        border-bottom: 1px solid #eee;
+        padding: 20px;
+    }
+
+    .worker-main-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .worker-left {
+        display: flex;
+        gap: 15px;
+    }
+
+    .worker-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #ccc;
+        object-fit: cover;
+    }
+
+    .worker-info h3 {
+        margin: 0 0 5px 0;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .worker-meta {
+        font-size: 13px;
+        color: #333;
+    }
+
+    .ob-badge {
+        display: inline-block;
+        background: #eee;
+        color: #666;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-top: 5px;
+    }
+
+    .worker-stats {
+        display: flex;
+        gap: 40px;
+        padding-top: 10px;
+    }
+
+    .stat-item {
+        width: 80px;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .badge-row {
+        background: #f9f9f9;
+        padding: 10px 15px;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        border-radius: 4px;
+    }
+
+    .badge-label {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    .skill-badge {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        background: white;
+        border: 1px solid #fae3d9;
+        /* orange-ish border */
+        color: #ff8c00;
+        /* dark orange */
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+    }
+
+    .group-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        align-items: center;
+        font-size: 12px;
+    }
+
+    .group-tag {
+        border: 1px solid #1890ff;
+        color: #1890ff;
+        padding: 2px 8px;
+        border-radius: 3px;
+        background: #e6f7ff;
+    }
+
+    .group-change-link {
+        color: #1890ff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>
+
+<h1 class="page-title">ワーカー管理</h1>
+<p class="page-desc">この店舗で稼働したことのあるワーカーやグループのワーカーを確認できます。</p>
+
+<!-- Top Cards -->
+<div class="action-cards">
+    <a href="#" class="action-card">
+        <i class="fa-solid fa-users card-icon"></i>
+        <div class="card-title">グループ管理</div>
+    </a>
+    <a href="#" class="action-card">
+        <i class="fa-solid fa-user-plus card-icon"></i>
+        <div class="card-title">招待機能</div>
+    </a>
+    <a href="#" class="action-card">
+        <i class="fa-regular fa-address-book card-icon"></i>
+        <div class="card-title">就業予定表<br><span style="font-weight:normal; font-size:12px;">(ベータ版)</span></div>
+    </a>
+</div>
+
+<!-- Search & Filter -->
+<div class="filter-section">
+    <form method="get">
+        <div class="search-box">
+            <label style="font-weight:bold; font-size:13px; margin-bottom:8px; display:block;">名前のフリガナで検索</label>
+            <div style="position:relative;">
+                <input type="text" name="q" class="search-input" value="{{ request.GET.q|default:'' }}"
+                    placeholder="ヤマダ タロウ">
+                <i class="fa-solid fa-magnifying-glass"
+                    style="position:absolute; right:15px; top:12px; color:#999;"></i>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>フィルタ：所属グループ</label>
+                <select name="group" class="filter-select" onchange="this.form.submit()">
+                    <option value="">すべて</option>
+                    {% for key, val in group_choices %}
+                    <option value="{{ key }}" {% if request.GET.group==key %}selected{% endif %}>{{ val }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>並び替え：最終稼働日</label>
+                <div class="sort-btn-group">
+                    <button type="button" class="sort-btn active">新しい順</button>
+                    <button type="button" class="sort-btn">古い順</button>
+                </div>
+            </div>
+        </div>
+        <div class="pagination-bar" style="border-top: 1px solid #eee; padding-top: 15px; margin-top: 20px;">
+            <div class="page-nums">
+                <span style="margin-right:5px;">前へ</span>
+                {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                <span class="page-circle active">{{ i }}</span>
+                {% else %}
+                <a href="?page={{ i }}&q={{ request.GET.q|default:'' }}&group={{ request.GET.group|default:'' }}"
+                    class="page-circle" style="color:inherit; text-decoration:none;">{{ i }}</a>
+                {% endif %}
+                {% endfor %}
+                <span style="margin-left:5px;">次へ</span>
+            </div>
+            <div>
+                {{ page_obj.start_index }}〜{{ page_obj.end_index }}件表示中 / {{ paginator.count }}件中
+            </div>
+        </div>
+    </form>
+
+    <!-- Main Header for stats -->
+    <div class="list-header">
+        <div class="header-item">Good率</div>
+        <div class="header-item">最終稼働日</div>
+        <div class="header-item">稼働回数</div>
+    </div>
+
+    <!-- Worker List -->
+    <div class="worker-list">
+        {% for worker in workers %}
+        <div class="worker-card">
+            <div class="worker-main-row">
+                <div class="worker-left">
+                    <!-- Avatar -->
+                    {% if worker.workerprofile.face_photo %}
+                    <img src="{{ worker.workerprofile.face_photo.url }}" class="worker-avatar">
+                    {% else %}
+                    <div class="worker-avatar"
+                        style="display:flex; align-items:center; justify-content:center; background:#eee;">
+                        <i class="fa-solid fa-user" style="color:#aaa; font-size:24px;"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="worker-info">
+                        <h3>
+                            <!-- Name blurred in original, showing real name here -->
+                            {% if worker.workerprofile %}
+                            {{ worker.workerprofile.last_name_kanji }} {{ worker.workerprofile.first_name_kanji }}
+                            {% else %}
+                            {{ worker.username }}
+                            {% endif %}
+                        </h3>
+                        <div class="worker-meta">
+                            {{ worker.age }}歳
+                            {% if worker.workerprofile.gender %}
+                            {{ worker.workerprofile.gender }}
+                            {% endif %}
+                        </div>
+                        {% if worker.workerprofile %} <!-- Mocking OB/OG badge if needed, skipping for now -->
+                        <!-- <div class="ob-badge">OB・OG</div> -->
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="worker-stats">
+                    <div class="stat-item">{{ worker.stats_good_rate }}%</div>
+                    <div class="stat-item">
+                        {% if worker.stats_last_worked %}
+                        {{ worker.stats_last_worked|date:"Y年n月j日" }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+                    <div class="stat-item">{{ worker.stats_work_count }}回</div>
+                </div>
+            </div>
+
+            {% if worker.badges_list %}
+            <div class="badge-row">
+                <span class="badge-label">バッジ</span>
+                {% for badge in worker.badges_list %}
+                <span class="skill-badge">
+                    <i class="fa-solid fa-medal"></i> {{ badge.name }}
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="group-row">
+                <span style="font-weight:bold;">所属グループ</span>
+                {% for g in worker.groups_list %}
+                <span class="group-tag">{{ g.get_group_type_display }}</span>
+                {% empty %}
+                <span style="color:#999;">-</span>
+                {% endfor %}
+                <a href="{% url 'biz_worker_detail' store.id worker.id %}" class="group-change-link"
+                    style="margin-left:10px;">グループを変更</a>
+                <!-- 実際は詳細画面かAPIで変更する想定 -->
+            </div>
+        </div>
+        {% empty %}
+        <div style="padding:40px; text-align:center; color:#999;">
+            条件に一致するワーカーはいません
+        </div>
+        {% endfor %}
+    </div>
+
+    {% endblock %}

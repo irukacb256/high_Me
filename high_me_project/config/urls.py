@@ -61,7 +61,8 @@ urlpatterns = [
     path('home/refine/treatment/', job_views.TreatmentSelectView.as_view(), name='treatment_select'),
     path('working/<int:pk>/', job_views.JobWorkingDetailView.as_view(), name='job_working_detail'),
     path('working/<int:pk>/qr/', job_views.QRScanView.as_view(), name='job_qr_scan'), # ★追加
-    path('working/<int:pk>/reader/', job_views.JobQRReaderView.as_view(), name='job_qr_reader'), # ★追加
+    path('working/<int:pk>/reader/', job_views.JobQRReaderView.as_view(), name='job_qr_reader'),
+    path('jobs/map/', job_views.MapSearchView.as_view(), name='map_search'),
     
     # 勤怠修正フロー
     path('attendance/<int:application_id>/step1/', job_views.AttendanceStep1CheckView.as_view(), name='attendance_step1'),
@@ -172,7 +173,12 @@ urlpatterns = [
     path('biz/store/<int:store_id>/postings/<int:pk>/workers/', biz_views.JobWorkerListView.as_view(), name='biz_job_worker_list'),
     # ワーカー詳細(店舗向け)
     # ワーカー詳細(店舗向け)
+    # ワーカー関連
+    path('biz/store/<int:store_id>/workers/', biz_views.BizWorkerManagementView.as_view(), name='biz_worker_management'),
     path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.JobWorkerDetailView.as_view(), name='biz_worker_detail'),
+    path('biz/store/<int:store_id>/groups/', biz_views.BizGroupManagementView.as_view(), name='biz_group_management'),
+    path('biz/store/<int:store_id>/reviews/', biz_views.BizWorkerReviewListView.as_view(), name='biz_worker_review_list'),
+    path('biz/store/<int:store_id>/reviews/submit/', biz_views.BizWorkerReviewSubmitView.as_view(), name='biz_worker_review_submit'),
 
     # メッセージ機能
     path('biz/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),

@@ -1,7 +1,7 @@
 {% extends 'business/dashboard_base.html' %}
 
 {% block header_actions %}
-<a href="#" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト</a>
+<a href="{% url 'biz_checkin_management' %}" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> チェックイン/アウト</a>
 <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">ひな形から求人を募集</a>
 {% endblock %}
 
@@ -170,7 +170,7 @@
     <a href="{% url 'biz_template_list' store.id %}" class="action-btn primary">
         <i class="fa-solid fa-circle-plus"></i>新規募集
     </a>
-    <a href="#" class="action-btn"><i class="fa-solid fa-qrcode"></i>チェックイン/アウト</a>
+    <a href="{% url 'biz_checkin_management' %}" class="action-btn"><i class="fa-solid fa-qrcode"></i>チェックイン/アウト</a>
     <a href="#" class="action-btn"><i class="fa-solid fa-circle-exclamation"></i>修正依頼</a>
     <a href="#" class="action-btn"><i class="fa-solid fa-user-check"></i>ワーカー評価</a>
     <a href="#" class="action-btn"><i class="fa-solid fa-envelope"></i>メッセージ</a>
