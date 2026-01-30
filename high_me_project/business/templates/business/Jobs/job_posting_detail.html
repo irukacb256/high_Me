@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 
 {% block content %}
 <style>
@@ -88,118 +88,118 @@
 </style>
 
 <div class="breadcrumb">
-    <a href="{% url 'biz_job_posting_list' store.id %}">豎ゆｺｺ荳隕ｧ</a> ・・豎ゆｺｺ隧ｳ邏ｰ
+    <a href="{% url 'biz_job_posting_list' store.id %}">求人一覧</a> ）求人詳細
 </div>
 
-<h1 class="page-title">豎ゆｺｺ隧ｳ邏ｰ</h1>
-<p class="page-sub">菴懈・縺励◆豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/p>
+<h1 class="page-title">求人詳細</h1>
+<p class="page-sub">菴懈。、励◆求人、瑚｡ｨ遉ｺ、輔ｌます吶。</p>
 
 <div class="detail-grid">
-    <!-- 蜈ｬ髢玖ｨｭ螳壹き繝ｼ繝・-->
+    <!-- 公開設定カープ-->
     <div class="detail-card">
         <div class="icon-circle"><i class="fa-solid fa-link"></i></div>
         <div>
-            <div class="card-label">蜈ｬ髢玖ｨｭ螳・<i class="fa-regular fa-question-circle"></i></div>
-            <div class="card-value">荳闊ｬ蜈ｬ髢・/div>
+            <div class="card-label">公開設定<i class="fa-regular fa-question-circle"></i></div>
+            <div class="card-value">一般公開</div>
             <div class="share-url-box">
                 <span>https://link.timee.co.jp/YgNL</span>
                 <i class="fa-regular fa-copy" style="cursor:pointer;"></i>
             </div>
         </div>
-        <a href="{% url 'biz_job_visibility_edit' store.id posting.id %}" class="link-action">蜈ｬ髢玖ｨｭ螳壹ｒ螟画峩 ・・/a>
+        <a href="{% url 'biz_job_visibility_edit' store.id posting.id %}" class="link-action">公開設定を変更 ）</a>
     </div>
 
-    <!-- 繝槭ャ繝√Φ繧ｰ繧ｫ繝ｼ繝・-->
+    <!-- マッチングカープ-->
     <div class="detail-card">
         <div class="icon-circle"><i class="fa-solid fa-user"></i></div>
         <div>
-            <div class="card-label">繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ</div>
-            <div class="card-value">{{ posting.matched_count }} / {{ posting.recruitment_count }}莠ｺ</div>
+            <div class="card-label">マッチングしたワーカー</div>
+            <div class="card-value">{{ posting.matched_count }} / {{ posting.recruitment_count }}人</div>
         </div>
-        <a href="{% url 'biz_job_worker_list' store.id posting.id %}" class="link-action">繝ｯ繝ｼ繧ｫ繝ｼ繧堤｢ｺ隱・・・/a>
+        <a href="{% url 'biz_job_worker_list' store.id posting.id %}" class="link-action">ワーカー繧堤｢ｺ隱）。</a>
     </div>
 </div>
 
 <div style="margin-top: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
     <div style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #eee;">
         <h3 style="margin-bottom: 25px; font-size: 18px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
-            豎ゆｺｺ蜀・ｮｹ縺ｮ隧ｳ邏ｰ</h3>
+            求人内容の詳細</h3>
 
         <div class="detail-section">
-            <h4 style="font-size: 14px; color: #888; margin-bottom: 10px;">蝓ｺ譛ｬ諠・ｱ</h4>
+            <h4 style="font-size: 14px; color: #888; margin-bottom: 10px;">基本情報</h4>
             <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
                 <tr>
-                    <td style="padding: 10px 0; color: #666; width: 120px;">繧ｿ繧､繝医Ν</td>
+                    <td style="padding: 10px 0; color: #666; width: 120px;">タイトル</td>
                     <td style="padding: 10px 0; font-weight: bold;">{{ posting.title }}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px 0; color: #666;">蜍､蜍呎律譎・/td>
+                    <td style="padding: 10px 0; color: #666;">勤務日時</td>
                     <td style="padding: 10px 0; font-weight: bold;">
                         {{ posting.work_date|date:"Y/m/d (D)" }}<br>
-                        {{ posting.start_time|time:"H:i" }} 縲・{{ posting.end_time|time:"H:i" }}
+                        {{ posting.start_time|time:"H:i" }} 〜{{ posting.end_time|time:"H:i" }}
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px 0; color: #666;">莨第・譎る俣</td>
+                    <td style="padding: 10px 0; color: #666;">莨第。譎る俣</td>
                     <td style="padding: 10px 0;">
                         {% if posting.break_start %}
-                        {{ posting.break_start|time:"H:i" }} 縲・({{ posting.break_duration }}蛻・
+                        {{ posting.break_start|time:"H:i" }} 〜({{ posting.break_duration }}分
                         {% else %}
-                        縺ｪ縺・
+                        なし
                         {% endif %}
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px 0; color: #666;">蜍滄寔莠ｺ謨ｰ</td>
-                    <td style="padding: 10px 0;">{{ posting.recruitment_count }}莠ｺ</td>
+                    <td style="padding: 10px 0; color: #666;">募集人数</td>
+                    <td style="padding: 10px 0;">{{ posting.recruitment_count }}人</td>
                 </tr>
             </table>
         </div>
 
         <div class="detail-section" style="margin-top: 30px;">
-            <h4 style="font-size: 14px; color: #888; margin-bottom: 10px;">讌ｭ蜍吶・譚｡莉ｶ</h4>
+            <h4 style="font-size: 14px; color: #888; margin-bottom: 10px;">業蜍吶。条件</h4>
             <div style="font-size: 14px; line-height: 1.6; background: #fafafa; padding: 15px; border-radius: 6px;">
-                <p style="margin-bottom: 15px;"><strong>讌ｭ蜍吝・螳ｹ:</strong><br>{{
+                <p style="margin-bottom: 15px;">strong>業務内容:</strong><br>{{
                     posting.work_content|default:posting.template.work_content|linebreaksbr }}</p>
-                <p style="margin-bottom: 15px;"><strong>豕ｨ諢丈ｺ矩・</strong><br>{{ posting.template.precautions|linebreaksbr
+                <p style="margin-bottom: 15px;">strong>注意事項</strong><br>{{ posting.template.precautions|linebreaksbr
                     }}</p>
-                <p style="margin-bottom: 15px;"><strong>謖√■迚ｩ:</strong><br>{{ posting.template.belongings|default:"縺ｪ縺・ }}
+                <p style="margin-bottom: 15px;">strong>持ち物:</strong><br>{{ posting.template.belongings|default:"なし " }}
                 </p>
-                <p><strong>蜒阪￥縺溘ａ縺ｮ譚｡莉ｶ:</strong><br>{{ posting.template.requirements|default:"縺ｪ縺・ }}</p>
+                <p><strong>働くための条件:</strong><br>{{ posting.template.requirements|default:"なし " }}</p>
             </div>
         </div>
     </div>
 
     <div style="background: white; padding: 30px; border-radius: 8px; border: 1px solid #eee; height: fit-content;">
-        <h3 style="margin-bottom: 20px; font-size: 16px;">蠕・∞繝ｻ迺ｰ蠅・/h3>
+        <h3 style="margin-bottom: 20px; font-size: 16px;">蠕。∞・迺ｰ蠅。</h3>
         <ul style="list-style: none; padding: 0; font-size: 13px;">
             <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                <span style="color: #888;">邨ｦ荳・</span> <span style="font-weight: bold;">譎らｵｦ ﾂ･{{ posting.hourly_wage
+                <span style="color: #888;">給丁E</span> <span style="font-weight: bold;">時給 ¥{{ posting.hourly_wage
                     }}</span>
             </li>
             <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                <span style="color: #888;">莠､騾夊ｲｻ:</span> <span style="font-weight: bold;">ﾂ･{{ posting.transportation_fee
+                <span style="color: #888;">交通費:</span> <span style="font-weight: bold;">¥{{ posting.transportation_fee
                     }}</span>
             </li>
             <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                <span style="color: #888;">蝟ｫ辣咏腸蠅・</span> {{ posting.template.get_smoking_prevention_display }}
+                <span style="color: #888;">喫煙環墁E</span> {{ posting.template.get_smoking_prevention_display }}
                 {% if posting.template.has_smoking_area %}<br><span
-                    style="color: #ff3b30; font-size: 11px;">窶ｻ蝟ｫ辣吶お繝ｪ繧｢縺ｧ縺ｮ菴懈･ｭ縺ゅｊ</span>{% endif %}
+                    style="color: #ff3b30; font-size: 11px;">※喫煙エリアでの作業あり</span>{% endif %}
             </li>
             <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                <span style="color: #888;">蠢・郁ｳ・ｼ:</span>
+                <span style="color: #888;">蠢。郁ｳ。ｼ:</span>
                 {% if posting.template.requires_qualification %}
-                {{ posting.template.qualification.name|default:"縺ゅｊ" }}
+                {{ posting.template.qualification.name|default:"あり" }}
                 {% if posting.template.qualification_notes %}<br><span style="font-size: 11px; color: #666;">{{
                     posting.template.qualification_notes }}</span>{% endif %}
                 {% else %}
-                縺ｪ縺・
+                なし
                 {% endif %}
             </li>
         </ul>
 
         <div style="margin-top: 20px;">
-            <div style="font-size: 12px; color: #888; margin-bottom: 5px;">蜈ｬ髢狗ｯ・峇</div>
+            <div style="font-size: 12px; color: #888; margin-bottom: 5px;">公開範囲</div>
             <span class="privacy-tag"
                 style="background: #eef6ff; color: #007AFF; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold;">
                 {{ posting.get_visibility_display }}
@@ -216,7 +216,7 @@
         style="background: #34C759; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
         <i class="fa-solid fa-check" style="font-size: 18px;"></i>
     </div>
-    <div style="font-weight: bold; font-size: 18px; color: #34C759; flex: 1;">豎ゆｺｺ繧剃ｽ懈・縺励∪縺励◆</div>
+    <div style="font-weight: bold; font-size: 18px; color: #34C759; flex: 1;">求人を作成、励∪、励◆</div>
     <i class="fa-solid fa-xmark" onclick="closePopup()" style="color: #ccc; font-size: 24px; cursor: pointer;"></i>
 </div>
 

@@ -123,7 +123,7 @@
     }
 
 
-    /* 3. ソート・フィルタバー */
+    /* 3. ソート。フィルタバー */
     .sort-bar {
         background: white;
         padding: 10px 15px;
@@ -339,7 +339,7 @@
     <a href="{% url 'location_home' %}" class="location-bar" style="text-decoration:none;">
         <div class="location-left">
             <i class="fa-solid fa-location-dot"></i>
-            <span>{{ selected_prefs|join:"・"|default:"エリアを選択" }}</span>
+            <span>{{ selected_prefs|join:"。"|default:"エリアを選択" }}</span>
         </div>
         <i class="fa-solid fa-chevron-right location-arrow"></i>
     </a>

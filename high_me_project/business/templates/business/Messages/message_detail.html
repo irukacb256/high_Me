@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 {% load static %}
 
 {% block content %}
@@ -142,7 +142,7 @@
         color: #999;
         white-space: nowrap;
         margin-bottom: 2px;
-        /* 繝舌ヶ繝ｫ縺ｮ荳区純縺郁ｪｿ謨ｴ */
+        /* バブルの下揃え調整 */
     }
 
     .others .msg-time {
@@ -187,7 +187,7 @@
         font-family: inherit;
     }
 
-    /* 繝励Ξ繝ｼ繧ｹ繝帙Ν繝繝ｼ縺ｮ濶ｲ謖・ｮ・*/
+    /* プレ繝ｼ繧ｹ繝帙Ν繝繝ｼの濶ｲ謖。ｮ。*/
     .chat-textarea::placeholder {
         color: #ccc;
     }
@@ -199,22 +199,22 @@
         border-radius: 6px;
         padding: 0 24px;
         height: 52px;
-        /* 鬮倥＆隱ｿ謨ｴ */
+        /* 高さ調整 */
         font-weight: bold;
         font-size: 14px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        /* 荳ｭ螟ｮ謠・∴ */
+        /* 一ｭ螟ｮ謠。∴ */
         gap: 8px;
         transition: background-color 0.2s;
         flex-shrink: 0;
-        /* 邵ｮ縺ｾ縺ｪ縺・ｈ縺・↓縺吶ｋ */
+        /* 邵ｮ、ｾなし。ｈう↓する */
         white-space: nowrap;
-        /* 繝・く繧ｹ繝医・謚倥ｊ霑斐＠遖∵ｭ｢ */
+        /* 繝。く繧ｹト謚倥ｊ霑斐＠遖∵ｭ｢ */
         margin-bottom: 0;
-        /* 繝槭・繧ｸ繝ｳ繝ｪ繧ｻ繝・ヨ */
+        /* 繝槭。繧ｸ繝ｳ繝ｪ繧ｻ繝。ヨ */
     }
 
     .send-btn:hover {
@@ -236,10 +236,10 @@
     <!-- Header -->
     <div class="chat-header">
         <a href="{% url 'biz_message_list' %}" class="back-link">
-            <i class="fa-solid fa-chevron-left"></i> &nbsp;繝｡繝・そ繝ｼ繧ｸ荳隕ｧ縺ｸ謌ｻ繧・
+            <i class="fa-solid fa-chevron-left"></i> &nbsp;繝｡繝。そ繝ｼ繧ｸ一覧、ｸ謌ｻを
         </a>
-        <h2 class="page-title">繝｡繝・そ繝ｼ繧ｸ隧ｳ邏ｰ</h2>
-        <p class="page-description">繝槭ャ繝√Φ繧ｰ縺励※縺・ｋ豎ゆｺｺ縺ｫ縺､縺・※縲√Γ繝・そ繝ｼ繧ｸ縺ｧ繧・ｊ縺ｨ繧翫〒縺阪∪縺吶・/p>
+        <h2 class="page-title">繝｡繝。そ繝ｼ繧ｸ詳細</h2>
+        <p class="page-description">繝槭ャ繝√Φ繧ｰしている求人に、､う※。√Γ繝。そ繝ｼ繧ｸでをｊ、ｨ繧翫〒きます。</p>
     </div>
 
     <!-- Info Card -->
@@ -249,7 +249,7 @@
             <img src="{{ room.worker.workerprofile.face_photo.url }}"
                 style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
             {% else %}
-            製
+            🐻
             {% endif %}
         </div>
         <div>
@@ -264,15 +264,15 @@
     <div class="chat-box" id="chatLog">
         {% if not messages %}
         <div style="text-align: center; color: #aaa; margin-top: 40px;">
-            <p>繝｡繝・そ繝ｼ繧ｸ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ縲・/p>
+            <p>繝｡繝。そ繝ｼ繧ｸはまだありません〜</p>
         </div>
         {% endif %}
 
         {% for msg in messages %}
-        <!-- 譌･莉伜､画峩邱壹・陦ｨ遉ｺ -->
+        <!-- 譌･莉伜､画峩邱壹。陦ｨ遉ｺ -->
         {% ifchanged msg.created_at|date:"Y-m-d" %}
         <div class="text-center my-3">
-            <span class="text-muted small fw-bold">{{ msg.created_at|date:"n譛・譌･ (D)" }}</span>
+            <span class="text-muted small fw-bold">{{ msg.created_at|date:"n月日 (D)" }}</span>
         </div>
         {% endifchanged %}
 
@@ -292,7 +292,7 @@
                 <img src="{{ room.worker.workerprofile.face_photo.url }}"
                     style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
                 {% else %}
-                製
+                🐻
                 {% endif %}
             </div>
             <div class="d-flex align-items-end gap-2">
@@ -305,13 +305,13 @@
     </div>
 
     <!-- Input Area -->
-    <form method="POST" class="input-area">
+    <form method="POST" class="<input-area">
         {% csrf_token %}
-        <textarea name="content" class="chat-textarea" placeholder="縺顔筏縺苓ｾｼ縺ｿ縺・◆縺縺阪≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺吶・#13;&#10;蠖捺律縺ｯ繧医ｍ縺励￥縺企｡倥＞縺励∪縺吶・
+        <textarea name="content" class="chat-textarea" placeholder="、顔筏、苓ｾｼみう◆、、阪≠繧翫′、ｨう＃、悶＞ます吶。#13;&#10;当日はよろしくお願いします〜
             required></textarea>
 
         <button type="submit" class="send-btn">
-            <i class="fa-solid fa-paper-plane"></i> 騾∽ｿ｡
+            <i class="fa-solid fa-paper-plane"></i> 送信
         </button>
     </form>
 

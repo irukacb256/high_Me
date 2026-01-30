@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 {% load static %}
 {% load jobs_extras %}
 
@@ -30,7 +30,7 @@
         margin-bottom: 20px;
     }
 
-    /* 蝓ｺ譛ｬ諠・ｱ繧ｨ繝ｪ繧｢ */
+    /* 基本情報繧ｨ繝ｪ繧｢ */
     .profile-header {
         display: flex;
         gap: 20px;
@@ -75,7 +75,7 @@
         height: 40px;
         border-radius: 50%;
         background: #FFD700;
-        /* 繝繝溘・ */
+        /* 繝繝溘。 */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -83,7 +83,7 @@
         font-size: 20px;
     }
 
-    /* 繧ｰ繝ｫ繝ｼ繝励ち繧ｰ */
+    /* グループタグ */
     .group-row {
         display: flex;
         align-items: center;
@@ -121,7 +121,7 @@
         cursor: pointer;
     }
 
-    /* 繝・・繧ｿ繝ｪ繧ｹ繝・*/
+    /* 繝）繧ｿ繝ｪ繧ｹ繝。*/
     .data-row {
         display: flex;
         justify-content: space-between;
@@ -142,7 +142,7 @@
         font-weight: bold;
     }
 
-    /* 繝｡繝｢ */
+    /* メモ */
     .memo-area {
         background: #FAFAFA;
         padding: 15px;
@@ -173,7 +173,7 @@
         cursor: pointer;
     }
 
-    /* 邱頑･騾｣邨｡蜈・*/
+    /* 緊急連絡允E*/
     .emergency-box {
         background: white;
         border: 1px solid #eee;
@@ -203,7 +203,7 @@
         cursor: pointer;
     }
 
-    /* 繝舌ャ繧ｸ隧ｳ邏ｰ */
+    /* バッジ詳細 */
     .badge-detail-title {
         font-weight: bold;
         font-size: 18px;
@@ -231,7 +231,7 @@
         height: 40px;
         border-radius: 50%;
         background: #FF9500;
-        /* 繧｢繧､繧ｳ繝ｳ閭梧勹 */
+        /* アイコン背景 */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -271,12 +271,12 @@
 </style>
 
 <div class="worker-detail-container">
-    <div class="page-title">繝ｯ繝ｼ繧ｫ繝ｼ隧ｳ邏ｰ</div>
+    <div class="page-title">ワーカー詳細</div>
     <div class="page-desc">
-        繝ｯ繝ｼ繧ｫ繝ｼ縺輔ｓ縺ｮ隧ｳ邏ｰ縺碁夢隕ｧ縺ｧ縺阪∪縺吶ゅ♀豌励↓蜈･繧翫・逋ｻ骭ｲ/隗｣髯､縲√ヶ繝ｭ繝・け縺ｮ霑ｽ蜉/隗｣髯､繧定｡後≧縺薙→縺後〒縺阪∪縺吶・
+        ワーカー、輔ｓの詳細、碁夢覧できますゅ♀豌励↓蜈･繧翫。登録/隗｣髯､。√ヶ繝ｭ繝。けの霑ｽ蜉/解除を行うことができます〜
     </div>
 
-    <!-- 蝓ｺ譛ｬ諠・ｱ繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
+    <!-- 基本情報繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
     <div class="section-box">
         <div class="profile-header">
             {% if worker.workerprofile.face_photo %}
@@ -289,99 +289,99 @@
             {% endif %}
 
             <div class="profile-info">
-                <!-- 蜷榊燕縺ｯ蛟倶ｺｺ諠・ｱ菫晁ｭｷ縺ｮ隕ｳ轤ｹ縺九ｉ繧､繝九す繝｣繝ｫ遲峨↓縺吶ｋ蝣ｴ蜷医ｂ縺ゅｋ縺後∽ｻ墓ｧ倅ｸ翫・隧ｳ邏ｰ縺ｪ縺ｮ縺ｧ陦ｨ遉ｺ -->
-                <!-- <div style="width:100px; height:20px; background:#eee;"></div> 繝槭せ繧ｭ繝ｳ繧ｰ陦ｨ迴ｾ -->
+                <!-- 名榊燕は蛟倶ｺｺ情報菫晁ｭｷの隕ｳ轤ｹから繧､繝九す繝｣繝ｫ遲峨↓する蝣ｴ名医ｂあるが、∽ｻ墓ｧ倅ｸ翫。詳細なしｮで陦ｨ遉ｺ -->
+                <!-- <div style="width:100px; height:20px; background:#eee;"></div> マスキング表現 -->
             </div>
 
-            <a href="#" class="block-btn">繝悶Ο繝・け險ｭ螳・/a>
+            <a href="#" class="block-btn">繝悶Ο繝。け設定</a>
         </div>
 
         <div class="badge-brief">
-            <span style="font-size:13px; color:#666;">繝舌ャ繧ｸ</span>
+            <span style="font-size:13px; color:#666;">バッジ</span>
             <i class="fa-regular fa-circle-question" style="color:#999;"></i>
 
             <div style="display:flex; gap:10px; margin-left:10px;">
-                <!-- 縺薙％縺ｫ迯ｲ蠕玲ｸ医∩繝舌ャ繧ｸ縺ｮ荳ｻ隕√↑繧ゅ・繧定｡ｨ遉ｺ -->
-                <!-- 繝繝溘・ -->
+                <!-- 、薙％に迯ｲ蠕玲ｸ医∩繝舌ャ繧ｸの一ｻ隕√↑繧ゅ。繧定｡ｨ遉ｺ -->
+                <!-- 繝繝溘。 -->
                 <div class="main-badge-icon"><i class="fa-solid fa-bell-concierge"></i></div>
-                <div style="font-size:12px; text-align:center;">繝帙・繝ｫ</div>
+                <div style="font-size:12px; text-align:center;">繝帙。繝ｫ</div>
             </div>
         </div>
 
         <div class="group-row">
-            <div class="group-label">謇螻槭げ繝ｫ繝ｼ繝・/div>
+            <div class="group-label">所属グループ</div>
             <div class="tag-list">
                 {% for g in groups %}
                 <span class="tag">{{ g.get_group_type_display }}</span>
                 {% empty %}
-                <span style="font-size:12px; color:#999;">縺ｪ縺・/span>
+                <span style="font-size:12px; color:#999;">なし</span>
                 {% endfor %}
             </div>
-            <button class="btn-group-change">繧ｰ繝ｫ繝ｼ繝励・螟画峩</button>
+            <button class="btn-group-change">繧ｰグループの変更</button>
         </div>
     </div>
 
-    <!-- 繧ｹ繧ｿ繝・ヤ繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
+    <!-- 繧ｹ繧ｿ繝。ヤ繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
     <div class="section-box" style="padding:0;">
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">蟷ｳ蝮⑧ood邇・ｼ育峩霑・0蝗槭・隧穂ｾ｡・・/div>
+            <div class="data-label">平均Good邇。ｼ育峩霑。0蝗槭。隧穂ｾ｡）</div>
             <div class="data-value">100%</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">逶ｴ蜑阪く繝｣繝ｳ繧ｻ繝ｫ邇・/div>
+            <div class="data-label">直前キャンセル率</div>
             <div class="data-value">0%</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">縺薙・蠎苓・縺ｧ蜒阪＞縺溷屓謨ｰ</div>
-            <div class="data-value">1蝗・/div>
+            <div class="data-label">この店舗で蜒阪＞、溷屓謨ｰ</div>
+            <div class="data-value">1回</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">蜒阪＞縺溷屓謨ｰ</div>
-            <div class="data-value">2蝗・/div>
+            <div class="data-label">働いた回数</div>
+            <div class="data-value">2回</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">蜒阪＞縺溷粋險域凾髢・/div>
-            <div class="data-value">4.0譎る俣</div>
+            <div class="data-label">働いた合計時閁E</div>
+            <div class="data-value">4.0時間</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">莉企ｱ蜒阪￠繧区ｮ九ｊ譎る俣</div>
-            <div class="data-value">39.0譎る俣</div>
+            <div class="data-label">今週働ける残り時間</div>
+            <div class="data-value">39.0時間</div>
         </div>
 
         <div style="padding:15px 20px; border-top:1px solid #eee;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                <div class="data-label">邂｡逅・畑繝｡繝｢</div>
-                <button class="btn-edit-memo">邱ｨ髮・/button>
+                <div class="data-label">管理畑繝｡繝｢</div>
+                <button class="btn-edit-memo">編雁E</button>
             </div>
-            <div class="memo-note">窶ｻ繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ縺ｯ蜈ｬ髢九＆繧後∪縺帙ｓ</div>
+            <div class="memo-note">※ワーカーには公開されません</div>
             {% if memo %}
             <div style="margin-top:5px; font-size:14px;">{{ memo.memo }}</div>
             {% endif %}
         </div>
     </div>
 
-    <!-- 邱頑･騾｣邨｡蜈・-->
+    <!-- 緊急連絡允E-->
     <div class="section-box">
-        <div class="emergency-title">繝ｯ繝ｼ繧ｫ繝ｼ縺ｮ邱頑･騾｣邨｡蜈・/div>
+        <div class="emergency-title">ワーカーの緊急連絡允E</div>
         <div class="emergency-desc">
-            繝ｯ繝ｼ繧ｫ繝ｼ縺輔ｓ縺ｮ邱頑･騾｣邨｡蜈医ｒ蜿門ｾ励☆繧九％縺ｨ縺後〒縺阪∪縺吶・br>
-            蛟倶ｺｺ諠・ｱ縺ｧ縺吶・縺ｧ縲∵ｪ謌代ｄ莠区腐縺ｪ縺ｩ邱頑･縺ｮ蝣ｴ蜷医↓縺ｮ縺ｿ縺泌茜逕ｨ縺上□縺輔＞縲・
+            ワーカーさんの緊急連絡先を取得することができます〜br>
+            蛟倶ｺｺ情報で、吶。で。∵ｪ謌代ｄ莠区腐なしｩ邱頑･の蝣ｴ名医↓のみ、泌茜逕ｨください〜
         </div>
-        <button class="btn-show-contact">邱頑･騾｣邨｡蜈医ｒ陦ｨ遉ｺ縺吶ｋ</button>
+        <button class="btn-show-contact">緊急連絡先を表示する</button>
         <div style="font-size:12px; color:#666; margin-top:10px;">
-            莉･荳九・縺・★繧後°縺ｫ隧ｲ蠖薙☆繧九◆繧√∫ｷ頑･騾｣邨｡蜈医ｒ陦ｨ遉ｺ縺ｧ縺阪∪縺帙ｓ縲・br>
-            繝ｻ 繝ｯ繝ｼ繧ｫ繝ｼ縺輔ｓ縺檎ｷ頑･騾｣邨｡蜈医ｒ逋ｻ骭ｲ縺励※縺・↑縺・br>
-            繝ｻ 繝ｯ繝ｼ繧ｫ繝ｼ縺輔ｓ縺ｮ邱頑･騾｣邨｡蜈医ｒ蜿門ｾ励〒縺阪ｋ譛滄俣縺ｫ隧ｲ蠖薙＠縺ｪ縺・
+            莉･一九。う★繧後°に隧ｲ蠖薙☆繧九◆繧√∫ｷ頑･騾｣邨｡蜈医ｒ陦ｨ遉ｺで、阪∪、帙ｓ〜br>
+            。 ワーカー、輔ｓ、檎ｷ頑･騾｣邨｡蜈医ｒ登録してう↑うbr>
+            。 ワーカーさんの緊急連絡先を取得できる期間に該当しなし
         </div>
     </div>
 
-    <!-- 繝舌ャ繧ｸ隧ｳ邏ｰ -->
+    <!-- バッジ詳細 -->
     <div class="section-box">
-        <div class="badge-detail-title">繝舌ャ繧ｸ隧ｳ邏ｰ</div>
+        <div class="badge-detail-title">バッジ詳細</div>
 
         <div style="font-size:12px; color:#666; margin-bottom:20px;">
-            隱榊ｮ壹＆繧後◆蝗樊焚・壹梧ｬ｡蝗槭ｂ鬆ｼ縺ｿ縺溘＞讌ｭ蜍吶阪→縺励※驕ｸ謚槭＆繧後◆蝗樊焚<br>
-            隱榊ｮ壹＠縺溷ｺ苓・謨ｰ・壹梧ｬ｡蝗槭ｂ鬆ｼ縺ｿ縺溘＞讌ｭ蜍吶阪→縺励※驕ｸ謚槭＠縺溷ｺ苓・縺ｮ謨ｰ
+            隱榊ｮ壹＆繧後◆蝗樊焚。壹梧ｬ｡蝗槭ｂ鬆ｼみた＞業蜍吶阪→して驕ｸ謚槭＆繧後◆蝗樊焚<br>
+            隱榊ｮ壹＠、溷ｺ苓。謨ｰ。壹梧ｬ｡蝗槭ｂ鬆ｼみた＞業蜍吶阪→して驕ｸ謚槭＠、溷ｺ苓。の謨ｰ
         </div>
 
         {% for wb in worker_badges %}
@@ -398,10 +398,10 @@
             </div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <div class="badge-detail-counts">
-                    隱榊ｮ壹＆繧後◆蝗樊焚 <span class="count-highlight">{{ wb.certified_count }}</span>
-                    隱榊ｮ壹＠縺溷ｺ苓・謨ｰ <span class="count-highlight">{{ wb.certified_store_count }}</span>
+                    認定された回数 <span class="count-highlight">{{ wb.certified_count }}</span>
+                    隱榊ｮ壹＠、溷ｺ苓。謨ｰ <span class="count-highlight">{{ wb.certified_store_count }}</span>
                 </div>
-                <button class="btn-detail-toggle">隧ｳ邏ｰ <i class="fa-solid fa-chevron-down"></i></button>
+                <button class="btn-detail-toggle">詳細 <i class="fa-solid fa-chevron-down"></i></button>
             </div>
         </div>
         {% endfor %}

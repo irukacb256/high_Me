@@ -1,0 +1,47 @@
+{% extends 'Auth/signup_base.html' %}
+
+{% block back_button %}
+<a href="{% url 'setup_address' %}" class="back-btn">＜</a>
+{% endblock %}
+
+{% block progress_bar %}
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment "></div>
+{% endblock %}
+
+{% block title %}現在の職業を教えてください{% endblock %}
+
+{% block form_content %}
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学生" required
+        onclick="checkForm()"> 大学生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学院生" onclick="checkForm()">
+    大学院生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="専門学生" onclick="checkForm()">
+    専門学生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="短大生" onclick="checkForm()">
+    短大生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高校生" onclick="checkForm()">
+    高校生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高専生" onclick="checkForm()">
+    高専生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="フリーター" onclick="checkForm()">
+    フリーター</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="会社員" onclick="checkForm()">
+    会社員</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="主婦。主夫" onclick="checkForm()">
+    主婦。主夫</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="その他" onclick="checkForm()">
+    その他</label>
+{% endblock %}
+
+
+
+{% block footer_buttons %}
+<a href="{% url 'setup_workstyle' %}" class="btn-later">あとで</a>
+<button type="submit" class="btn-next" disabled>次へ</button>
+{% endblock %}

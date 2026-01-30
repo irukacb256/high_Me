@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 
 {% block content %}
 <style>
@@ -78,22 +78,22 @@
     <div class="confirm-icon">
         <i class="fa-solid fa-triangle-exclamation"></i>
     </div>
-    <h1 class="confirm-title">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧貞炎髯､縺励∪縺吶°・・/h1>
+    <h1 class="confirm-title">求人の、ｲ、ｪ蠖｢繧貞炎髯､します°）</h1>
     <p style="color: #666; margin-bottom: 25px; font-size: 14px;">
-        縺薙・縺ｲ縺ｪ蠖｢繧貞炎髯､縺吶ｋ縺ｨ縲∝・縺ｮ蜍滄寔蜀・ｮｹ繧貞ｾｩ蜈・☆繧九％縺ｨ縺ｯ縺ｧ縺阪∪縺帙ｓ縲・br>
-        譌｢縺ｫ蜃ｺ縺輔ｌ縺ｦ縺・ｋ豎ゆｺｺ縺ｯ蜑企勁縺輔ｌ縺ｾ縺帙ｓ縲・
+        この、ｲ、ｪ蠖｢繧貞炎髯､する、ｨ。∝。の蜍滄寔内ｮｹ繧貞ｾｩ蜈。☆繧九ことはで、阪∪、帙ｓ〜br>
+        譌｢に蜃ｺ、輔ｌ、ｦいる求人は蜑企勁、輔ｌます帙ｓ〜
     </p>
 
     <div class="target-box">
-        <div style="font-size: 12px; color: #888; margin-bottom: 5px;">蜑企勁蟇ｾ雎｡</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 5px;">削除対象</div>
         <div class="target-title">{{ template.title }}</div>
     </div>
 
     <form method="POST">
         {% csrf_token %}
         <div class="btn-row">
-            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">縺・＞縺医∵綾繧翫∪縺・/a>
-            <button type="submit" class="btn-delete">蜑企勁縺吶ｋ</button>
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">う＞え∵綾繧翫∪う</a>
+            <button type="submit" class="btn-delete">削除する</button>
         </div>
     </form>
 </div>

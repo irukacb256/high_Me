@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 
 {% block content %}
 <style>
@@ -102,17 +102,17 @@
     }
 </style>
 
-<div class="page-title">繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡</div>
-<p class="page-desc">繝ｯ繝ｼ繧ｫ繝ｼ縺ｮ隧穂ｾ｡縺檎ｵゅｏ縺｣縺ｦ縺ｪ縺・ｱゆｺｺ繧帝∈謚槭＠縺ｦ繝ｬ繝薙Η繝ｼ縺励※縺上□縺輔＞縲・/p>
+<div class="page-title">ワーカー評価</div>
+<p class="page-desc">ワーカーの隧穂ｾ｡、檎ｵゅｏ、｣、ｦなし。ｱゆｺｺ繧帝∈謚槭＠、ｦ繝ｬ繝薙Η繝ｼしてください〜</p>
 
 <div class="content-card">
-    <div class="card-header">繝ｬ繝薙Η繝ｼ縺悟ｿ・ｦ√↑豎ゆｺｺ荳隕ｧ</div>
+    <div class="card-header">繝ｬ繝薙Η繝ｼ、悟ｿ。ｦ√↑求人一覧</div>
 
     <!-- Header -->
     <div class="job-list-header">
-        <div class="col-job">豎ゆｺｺ</div>
-        <div class="col-time">讌ｭ蜍呎凾髢・/div>
-        <div class="col-count">繝ｬ繝薙Η繝ｼ<br>莠ｺ謨ｰ</div>
+        <div class="col-job">求人</div>
+        <div class="col-time">業務時閁E</div>
+        <div class="col-count">レビュー<br>人数</div>
         <div class="col-action"></div>
     </div>
 
@@ -124,19 +124,19 @@
                 <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="job-title">{{ job.title }}</a>
             </div>
             <div class="col-time">
-                {{ job.work_date|date:"Y蟷ｴn譛・譌･" }} ({{ job.work_date|date:"D" }})<br>
-                {{ job.start_time|date:"H:i" }} 縲・{{ job.end_time|date:"H:i" }}
+                {{ job.work_date|date:"Y年n月日" }} ({{ job.work_date|date:"D" }})<br>
+                {{ job.start_time|date:"H:i" }} 〜{{ job.end_time|date:"H:i" }}
             </div>
             <div class="col-count">
-                {{ job.unreviewed_count }}莠ｺ
+                {{ job.unreviewed_count }}人
             </div>
             <div class="col-action">
-                <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="btn-review">繝ｬ繝薙Η繝ｼ</a>
+                <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="btn-review">レビュー</a>
             </div>
         </div>
         {% empty %}
         <div style="padding:40px; text-align:center; color:#999;">
-            繝ｬ繝薙Η繝ｼ縺悟ｿ・ｦ√↑豎ゆｺｺ縺ｯ縺ゅｊ縺ｾ縺帙ｓ
+            繝ｬ繝薙Η繝ｼ、悟ｿ。ｦ√↑求人はありません
         </div>
         {% endfor %}
     </div>

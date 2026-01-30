@@ -1,97 +1,206 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
-    <title>莨∵･ｭ / 蠎苓・荳隕ｧ | Timee</title>
+    <title>企業 / 店舗一覧 | Timee</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { display: flex; margin: 0; font-family: sans-serif; background-color: #f5f5f5; height: 100vh; }
-        
-        /* 繧ｵ繧､繝峨Γ繝九Η繝ｼ (逕ｻ蜒・蟾ｦ) */
-        .sidebar { width: 220px; background: white; border-right: 1px solid #ddd; padding: 20px 0; }
-        .sidebar-brand { padding: 0 20px 20px; font-weight: bold; font-size: 20px; }
-        .sidebar-label { padding: 10px 20px; font-size: 11px; color: #999; font-weight: bold; }
-        .nav-item { padding: 12px 20px; display: flex; align-items: center; text-decoration: none; color: #333; font-size: 13px; }
-        .nav-item i { width: 25px; margin-right: 10px; color: #666; }
-        .nav-item.active { background: #fff3c4; font-weight: bold; border-radius: 0 25px 25px 0; margin-right: 10px; }
+        body {
+            display: flex;
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
 
-        /* 繝｡繧､繝ｳ繧ｨ繝ｪ繧｢ */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .page-header { margin-bottom: 30px; }
-        .page-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
-        .page-desc { font-size: 13px; color: #666; }
+        /* サイドメニュー (画像左) */
+        .sidebar {
+            width: 220px;
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 20px 0;
+        }
 
-        /* 繧ｫ繝ｼ繝峨ョ繧ｶ繧､繝ｳ */
-        .card { background: white; border-radius: 8px; border: 1px solid #eee; margin-bottom: 30px; }
-        .card-header { padding: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #f9f9f9; }
-        .list-table { width: 100%; border-collapse: collapse; }
-        .list-table th { padding: 12px 20px; text-align: left; font-size: 11px; color: #999; background: #fafafa; }
-        .list-table td { padding: 20px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
-        
-        .btn-manage { background: #007AFF; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 12px; }
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .sidebar-label {
+            padding: 10px 20px;
+            font-size: 11px;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .nav-item i {
+            width: 25px;
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .nav-item.active {
+            background: #fff3c4;
+            font-weight: bold;
+            border-radius: 0 25px 25px 0;
+            margin-right: 10px;
+        }
+
+        /* メインエリア */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* カードデザイン */
+        .card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list-table th {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 11px;
+            color: #999;
+            background: #fafafa;
+        }
+
+        .list-table td {
+            padding: 20px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+
+        .btn-manage {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 12px;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <div class="sidebar-brand">Timee</div>
-    <div class="sidebar-label">繝槭う繝壹・繧ｸ</div>
-    <a href="#" class="nav-item"><i class="fa-regular fa-bell"></i> 縺顔衍繧峨○</a>
-    <a href="{% url 'biz_portal' %}" class="nav-item active"><i class="fa-solid fa-house"></i> 莨∵･ｭ / 蠎苓・荳隕ｧ</a>
-    <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> 繧｢繧ｫ繧ｦ繝ｳ繝域ュ蝣ｱ</a>
-    <a href="#" class="nav-item"><i class="fa-regular fa-envelope"></i> 繝｡繝ｼ繝ｫ蜿嶺ｿ｡險ｭ螳・/a>
-</div>
-
-<div class="main-content">
-    <div class="page-header">
-        <h1 class="page-title">莨∵･ｭ / 蠎苓・荳隕ｧ</h1>
-        <p class="page-desc">莨∵･ｭ邂｡逅・判髱｢繧・ｺ苓・邂｡逅・判髱｢縺ｫ繧｢繧ｯ繧ｻ繧ｹ縺吶ｋ縺薙→縺後〒縺阪∪縺吶・/p>
+    <div class="sidebar">
+        <div class="sidebar-brand">Timee</div>
+        <div class="sidebar-label">マイページ</div>
+        <a href="#" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
+        <a href="{% url 'biz_portal' %}" class="nav-item active"><i class="fa-solid fa-house"></i> 企業 / 店舗一覧</a>
+        <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> アカウント情報</a>
+        <a href="#" class="nav-item"><i class="fa-regular fa-envelope"></i> メール受信設定</a>
     </div>
 
-    <!-- 莨∵･ｭ繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
-    <div class="card">
-        <div class="card-header">莨∵･ｭ</div>
-        <table class="list-table">
-            <thead>
-                <tr><th>莨∵･ｭ蜷・/th><th>莨∵･ｭID</th><th></th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="font-weight: bold;">{{ biz_profile.company_name }}</td>
-                    <td style="color: #666;">{{ biz_profile.id }}</td>
-                    <td style="text-align: right;"><button class="btn-manage">邂｡逅・判髱｢</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 蠎苓・繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
-    <div class="card">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <span>蠎苓・</span>
-            <a href="{% url 'biz_add_store' %}" style="font-size: 12px; color: #007AFF; text-decoration: none;">+ 蠎苓・繧定ｿｽ蜉縺吶ｋ</a>
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">企業 / 店舗一覧</h1>
+            <p class="page-desc">企業管理画面や店舗管理画面にアクセスすることができます。</p>
         </div>
-        <table class="list-table">
-            <thead>
-                <tr><th>蠎苓・蜷・/th><th>蠎苓・ID</th><th>邂｡逅・畑蠎苓・ID</th><th></th></tr>
-            </thead>
-            <tbody>
-                {% for store in stores %}
-                <tr>
-                    <td style="font-weight: bold;">{{ store.store_name }}</td>
-                    <td style="color: #666;">{{ store.id }}</td>
-                    <td style="color: #ccc;">-</td>
-                    <td style="text-align: right;">
-                        <a href="{% url 'biz_dashboard' store.id %}" class="btn-manage">邂｡逅・判髱｢</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="4" style="text-align:center; color:#999; padding:40px;">蠎苓・縺檎匳骭ｲ縺輔ｌ縺ｦ縺・∪縺帙ｓ縲・/td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <!-- 企業セクション -->
+        <div class="card">
+            <div class="card-header">企業</div>
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>企業名</th>
+                        <th>企業ID</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold;">{{ biz_profile.company_name }}</td>
+                        <td style="color: #666;">{{ biz_profile.id }}</td>
+                        <td style="text-align: right;">button class="btn-manage">管理画面</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 店舗セクション -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>店舗</span>
+                <a href="{% url 'biz_add_store' %}" style="font-size: 12px; color: #007AFF; text-decoration: none;">+
+                    店舗を追加する</a>
+            </div>
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>店舗名</th>
+                        <th>店舗ID</th>
+                        <th>管理用店舗ID</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for store in stores %}
+                    <tr>
+                        <td style="font-weight: bold;">{{ store.store_name }}</td>
+                        <td style="color: #666;">{{ store.id }}</td>
+                        <td style="color: #ccc;">-</td>
+                        <td style="text-align: right;">
+                            <a href="{% url 'biz_dashboard' store.id %}" class="btn-manage">管理画面</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:#999; padding:40px;">店舗が登録されていません。</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>

@@ -1,4 +1,4 @@
-<style>
+﻿<style>
     /* Custom Calendar Grid Styling */
     .custom-calendar {
         width: 100%;
@@ -117,12 +117,12 @@
     <thead>
         <tr class="cal-header-row">
             <th class="sunday">日</th>
-            <th>朁E/th>
+            <th>月</th>
             <th>火</th>
             <th>水</th>
             <th>木</th>
-            <th>釁E/th>
-            <th class="saturday">圁E/th>
+            <th>金</th>
+            <th class="saturday">土</th>
         </tr>
     </thead>
     <tbody>
@@ -130,10 +130,10 @@
         <tr>
             {% for day in week %}
             <td class="cal-cell {% if not day.is_current_month %}other-month{% endif %} {% if day.is_today %}today{% endif %} {% if forloop.counter0 == 0 %}sunday{% elif forloop.counter0 == 6 %}saturday{% endif %}"
-                onclick="openDayModal('{{ day.date|date:'Y-m-d' }}', '{{ day.date|date:'Y年n朁E日' }}', {{ forloop.counter0 }})">
+                onclick="openDayModal('{{ day.date|date:'Y-m-d' }}', '{{ day.date|date:'Y年n月j日' }}', {{ forloop.counter0 }})">
 
                 <span class="cal-date-num">{{ day.day }}</span>
-                {% if day.is_today and day.day == 1 %}<span style="font-size:10px; margin-left:2px;">允E��</span>{% endif
+                {% if day.is_today and day.day == 1 %}<span style="font-size:10px; margin-left:2px;">元日</span>{% endif
                 %}
 
                 <!-- Display up to 3 jobs, then +X more -->
@@ -169,7 +169,7 @@
                     {% for job in day.postings %}
                     <div class="job-data-item" data-id="{{ job.id }}" data-title="{{ job.title }}"
                         data-time="{{ job.start_time|time:'H:i' }} ~ {{ job.end_time|time:'H:i' }}"
-                        data-status="{% if job.is_ended %}募集終亁E% elif job.matched_count >= job.recruitment_count %}確定済み{% else %}募集中{% endif %}"
+                        data-status="{% if job.is_ended %}募集終了{% elif job.matched_count >= job.recruitment_count %}確定済み{% else %}募集中{% endif %}"
                         data-status-class="{% if job.is_ended %}badge-ended{% elif job.matched_count >= job.recruitment_count %}badge-done{% else %}badge-active{% endif %}"
                         data-visibility="{{ job.get_visibility_display }}"
                         data-people="{{ job.matched_count }} / {{ job.recruitment_count }}人"

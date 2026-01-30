@@ -38,6 +38,9 @@ class AddressForm(forms.Form):
     address_line = forms.CharField(max_length=100, label='番地')
     building = forms.CharField(max_length=100, label='建物名', required=False)
 
+class AssociationForm(forms.Form):
+    occupation = forms.CharField(label='現在の職業', required=False)
+
 class WorkstyleForm(forms.Form):
     work_style = forms.CharField(label='現在の職業', required=False)
     career_interest = forms.CharField(label='興味のある職種', required=False)

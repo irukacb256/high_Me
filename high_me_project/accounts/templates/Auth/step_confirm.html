@@ -1,63 +1,75 @@
-{% extends 'signup/signup_base.html' %}
+{% extends 'Auth/signup_base.html' %}
 
-{% block content %}
-<h1 class="question-title">入力内容の確認</h1>
 
-<div style="margin-bottom: 30px;">
-    <!-- 名前 (漢字) -->
-    <div style="margin-bottom: 20px;">
-        <label style="color:#999; font-size:12px;">氏名（漢字）</label>
-        <div style="font-size:16px; font-weight:bold;">
-            {{ profile.last_name_kanji }} {{ profile.first_name_kanji }}
-        </div>
-    </div>
 
-    <!-- 名前 (カナ) -->
-    <div style="margin-bottom: 20px;">
-        <label style="color:#999; font-size:12px;">氏名（カナ）</label>
-        <div style="font-size:16px; font-weight:bold;">
-            {{ profile.last_name_kana }} {{ profile.first_name_kana }}
-        </div>
-    </div>
+{% block title %}入力内容の確認{% endblock %}
 
-    <!-- 性別 -->
-    <div style="margin-bottom: 20px;">
-        <label style="color:#999; font-size:12px;">性別</label>
-        <div style="font-size:16px; font-weight:bold;">
-            {% if profile.gender == 'male' %}男性
-            {% elif profile.gender == 'female' %}女性
-            {% else %}未回答
-            {% endif %}
-        </div>
-    </div>
 
-    <!-- 生年月日 -->
-    <div style="margin-bottom: 20px;">
-        <label style="color:#999; font-size:12px;">生年月日</label>
-        <div style="font-size:16px; font-weight:bold;">
-            {{ profile.birth_date|date:"Y年n月j日" }}
-        </div>
-    </div>
 
-    <!-- 住所 -->
-    <div style="margin-bottom: 20px;">
-        <label style="color:#999; font-size:12px;">住所</label>
-        <div style="font-size:16px; font-weight:bold;">
-            {% if profile.postal_code %}
-            〒{{ profile.postal_code }}<br>
-            {{ profile.prefecture|default:"" }} {{ profile.city|default:"" }} {{ profile.address_line|default:"" }}<br>
-            {{ profile.building|default:"" }}
-            {% else %}
-            <span style="color:#ccc;">入力されていません</span>
-            {% endif %}
-        </div>
-    </div>
+{% block form_content %}
+<div class="confirm-group">
+    <label class="form-label">名前</label>
+    <p class="confirm-text">{{ profile.last_name_kanji }} {{ profile.first_name_kanji }}</p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">フリガナ</label>
+    <p class="confirm-text">{{ profile.last_name_kana }} {{ profile.first_name_kana }}</p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">性別</label>
+    <p class="confirm-text">
+        {% if profile.gender == 'male' %}男性
+        {% elif profile.gender == 'female' %}女性
+        {% else %}回答しない{% endif %}
+    </p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">生年月日</label>
+    <p class="confirm-text">{{ profile.birth_date|date:"Y年n月j日"|default:profile.birth_date }}</p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">電話番号</label>
+    <p class="confirm-text">{{ profile.phone }}</p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">住所</label>
+    <p class="confirm-text">
+        〒{{ profile.postal_code }}<br>
+        {{ profile.prefecture }}{{ profile.city }}{{ profile.address_line }}<br>
+        {{ profile.building }}
+    </p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">現在の職業</label>
+    <p class="confirm-text">{{ profile.occupation|default:"未回答" }}</p>
+</div>
+<div class="confirm-group">
+    <label class="form-label">働き方</label>
+    <p class="confirm-text">{{ profile.work_style|default:"未回答" }}</p>
 </div>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="footer-btn-area">
-        <button type="submit" class="btn-next active">次へ</button>
-    </div>
-</form>
+<style>
+    .confirm-group {
+        margin-bottom: 24px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 12px;
+    }
+
+    .confirm-group:last-child {
+        border-bottom: none;
+    }
+
+    .confirm-text {
+        font-size: 16px;
+        color: #333;
+        margin: 0;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+{% block footer_class %}single-btn{% endblock %}
+
+{% block footer_buttons %}
+<button type="submit" class="btn-next">この内容で登録する</button>
 {% endblock %}

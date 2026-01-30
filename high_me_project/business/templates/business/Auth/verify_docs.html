@@ -1,7 +1,7 @@
-{% extends 'business/Common/base_signup.html' %}
+﻿{% extends 'business/Common/base_signup.html' %}
 {% block content %}
 <style>
-    /* 繧ｹ繝・ャ繝代・ */
+    /* ステッパー */
     .stepper {
         display: flex;
         margin: -40px -40px 40px -40px;
@@ -28,14 +28,14 @@
     }
 
     .step::before {
-        content: '笨・';
+        content: '✓';
     }
 
     .step.no-check::before {
         content: '';
     }
 
-    /* 譖ｸ鬘樣∈謚槭お繝ｪ繧｢ */
+    /* 書類選択エリア */
     .doc-select-section {
         margin-bottom: 30px;
     }
@@ -55,7 +55,7 @@
         margin-bottom: 20px;
     }
 
-    /* 繧｢繝・・繝ｭ繝ｼ繝峨お繝ｪ繧｢ */
+    /* 繧｢繝）繝ｭ繝ｼ繝峨お繝ｪ繧｢ */
     .upload-zone {
         border: 2px dashed #ddd;
         border-radius: 10px;
@@ -78,7 +78,7 @@
         display: block;
     }
 
-    /* 繧ｹ繝槭・縺九ｉ繧｢繝・・繝ｭ繝ｼ繝・*/
+    /* 繧ｹ繝槭。から繧｢繝）繝ｭート*/
     .mobile-link-box {
         background: #F0F7FF;
         border: 1px solid #B3D7F7;
@@ -101,7 +101,7 @@
         font-size: 12px;
     }
 
-    /* 繝√ぉ繝・け繝ｪ繧ｹ繝・*/
+    /* チェック繝ｪ繧ｹ繝。*/
     .checklist-container {
         margin-top: 40px;
         padding-top: 30px;
@@ -160,34 +160,34 @@
     }
 </style>
 
-<!-- 騾ｲ陦後ヰ繝ｼ -->
+<!-- ステッパー -->
 <div class="stepper">
-    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
-    <div class="step">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
-    <div class="step active no-check">3. 莠区･ｭ閠・匳骭ｲ</div>
-    <div class="step inactive no-check">4. 蠎苓・逋ｻ骭ｲ</div>
+    <div class="step">メール登録</div>
+    <div class="step">アカウント登録</div>
+    <div class="step active no-check">3. 事業者登録</div>
+    <div class="step inactive no-check">4. 店舗登録</div>
 </div>
 
-<h1>莠区･ｭ閠・｢ｺ隱肴嶌鬘槭・騾∽ｿ｡</h1>
+<h1>事業者確認書類の送信</h1>
 
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="doc-select-section">
-        <label class="label-title">1. 謠仙・縺吶ｋ譖ｸ鬘槭ｒ驕ｸ謚槭＠縺ｦ縺上□縺輔＞</label>
+        <label class="<label-title">1. 提出する書類を選択してください</label>
         <select name="doc_type" id="doc_type">
-            <option value="">驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
-            <option value="螻･豁ｴ莠矩・・驛ｨ險ｼ譏取嶌">螻･豁ｴ莠矩・・驛ｨ險ｼ譏取嶌・域ｳ穂ｺｺ縺ｮ蝣ｴ蜷茨ｼ・/option>
-            <option value="髢区･ｭ螻・>髢区･ｭ螻奇ｼ亥倶ｺｺ莠区･ｭ荳ｻ縺ｮ蝣ｴ蜷茨ｼ・/option>
-            <option value="驕玖ｻ｢蜈崎ｨｱ險ｼ">莉｣陦ｨ閠・驕玖ｻ｢蜈崎ｨｱ險ｼ</option>
+            <option value="">選択してください</option>
+            <option value="履歴事項全部証明書">履歴事項全部証明書（法人の場合）</option>
+            <option value="開業届">開業届（個人事業主の場合）</option>
+            <option value="運転免許証">代表者 運転免許証</option>
         </select>
 
-        <label class="label-title">2. 譖ｸ鬘槭ｒ繧｢繝・・繝ｭ繝ｼ繝峨＠縺ｦ縺上□縺輔＞</label>
+        <label class="<label-title">2. 書類をアップロードしてください</label>
         <div class="upload-zone" onclick="document.getElementById('file-input').click()">
             <div id="upload-placeholder">
-                <span style="font-size: 40px;">刀</span>
-                <p style="font-weight: bold; margin: 10px 0 5px;">繧ｯ繝ｪ繝・け縺ｾ縺溘・繝峨Λ繝・げ・・ラ繝ｭ繝・・縺ｧ霑ｽ蜉</p>
-                <p style="font-size: 12px; color: #999;">PDF, JPG, PNG (譛螟ｧ10MB)</p>
+                <span style="font-size: 40px;">📄</span>
+                <p style="font-weight: bold; margin: 10px 0 5px;">クリックまたはドラッグ＆ドロップで追加</p>
+                <p style="font-size: 12px; color: #999;">PDF, JPG, PNG (最大10MB)</p>
             </div>
             <div id="file-name-display" style="display:none; font-weight: bold; color: #007AFF;"></div>
             <input type="file" id="file-input" name="document" style="display: none;" onchange="handleFileSelect(this)">
@@ -195,24 +195,24 @@
 
         <div class="mobile-link-box">
             <div style="font-size: 13px;">
-                <strong>繧ｹ繝槭・繝医ヵ繧ｩ繝ｳ縺九ｉ繧｢繝・・繝ｭ繝ｼ繝峨☆繧句ｴ蜷・/strong><br>
-                QR繧ｳ繝ｼ繝峨ｒ陦ｨ遉ｺ縺励※隱ｭ縺ｿ蜿悶▲縺ｦ縺上□縺輔＞縲・
+                <strong>スマートフォンからアップロードする場合</strong><br>
+                QRコードを表示して読み取ってください。
             </div>
-            <button type="button" class="btn-qr">QR繧定｡ｨ遉ｺ</button>
+            <button type="button" class="btn-qr">QRを表示</button>
         </div>
     </div>
 
     <div class="checklist-container">
-        <label class="label-title">3. 遒ｺ隱埼・岼縺ｫ繝√ぉ繝・け繧偵▽縺代※縺上□縺輔＞</label>
+        <label class="<label-title">3. 確認項目にチェックをつけてください</label>
 
         <div class="check-group">
-            <div class="check-group-title">縲仙・騾壹・遒ｺ隱堺ｺ矩・・/div>
-            <label class="check-item"><input type="checkbox" class="sync-check"> 譖ｸ鬘槭・蜀・ｮｹ縺ｨ蜈･蜉帙＠縺滓ュ蝣ｱ縺御ｸ閾ｴ縺励※縺・ｋ</label>
-            <label class="check-item"><input type="checkbox" class="sync-check"> 譖ｸ鬘槭・蝗幃嚆縺後☆縺ｹ縺ｦ蜀吶ｊ縲∵枚蟄励′魄ｮ譏弱〒縺ゅｋ</label>
-            <label class="check-item"><input type="checkbox" class="sync-check"> 譛牙柑譛滄剞蜀・・繧ゅ・縺ｧ縺ゅｋ</label>
+            <div class="check-group-title">【共通の確認事項】</div>
+            <label class="check-item"><input type="checkbox" class="sync-check"> 書類の内容と入力した情報が一致している</label>
+            <label class="check-item"><input type="checkbox" class="sync-check"> 書類の四隅がすべて写り、文字が鮮明である</label>
+            <label class="check-item"><input type="checkbox" class="sync-check"> 有効期限内のものである</label>
         </div>
 
-        <button type="submit" class="btn-submit" id="submitBtn" disabled>莠区･ｭ閠・・遒ｺ隱阪・縺溘ａ縺ｮ譖ｸ鬘槭ｒ騾∽ｿ｡縺吶ｋ</button>
+        <button type="submit" class="btn-submit" id="submitBtn" disabled>事業者の確認のための書類を送信する</button>
     </div>
 </form>
 
@@ -221,7 +221,7 @@
         const display = document.getElementById('file-name-display');
         const placeholder = document.getElementById('upload-placeholder');
         if (input.files.length > 0) {
-            display.innerText = "驕ｸ謚樊ｸ医∩: " + input.files[0].name;
+            display.innerText = "選択済み: " + input.files[0].name;
             display.style.display = 'block';
             placeholder.style.display = 'none';
         }

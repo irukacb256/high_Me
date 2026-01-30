@@ -1,80 +1,368 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Timee - アカウント登録</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --timee-yellow: #FFD700; --ios-blue: #007AFF; --progress-bg: #eee; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; background-color: #333; display: flex; justify-content: center; align-items: center; overflow: hidden; font-family: -apple-system, sans-serif; }
+{% extends 'base_auth.html' %}
 
-        /* スマホの外枠 */
-        .phone-wrapper {
-            width: 100%; max-width: 430px; height: 100vh;
-            background-color: white; position: relative;
-            display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+{% block extra_head %}
+<style>
+    /* New Signup Design System */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #333;
+    }
+
+    /* Layout Wrapper */
+    /* .base_auth.html provides .phone-wrapper (430px max, 100vh).
+       We just fill it. */
+    .signup-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        background: white;
+        overflow: hidden;
+        /* Prevent body scroll */
+    }
+
+    /* Header: Back Button + Progress */
+    .signup-header {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        /* Stack vertically */
+        padding: 50px 20px 10px;
+        /* Adjust padding if needed */
+        background: white;
+        z-index: 10;
+    }
+
+    .header-top {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 15px;
+        /* Space between back button and progress bar */
+        height: 24px;
+        /* Ensure height reserved even if empty? No, block is conditional. */
+    }
+
+    .back-btn {
+        font-size: 24px;
+        color: #333;
+        text-decoration: none;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+        width: 100%;
+        /* Full width */
+        display: flex;
+        gap: 4px;
+    }
+
+    /* ... existing progress styles ... */
+
+    /* ... skipped ... */
+
+    /* Footer / Buttons - Fixed at bottom */
+    .signup-footer {
+        flex-shrink: 0;
+        padding: 24px;
+        background: white;
+        display: flex;
+        gap: 15px;
+        /* Space between buttons */
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    .btn-later {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+        padding: 14px 20px;
+        /* Match height of Next button */
+        background: transparent;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        text-align: center;
+        flex: 1;
+        /* 50% width */
+        margin-right: 0;
+        /* Handled by gap property on container */
+        box-sizing: border-box;
+    }
+
+    .btn-next {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: var(--ios-blue);
+        border: none;
+        border-radius: 8px;
+        padding: 14px 20px;
+        flex: 1;
+        /* 50% width */
+        cursor: pointer;
+        transition: opacity 0.3s;
+        text-align: center;
+    }
+
+    .progress-segment {
+        flex: 1;
+        height: 4px;
+        background-color: #E0E0E0;
+        border-radius: 2px;
+    }
+
+    .progress-segment.active {
+        background-color: var(--ios-blue);
+    }
+
+    /* Main Form Container - fills remaining space, holds content and footer */
+    .signup-form-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        /* Contains the scrollable content */
+    }
+
+    /* Content Area - Scrollable */
+    .signup-content {
+        flex: 1;
+        padding: 20px 24px 0;
+        /* No bottom padding here, footer has it */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .signup-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 24px;
+        line-height: 1.3;
+        color: #000;
+    }
+
+    .signup-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.5;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+        color: #333;
+    }
+
+    /* Input Styling */
+    .form-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        appearance: none;
+        background: #fff;
+        color: #333;
+    }
+
+    /* Special handling for Radio and Checkbox */
+    input[type="radio"].form-input,
+    input[type="checkbox"].form-input {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        margin-right: 12px;
+        border: 1px solid #ccc;
+        /* Default border */
+        appearance: auto;
+        accent-color: var(--ios-blue);
+    }
+
+    .form-input:not([type="radio"]):not([type="checkbox"]):focus {
+        border-color: var(--ios-blue);
+        outline: none;
+        box-shadow: 0 0 0 1px var(--ios-blue);
+        /* Focus ring */
+    }
+
+    .form-input::placeholder {
+        color: #CCC;
+    }
+
+    /* Option Item (Radio/Checkbox list row) */
+    .option-item {
+        display: flex;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .option-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Select Box Arrow */
+    select.form-input {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+    }
+
+    /* Footer / Buttons - Fixed at bottom */
+    .signup-footer {
+        flex-shrink: 0;
+        padding: 24px;
+        background: white;
+        display: flex;
+        gap: 15px;
+        /* Space between buttons */
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    .btn-later {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+        padding: 14px 20px;
+        /* Match height of Next button */
+        background: transparent;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        text-align: center;
+        flex: 1;
+        /* 50% width */
+        margin-right: 0;
+        /* Handled by gap property on container */
+        box-sizing: border-box;
+    }
+
+    .btn-next {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: var(--ios-blue);
+        border: none;
+        border-radius: 8px;
+        padding: 14px 20px;
+        flex: 1;
+        /* 50% width */
+        cursor: pointer;
+        transition: opacity 0.3s;
+        text-align: center;
+    }
+
+    .btn-next:disabled {
+        background-color: #E0E0E0;
+        color: #999;
+        cursor: not-allowed;
+    }
+
+    .signup-footer.single-btn .btn-next {
+        margin-left: 0;
+        /* Not strictly needed with gap, but safe to keep or remove */
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('input[required], select[required]');
+        const btn = document.querySelector('.btn-next');
+
+        function check() {
+            if (!btn) return;
+            let valid = true;
+            const radioGroups = {};
+
+            inputs.forEach(i => {
+                if (i.type === 'radio') {
+                    if (!radioGroups[i.name]) radioGroups[i.name] = false;
+                    if (i.checked) radioGroups[i.name] = true;
+                } else if (i.type === 'checkbox') {
+                    if (!i.checked && i.required) valid = false;
+                } else {
+                    if (!i.value) valid = false;
+                }
+            });
+
+            for (let name in radioGroups) {
+                if (!radioGroups[name]) valid = false;
+            }
+
+            btn.disabled = !valid;
         }
 
-        /* コンテンツエリア */
-        .content-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 20px 25px 30px; box-sizing: border-box; }
+        inputs.forEach(i => {
+            i.addEventListener('input', check);
+            i.addEventListener('change', check);
+        });
 
-        /* ヘッダー・戻るボタン */
-        .header { display: flex; align-items: center; margin-bottom: 20px; height: 40px; }
-        .back-link { text-decoration: none; color: black; font-size: 24px; width: 40px; }
+        // Also listen to any 'change' on the form for delegation (good for dynamic inputs)
+        const form = document.querySelector('form');
+        if (form) form.addEventListener('change', check);
 
-        /* プログレスバー（画像の上部にある青い線） */
-        .progress-container { display: flex; gap: 4px; margin-bottom: 30px; }
-        .progress-bar-segment { height: 4px; flex: 1; background: var(--progress-bg); border-radius: 2px; }
-        .progress-bar-segment.active { background: var(--ios-blue); }
+        check();
+    });
+</script>
+{% endblock %}
 
-        /* テキスト・入力 */
-        .question-title { font-size: 22px; font-weight: bold; margin-bottom: 35px; color: #333; }
-        label { display: block; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 8px; }
-        
-        input[type="text"], input[type="tel"], select { 
-            width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; margin-bottom: 20px; outline: none; background: #fdfdfd; 
-        }
-        input:focus { border-color: var(--ios-blue); }
+{% block content %}
+<div class="signup-container">
+    <div class="signup-header">
+        <div class="header-top">
+            {% block back_button %}
+            <a href="javascript:history.back()" class="back-btn">＜</a>
+            {% endblock %}
+        </div>
 
-        /* 選択肢（画像3, 6用） */
-        .option-item { border: 1px solid #eee; padding: 16px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
-        .option-item input { margin-right: 15px; width: 20px; height: 20px; }
-
-        /* 下部固定エリア */
-        .footer-btn-area { margin-top: auto; padding-top: 20px; }
-        .btn-next { width: 100%; padding: 18px; border-radius: 10px; border: none; background-color: #eee; color: #aaa; font-weight: bold; font-size: 16px; cursor: not-allowed; transition: 0.3s; }
-        .btn-next.active { background-color: var(--ios-blue); color: white; cursor: pointer; }
-        .btn-later { width: 100%; background: none; border: none; color: #888; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="phone-wrapper">
-        <div class="content-area">
-            {% block content %}{% endblock %}
+        <div class="progress-bar-container">
+            {% block progress_bar %}
+            {% endblock %}
         </div>
     </div>
 
-    <script>
-        // バリデーションスクリプト
-        function checkForm() {
-            const required = document.querySelectorAll('[required]');
-            const btn = document.querySelector('.btn-next');
-            if(!btn) return;
-            let ok = true;
-            required.forEach(el => {
-                if (el.type === 'radio' || el.type === 'checkbox') {
-                    const name = el.name;
-                    if(!document.querySelector(`input[name="${name}"]:checked`)) ok = false;
-                } else if (!el.value.trim()) {
-                    ok = false;
-                }
-            });
-            if(ok) { btn.classList.add('active'); btn.disabled = false; }
-            else { btn.classList.remove('active'); btn.disabled = true; }
-        }
-        document.addEventListener('input', checkForm);
-        window.addEventListener('load', checkForm);
-    </script>
-</body>
-</html>
+    <!-- Form wraps Content and Footer for submission -->
+    <form method="post" id="signup-form" class="signup-form-wrapper">
+        {% csrf_token %}
+
+        <div class="signup-content">
+            <h1 class="signup-title">{% block title %}{% endblock %}</h1>
+            {% block description %}{% endblock %}
+
+            {% block form_content %}{% endblock %}
+        </div>
+
+        <div class="signup-footer {% block footer_class %}{% endblock %}">
+            {% block footer_buttons %}
+            <a href="{% url 'signup_verify_identity_skip' %}" class="btn-later">あとで</a>
+            <button type="submit" class="btn-next" disabled>次へ</button>
+            {% endblock %}
+        </div>
+    </form>
+</div>
+{% endblock %}

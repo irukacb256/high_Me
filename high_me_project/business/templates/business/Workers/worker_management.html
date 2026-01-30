@@ -1,4 +1,4 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 
 {% block content %}
 <style>
@@ -286,22 +286,22 @@
     }
 </style>
 
-<h1 class="page-title">繝ｯ繝ｼ繧ｫ繝ｼ邂｡逅・/h1>
-<p class="page-desc">縺薙・蠎苓・縺ｧ遞ｼ蜒阪＠縺溘％縺ｨ縺ｮ縺ゅｋ繝ｯ繝ｼ繧ｫ繝ｼ繧・げ繝ｫ繝ｼ繝励・繝ｯ繝ｼ繧ｫ繝ｼ繧堤｢ｺ隱阪〒縺阪∪縺吶・/p>
+<h1 class="page-title">ワーカー管理</h1>
+<p class="page-desc">この店舗で稼働したことのあるワーカーをやグループのワーカーを確認できます。</p>
 
 <!-- Top Cards -->
 <div class="action-cards">
     <a href="#" class="action-card">
         <i class="fa-solid fa-users card-icon"></i>
-        <div class="card-title">繧ｰ繝ｫ繝ｼ繝礼ｮ｡逅・/div>
+        <div class="card-title">グループ管理</div>
     </a>
     <a href="#" class="action-card">
         <i class="fa-solid fa-user-plus card-icon"></i>
-        <div class="card-title">諡帛ｾ・ｩ溯・</div>
+        <div class="card-title">招待機能</div>
     </a>
     <a href="#" class="action-card">
         <i class="fa-regular fa-address-book card-icon"></i>
-        <div class="card-title">蟆ｱ讌ｭ莠亥ｮ夊｡ｨ<br><span style="font-weight:normal; font-size:12px;">(繝吶・繧ｿ迚・</span></div>
+        <div class="card-title">就業予定表<br><span style="font-weight:normal; font-size:12px;">(ベータ版)</span></div>
     </a>
 </div>
 
@@ -309,10 +309,10 @@
 <div class="filter-section">
     <form method="get">
         <div class="search-box">
-            <label style="font-weight:bold; font-size:13px; margin-bottom:8px; display:block;">蜷榊燕縺ｮ繝輔Μ繧ｬ繝翫〒讀懃ｴ｢</label>
+            <label style="font-weight:bold; font-size:13px; margin-bottom:8px; display:block;">名前のフリガナで検索</label>
             <div style="position:relative;">
                 <input type="text" name="q" class="search-input" value="{{ request.GET.q|default:'' }}"
-                    placeholder="繝､繝槭ム 繧ｿ繝ｭ繧ｦ">
+                    placeholder="ヤマダ タロウ">
                 <i class="fa-solid fa-magnifying-glass"
                     style="position:absolute; right:15px; top:12px; color:#999;"></i>
             </div>
@@ -320,9 +320,9 @@
 
         <div class="filter-row">
             <div class="filter-group">
-                <label>繝輔ぅ繝ｫ繧ｿ・壽園螻槭げ繝ｫ繝ｼ繝・/label>
+                <label>フィルタ：所属グループ</label>
                 <select name="group" class="filter-select" onchange="this.form.submit()">
-                    <option value="">縺吶∋縺ｦ</option>
+                    <option value="">すべて</option>
                     {% for key, val in group_choices %}
                     <option value="{{ key }}" {% if request.GET.group==key %}selected{% endif %}>{{ val }}</option>
                     {% endfor %}
@@ -330,16 +330,16 @@
             </div>
 
             <div class="filter-group">
-                <label>荳ｦ縺ｳ譖ｿ縺茨ｼ壽怙邨らｨｼ蜒肴律</label>
+                <label>並び替え：最終稼働日</label>
                 <div class="sort-btn-group">
-                    <button type="button" class="sort-btn active">譁ｰ縺励＞鬆・/button>
-                    <button type="button" class="sort-btn">蜿､縺・・/button>
+                    <button type="button" class="sort-btn active">新しい順</button>
+                    <button type="button" class="sort-btn">古い順</button>
                 </div>
             </div>
         </div>
         <div class="pagination-bar" style="border-top: 1px solid #eee; padding-top: 15px; margin-top: 20px;">
             <div class="page-nums">
-                <span style="margin-right:5px;">蜑阪∈</span>
+                <span style="margin-right:5px;">前へ</span>
                 {% for i in paginator.page_range %}
                 {% if page_obj.number == i %}
                 <span class="page-circle active">{{ i }}</span>
@@ -348,19 +348,19 @@
                     class="page-circle" style="color:inherit; text-decoration:none;">{{ i }}</a>
                 {% endif %}
                 {% endfor %}
-                <span style="margin-left:5px;">谺｡縺ｸ</span>
+                <span style="margin-left:5px;">次へ</span>
             </div>
             <div>
-                {{ page_obj.start_index }}縲悳{ page_obj.end_index }}莉ｶ陦ｨ遉ｺ荳ｭ / {{ paginator.count }}莉ｶ荳ｭ
+                {{ page_obj.start_index }}〜{{ page_obj.end_index }}件表示中 / {{ paginator.count }}件中
             </div>
         </div>
     </form>
 
     <!-- Main Header for stats -->
     <div class="list-header">
-        <div class="header-item">Good邇・/div>
-        <div class="header-item">譛邨らｨｼ蜒肴律</div>
-        <div class="header-item">遞ｼ蜒榊屓謨ｰ</div>
+        <div class="header-item">Good率</div>
+        <div class="header-item">最終稼働日</div>
+        <div class="header-item">稼働回数</div>
     </div>
 
     <!-- Worker List -->
@@ -389,13 +389,13 @@
                             {% endif %}
                         </h3>
                         <div class="worker-meta">
-                            {{ worker.age }}豁ｳ
+                            {{ worker.age }}歳
                             {% if worker.workerprofile.gender %}
                             {{ worker.workerprofile.gender }}
                             {% endif %}
                         </div>
                         {% if worker.workerprofile %} <!-- Mocking OB/OG badge if needed, skipping for now -->
-                        <!-- <div class="ob-badge">OB繝ｻOG</div> -->
+                        <!-- <div class="ob-badge">OB。OG</div> -->
                         {% endif %}
                     </div>
                 </div>
@@ -404,18 +404,18 @@
                     <div class="stat-item">{{ worker.stats_good_rate }}%</div>
                     <div class="stat-item">
                         {% if worker.stats_last_worked %}
-                        {{ worker.stats_last_worked|date:"Y蟷ｴn譛・譌･" }}
+                        {{ worker.stats_last_worked|date:"Y年n月日" }}
                         {% else %}
                         -
                         {% endif %}
                     </div>
-                    <div class="stat-item">{{ worker.stats_work_count }}蝗・/div>
+                    <div class="stat-item">{{ worker.stats_work_count }}回</div>
                 </div>
             </div>
 
             {% if worker.badges_list %}
             <div class="badge-row">
-                <span class="badge-label">繝舌ャ繧ｸ</span>
+                <span class="badge-label">バッジ</span>
                 {% for badge in worker.badges_list %}
                 <span class="skill-badge">
                     <i class="fa-solid fa-medal"></i> {{ badge.name }}
@@ -425,20 +425,20 @@
             {% endif %}
 
             <div class="group-row">
-                <span style="font-weight:bold;">謇螻槭げ繝ｫ繝ｼ繝・/span>
+                <span style="font-weight:bold;">所属グループ</span>
                 {% for g in worker.groups_list %}
                 <span class="group-tag">{{ g.get_group_type_display }}</span>
                 {% empty %}
                 <span style="color:#999;">-</span>
                 {% endfor %}
                 <a href="{% url 'biz_worker_detail' store.id worker.id %}" class="group-change-link"
-                    style="margin-left:10px;">繧ｰ繝ｫ繝ｼ繝励ｒ螟画峩</a>
-                <!-- 螳滄圀縺ｯ隧ｳ邏ｰ逕ｻ髱｢縺帰PI縺ｧ螟画峩縺吶ｋ諠ｳ螳・-->
+                    style="margin-left:10px;">グループを変更</a>
+                <!-- 実際は詳細画面かAPIで変更する想定-->
             </div>
         </div>
         {% empty %}
         <div style="padding:40px; text-align:center; color:#999;">
-            譚｡莉ｶ縺ｫ荳閾ｴ縺吶ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺ｯ縺・∪縺帙ｓ
+            条件に一致するワーカーはいません
         </div>
         {% endfor %}
     </div>

@@ -1,9 +1,9 @@
-{% extends 'business/Common/dashboard_base.html' %}
+﻿{% extends 'business/Common/dashboard_base.html' %}
 {% load static %}
 
 {% block content %}
 <style>
-    /* 逕ｻ髱｢蜈ｨ菴薙ｒ鮟・牡縺上☆繧・*/
+    /* 逕ｻ髱｢蜈ｨ菴薙ｒ鮟。牡、上☆を*/
     .qr-management-container {
         background-color: #FFD700;
         /* Timee Yellow */
@@ -83,7 +83,7 @@
         margin: 0 5px;
     }
 
-    /* 繝代Φ繝縺ｮ繧､繝ｩ繧ｹ繝・(CSS縺ｧ邁｡譏灘・迴ｾ or 逕ｻ蜒乗耳螂ｨ) */
+    /* パンダのイラスプ(CSSで邁｡譏灘。迴ｾ or 画像推奨) */
     .panda-area {
         margin-top: 20px;
     }
@@ -91,9 +91,9 @@
     .panda-face {
         width: 200px;
         height: 100px;
-        /* 蜊雁・ */
+        /* 蜊雁。 */
         background: #f8c67d;
-        /* 鬘斐・濶ｲ (莉ｮ) */
+        /* 鬘斐。濶ｲ (仮) */
         border-radius: 100px 100px 0 0;
         margin: 0 auto;
         position: relative;
@@ -148,7 +148,7 @@
         transform: translateX(-50%);
     }
 
-    /* 繝輔ャ繧ｿ繝ｼ繧｢繧ｯ繧ｷ繝ｧ繝ｳ (繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ縺ｫ螟画峩) */
+    /* フッターアクション (セクションに変更) */
     .footer-actions {
         /* position: fixed; removed */
         /* bottom: 0; removed */
@@ -219,19 +219,19 @@
     <div class="qr-title">Timee</div>
 
     <div class="qr-label-capsule">
-        繝√ぉ繝・け繧､繝ｳ / 繝√ぉ繝・け繧｢繧ｦ繝育畑QR繧ｳ繝ｼ繝・
+        チェックイン / チェック繧｢繧ｦ繝育畑QRコープ
     </div>
 
-    <div class="company-name">(譬ｪ)繧ｿ繧､繝溘・</div>
+    <div class="company-name">(株)タイミー</div>
 
     <div class="qr-box">
-        <!-- QR繧ｳ繝ｼ繝臥判蜒・(譛ｬ譚･縺ｯ蜍慕噪逕滓・) -->
+        <!-- QRコード画像(本譚･は蜍慕噪逕滓。) -->
         <i class="fa-solid fa-qrcode fa-10x" style="font-size: 200px; color:#333;"></i>
     </div>
 
     <div class="instruction-text">
-        讌ｭ蜍咎幕蟋区凾 <span class="instruction-box">繝√ぉ繝・け繧､繝ｳ</span> 縺ｨ 讌ｭ蜍咏ｵゆｺ・凾 <span class="instruction-box">繝√ぉ繝・け繧｢繧ｦ繝・/span> 縺ｫ<br>
-        縺薙・ <span style="text-decoration: underline;">QR繧ｳ繝ｼ繝・/span> 繧偵い繝励Μ縺九ｉ隱ｭ縺ｿ霎ｼ繧薙〒縺上□縺輔＞・・
+        業務開始時 <span class="instruction-box">チェックイン</span> と 業蜍咏ｵゆ了凾 <span class="instruction-box">チェックアウト</span> に<br>
+        この <span style="text-decoration: underline;">QRコープ</span> 繧偵い繝励Μから隱ｭみ霎ｼ繧薙〒ください）
     </div>
 
     <div class="panda-area">
@@ -247,19 +247,19 @@
     </div>
 </div>
 
-<!-- 繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ縺ｨ縺励※驟咲ｽｮ -->
+<!-- セクションとして配置 -->
 <div class="footer-section-container">
     <div class="note-box">
-        <div><i class="fa-solid fa-circle-question text-secondary"></i> 隱ｭ縺ｿ蜿悶ｊ繧貞ｿ倥ｌ縺・/div>
-        <div><i class="fa-solid fa-rotate-left text-secondary"></i> 驕・綾繝ｻ蟒ｶ髟ｷ繝ｻ譌ｩ荳翫′繧翫〒蝣ｱ驟ｬ縺ｮ螟画峩縺悟ｿ・ｦ・/div>
-        <div style="margin-left: 20px; color:#999;">荳願ｨ倥・蝣ｴ蜷医√Ρ繝ｼ繧ｫ繝ｼ縺九ｉ縲御ｿｮ豁｣萓晞ｼ縲阪′螻翫″縺ｾ縺吶・/div>
+        <div><i class="fa-solid fa-circle-question text-secondary"></i> 読み取りを忘れぁE</div>
+        <div><i class="fa-solid fa-rotate-left text-secondary"></i> 驕。綾・蟒ｶ髟ｷ・譌ｩ一翫′繧翫〒蝣ｱ驟ｬの変更、悟ｿ。ｦ。</div>
+        <div style="margin-left: 20px; color:#999;">一願ｨ倥。蝣ｴ名医√Ρ繝ｼ繧ｫ繝ｼから。御ｿｮ豁｣萓晞ｼ。阪′螻翫″ます吶。</div>
     </div>
     <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn-action btn-blue">菫ｮ豁｣萓晞ｼ繧堤｢ｺ隱阪☆繧・/button>
-        <button class="btn-action btn-white">QR繧ｳ繝ｼ繝峨ｒ蜊ｰ蛻ｷ縺吶ｋ</button>
+        <button class="btn-action btn-blue">修正依頼を確認すめE</button>
+        <button class="btn-action btn-white">QRコードを印刷する</button>
     </div>
 </div>
 <div style="text-align:right; padding: 10px 40px; background:white;">
-    <a href="#" style="font-size:12px;">繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育畑QR繧ｳ繝ｼ繝峨ｒ譖ｴ譁ｰ縺吶ｋ</a>
+    <a href="#" style="font-size:12px;">チェックイン/アウト用QRコードを更新する</a>
 </div>
 {% endblock %}

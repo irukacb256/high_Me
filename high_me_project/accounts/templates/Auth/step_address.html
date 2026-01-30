@@ -1,72 +1,39 @@
-{% extends 'signup/signup_base.html' %}
-{% block content %}
-<div class="header"><a href="{% url 'setup_photo' %}" class="back-link">＜</a></div>
-<div class="progress-container">
-    <div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment active"></div><div class="progress-bar-segment"></div><div class="progress-bar-segment"></div>
-</div>
-<h1 class="question-title">住所を入力する</h1>
-<p style="font-size:13px; color:#666; margin-top:-25px; margin-bottom:30px;">本人確認書類と完全に一致する住所を入力してください。</p>
+{% extends 'Auth/signup_base.html' %}
 
-<form method="post" style="flex:1; display:flex; flex-direction:column;">
-    {% csrf_token %}
-    <label>郵便番号</label>
-    <input type="tel" id="id_postal_code" name="postal_code" placeholder="1234567" maxlength="7">
+{% block back_button %}
+<a href="{% url 'setup_photo' %}" class="back-btn">＜</a>
+{% endblock %}
 
-    <label>都道府県</label>
-    <select id="id_prefecture" name="prefecture">
-        <option value="" disabled selected>未選択</option>
-        <option value="東京都">東京都</option>
-        <option value="神奈川県">神奈川県</option>
-        <option value="千葉県">千葉県</option>
-        <option value="埼玉県">埼玉県</option>
-    </select>
+{% block progress_bar %}
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment "></div>
+<div class="progress-segment "></div>
+{% endblock %}
 
-    <label>市区町村・町名</label>
-    <input type="text" id="id_city" name="city" placeholder="港区南新橋" >
+{% block title %}住所を入力する{% endblock %}
 
-    <label>丁目・番地</label>
-    <input type="text" name="address_line" placeholder="1丁目1-1" >
+{% block form_content %}
+<label class="form-label">郵便番号</label>
+<input class="form-input" type="tel" id="id_postal_code" name="postal_code" placeholder="1234567" maxlength="7">
+<label class="form-label">都道府県</label>
+<select class="form-input" id="id_prefecture" name="prefecture">
+    <option value="" disabled selected>未選択</option>
+    <option value="東京都">東京都</option>
+    <option value="神奈川県">神奈川県</option>
+    <option value="千葉県">千葉県</option>
+    <option value="埼玉県">埼玉県</option>
+</select>
+<label class="form-label">市区町村。町名</label>
+<input class="form-input" type="text" id="id_city" name="city" placeholder="港区南新橋">
+<label class="form-label">丁目。番地</label>
+<input class="form-input" type="text" name="address_line" placeholder="1丁目1-1">
+{% endblock %}
 
-    <div class="footer-btn-area">
-        <button type="submit" class="btn-next" disabled>次へ</button>
-        <button type="submit" name="skip" class="btn-later">あとで</button>
-    </div>
-</form>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const postalCodeInput = document.getElementById('id_postal_code');
-        const prefectureSelect = document.getElementById('id_prefecture');
-        const cityInput = document.getElementById('id_city');
-
-        postalCodeInput.addEventListener('input', function(e) {
-            const value = e.target.value.replace(/[^0-9]/g, '');
-            if (value.length === 7) {
-                fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${value}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 200 && data.results) {
-                            const result = data.results[0];
-                            const prefecture = result.address1;
-                            const city = result.address2 + result.address3;
-
-                            // 都道府県を選択
-                            for (let i = 0; i < prefectureSelect.options.length; i++) {
-                                if (prefectureSelect.options[i].value === prefecture) {
-                                    prefectureSelect.selectedIndex = i;
-                                    break;
-                                }
-                            }
-
-                            // 市区町村を入力
-                            cityInput.value = city;
-                        } else {
-                            console.log('住所が見つかりませんでした。');
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
-        });
-    });
-</script>
+{% block footer_buttons %}
+<a href="{% url 'setup_association' %}" class="btn-later">あとで</a>
+<button type="submit" class="btn-next" disabled>次へ</button>
 {% endblock %}

@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>莨∵･ｭ繧｢繧ｫ繧ｦ繝ｳ繝磯幕險ｭ | Timee</title>
+    <title>企業アカウント開設 | Timee</title>
     <style>
-        /* 莨∵･ｭ逕ｨ繝昴・繧ｿ繝ｫ縺ｮ繝励Ο繝輔ぉ繝・す繝ｧ繝翫Ν縺ｪ繝・じ繧､繝ｳ */
+        /* 企業逕ｨポータルのプロフェッショナル、ｪデザイン */
         body {
             background-color: #f4f7f9;
-            /* 阮・＞繧ｰ繝ｬ繝ｼ縺ｮ閭梧勹 */
+            /* 淡いグレーの背景 */
             margin: 0;
             padding: 0;
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
@@ -38,7 +38,7 @@
             padding: 40px 20px;
         }
 
-        /* 繝輔か繝ｼ繝繧貞峇繧逋ｽ縺・・繝・け繧ｹ・医き繝ｼ繝会ｼ・*/
+        /* フォームを囲む白いボックス（カード形状）*/
         .form-container {
             background-color: white;
             width: 100%;
@@ -50,7 +50,7 @@
             box-sizing: border-box;
         }
 
-        /* 蜈ｱ騾壹・繝懊ち繝ｳ繝ｻ蜈･蜉帙ヵ繧ｩ繝ｼ繝繧ｹ繧ｿ繧､繝ｫ */
+        /* 共通のボタン・入力フォームスタイル */
         input[type="text"],
         input[type="password"],
         input[type="email"],
@@ -88,13 +88,13 @@
 
     <header class="signup-header">
         <a href="{% url 'biz_landing' %}" class="logo">Timee</a>
-        <div style="font-size: 12px; color: #666;">豎ゆｺｺ謗ｲ霈臥畑繧｢繧ｫ繧ｦ繝ｳ繝磯幕險ｭ</div>
+        <div style="font-size: 12px; color: #666;">求人掲載用アカウント開設</div>
     </header>
 
     <main class="main-wrapper">
         <div class="form-container">
             {% block content %}
-            <!-- 縺薙％縺ｫ account_register.html 繧・business_register.html 縺ｮ蜀・ｮｹ縺悟・繧翫∪縺・-->
+            <!-- ここに account_register.html や business_register.html の内容が入ります -->
             {% endblock %}
         </div>
     </main>

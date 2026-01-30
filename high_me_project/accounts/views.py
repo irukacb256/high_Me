@@ -19,7 +19,7 @@ from django.views.generic import FormView, TemplateView, CreateView, DetailView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import (
-    SignupForm, NameForm, KanaForm, GenderForm, PhotoForm, AddressForm, WorkstyleForm, VerifyDobForm, PrefectureSelectForm
+    SignupForm, NameForm, KanaForm, GenderForm, PhotoForm, AddressForm, WorkstyleForm, VerifyDobForm, PrefectureSelectForm, AssociationForm
 )
 
 class CustomLoginView(LoginView):
@@ -275,7 +275,7 @@ class VerifyIdentityUploadView(TemplateView):
                 # ポップアップを表示するためのフラグと次へ進むURLを渡す
                 context = self.get_context_data()
                 context['show_popup'] = True
-                context['next_url'] = reverse_lazy('setup_workstyle')
+                context['next_url'] = reverse_lazy('signup_confirm')
                 return self.render_to_response(context)
         
         # ログイン済みユーザーの場合
@@ -337,7 +337,7 @@ class SignupConfirmView(TemplateView):
 class SetupAddressView(FormView):
     template_name = 'Auth/step_address.html'
     form_class = AddressForm
-    success_url = reverse_lazy('signup_verify_identity')
+    success_url = reverse_lazy('setup_association')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.session.get('signup_data'):
@@ -362,7 +362,7 @@ class SetupAddressView(FormView):
 class SetupWorkstyleView(FormView):
     template_name = 'Auth/step_workstyle.html'
     form_class = WorkstyleForm
-    success_url = reverse_lazy('signup_confirm')
+    success_url = reverse_lazy('signup_verify_identity')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.session.get('signup_data'):
@@ -455,6 +455,7 @@ class SetupPrefSelectView(FormView):
                 
                 profile.work_style = signup_data.get('work_style', '')
                 profile.career_interest = signup_data.get('career_interest', '')
+                profile.occupation = signup_data.get('occupation', '') # 職業保存
                 
                 profile.target_prefectures = ",".join(prefs)
                 profile.is_setup_completed = True
@@ -502,10 +503,30 @@ class SetupPrefSelectView(FormView):
         else:
             # 既存ユーザー
             profile = get_object_or_404(WorkerProfile, user=self.request.user)
+            # 都道府県の更新もprofile.target_prefecturesを使用
             profile.target_prefectures = ",".join(prefs)
             profile.is_setup_completed = True
             profile.save()
             return redirect(self.success_url)
+
+
+# -------------------------------------------------------------
+# 所属選択画面 (新設)
+class SetupAssociationView(FormView):
+    template_name = 'Auth/step_association.html'
+    form_class = AssociationForm
+    success_url = reverse_lazy('setup_workstyle')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('signup_data'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        signup_data = self.request.session.get('signup_data')
+        signup_data['occupation'] = form.cleaned_data['occupation']
+        self.request.session['signup_data'] = signup_data
+        return super().form_valid(form)
 
 
 def verify_identity(request):

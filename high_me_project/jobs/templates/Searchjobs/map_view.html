@@ -374,7 +374,7 @@
             <div class="date-scroll-inner">
                 {% for d in date_list %}
                 <div class="date-item {% if d|date:'Y-m-d' == today_str %}active{% endif %}"
-                    data-date="{{ d|date:'Y-m-d' }}" onclick="selectDate(this)">
+                    data-date="{{ d|date:'Y-m-d' }}" onclick="<selectDate(this)">
                     <div class="date-day">{{ d|date:"D" }}</div>
                     <div class="date-circle">{{ d.day }}</div>
                 </div>
@@ -388,7 +388,7 @@
             <div class="chip">軽作業</div>
             <div class="chip">飲食</div>
             <div class="chip">介護</div>
-            <div class="chip">配達・運転</div>
+            <div class="chip">配達。運転</div>
             <div class="chip">販売</div>
         </div>
 

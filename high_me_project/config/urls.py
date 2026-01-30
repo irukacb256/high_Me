@@ -27,6 +27,7 @@ urlpatterns = [
     path('signup/gender/', account_views.SetupGenderView.as_view(), name='setup_gender'),
     path('signup/photo/', account_views.SetupPhotoView.as_view(), name='setup_photo'),
     path('signup/address/', account_views.SetupAddressView.as_view(), name='setup_address'),
+    path('signup/association/', account_views.SetupAssociationView.as_view(), name='setup_association'), # 新規追加
     path('signup/workstyle/', account_views.SetupWorkstyleView.as_view(), name='setup_workstyle'),
     path('signup/pref-select/', account_views.SetupPrefSelectView.as_view(), name='setup_pref_select'),
     

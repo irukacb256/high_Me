@@ -1,31 +1,45 @@
-{% extends 'signup/signup_base.html' %}
-{% block content %}
-<h1 class="question-title">仕事を探したい都道府県を選んでください</h1>
+{% extends 'Auth/signup_base.html' %}
 
-<form method="post" style="flex:1; display:flex; flex-direction:column;">
-    {% csrf_token %}
-    <div style="flex:1; overflow-y:auto; border-top:1px solid #eee;">
-        {% for pref in prefectures %}
-        <label
-            style="display:flex; align-items:center; padding:18px; border-bottom:1px solid #eee; gap:15px; cursor:pointer;">
-            <input type="checkbox" name="prefs" value="{{ pref }}" onclick="checkForm()">
-            <span style="font-size:16px;">{{ pref }}</span>
-        </label>
-        {% endfor %}
-    </div>
 
-    <div class="footer-btn-area">
-        <button type="submit" class="btn-next" id="okBtn" disabled>OK</button>
-    </div>
-</form>
+
+{% block title %}仕事を探したい都道府県を選んでください{% endblock %}
+
+{% block form_content %}
+<div style="flex:1; overflow-y:auto; border-top:1px solid #eee;">
+
+    <!-- Hidden required input to control the Next button via base script -->
+    <input type="text" id="pref-validator" required
+        style="opacity: 0; position: absolute; pointer-events: none; height: 0;">
+
+    {% for pref in prefectures %}
+    <label class="option-item">
+        <input class="form-input pref-check" type="checkbox" name="prefs" value="{{ pref }}">
+        <span style="font-size:16px;">{{ pref }}</span>
+    </label>
+    {% endfor %}
+</div>
 
 <script>
-    // チェックボックス専用のバリデーション（1つ以上選択）
-    function checkForm() {
-        const checked = document.querySelectorAll('input[name="prefs"]:checked');
-        const btn = document.getElementById('okBtn');
-        if (checked.length > 0) { btn.classList.add('active'); btn.disabled = false; }
-        else { btn.classList.remove('active'); btn.disabled = true; }
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const checks = document.querySelectorAll('.pref-check');
+        const validator = document.getElementById('pref-validator');
+
+        function updateValidator() {
+            let any = false;
+            checks.forEach(c => { if (c.checked) any = true; });
+            validator.value = any ? 'ok' : '';
+            // Trigger input event so base script re-checks validation
+            validator.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        checks.forEach(c => c.addEventListener('change', updateValidator));
+        // Initial check needed? validator is empty, button disabled. Correct.
+    });
 </script>
+{% endblock %}
+
+{% block footer_class %}single-btn{% endblock %}
+
+{% block footer_buttons %}
+<button type="submit" class="btn-next" disabled>次へ</button>
 {% endblock %}

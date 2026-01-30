@@ -37,6 +37,7 @@ class WorkerProfile(models.Model):
     building = models.CharField("建物名・部屋番号", max_length=100, null=True, blank=True)
     
     # 働き方（画像6）
+    occupation = models.CharField("現在の職業", max_length=50, null=True, blank=True) # 所属選択
     work_style = models.CharField("アルバイトの働き方", max_length=100, null=True, blank=True)
     career_interest = models.CharField("正社員への興味", max_length=100, null=True, blank=True)
     

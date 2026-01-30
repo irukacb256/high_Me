@@ -9,7 +9,7 @@
 <style>
     #map {
         height: calc(100vh - 120px);
-        /* ヘッダー・フッター分を引く(調整必要かも) */
+        /* ヘッダー。フッター分を引く(調整必要かも) */
         width: 100%;
         margin-top: 10px;
         border-radius: 8px;
@@ -71,7 +71,7 @@
             var popupContent = `
                     <div style="min-width: 200px;">
                         <a href="${job.url}" class="popup-title">${job.title}</a>
-                        <div class="popup-info"><strong>${job.store_name}</strong></div>
+                        <div class="popup-info">strong>${job.store_name}</strong></div>
                         <div class="popup-info"><i class="fa-solid fa-yen-sign"></i> ${job.salary}</div>
                         <div class="popup-info"><i class="fa-regular fa-clock"></i> ${job.work_date} ${job.time}</div>
                         <div style="text-align: right; margin-top: 5px;">
