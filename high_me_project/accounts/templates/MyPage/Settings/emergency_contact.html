@@ -1,0 +1,80 @@
+{% extends 'base_auth.html' %} {# Assuming base_auth or base is appropriate, using base_auth for consistency with
+settings #}
+
+{% block content %}
+<style>
+    .settings-container {
+        padding: 20px;
+        background: #f9f9f9;
+        min-height: 100vh;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        margin-right: 15px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .btn-submit {
+        background: var(--ios-blue, #007aff);
+        color: white;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="settings-container">
+    <div class="header">
+        <a href="{% url 'account_settings' %}" class="back-btn">＜</a>
+        <div class="title">緊急連絡先設定</div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>緊急連絡先電話番号</label>
+            <input type="tel" name="emergency_phone" value="{{ profile.emergency_phone|default:'' }}"
+                placeholder="090-0000-0000">
+        </div>
+        <div class="form-group">
+            <label>続柄</label>
+            <input type="text" name="emergency_relation" value="{{ profile.emergency_relation|default:'' }}"
+                placeholder="父、母など">
+        </div>
+        <button type="submit" class="btn-submit">保存する</button>
+    </form>
+</div>
+{% endblock %}

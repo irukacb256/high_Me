@@ -1,0 +1,703 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --timee-red: #ff3b30;
+        --timee-blue: #007AFF;
+        --bg-gray: #f2f2f7;
+        --border-color: #c6c6c8;
+    }
+
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        padding-bottom: 120px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        overflow: hidden;
+        border: 1px solid #e5e5e5;
+    }
+
+    .section-header {
+        padding: 16px 20px;
+        background: #fafafa;
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+        font-size: 16px;
+        color: #1c1c1e;
+    }
+
+    .section-body {
+        padding: 24px 20px;
+    }
+
+    .field-group {
+        margin-bottom: 24px;
+    }
+
+    .field-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #3a3a3c;
+    }
+
+    .tag-required {
+        background: var(--timee-red);
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+        background: #fff;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--timee-blue);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .treatment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 14px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 14px;
+        color: #3a3a3c;
+    }
+
+    .checkbox-item input {
+        margin-right: 12px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .checkbox-item:hover {
+        background: #f9f9f9;
+    }
+
+    .chip-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .chip {
+        padding: 12px 16px;
+        border-radius: 8px;
+        background-color: #f0f0f7;
+        color: #1c1c1e;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #e5e5e5;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .chip.selected {
+        background-color: #e8f2ff;
+        border-color: var(--timee-blue);
+        color: var(--timee-blue);
+        font-weight: 600;
+    }
+
+    .chip.selected::after {
+        content: '笨・;
+        font-weight: bold;
+    }
+
+    .chip:hover {
+        background-color: #e9e9f0;
+    }
+
+    .add-custom-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .add-custom-group input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .btn-add-custom {
+        padding: 8px 16px;
+        background-color: #f0f0f7;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        color: var(--timee-blue);
+        font-weight: 600;
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .photo-add-card {
+        aspect-ratio: 4/3;
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #8e8e93;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .photo-preview {
+        position: relative;
+        aspect-ratio: 4/3;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .photo-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        font-size: 12px;
+    }
+
+    .form-footer {
+        position: fixed;
+        bottom: 0;
+        left: 240px;
+        right: 0;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 16px 40px;
+        border-top: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 20px;
+        z-index: 1000;
+    }
+
+    .btn-cancel {
+        color: #8e8e93;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .btn-submit {
+        background: var(--timee-blue);
+        color: white;
+        border: none;
+        padding: 14px 48px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .hint-text {
+        font-size: 12px;
+        color: #8e8e93;
+        margin-top: 4px;
+        line-height: 1.4;
+    }
+</style>
+
+<div class="form-container">
+    <h1 style="font-size: 24px; margin-bottom: 24px; color: #1c1c1e;">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧畜% if is_edit %}邱ｨ髮・% else %}譁ｰ隕丈ｽ懈・{% endif %}
+    </h1>
+
+    <form method="POST" enctype="multipart/form-data" id="templateForm">
+        {% csrf_token %}
+
+        <div class="section-card">
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">豎ゆｺｺ繧ｿ繧､繝医Ν <span class="tag-required">蠢・・/span></div>
+                    <input type="text" name="title" value="{{ template.title }}"
+                        placeholder="縲先眠讖矩ｧ・ｾ呈ｭｩ5蛻・醍ｬ鷹｡疲ｺ｢繧後ｋ繝ｬ繧ｹ繝医Λ繝ｳ縺ｧ繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ・√ち繧､繝溘・譁ｰ讖句ｺ・ required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="field-group">
+                        <div class="field-label">讌ｭ遞ｮ <span class="tag-required">蠢・・/span></div>
+                        <select name="industry" id="industrySelect" required>
+                            <option value="" disabled selected>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+                            <option {% if template.industry=='鬟ｲ鬟溘・繝輔・繝・ %}selected{% endif %}>鬟ｲ鬟溘・繝輔・繝・/option>
+                            <option {% if template.industry=='雋ｩ螢ｲ繝ｻ謗･螳｢' %}selected{% endif %}>雋ｩ螢ｲ繝ｻ謗･螳｢</option>
+                            <option {% if template.industry=='迚ｩ豬√・霆ｽ菴懈･ｭ' %}selected{% endif %}>迚ｩ豬√・霆ｽ菴懈･ｭ</option>
+                            <option {% if template.industry=='繧ｪ繝輔ぅ繧ｹ' %}selected{% endif %}>繧ｪ繝輔ぅ繧ｹ</option>
+                            <option {% if template.industry=='縺昴・莉・ %}selected{% endif %}>縺昴・莉・/option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">閨ｷ遞ｮ <span class="tag-required">蠢・・/span></div>
+                        <select name="occupation" id="occupationSelect" required>
+                            <option value="" disabled selected>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+
+                            <optgroup label="鬟ｲ鬟溘・繝輔・繝・>
+                                <option {% if template.occupation=='繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｭ繝・メ繝ｳ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｭ繝・メ繝ｳ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繝ｬ繧ｹ繝医Λ繝ｳ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝ｬ繧ｹ繝医Λ繝ｳ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='螻・・螻九せ繧ｿ繝・ヵ' %}selected{% endif %}>螻・・螻九せ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｫ繝輔ぉ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｫ繝輔ぉ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='豢励＞蝣ｴ' %}selected{% endif %}>豢励＞蝣ｴ</option>
+                                <option {% if template.occupation=='隱ｿ逅・｣懷勧' %}selected{% endif %}>隱ｿ逅・｣懷勧</option>
+                                <option {% if template.occupation=='繝・Μ繝舌Μ繝ｼ' %}selected{% endif %}>繝・Μ繝舌Μ繝ｼ</option>
+                            </optgroup>
+
+                            <optgroup label="雋ｩ螢ｲ繝ｻ謗･螳｢">
+                                <option {% if template.occupation=='繧ｳ繝ｳ繝薙ル繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｳ繝ｳ繝薙ル繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｹ繝ｼ繝代・繝ｻ繝ｬ繧ｸ' %}selected{% endif %}>繧ｹ繝ｼ繝代・繝ｻ繝ｬ繧ｸ</option>
+                                <option {% if template.occupation=='繧｢繝代Ξ繝ｫ雋ｩ螢ｲ' %}selected{% endif %}>繧｢繝代Ξ繝ｫ雋ｩ螢ｲ</option>
+                                <option {% if template.occupation=='謳ｺ蟶ｯ雋ｩ螢ｲ' %}selected{% endif %}>謳ｺ蟶ｯ雋ｩ螢ｲ</option>
+                                <option {% if template.occupation=='繧ｭ繝｣繝ｳ繝壹・繝ｳ繝ｻ繧､繝吶Φ繝・ %}selected{% endif %}>繧ｭ繝｣繝ｳ繝壹・繝ｳ繝ｻ繧､繝吶Φ繝・
+                                </option>
+                            </optgroup>
+
+                            <optgroup label="迚ｩ豬√・霆ｽ菴懈･ｭ">
+                                <option {% if template.occupation=='蛟牙ｺｫ菴懈･ｭ' %}selected{% endif %}>蛟牙ｺｫ菴懈･ｭ</option>
+                                <option {% if template.occupation=='莉募・縺代・繝斐ャ繧ｭ繝ｳ繧ｰ' %}selected{% endif %}>莉募・縺代・繝斐ャ繧ｭ繝ｳ繧ｰ</option>
+                                <option {% if template.occupation=='謳ｬ蜈･繝ｻ謳ｬ蜃ｺ' %}selected{% endif %}>謳ｬ蜈･繝ｻ謳ｬ蜃ｺ</option>
+                                <option {% if template.occupation=='蠑戊ｶ翫＠繧｢繧ｷ繧ｹ繧ｿ繝ｳ繝・ %}selected{% endif %}>蠑戊ｶ翫＠繧｢繧ｷ繧ｹ繧ｿ繝ｳ繝・/option>
+                                <option {% if template.occupation=='繝峨Λ繧､繝舌・' %}selected{% endif %}>繝峨Λ繧､繝舌・</option>
+                            </optgroup>
+
+                            <optgroup label="繧ｪ繝輔ぅ繧ｹ">
+                                <option {% if template.occupation=='繝・・繧ｿ蜈･蜉・ %}selected{% endif %}>繝・・繧ｿ蜈･蜉・/option>
+                                <option {% if template.occupation=='繧ｳ繝ｼ繝ｫ繧ｻ繝ｳ繧ｿ繝ｼ' %}selected{% endif %}>繧ｳ繝ｼ繝ｫ繧ｻ繝ｳ繧ｿ繝ｼ</option>
+                                <option {% if template.occupation=='荳闊ｬ莠句漁' %}selected{% endif %}>荳闊ｬ莠句漁</option>
+                            </optgroup>
+
+                            <optgroup label="縺昴・莉・>
+                                <option {% if template.occupation=='貂・祉繝ｻ繝吶ャ繝峨Γ繧､繧ｯ' %}selected{% endif %}>貂・祉繝ｻ繝吶ャ繝峨Γ繧､繧ｯ</option>
+                                <option {% if template.occupation=='繝帙ユ繝ｫ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝帙ユ繝ｫ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='隴ｦ蛯吝藤' %}selected{% endif %}>隴ｦ蛯吝藤</option>
+                                <option {% if template.occupation=='繧ｫ繝ｩ繧ｪ繧ｱ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｫ繝ｩ繧ｪ繧ｱ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='莉玖ｭｷ陬懷勧' %}selected{% endif %}>莉玖ｭｷ陬懷勧</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">讌ｭ蜍吝・螳ｹ <span class="tag-required">蠢・・/span></div>
+                    <textarea name="work_content" placeholder="讌ｭ蜍吝・螳ｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞">{{ template.work_content }}</textarea>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">豕ｨ諢丈ｺ矩・/div>
+                    <textarea name="precautions" placeholder="豕ｨ諢丈ｺ矩・ｒ蜈･蜉帙＠縺ｦ縺上□縺輔＞">{{ template.precautions }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">蠕・∞</div>
+            <div class="section-body">
+                <div class="treatment-grid">
+                    <label class="checkbox-item"><input type="checkbox" name="has_unexperienced_welcome" {% if
+                            template.has_unexperienced_welcome %}checked{% endif %}> 譛ｪ邨碁ｨ楢・ｭ楢ｿ・/label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_bike_car_commute" {% if
+                            template.has_bike_car_commute %}checked{% endif %}> 繝舌う繧ｯ・剰ｻ企壼共蜿ｯ</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_clothing_free" {% if
+                            template.has_clothing_free %}checked{% endif %}> 譛崎｣・・逕ｱ</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_coupon_get" {% if
+                            template.has_coupon_get %}checked{% endif %}> 繧ｯ繝ｼ繝昴ΦGET</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_meal" {% if template.has_meal
+                            %}checked{% endif %}> 縺ｾ縺九↑縺・≠繧・/label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_hair_color_free" {% if
+                            template.has_hair_color_free %}checked{% endif %}> 鬮ｪ蝙具ｼ上き繝ｩ繝ｼ閾ｪ逕ｱ</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_bike_bicycle_commute" {% if
+                            template.has_bike_bicycle_commute %}checked{% endif %}> 繝舌う繧ｯ・剰・霆｢霆企壼共蜿ｯ</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_bicycle_commute" {% if
+                            template.has_bicycle_commute %}checked{% endif %}> 閾ｪ霆｢霆企壼共蜿ｯ</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">謖√■迚ｩ</div>
+                    <div id="belongings-chips" class="chip-container"></div>
+                    <div class="add-custom-group">
+                        <input type="text" id="custom-belonging-input" placeholder="鬆・岼繧貞・蜉帙＠縺ｦ霑ｽ蜉">
+                        <button type="button" class="btn-add-custom"
+                            onclick="addCustomChip('belongings-chips', 'custom-belonging-input')">霑ｽ蜉</button>
+                    </div>
+                    <input type="hidden" name="belongings" id="final-belongings">
+                </div>
+                <div class="field-group">
+                    <div class="field-label">蜒阪￥縺溘ａ縺ｮ譚｡莉ｶ</div>
+                    <div id="requirements-chips" class="chip-container"></div>
+                    <div class="add-custom-group">
+                        <input type="text" id="custom-requirement-input" placeholder="鬆・岼繧貞・蜉帙＠縺ｦ霑ｽ蜉">
+                        <button type="button" class="btn-add-custom"
+                            onclick="addCustomChip('requirements-chips', 'custom-requirement-input')">霑ｽ蜉</button>
+                    </div>
+                    <input type="hidden" name="requirements" id="final-requirements">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">雉・ｼ險ｭ螳・/div>
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">縺薙・豎ゆｺｺ縺ｯ雉・ｼ縺悟ｿ・ｦ√〒縺吶°・・<span class="tag-required">蠢・・/span></div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">雉・ｼ諠・ｱ縺ｮ逋ｻ骭ｲ縺後↑縺・Ρ繝ｼ繧ｫ繝ｼ縺ｯ縲∵ｱゆｺｺ縺ｫ逕ｳ縺苓ｾｼ繧縺薙→縺後〒縺阪↑縺上↑繧翫∪縺吶・
+                    </p>
+                    <div style="display: flex; gap: 20px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="requires_qualification" value="true"
+                                onchange="toggleQualification(true)" {% if template.requires_qualification %}checked{%
+                                endif %}> 縺ｯ縺・
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="radio" name="requires_qualification" value="false"
+                                onchange="toggleQualification(false)" {% if not template.requires_qualification
+                                %}checked{% endif %}> 縺・＞縺・
+                        </label>
+                    </div>
+                    <p style="font-size: 12px; color: #b8860b; margin-top: 12px; line-height: 1.4;">
+                        繝ｯ繝ｼ繧ｫ繝ｼ縺檎匳骭ｲ縺吶ｋ雉・ｼ險ｼ譏取嶌縺ｮ譛牙柑諤ｧ繧・判蜒上・豁｣遒ｺ諤ｧ縺ｯ縲√ち繧､繝溘・縺御ｿ晁ｨｼ縺吶ｋ繧ゅ・縺ｧ縺ｯ縺ゅｊ縺ｾ縺帙ｓ縲・br>
+                        蠢・★豎ゆｺｺ隧ｳ邏ｰ逕ｻ髱｢縺ｫ縺ｦ繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ縺ｮ雉・ｼ險ｼ譏取嶌繧定｡ｨ遉ｺ縺励∝・螳ｹ繧偵＃遒ｺ隱阪￥縺縺輔＞縲・
+                    </p>
+                </div>
+
+                <div class="field-group" id="qualification-type-group"
+                    style="{% if not template.requires_qualification %}display: none;{% endif %}">
+                    <div class="field-label">雉・ｼ遞ｮ蛻･ <span class="tag-required">蠢・・/span></div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">豎ゆｺｺ縺ｮ蠢懷供縺ｫ蠢・ｦ√↑雉・ｼ遞ｮ蛻･繧帝∈謚槭＠縺ｦ縺上□縺輔＞縲・/p>
+                    <select name="qualification_id">
+                        <option value="none" {% if not template.qualification %}selected{% endif %}>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+                        {% regroup qualifications by category as category_list %}
+                        {% for category in category_list %}
+                        <optgroup label="{{ category.grouper }}">
+                            {% for qual in category.list %}
+                            <option value="{{ qual.id }}" {% if template.qualification.id==qual.id %}selected{% endif
+                                %}>{{ qual.name }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                    <p style="font-size: 12px; color: #888; margin-top: 8px;">
+                        窶ｻ驕ｸ謚槭＠縺溘＞縺壹ｌ縺九・雉・ｼ縺ｮ逋ｻ骭ｲ縺悟ｮ御ｺ・＠縺ｦ縺・ｋ繝ｦ繝ｼ繧ｶ繝ｼ縺ｯ縲∵ｱゆｺｺ縺ｸ逕ｳ縺苓ｾｼ繧縺薙→縺悟庄閭ｽ縺ｫ縺ｪ繧翫∪縺吶・/p>
+
+                    <div class="field-label" style="margin-top: 20px;">雉・ｼ縺ｮ陬懆ｶｳ諠・ｱ</div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">蜈ｷ菴鍋噪縺ｪ隕∽ｻｶ繧・・∈謚櫁い縺ｫ縺ｪ縺・ｳ・ｼ蜷阪↑縺ｩ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/p>
+                    <textarea name="qualification_notes"
+                        placeholder="・井ｾ具ｼ陰T髯仙ｮ壻ｸ榊庄縲√・・比ｿｮ菫ｮ莠・・↑縺ｩ">{{ template.qualification_notes|default:'' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">蜀咏悄縺ｨ繝槭ル繝･繧｢繝ｫ</div>
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">蜀咏悄 <span class="tag-required">蠢・・/span></div>
+                    <div class="photo-grid" id="photo-grid">
+                        <label class="photo-add-card">
+                            <i class="fas fa-plus" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <span style="font-size: 12px;">霑ｽ蜉縺吶ｋ</span>
+                            <input type="file" name="photos" multiple accept="image/*" style="display: none;"
+                                onchange="handlePhotoUpload(this)">
+                        </label>
+                        {% for photo in template.photos.all %}
+                        <div class="photo-preview">
+                            <img src="{{ photo.image.url }}">
+                            <button type="button" class="photo-remove" onclick="this.parentElement.remove()">ﾃ・/button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">讌ｭ蜍吶↓髢｢縺吶ｋ譖ｸ鬘・(PDF)</div>
+                    <input type="file" name="manual_pdf" accept="application/pdf">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">蟆ｱ讌ｭ蝣ｴ謇縺ｨ迺ｰ蠅・/div>
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">蟆ｱ讌ｭ蝣ｴ謇縺ｮ菴乗園 <span class="tag-required">蠢・・/span></div>
+                    <input type="text" name="address" value="{{ template.address|default:store.full_address }}"
+                        required>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">繧｢繧ｯ繧ｻ繧ｹ</div>
+                    <textarea name="access">{{ template.access }}</textarea>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">邱頑･騾｣邨｡蜈・<span class="tag-required">蠢・・/span></div>
+                    <input type="tel" name="contact_number" value="{{ template.contact_number }}" required>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">蜿怜虚蝟ｫ辣咎亟豁｢謗ｪ鄂ｮ <span class="tag-required">蠢・・/span></div>
+                    <select name="smoking_prevention">
+                        <option value="indoor_no_smoking" {% if template.smoking_prevention=='indoor_no_smoking'
+                            %}selected{% endif %}>螻句・遖∫・</option>
+                        <option value="indoor_smoking_separate" {% if
+                            template.smoking_prevention=='indoor_smoking_separate' %}selected{% endif %}>蛻・・</option>
+                        <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok'
+                            %}selected{% endif %}>螻句・蝟ｫ辣吝庄</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">逕ｳ縺苓ｾｼ縺ｿ譚｡莉ｶ</div>
+            <div class="section-body">
+                <div class="field-group">
+                    <div class="field-label">蠢・ｦ√↑繧ｹ繧ｭ繝ｫ</div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">讌ｭ蜍吶↓蠢・ｦ√↑繧ｹ繧ｭ繝ｫ繧帝∈謚槭＠縺ｦ縺上□縺輔＞縲・/p>
+                    <div class="treatment-grid">
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="闍ｱ隱・> 闍ｱ隱・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="荳ｭ蝗ｽ隱・> 荳ｭ蝗ｽ隱・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="菴灘鴨"> 菴灘鴨</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="蜈・ｰ・> 蜈・ｰ・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="隨鷹｡・> 隨鷹｡・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｳ繝溘Η繝九こ繝ｼ繧ｷ繝ｧ繝ｳ蜉・>
+                            繧ｳ繝溘Η繝九こ繝ｼ繧ｷ繝ｧ繝ｳ蜉・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="謗･螳｢"> 謗･螳｢</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｪ繝ｼ繝繝ｼ"> 繧ｪ繝ｼ繝繝ｼ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｭ繝・メ繝ｳ"> 繧ｭ繝・メ繝ｳ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝帙・繝ｫ繝ｻ驟崎・"> 繝帙・繝ｫ繝ｻ驟崎・</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝峨Μ繝ｳ繧ｯ繝ｻ繝舌・繧ｫ繧ｦ繝ｳ繧ｿ繝ｼ">
+                            繝峨Μ繝ｳ繧ｯ繝ｻ繝舌・繧ｫ繧ｦ繝ｳ繧ｿ繝ｼ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="豢励＞蝣ｴ"> 豢励＞蝣ｴ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝舌ャ繧ｷ繝ｳ繧ｰ繝ｻ貂・祉">
+                            繝舌ャ繧ｷ繝ｳ繧ｰ繝ｻ貂・祉</label>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">縺昴・莉悶・譚｡莉ｶ</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;" id="other-conditions-container">
+                        <input type="text" name="other_conditions" placeholder="">
+                        <input type="text" name="other_conditions" placeholder="">
+                        <input type="text" name="other_conditions" placeholder="">
+                        <input type="text" name="other_conditions" placeholder="">
+                        <input type="text" name="other_conditions" placeholder="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</a>
+            <button type="submit" class="btn-submit">{% if is_edit %}螟画峩繧剃ｿ晏ｭ・% else %}縺ｲ縺ｪ蠖｢繧剃ｽ懈・{% endif %}</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const industrySelect = document.getElementById('industrySelect');
+        const occupationSelect = document.getElementById('occupationSelect');
+        const optgroups = occupationSelect.querySelectorAll('optgroup');
+
+        function filterOccupations() {
+            const selectedIndustry = industrySelect.value;
+
+            // 蜈ｨ縺ｦ縺ｮoptgroup繧帝撼陦ｨ遉ｺ
+            optgroups.forEach(group => {
+                const label = group.getAttribute('label');
+                if (label === selectedIndustry) {
+                    group.hidden = false;
+                    group.disabled = false;
+                } else {
+                    group.hidden = true;
+                    group.disabled = true;
+                }
+            });
+
+            // 驕ｸ謚樔ｸｭ縺ｮ閨ｷ遞ｮ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｦ縺・↑縺・げ繝ｫ繝ｼ繝励・繧ゅ・縺ｪ繧峨Μ繧ｻ繝・ヨ
+            const selectedOption = occupationSelect.options[occupationSelect.selectedIndex];
+            if (selectedOption && selectedOption.parentElement.tagName === 'OPTGROUP') {
+                if (selectedOption.parentElement.hidden) {
+                    occupationSelect.value = "";
+                }
+            }
+        }
+
+        // 蛻晄悄螳溯｡・
+        filterOccupations();
+
+        // 螟画峩譎ょｮ溯｡・
+        industrySelect.addEventListener('change', function () {
+            occupationSelect.value = ""; // 讌ｭ遞ｮ縺悟､峨ｏ縺｣縺溘ｉ閨ｷ遞ｮ縺ｯ繝ｪ繧ｻ繝・ヨ
+            filterOccupations();
+        });
+    });
+
+    const savedBelongings = "{{ template.belongings|default:'' }}".split('縲・).filter(s => s);
+    const savedRequirements = "{{ template.requirements|default:'' }}".split('縲・).filter(s => s);
+
+    const defaultBelongings = ['繝懊・繝ｫ繝壹Φ', '繝｡繝｢蟶ｳ', '辟｡蝨ｰ縺ｮT繧ｷ繝｣繝・, '蜍輔″繧・☆縺・ｻ偵＞繧ｺ繝懊Φ', '豎壹ｌ縺ｦ繧り憶縺・擽'];
+    const defaultRequirements = ['GOOD邇・0%莉･荳翫・逶ｴ蜑阪く繝｣繝ｳ繧ｻ繝ｫ邇・%莉･荳九・譁ｹ', '貂・ｽ疲─縺ｮ縺ゅｋ譁ｹ', '鬟ｲ鬟溷ｺ励〒縺ｮ蜍､蜍咏ｵ碁ｨ薙・縺ゅｋ譁ｹ', '譏弱ｋ縺乗磁螳｢縺後〒縺阪ｋ譁ｹ'];
+
+    function initChips(containerId, defaults, saved) {
+        const container = document.getElementById(containerId);
+        // 驥崎､・ｒ髯､縺・◆蜈ｨ繧｢繧､繝・Β・医ョ繝輔か繝ｫ繝・+ 菫晏ｭ俶ｸ医∩・・
+        const allItems = [...new Set([...defaults, ...saved])];
+        allItems.forEach(item => {
+            // 菫晏ｭ俶ｸ医∩繝・・繧ｿ縺後≠繧句ｴ蜷医・縺ｿ縲√◎縺ｮ繧｢繧､繝・Β繧帝∈謚樒憾諷九↓縺吶ｋ
+            // saved 縺檎ｩｺ縺ｮ蝣ｴ蜷医・縲∵眠隕丈ｽ懈・譎ゅ↑縺ｮ縺ｧ菴輔ｂ驕ｸ謚槭＠縺ｪ縺・
+            const isSelected = saved.includes(item);
+            createChip(container, item, isSelected);
+        });
+    }
+
+    function createChip(container, text, isSelected = false) {
+        const chip = document.createElement('div');
+        chip.className = 'chip' + (isSelected ? ' selected' : '');
+        chip.textContent = text;
+        chip.onclick = () => chip.classList.toggle('selected');
+        container.appendChild(chip);
+    }
+
+    function addCustomChip(containerId, inputId) {
+        const input = document.getElementById(inputId);
+        const text = input.value.trim();
+        if (text) {
+            const container = document.getElementById(containerId);
+            // 譌｢蟄倥・繝√ャ繝励↓蜷後§繝・く繧ｹ繝医′縺ゅｌ縺ｰ縺昴ｌ繧帝∈謚樒憾諷九↓縺吶ｋ縺ｮ縺ｿ
+            const existing = Array.from(container.querySelectorAll('.chip')).find(c => c.textContent === text);
+            if (existing) {
+                existing.classList.add('selected');
+            } else {
+                createChip(container, text, true);
+            }
+            input.value = '';
+        }
+    }
+
+    // 蛻晄悄蛹・
+    initChips('belongings-chips', defaultBelongings, savedBelongings);
+    initChips('requirements-chips', defaultRequirements, savedRequirements);
+
+    document.getElementById('templateForm').onsubmit = function () {
+        const b = Array.from(document.querySelectorAll('#belongings-chips .chip.selected')).map(c => c.textContent);
+        document.getElementById('final-belongings').value = b.join('縲・);
+        const r = Array.from(document.querySelectorAll('#requirements-chips .chip.selected')).map(c => c.textContent);
+        document.getElementById('final-requirements').value = r.join('縲・);
+    };
+
+    function handlePhotoUpload(input) {
+        if (input.files && input.files.length > 0) {
+            const grid = document.getElementById('photo-grid');
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const div = document.createElement('div');
+                    div.className = 'photo-preview';
+                    div.innerHTML = `<img src="${e.target.result}"><button type="button" class="photo-remove" onclick="this.parentElement.remove()">ﾃ・/button>`;
+                    grid.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    function toggleQualification(show) {
+        const group = document.getElementById('qualification-type-group');
+        if (group) {
+            group.style.display = show ? 'block' : 'none';
+        }
+    }
+
+    // 繧ｹ繧ｭ繝ｫ縺ｨ縺昴・莉匁擅莉ｶ縺ｮ蜿肴丐
+    document.addEventListener('DOMContentLoaded', function () {
+        // 繧ｹ繧ｭ繝ｫ
+        const savedSkills = "{{ template.skills|default:'' }}".split(',');
+        document.querySelectorAll('input[name="skills"]').forEach(cb => {
+            if (savedSkills.includes(cb.value)) {
+                cb.checked = true;
+            }
+        });
+
+        // 縺昴・莉匁擅莉ｶ
+        // 謾ｹ陦後さ繝ｼ繝画ｭ｣隕丞喧縺励※縺九ｉ蛻・牡
+        const savedConditions = `{{ template.other_conditions|default:''|escapejs }}`.replace(/\r\n/g, '\n').split('\n');
+        const inputs = document.querySelectorAll('input[name="other_conditions"]');
+        savedConditions.forEach((cond, index) => {
+            if (index < inputs.length && cond) {
+                inputs[index].value = cond;
+            }
+        });
+    });
+</script>
+{% endblock %}

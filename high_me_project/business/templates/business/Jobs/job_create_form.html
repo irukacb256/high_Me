@@ -1,0 +1,585 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px 20px 120px;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #E5E5E5;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #E5E5E5;
+        background: #FAFAFA;
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .card-body {
+        padding: 24px;
+    }
+
+    /* 縺ｲ縺ｪ蠖｢繝励Ξ繝薙Η繝ｼ */
+    .template-preview {
+        display: flex;
+        gap: 20px;
+    }
+
+    .template-img {
+        width: 200px;
+        height: 120px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .template-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .template-info {
+        flex: 1;
+    }
+
+    .template-meta {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .template-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .template-address {
+        font-size: 13px;
+        color: #444;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .template-detail-section {
+        margin-top: 20px;
+        border-top: 1px solid #EEE;
+        padding-top: 15px;
+    }
+
+    .template-detail-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 15px;
+        margin-bottom: 12px;
+        font-size: 13px;
+    }
+
+    .template-detail-label {
+        font-weight: bold;
+        color: #888;
+    }
+
+    .template-detail-value {
+        color: #333;
+        line-height: 1.5;
+    }
+
+    /* 莠梧ｮｵ邨・Ξ繧､繧｢繧ｦ繝・*/
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .label-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .label-text {
+        font-weight: bold;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .required-badge {
+        background: #FF3B30;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-weight: normal;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #D1D1D6;
+        border-radius: 8px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .input-with-icon {
+        position: relative;
+        display: inline-block;
+        width: 140px;
+    }
+
+    .input-with-icon i {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #8E8E93;
+        pointer-events: none;
+        font-size: 14px;
+    }
+
+    .time-range {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .duration-text {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    /* 蜈ｬ髢玖ｨｭ螳・*/
+    .radio-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 15px;
+        cursor: pointer;
+    }
+
+    .radio-option input {
+        margin-top: 4px;
+    }
+
+    .option-content {
+        flex: 1;
+    }
+
+    .option-title {
+        font-weight: bold;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .option-desc {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .nested-options {
+        margin-left: 28px;
+        padding: 15px;
+        background: #F9F9F9;
+        border-radius: 8px;
+        border: 1px solid #EEE;
+        margin-top: 10px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: #444;
+    }
+
+    /* 荳矩Κ蝗ｺ螳壹・繧ｿ繝ｳ */
+    .footer-bar {
+        position: fixed;
+        bottom: 0;
+        left: 240px;
+        right: 0;
+        background: white;
+        border-top: 1px solid #E5E5E5;
+        padding: 20px 40px;
+        text-align: center;
+        z-index: 1000;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-submit {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px 60px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    /* 繝倥Ν繝励ユ繧ｭ繧ｹ繝・*/
+    .help-text {
+        font-size: 11px;
+        color: #888;
+        margin-top: 6px;
+        line-height: 1.4;
+    }
+</style>
+
+<div class="form-container">
+    <div class="page-header">
+        <h1 class="page-title">豎ゆｺｺ繧剃ｽ懈・</h1>
+        <p class="page-subtitle">豎ゆｺｺ縺ｫ蠢・ｦ√↑諠・ｱ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/p>
+    </div>
+
+    <!-- 縺ｲ縺ｪ蠖｢繝励Ξ繝薙Η繝ｼ -->
+    <div class="card">
+        <div class="card-header">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢</div>
+        <!-- Image 2 Style -->
+        <div style="padding: 20px;">
+            <div style="display:flex; gap:20px;">
+                <div style="width:240px; height:160px; background:#eee; flex-shrink:0;">
+                    {% if template.photos.first %}
+                    <img src="{{ template.photos.first.image.url }}" style="width:100%; height:100%; object-fit:cover;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/240x160?text=No+Image"
+                        style="width:100%; height:100%; object-fit:cover;">
+                    {% endif %}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:12px; color:#666; margin-bottom:5px;">{{ template.industry }} / {{
+                        template.occupation }}</div>
+                    <div style="font-weight:bold; font-size:16px; margin-bottom:10px; line-height:1.4;">{{
+                        template.title }}</div>
+                    <div style="font-size:13px; font-weight:bold; display:flex; align-items:center; gap:5px;">
+                        <i class="fa-solid fa-location-dot"></i> {{ template.address }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Label Section (Below Card Content) -->
+            <div style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
+                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">邂｡逅・畑繝ｩ繝吶Ν</div>
+                <div style="font-size:11px; color:#666;">窶ｻ繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ縺ｯ蜈ｬ髢九＆繧後∪縺帙ｓ</div>
+                <div style="margin-top:5px; font-size:14px;">{{ template.title }}</div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="template_id" value="{{ template.pk }}">
+
+        <!-- 豎ゆｺｺ蜀・ｮｹ -->
+        <div class="card">
+            <div class="card-header">豎ゆｺｺ蜀・ｮｹ</div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <div class="label-row"><span class="label-text">豎ゆｺｺ譌･</span></div>
+                        <input type="date" name="work_date" id="work_date" value="{{ tomorrow|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="label-row"><span class="label-text">髢句ｧ九懃ｵゆｺ・/span></div>
+                        <div class="time-range">
+                            <div class="input-with-icon">
+                                <input type="time" name="start_time" id="start_time" required>
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+                            <span>縲・/span>
+                            <div class="input-with-icon">
+                                <input type="time" name="end_time" id="end_time" required>
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+                            <span class="duration-text" id="duration_display"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <div class="label-row"><span class="label-text">莨第・縺ｮ髢句ｧ・/span></div>
+                        <input type="time" name="break_start" id="break_start" placeholder="--:--">
+                    </div>
+                    <div class="form-group">
+                        <div class="label-row"><span class="label-text">莨第・譎る俣</span></div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="number" name="break_duration" id="break_duration" value="0"
+                                style="width: 80px;">
+                            <span>蛻・/span>
+                        </div>
+                    </div>
+                </div>
+                <p class="help-text">
+                    蜉ｴ蜒肴凾髢薙′縲・譎る俣繧定ｶ・∴縲・譎る俣莉･荳九阪・蝣ｴ蜷医・縲・5蛻・ｻ･荳翫・莨第・繧定ｨｭ螳壹＠縺ｦ縺上□縺輔＞縲・br>
+                    蜉ｴ蜒肴凾髢薙′縲・譎る俣繧定ｶ・∴繧九榊ｴ蜷医・縲・0蛻・ｻ･荳翫・莨第・繧定ｨｭ螳壹＠縺ｦ縺上□縺輔＞縲・
+                </p>
+
+                <div class="form-group" id="break_warning"
+                    style="display:none; color: #FF3B30; font-size: 12px; font-weight: bold; margin-bottom: 15px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 莨第・譎る俣縺御ｸ崎ｶｳ縺励※縺・∪縺吶・
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <div class="label-row"><span class="label-text">豎ゆｺｺ縺ｮ邱蛻・凾髢・/span></div>
+                    <select name="deadline"
+                        style="max-width: 300px; padding:10px; border-radius:8px; border:1px solid #ccc;">
+                        <option value="start">縲先耳螂ｨ縲鷹幕蟋区凾蛻ｻ縺ｨ蜷梧凾</option>
+                        <option value="1h">髢句ｧ区凾蛻ｻ縺ｮ1譎る俣蜑・/option>
+                        <option value="2h">髢句ｧ区凾蛻ｻ縺ｮ2譎る俣蜑・/option>
+                        <option value="3h">髢句ｧ区凾蛻ｻ縺ｮ3譎る俣蜑・/option>
+                        <option value="5h">髢句ｧ区凾蛻ｻ縺ｮ5譎る俣蜑・/option>
+                        <option value="8h">髢句ｧ区凾蛻ｻ縺ｮ8譎る俣蜑・/option>
+                        <option value="12h">髢句ｧ区凾蛻ｻ縺ｮ12譎る俣蜑・/option>
+                        <option value="day_before">髢句ｧ区凾蛻ｻ縺ｮ1譌･・・4譎る俣・牙燕</option>
+                        <option value="2days_before">髢句ｧ区凾蛻ｻ縺ｮ2譌･・・8譎る俣・牙燕</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <span class="label-text">蜍滄寔莠ｺ謨ｰ</span>
+                        <span class="required-badge">蠢・・/span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="number" name="count" value="1" style="width: 80px;" required>
+                        <span>莠ｺ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 蜈ｬ髢玖ｨｭ螳・-->
+        <div class="card">
+            <div class="card-header">蜈ｬ髢玖ｨｭ螳・/div>
+            <div class="card-body">
+                <!-- 1. 荳闊ｬ -->
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="public" checked>
+                    <div class="option-content">
+                        <div class="option-title">荳闊ｬ蜈ｬ髢・/div>
+                    </div>
+                </label>
+
+                <!-- 2. 繝舌ャ繧ｸ -->
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="badge">
+                    <div class="option-content">
+                        <div class="option-title">繝舌ャ繧ｸ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question"
+                                style="color:#C7C7CC; cursor:pointer;"></i></div>
+                        <div class="option-desc">邨碁ｨ楢ｱ雁ｯ後↑繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ蜒阪＞縺ｦ縺ｻ縺励＞豎ゆｺｺ縺ｫ縺翫☆縺吶ａ縺ｧ縺吶・br>險ｭ螳壼庄閭ｽ縺ｪ譎らｵｦ・・,363蜀・ｻ･荳・/div>
+                    </div>
+                </label>
+
+                <!-- 3. 繧ｰ繝ｫ繝ｼ繝・-->
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="group">
+                    <div class="option-content">
+                        <div class="option-title">繧ｰ繝ｫ繝ｼ繝鈴剞螳壼・髢・(59蛟九・繧ｰ繝ｫ繝ｼ繝励≠繧・</div>
+                        <div class="checkbox-item" style="margin-top: 8px;">
+                            <input type="checkbox" name="auto_switch" checked>
+                            <span>閾ｪ蜍輔〒縲御ｸ闊ｬ蜈ｬ髢九阪↓蛻・ｊ譖ｿ縺医ｋ・医・繝ｼ繧ｿ迚茨ｼ・/span>
+                        </div>
+                        <div class="option-desc" style="margin-left: 20px;">
+                            縲後げ繝ｫ繝ｼ繝鈴剞螳壼・髢九阪〒蜍滄寔莠ｺ謨ｰ繧呈ｺ縺溘○縺ｪ縺・ｴ蜷医↓閾ｪ蜍輔〒縲御ｸ闊ｬ蜈ｬ髢九阪↓蛻・ｊ譖ｿ縺医※縲√・繝・メ繝ｳ繧ｰ縺ｮ讖滉ｼ壹ｒ蠅励ｄ縺励∪縺吶・
+                        </div>
+                    </div>
+                </label>
+
+                <!-- 4. 蛻晏屓髯仙ｮ・-->
+                <label class="radio-option">
+                    <input type="radio" name="visibility" value="first_time">
+                    <div class="option-content">
+                        <div class="option-title">蛻晏屓繝ｯ繝ｼ繧ｫ繝ｼ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question"
+                                style="color:#C7C7CC; cursor:pointer;"></i></div>
+                        <div class="option-desc">縺薙・蠎苓・縺ｧ逶ｴ霑代・2蟷ｴ髢薙∽ｸ蠎ｦ繧ょ共蜍咏ｵ碁ｨ薙′縺ｪ縺・Ρ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/div>
+                    </div>
+                </label>
+
+                <!-- 5. URL髯仙ｮ・-->
+                <label class="radio-option" style="margin-bottom: 0;">
+                    <input type="radio" name="visibility" value="url">
+                    <div class="option-content">
+                        <div class="option-title">URL髯仙ｮ壼・髢・/div>
+                        <div class="option-desc">豎ゆｺｺ隧ｳ邏ｰ繝壹・繧ｸ縺ｮ縲悟・譛蔚RL縲阪ｒ遏･縺｣縺ｦ縺・ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- 譎らｵｦ繝ｻ莠､騾夊ｲｻ -->
+        <div class="card">
+            <div class="card-body">
+                <div class="form-grid" style="align-items: flex-end;">
+                    <div class="form-group">
+                        <div class="label-row">
+                            <span class="label-text">譎らｵｦ</span>
+                            <span class="required-badge">蠢・・/span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="number" name="wage" value="1300" style="width: 120px;" required>
+                            <span>蜀・/span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="label-row">
+                            <span class="label-text">莠､騾夊ｲｻ</span>
+                            <span class="required-badge">蠢・・/span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="number" name="transport" value="700" style="width: 120px;" required>
+                            <span>蜀・/span>
+                        </div>
+                    </div>
+                </div>
+                <div class="option-desc" style="color: #666;">
+                    豺ｱ螟懈焔蠖難ｼ・2譎ゆｻ･髯阪・蜍､蜍呻ｼ峨∵ｮ区･ｭ謇句ｽ難ｼ・譎る俣繧定ｶ・∴繧句共蜍呻ｼ峨・縲∝・蜉帙＠縺滓凾邨ｦ縺ｫ蠢懊§縺ｦ閾ｪ蜍戊ｨ育ｮ励＆繧後∪縺吶・br>
+                    驛ｽ驕灘ｺ懃恁縺斐→縺ｮ譛菴手ｳ・≡縺ｯ<a href="#" style="color:#007AFF;">縺薙■繧・/a>繧偵＃遒ｺ隱阪￥縺縺輔＞縲・br>
+                    <span
+                        style="color: #D67A00; font-weight: bold;">豈主ｹｴ10譛磯・↓蜷・・驕灘ｺ懃恁縺ｮ譛菴手ｳ・≡縺悟､画峩縺輔ｌ繧句庄閭ｽ諤ｧ縺後≠繧翫∪縺吶よｱゆｺｺ譌･縺ｫ驕ｩ逕ｨ縺輔ｌ繧区怙菴手ｳ・≡縺ｮ譎らｵｦ繧剃ｸ句屓繧峨↑縺・ｈ縺・↓豕ｨ諢上＠縺ｦ縺上□縺輔＞縲・/span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 閾ｪ蜍暮∽ｿ｡繝｡繝・そ繝ｼ繧ｸ -->
+        <div class="card">
+            <div class="card-header">閾ｪ蜍暮∽ｿ｡繝｡繝・そ繝ｼ繧ｸ</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">騾∽ｿ｡險ｭ螳・/div>
+                    <div style="display:flex; gap:20px; font-size: 13px;">
+                        <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_send"
+                                value="true" checked> 騾∽ｿ｡縺吶ｋ</label>
+                        <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_send"
+                                value="false"> 騾∽ｿ｡縺励↑縺・/label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">騾∽ｿ｡蟇ｾ雎｡</div>
+                    <div style="display:flex; gap:20px; font-size: 13px;">
+                        <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_target"
+                                value="all"> 蜈ｨ蜩｡</label>
+                        <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_target"
+                                value="first" checked> 縺ｯ縺倥ａ縺ｦ繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 10px;">繝｡繝・そ繝ｼ繧ｸ蜀・ｮｹ</div>
+                    <textarea name="auto_message" rows="4" style="resize: none;">
+逕ｳ縺苓ｾｼ縺ｿ縺・◆縺縺阪≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺呻ｼ・
+蠖捺律蛻ｰ逹縺励∪縺励◆繧牙・蜿｣縺九ｉ蜈･縺｣縺ｦ縺・◆縺縺阪√後ち繧､繝溘・縺九ｉ逕ｳ縺苓ｾｼ繧薙□縲・・〒縺吶阪→霑代￥縺ｮ蠎怜藤縺ｫ縺贋ｼ昴∴縺上□縺輔＞縲・
+荳肴・轤ｹ縺ｪ縺ｩ縺ゅｌ縺ｰ繝｡繝・そ繝ｼ繧ｸ縺狗ｷ頑･騾｣邨｡蜈医↓縺秘｣邨｡縺上□縺輔＞縲・/textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container" style="text-align:center; padding-top:40px; border-top:1px solid #eee;">
+            <button type="submit" class="btn-submit">蜈･蜉帙＠縺滓ｱゆｺｺ蜀・ｮｹ繧堤｢ｺ隱・/button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function calculateDuration() {
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
+        const breakDuration = parseInt(document.getElementById('break_duration').value) || 0;
+
+        if (startTime && endTime) {
+            const start = new Date(`2000-01-01T${startTime}:00`);
+            let end = new Date(`2000-01-01T${endTime}:00`);
+
+            // 邨ゆｺ・凾髢薙′髢句ｧ区凾髢薙ｈ繧雁燕縺ｪ繧臥ｿ梧律縺ｨ縺ｿ縺ｪ縺・
+            if (end <= start) {
+                end.setDate(end.getDate() + 1);
+            }
+
+            const diffMs = end - start;
+            const diffMin = Math.floor(diffMs / 60000);
+            const netWorkMin = diffMin - breakDuration;
+
+            const hours = Math.floor(netWorkMin / 60);
+            const mins = netWorkMin % 60;
+
+            document.getElementById('duration_display').textContent = `(${hours}譎る俣${mins}蛻・`;
+
+            // 莨第・譎る俣縺ｮ隴ｦ蜻翫Ο繧ｸ繝・け
+            const warningEl = document.getElementById('break_warning');
+            if (diffMin > 480) { // 8譎る俣雜・
+                if (breakDuration < 60) {
+                    warningEl.style.display = 'block';
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 蜉ｴ蜒肴凾髢薙′8譎る俣繧定ｶ・∴繧九◆繧√・0蛻・ｻ･荳翫・莨第・縺悟ｿ・ｦ√〒縺吶・;
+                } else {
+                    warningEl.style.display = 'none';
+                }
+            } else if (diffMin > 360) { // 6譎る俣雜・
+                if (breakDuration < 45) {
+                    warningEl.style.display = 'block';
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 蜉ｴ蜒肴凾髢薙′6譎る俣繧定ｶ・∴繧九◆繧√・5蛻・ｻ･荳翫・莨第・縺悟ｿ・ｦ√〒縺吶・;
+                } else {
+                    warningEl.style.display = 'none';
+                }
+            } else {
+                warningEl.style.display = 'none';
+            }
+        }
+    }
+
+    document.getElementById('start_time').addEventListener('change', calculateDuration);
+    document.getElementById('end_time').addEventListener('change', calculateDuration);
+    document.getElementById('break_duration').addEventListener('input', calculateDuration);
+
+    // 蛻晄悄隱ｭ縺ｿ霎ｼ縺ｿ譎ゅ↓繧りｨ育ｮ・
+    window.addEventListener('load', calculateDuration);
+</script>
+{% endblock %}

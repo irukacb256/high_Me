@@ -1,0 +1,232 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .message-container {
+        max-width: 900px;
+        margin: 20px auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 24px;
+        color: #333;
+    }
+
+    .message-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eaeaea;
+        overflow: hidden;
+    }
+
+    .message-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .message-item {
+        display: block;
+        text-decoration: none;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+        color: inherit;
+    }
+
+    .message-item:last-child {
+        border-bottom: none;
+    }
+
+    .message-item:hover {
+        background-color: #f9f9f9;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .item-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .worker-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        background-color: #f0f2f5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .worker-icon-text {
+        font-size: 28px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 6px;
+    }
+
+    .worker-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin: 0;
+    }
+
+    .date-label {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .job-title {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .arrow-icon {
+        color: #ccc;
+        font-size: 14px;
+    }
+
+    .empty-state {
+        padding: 60px 20px;
+        text-center: center;
+        color: #888;
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #ddd;
+    }
+
+    /* 讀懃ｴ｢繝輔か繝ｼ繝逕ｨCSS陬懷ｮ・*/
+    .form-control {
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .d-flex {
+        display: flex !important;
+    }
+
+    .gap-2 {
+        gap: 0.5rem !important;
+    }
+
+    .p-4 {
+        padding: 1.5rem !important;
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+</style>
+
+<div class="message-container">
+    <h2 class="page-title">繝｡繝・そ繝ｼ繧ｸ</h2>
+    <p class="text-muted mb-4">繝槭ャ繝√Φ繧ｰ縺励※縺・ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺ｨ縲√Γ繝・そ繝ｼ繧ｸ縺ｧ蛟句挨縺ｫ繧・ｊ縺ｨ繧翫〒縺阪∪縺吶・/p>
+
+    <div class="message-card">
+        <!-- 讀懃ｴ｢繝輔か繝ｼ繝 -->
+        <div class="p-4 border-bottom">
+            <form method="get" class="d-flex gap-2">
+                <input type="text" name="q" class="form-control" placeholder="繝ｯ繝ｼ繧ｫ繝ｼ蜷阪〒讀懃ｴ｢"
+                    value="{{ request.GET.q|default:'' }}" style="height: 44px;">
+                <button type="submit" class="btn btn-primary px-4 fw-bold"
+                    style="height: 44px; min-width: 80px;">讀懃ｴ｢</button>
+            </form>
+        </div>
+
+        {% if rooms %}
+        <div class="message-list">
+            {% for room in rooms %}
+            <a href="{% url 'biz_message_detail' room.id %}" class="message-item">
+                <div class="item-content">
+                    <!-- 繧｢繧､繧ｳ繝ｳ -->
+                    <div class="worker-icon-wrapper">
+                        {% if room.worker.workerprofile.face_photo %}
+                        <img src="{{ room.worker.workerprofile.face_photo.url }}" alt="worker"
+                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        {% else %}
+                        <span class="worker-icon-text">製</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- 蜷榊燕 -->
+                    <div class="text-content">
+                        <h5 class="worker-name">{{ room.worker.workerprofile.last_name_kanji }} {{
+                            room.worker.workerprofile.first_name_kanji }}</h5>
+                        <div class="text-muted" style="font-size: 12px; margin-top: 4px;">
+                            譛邨よ峩譁ｰ: {{ room.updated_at|date:"n譛・譌･ H:i" }}
+                        </div>
+                    </div>
+
+                    <!-- 遏｢蜊ｰ -->
+                    <div>
+                        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa-regular fa-comments"></i>
+            </div>
+            <p>繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ縺ｯ縺・∪縺帙ｓ縲・/p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

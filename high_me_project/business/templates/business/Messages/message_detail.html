@@ -1,0 +1,326 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .chat-container {
+        max-width: 900px;
+        margin: 20px auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .chat-header {
+        margin-bottom: 20px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: #666;
+        text-decoration: none;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .page-description {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Info Card */
+    .info-card {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .worker-icon-large {
+        width: 48px;
+        height: 48px;
+        background-color: #fff3c4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .worker-name-link {
+        font-size: 16px;
+        font-weight: bold;
+        color: #007AFF;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .job-meta-info {
+        font-size: 13px;
+        color: #333;
+    }
+
+    .job-meta-info i {
+        color: #666;
+        margin-right: 4px;
+    }
+
+    .job-meta-link {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    /* Chat Area */
+    .chat-box {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        height: 400px;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .message-row {
+        display: flex;
+        margin-bottom: 16px;
+    }
+
+    .message-row.mine {
+        justify-content: flex-end;
+    }
+
+    .message-row.others {
+        justify-content: flex-start;
+        align-items: flex-end;
+    }
+
+    .msg-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        position: relative;
+    }
+
+    .mine .msg-bubble {
+        background-color: #007AFF;
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+
+    .others .msg-bubble {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        color: #333;
+        border-bottom-left-radius: 2px;
+        margin-left: 8px;
+    }
+
+    .msg-time {
+        font-size: 11px;
+        color: #999;
+        white-space: nowrap;
+        margin-bottom: 2px;
+        /* 繝舌ヶ繝ｫ縺ｮ荳区純縺郁ｪｿ謨ｴ */
+    }
+
+    .others .msg-time {
+        text-align: left;
+        margin-left: 0;
+    }
+
+    .other-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #eaeaea;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    /* Input Area */
+    .input-area {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-top: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        padding: 20px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-end;
+    }
+
+    .chat-textarea {
+        flex-grow: 1;
+        width: 100%;
+        border: 2px solid #007AFF;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        resize: none;
+        height: 100px;
+        font-family: inherit;
+    }
+
+    /* 繝励Ξ繝ｼ繧ｹ繝帙Ν繝繝ｼ縺ｮ濶ｲ謖・ｮ・*/
+    .chat-textarea::placeholder {
+        color: #ccc;
+    }
+
+    .send-btn {
+        background-color: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0 24px;
+        height: 52px;
+        /* 鬮倥＆隱ｿ謨ｴ */
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* 荳ｭ螟ｮ謠・∴ */
+        gap: 8px;
+        transition: background-color 0.2s;
+        flex-shrink: 0;
+        /* 邵ｮ縺ｾ縺ｪ縺・ｈ縺・↓縺吶ｋ */
+        white-space: nowrap;
+        /* 繝・く繧ｹ繝医・謚倥ｊ霑斐＠遖∵ｭ｢ */
+        margin-bottom: 0;
+        /* 繝槭・繧ｸ繝ｳ繝ｪ繧ｻ繝・ヨ */
+    }
+
+    .send-btn:hover {
+        background-color: #0060cc;
+    }
+
+    .text-center {
+        text-align: center !important;
+    }
+
+    .my-3 {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+</style>
+
+<div class="chat-container">
+
+    <!-- Header -->
+    <div class="chat-header">
+        <a href="{% url 'biz_message_list' %}" class="back-link">
+            <i class="fa-solid fa-chevron-left"></i> &nbsp;繝｡繝・そ繝ｼ繧ｸ荳隕ｧ縺ｸ謌ｻ繧・
+        </a>
+        <h2 class="page-title">繝｡繝・そ繝ｼ繧ｸ隧ｳ邏ｰ</h2>
+        <p class="page-description">繝槭ャ繝√Φ繧ｰ縺励※縺・ｋ豎ゆｺｺ縺ｫ縺､縺・※縲√Γ繝・そ繝ｼ繧ｸ縺ｧ繧・ｊ縺ｨ繧翫〒縺阪∪縺吶・/p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="worker-icon-large">
+            {% if room.worker.workerprofile.face_photo %}
+            <img src="{{ room.worker.workerprofile.face_photo.url }}"
+                style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+            {% else %}
+            製
+            {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'biz_worker_detail' store.id room.worker.id %}" class="worker-name-link">
+                {{ room.worker.workerprofile.last_name_kanji }} {{ room.worker.workerprofile.first_name_kanji }}
+            </a>
+            <!-- Job info removed as chat is persistent across jobs -->
+        </div>
+    </div>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatLog">
+        {% if not messages %}
+        <div style="text-align: center; color: #aaa; margin-top: 40px;">
+            <p>繝｡繝・そ繝ｼ繧ｸ縺ｯ縺ｾ縺縺ゅｊ縺ｾ縺帙ｓ縲・/p>
+        </div>
+        {% endif %}
+
+        {% for msg in messages %}
+        <!-- 譌･莉伜､画峩邱壹・陦ｨ遉ｺ -->
+        {% ifchanged msg.created_at|date:"Y-m-d" %}
+        <div class="text-center my-3">
+            <span class="text-muted small fw-bold">{{ msg.created_at|date:"n譛・譌･ (D)" }}</span>
+        </div>
+        {% endifchanged %}
+
+        {% if msg.sender == request.user %}
+        <!-- Mine -->
+        <div class="message-row mine">
+            <div class="d-flex align-items-end gap-2">
+                <div class="msg-time">{{ msg.created_at|date:"H:i" }}</div>
+                <div class="msg-bubble">{{ msg.content|linebreaksbr }}</div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Others -->
+        <div class="message-row others">
+            <div class="other-icon mb-1">
+                {% if room.worker.workerprofile.face_photo %}
+                <img src="{{ room.worker.workerprofile.face_photo.url }}"
+                    style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                {% else %}
+                製
+                {% endif %}
+            </div>
+            <div class="d-flex align-items-end gap-2">
+                <div class="msg-bubble">{{ msg.content|linebreaksbr }}</div>
+                <div class="msg-time">{{ msg.created_at|date:"H:i" }}</div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Input Area -->
+    <form method="POST" class="input-area">
+        {% csrf_token %}
+        <textarea name="content" class="chat-textarea" placeholder="縺顔筏縺苓ｾｼ縺ｿ縺・◆縺縺阪≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺吶・#13;&#10;蠖捺律縺ｯ繧医ｍ縺励￥縺企｡倥＞縺励∪縺吶・
+            required></textarea>
+
+        <button type="submit" class="send-btn">
+            <i class="fa-solid fa-paper-plane"></i> 騾∽ｿ｡
+        </button>
+    </form>
+
+</div>
+
+<script>
+    window.onload = function () {
+        var chatLog = document.getElementById("chatLog");
+        chatLog.scrollTop = chatLog.scrollHeight;
+    };
+</script>
+{% endblock %}

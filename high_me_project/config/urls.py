@@ -13,10 +13,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # --- オンボーディング ---
-    path('', TemplateView.as_view(template_name='accounts/onboarding1.html'), name='onboarding1'),
-    path('step2/', TemplateView.as_view(template_name='accounts/onboarding2.html'), name='onboarding2'),
-    path('step3/', TemplateView.as_view(template_name='accounts/onboarding3.html'), name='onboarding3'),
-    path('gate/', TemplateView.as_view(template_name='accounts/gate.html'), name='gate'),
+    path('', TemplateView.as_view(template_name='Auth/onboarding1.html'), name='onboarding1'),
+    path('step2/', TemplateView.as_view(template_name='Auth/onboarding2.html'), name='onboarding2'),
+    path('step3/', TemplateView.as_view(template_name='Auth/onboarding3.html'), name='onboarding3'),
+    path('gate/', TemplateView.as_view(template_name='Auth/gate.html'), name='gate'),
 
     # --- 会員登録フロー ---
     # --- 会員登録フロー ---
@@ -177,7 +177,8 @@ urlpatterns = [
     path('biz/store/<int:store_id>/workers/', biz_views.BizWorkerManagementView.as_view(), name='biz_worker_management'),
     path('biz/store/<int:store_id>/workers/<int:worker_id>/', biz_views.JobWorkerDetailView.as_view(), name='biz_worker_detail'),
     path('biz/store/<int:store_id>/groups/', biz_views.BizGroupManagementView.as_view(), name='biz_group_management'),
-    path('biz/store/<int:store_id>/reviews/', biz_views.BizWorkerReviewListView.as_view(), name='biz_worker_review_list'),
+    path('biz/store/<int:store_id>/reviews/', biz_views.BizWorkerReviewJobListView.as_view(), name='biz_worker_review_job_list'),
+    path('biz/store/<int:store_id>/reviews/<int:job_id>/', biz_views.BizWorkerReviewListView.as_view(), name='biz_worker_review_list'),
     path('biz/store/<int:store_id>/reviews/submit/', biz_views.BizWorkerReviewSubmitView.as_view(), name='biz_worker_review_submit'),
 
     # メッセージ機能

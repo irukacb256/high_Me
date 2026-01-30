@@ -1,0 +1,144 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .page-desc {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .content-card {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 0;
+        /* padding handled inside items for list */
+    }
+
+    .card-header {
+        padding: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* List Table Style */
+    .job-list-header {
+        display: flex;
+        padding: 10px 20px;
+        font-size: 12px;
+        color: #666;
+        background: #fafafa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .job-item {
+        display: flex;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+    }
+
+    .job-item:last-child {
+        border-bottom: none;
+    }
+
+    .job-item:hover {
+        background: #f9f9f9;
+    }
+
+    .col-job {
+        flex: 1;
+        padding-right: 20px;
+    }
+
+    .col-time {
+        width: 250px;
+        font-size: 14px;
+    }
+
+    .col-count {
+        width: 100px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .col-action {
+        width: 120px;
+        text-align: right;
+    }
+
+    .job-title {
+        text-decoration: none;
+        color: #007AFF;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .job-title:hover {
+        text-decoration: underline;
+    }
+
+    .btn-review {
+        background: #007AFF;
+        color: white;
+        text-decoration: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .btn-review:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div class="page-title">ワーカー評価</div>
+<p class="page-desc">ワーカーの評価が終わってなぁE��人を選択してレビューしてください、E/p>
+
+<div class="content-card">
+    <div class="card-header">レビューが忁E��な求人一覧</div>
+
+    <!-- Header -->
+    <div class="job-list-header">
+        <div class="col-job">求人</div>
+        <div class="col-time">業務時閁E/div>
+        <div class="col-count">レビュー<br>人数</div>
+        <div class="col-action"></div>
+    </div>
+
+    <!-- List -->
+    <div>
+        {% for job in job_postings %}
+        <div class="job-item">
+            <div class="col-job">
+                <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="job-title">{{ job.title }}</a>
+            </div>
+            <div class="col-time">
+                {{ job.work_date|date:"Y年n朁E日" }} ({{ job.work_date|date:"D" }})<br>
+                {{ job.start_time|date:"H:i" }} 、E{{ job.end_time|date:"H:i" }}
+            </div>
+            <div class="col-count">
+                {{ job.unreviewed_count }}人
+            </div>
+            <div class="col-action">
+                <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="btn-review">レビュー</a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="padding:40px; text-align:center; color:#999;">
+            レビューが忁E��な求人はありません
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

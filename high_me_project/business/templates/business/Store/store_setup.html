@@ -1,0 +1,292 @@
+{% extends 'business/Common/base_signup.html' %}
+
+{% block content %}
+<style>
+    /* プログレスバ�E (スチE��チE: 店�E登録がアクチE��チE */
+    .stepper {
+        display: flex;
+        margin: -40px -40px 40px -40px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+
+    .step {
+        flex: 1;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 11px;
+        color: #007AFF;
+        position: relative;
+    }
+
+    .step.inactive {
+        color: #999;
+    }
+
+    .step.active {
+        font-weight: bold;
+        border-bottom: 3px solid #007AFF;
+    }
+
+    .step::before {
+        content: '✁E';
+    }
+
+    .step.no-check::before {
+        content: '';
+    }
+
+    /* フォームスタイル (画僁E準拠) */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .reflect-btn {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .form-item {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .form-item label {
+        display: block;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+        background-color: #fff;
+    }
+
+    input::placeholder {
+        color: #ccc;
+    }
+
+    .btn-register {
+        background: #007AFF;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 30px;
+        cursor: pointer;
+    }
+</style>
+
+<!-- 進行バー -->
+<div class="stepper">
+    <div class="step">メール登録</div>
+    <div class="step">アカウント登録</div>
+    <div class="step">3. 事業老E��録</div>
+    <div class="step active no-check">4. 店�E登録</div>
+</div>
+
+<div class="form-body">
+    <form method="POST" class="h-adr">
+        <span class="p-country-name" style="display:none;">Japan</span>
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div
+            style="background:#ffebee; color:#d32f2f; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold;">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            {% if field != '__all__' %}
+            <div>{{ field }}: {{ error }}</div>
+            {% else %}
+            <div>{{ error }}</div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="section-header">
+            <span class="section-title">店�Eの基本惁E��</span>
+        </div>
+        <div class="form-item">
+            <label>店�E吁E/label>
+            <input type="text" name="store_name" placeholder="侁E タイミ�E 汐留庁E
+                value="{{ form.store_name.value|default:'' }}" required>
+        </div>
+
+        <div class="section-header" style="margin-top: 40px;">
+            <span class="section-title">業務�E容</span>
+        </div>
+        <div class="form-item">
+            <label>業種</label>
+            <select name="industry" id="industrySelect" required>
+                <option value="">選択してください</option>
+                <option value="飲食�Eフ�EチE>飲食�Eフ�EチE/option>
+                <option value="販売・接客">販売・接客</option>
+                <option value="物流�E軽作業">物流�E軽作業</option>
+                <option value="オフィス">オフィス</option>
+                <option value="そ�E仁E>そ�E仁E/option>
+            </select>
+        </div>
+
+        <div class="section-header" style="margin-top: 40px;">
+            <span class="section-title">店�Eの所在地</span>
+            <button type="button" class="reflect-btn">事業老E�E所在地を反映する</button>
+        </div>
+
+        <div class="form-item">
+            <label>郵便番号</label>
+            <input type="text" name="post_code" class="p-postal-code" placeholder="侁E 1700013"
+                value="{{ form.post_code.value|default:'' }}" required>
+        </div>
+
+        <div class="form-item">
+            <label>都道府県</label>
+            <select name="prefecture" class="p-region">
+                <option value="">選択してください</option>
+                <option value="北海遁E>北海遁E/option>
+                <option value="青森省E>青森省E/option>
+                <option value="岩手県">岩手県</option>
+                <option value="宮城県">宮城県</option>
+                <option value="秋田省E>秋田省E/option>
+                <option value="山形省E>山形省E/option>
+                <option value="福島省E>福島省E/option>
+                <option value="茨城県">茨城県</option>
+                <option value="栁E��省E>栁E��省E/option>
+                <option value="群馬省E>群馬省E/option>
+                <option value="埼玉県">埼玉県</option>
+                <option value="十E��省E>十E��省E/option>
+                <option value="東京都">東京都</option>
+                <option value="神奈川県">神奈川県</option>
+                <option value="新潟県">新潟県</option>
+                <option value="富山省E>富山省E/option>
+                <option value="石川県">石川県</option>
+                <option value="福井県">福井県</option>
+                <option value="山梨省E>山梨省E/option>
+                <option value="長野県">長野県</option>
+                <option value="岐�E省E>岐�E省E/option>
+                <option value="静岡省E>静岡省E/option>
+                <option value="愛知省E>愛知省E/option>
+                <option value="三重省E>三重省E/option>
+                <option value="滋賀省E>滋賀省E/option>
+                <option value="京都庁E>京都庁E/option>
+                <option value="大阪庁E>大阪庁E/option>
+                <option value="兵庫省E>兵庫省E/option>
+                <option value="奈良省E>奈良省E/option>
+                <option value="和歌山省E>和歌山省E/option>
+                <option value="鳥取県">鳥取県</option>
+                <option value="島根省E>島根省E/option>
+                <option value="岡山省E>岡山省E/option>
+                <option value="庁E��省E>庁E��省E/option>
+                <option value="山口省E>山口省E/option>
+                <option value="徳島省E>徳島省E/option>
+                <option value="香川県">香川県</option>
+                <option value="愛媛県">愛媛県</option>
+                <option value="高知省E>高知省E/option>
+                <option value="福岡省E>福岡省E/option>
+                <option value="佐賀省E>佐賀省E/option>
+                <option value="長崎県">長崎県</option>
+                <option value="熊本省E>熊本省E/option>
+                <option value="大刁E��">大刁E��</option>
+                <option value="宮崎県">宮崎県</option>
+                <option value="鹿児島省E>鹿児島省E/option>
+                <option value="沖縁E��">沖縁E��</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label>市区町村名</label>
+            <input type="text" name="city" class="p-locality" placeholder="侁E 豊島区"
+                value="{{ form.city.value|default:'' }}">
+        </div>
+
+        <div class="form-item">
+            <label>町域�E番地</label>
+            <input type="text" name="address_line" class="p-street-address" placeholder="侁E 東池袁E-1-18-1"
+                value="{{ form.address_line.value|default:'' }}">
+        </div>
+
+        <div class="form-item">
+            <label>建物名など</label>
+            <input type="text" name="building" class="p-extended-address" placeholder="侁E Hareza Tower 27隁E
+                value="{{ form.building.value|default:'' }}">
+        </div>
+
+        <button type="submit" class="btn-register">店�Eを登録する</button>
+    </form>
+</div>
+
+<script>
+    document.querySelector('.reflect-btn').addEventListener('click', function () {
+        // セチE��ョンから渡されたbiz_dataをJSで使えるようにする�E�簡易的�E�E
+        // チE��プレート変数で直接JS変数に埋め込む
+        var bizPostCode = "{{ biz_data.biz_post_code|default:'' }}";
+        var bizPrefecture = "{{ biz_data.biz_prefecture|default:'' }}";
+        var bizCity = "{{ biz_data.biz_city|default:'' }}";
+        var bizAddressLine = "{{ biz_data.biz_address_line|default:'' }}";
+        var bizBuilding = "{{ biz_data.biz_building|default:'' }}";
+
+        if (bizPostCode) document.querySelector('input[name="post_code"]').value = bizPostCode;
+        if (bizPrefecture) document.querySelector('select[name="prefecture"]').value = bizPrefecture;
+        if (bizCity) document.querySelector('input[name="city"]').value = bizCity;
+        if (bizAddressLine) document.querySelector('input[name="address_line"]').value = bizAddressLine;
+        if (bizBuilding) document.querySelector('input[name="building"]').value = bizBuilding;
+    });
+
+    // Restore form values on error
+    document.addEventListener('DOMContentLoaded', function () {
+        // Industry
+        var selectedIndustry = "{{ form.industry.value|default:'' }}";
+        if (selectedIndustry) {
+            var sel = document.getElementById('industrySelect');
+            if (sel) {
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === selectedIndustry) {
+                        sel.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Prefecture
+        var selectedPref = "{{ form.prefecture.value|default:'' }}";
+        if (selectedPref) {
+            var prefSel = document.querySelector('select[name="prefecture"]');
+            if (prefSel) {
+                for (var i = 0; i < prefSel.options.length; i++) {
+                    if (prefSel.options[i].value === selectedPref) {
+                        prefSel.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,335 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    /* 蛻・ｊ譖ｿ縺医ち繝・*/
+    .view-switcher {
+        display: flex;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        padding: 2px;
+    }
+
+    .view-btn {
+        padding: 8px 16px;
+        border-radius: 18px;
+        border: none;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: none;
+        color: #666;
+    }
+
+    .view-btn.active {
+        background: #eef6ff;
+        color: #007AFF;
+    }
+
+    /* 繝ｪ繧ｹ繝医ユ繝ｼ繝悶Ν・育判蜒・蜀咲樟・・*/
+    .job-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px;
+        font-size: 13px;
+    }
+
+    .job-list-table th {
+        background: #f9f9f9;
+        padding: 15px;
+        text-align: left;
+        color: #888;
+        border-bottom: 1px solid #eee;
+    }
+
+    .job-list-table td {
+        padding: 20px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 5px 15px;
+        border-radius: 20px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .privacy-tag {
+        background: #eef6ff;
+        color: #007AFF;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-top: 5px;
+        display: inline-block;
+    }
+
+    .job-link {
+        color: #007AFF;
+        font-weight: bold;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .btn-copy-dropdown {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* 6繝ｶ譛育ｵ碁℃蠕後・繧ｹ繧ｿ繧､繝ｫ */
+    .job-old {
+        background-color: #f5f5f5 !important;
+        color: #999 !important;
+    }
+
+    .job-old .job-link {
+        color: #999 !important;
+        text-decoration: none;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .job-old .status-badge {
+        background: #eee;
+        border-color: #ddd;
+        color: #aaa;
+    }
+
+    #calendar-view,
+    #list-view {
+        display: none;
+    }
+
+    .visible {
+        display: block !important;
+    }
+
+    /* 繧ｫ繝ｬ繝ｳ繝繝ｼ縺ｮ譛滄剞蛻・ｌ繧､繝吶Φ繝・*/
+    .fc-event.event-old {
+        background-color: #d1d1d6 !important;
+        border-color: #c7c7cc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+</style>
+
+<div class="page-header">
+    <h1 class="page-title">縺吶∋縺ｦ縺ｮ豎ゆｺｺ荳隕ｧ</h1>
+    <div class="view-switcher">
+        <button class="view-btn active" id="btn-calendar" onclick="switchView('calendar')"><i
+                class="fa-solid fa-calendar-days"></i> 繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ</button>
+        <button class="view-btn" id="btn-list" onclick="switchView('list')"><i class="fa-solid fa-list-ul"></i>
+            繝ｪ繧ｹ繝郁｡ｨ遉ｺ</button>
+    </div>
+</div>
+
+<!-- 繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ繧ｨ繝ｪ繧｢ -->
+<div id="calendar-view" class="visible">
+    <div class="calendar-card">
+        <div class="calendar-top" style="justify-content:center; margin-bottom:15px;">
+            <button onclick="navigateCalendar(-1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
+            <span class="calendar-title" style="margin:0 15px;">{{ current_year }}蟷ｴ{{ current_month }}譛・/span>
+            <button onclick="navigateCalendar(1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
+        </div>
+        {% include 'business/components/calendar_grid.html' %}
+    </div>
+</div>
+
+<!-- 繝ｪ繧ｹ繝郁｡ｨ遉ｺ繧ｨ繝ｪ繧｢・育判蜒・蜀咲樟・・-->
+<div id="list-view">
+    <table class="job-list-table">
+        <thead>
+            <tr>
+                <th>豎ゆｺｺ縺ｮ迥ｶ諷・/th>
+                <th>蜈ｬ髢玖ｨｭ螳・/th>
+                <th>豎ゆｺｺ</th>
+                <th>豎ゆｺｺ譌･譎・/th>
+                <th>繝ｯ繝ｼ繧ｫ繝ｼ</th>
+                <th>謫堺ｽ・/th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in postings %}
+            <tr class="{% if job.is_old_posting %}job-old{% endif %}">
+                <td><span class="status-badge">{% if job.is_old_posting %}譛滄剞蛻・ｌ{% else %}豎ゆｺｺ荳ｭ{% endif %}</span></td>
+                <td>
+                    <div>{{ job.get_visibility_display|default:"荳闊ｬ蜈ｬ髢・ }}</div>
+                    <!-- 繧ｰ繝ｫ繝ｼ繝鈴剞螳夂ｭ峨・蝣ｴ蜷医・繧ｿ繧ｰ繧定｡ｨ遉ｺ -->
+                    {% if job.visibility == 'group' %}<span class="privacy-tag">繧ｰ繝ｫ繝ｼ繝鈴剞螳・/span>{% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'biz_job_posting_detail' store.id job.id %}" class="job-link">{{ job.title }}</a>
+                </td>
+                <td>
+                    {{ job.work_date|date:"Y蟷ｴn譛・譌･" }}・・{ job.work_date|date:"D" }}・・br>
+                    <strong>{{ job.start_time|time:"H:i" }} 縲・{{ job.end_time|time:"H:i" }}</strong>
+                </td>
+                <td>{{ job.matched_count }} / {{ job.recruitment_count }}莠ｺ</td>
+                <td>
+                    {% if not job.is_old_posting %}
+                    <button class="btn-copy-dropdown"><i class="fa-regular fa-copy"></i> 繧ｳ繝斐・ <i
+                            class="fa-solid fa-chevron-down"></i></button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Copy Modal Logic from Dashboard -->
+<!-- Day Detail Modal (Image 2) -->
+<div id="dayModal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+    <div
+        style="background:white; width:90%; max-width:500px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
+        <!-- Modal Header -->
+        <div
+            style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024蟷ｴ1譛・0譌･・亥悄・・/div>
+            <button onclick="closeDayModal()"
+                style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div id="modalContent" style="padding:20px; overflow-y:auto; flex:1;"></div>
+
+        <div style="padding:15px; border-top:1px solid #eee; text-align:center;">
+            <button onclick="closeDayModal()"
+                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">髢峨§繧・/button>
+        </div>
+    </div>
+</div>
+
+<template id="jobItemTemplate">
+    <div style="margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0;">
+        <a href="#" class="job-link"
+            style="color:#007AFF; font-weight:bold; font-size:15px; text-decoration:underline; display:block; margin-bottom:10px;">TITLE_HERE</a>
+
+        <div
+            style="display:grid; grid-template-columns: 80px 1fr; gap:10px; font-size:13px; color:#666; margin-bottom:8px;">
+            <div>譎る俣</div>
+            <div><i class="fa-regular fa-clock"></i> TIME_HERE</div>
+
+            <div>豎ゆｺｺ縺ｮ迥ｶ諷・/div>
+            <div><span class="status-badge BADGE_CLASS">STATUS_HERE</span></div>
+
+            <div>蜈ｬ髢玖ｨｭ螳・/div>
+            <div>VISIBILITY_HERE</div>
+
+            <div>蜍滄寔莠ｺ謨ｰ</div>
+            <div><i class="fa-solid fa-user"></i> PEOPLE_HERE</div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .badge-active {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+
+    .badge-done {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+</style>
+
+<script>
+    function switchView(view) {
+        document.getElementById('calendar-view').classList.remove('visible');
+        document.getElementById('list-view').classList.remove('visible');
+        document.getElementById('btn-calendar').classList.remove('active');
+        document.getElementById('btn-list').classList.remove('active');
+
+        if (view === 'calendar') {
+            document.getElementById('calendar-view').classList.add('visible');
+            document.getElementById('btn-calendar').classList.add('active');
+        } else {
+            document.getElementById('list-view').classList.add('visible');
+            document.getElementById('btn-list').classList.add('active');
+        }
+    }
+
+    function openDayModal(dateYMD, dateFormatted, dayOfWeekIdx) {
+        const days = ['・域律・・, '・域怦・・, '・育↓・・, '・域ｰｴ・・, '・域惠・・, '・磯≡・・, '・亥悄・・];
+        const dayStr = days[dayOfWeekIdx] || '';
+        document.getElementById('modalDate').innerText = dateFormatted + ' ' + dayStr;
+
+        const dataContainer = document.getElementById('data-' + dateYMD);
+        const modalContent = document.getElementById('modalContent');
+        const template = document.getElementById('jobItemTemplate').innerHTML;
+
+        modalContent.innerHTML = '';
+
+        if (dataContainer && dataContainer.children.length > 0) {
+            Array.from(dataContainer.children).forEach(item => {
+                let html = template
+                    .replace('TITLE_HERE', item.dataset.title)
+                    .replace('TIME_HERE', item.dataset.time)
+                    .replace('STATUS_HERE', item.dataset.status)
+                    .replace('BADGE_CLASS', item.dataset.statusClass)
+                    .replace('VISIBILITY_HERE', item.dataset.visibility)
+                    .replace('PEOPLE_HERE', item.dataset.people)
+                    .replace('href="#"', 'href="' + item.dataset.detailUrl + '"'); // Updated link
+                modalContent.innerHTML += html;
+            });
+        } else {
+            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">莠亥ｮ壹・縺ゅｊ縺ｾ縺帙ｓ</div>';
+        }
+
+        document.getElementById('dayModal').style.display = 'flex';
+    }
+
+    function closeDayModal() {
+        document.getElementById('dayModal').style.display = 'none';
+    }
+
+    document.getElementById('dayModal').addEventListener('click', function (e) {
+        if (e.target === this) closeDayModal();
+    });
+</script>
+{% endblock %}

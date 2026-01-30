@@ -1,0 +1,463 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        color: #007AFF;
+        margin-bottom: 5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .page-desc {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .job-title-header {
+        font-size: 18px;
+        font-weight: bold;
+        padding: 15px 20px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .job-title-text {
+        color: #333;
+    }
+
+    .job-actions button {
+        margin-left: 10px;
+    }
+
+    /* Review Card Layout */
+    .review-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        display: flex;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .left-col {
+        width: 200px;
+        background: #f9f9f9;
+        border-right: 1px solid #eee;
+        padding: 30px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .worker-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #ccc;
+        margin-bottom: 15px;
+        object-fit: cover;
+    }
+
+    .worker-name {
+        color: #007AFF;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: underline;
+    }
+
+    .right-col {
+        flex: 1;
+        padding: 30px 40px;
+    }
+
+    /* Form Sections */
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .section-label {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    /* Good/Bad */
+    .gb-toggle {
+        display: flex;
+        gap: 20px;
+    }
+
+    .gb-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        transition: 0.2s;
+    }
+
+    .gb-btn.active {
+        background: #e6f0ff;
+        /* Light Blue for both? Image shows grey active? No, usually colored */
+        color: #333;
+        /* Image shows dark icons */
+    }
+
+    /* Let's follow image: Active one is darker grey or specific style? User image shows thumbs up/down icons. */
+    /* I'll use simple active style */
+    .gb-btn.good.active {
+        background: #007AFF;
+        color: white;
+    }
+
+    .gb-btn.bad.active {
+        background: #FF3B30;
+        color: white;
+    }
+
+    /* Skills Button */
+    .btn-select-skill {
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 8px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .selected-skills-display {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .skill-tag {
+        background: #e0f0ff;
+        color: #007AFF;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    /* Groups */
+    .group-desc {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .group-link {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    .checkbox-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        transform: scale(1.2);
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        width: 400px;
+    }
+
+    .badge-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .badge-option {
+        border: 1px solid #ddd;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .badge-option.selected {
+        background: #007AFF;
+        color: white;
+        border-color: #007AFF;
+    }
+</style>
+
+<div class="page-header">
+    <a href="{% url 'biz_worker_review_job_list' store.id %}" class="breadcrumb">ワーカー評価</a> &gt; <span
+        style="font-weight:bold;">未レビューのワーカー</span>
+    <h1 class="page-title">未レビューのワーカー</h1>
+    <p class="page-desc">それぞれのレビュー頁E��を�E力して、業務が終亁E��たワーカーのレビューを送信してください</p>
+</div>
+
+<div class="job-title-header">
+    <div class="job-title-text">{{ job.title }}</div>
+    <div class="job-actions">
+        <button
+            style="border:1px solid #ddd; background:white; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">まとめて入力すめE/button>
+        <button
+            style="background:#007AFF; color:white; border:none; padding:6px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">送信する</button>
+    </div>
+</div>
+
+<div class="review-list">
+    {% for app in applications %}
+    <div class="review-card" data-app-id="{{ app.id }}">
+        <!-- Left Column -->
+        <div class="left-col">
+            {% if app.worker.workerprofile.face_photo %}
+            <img src="{{ app.worker.workerprofile.face_photo.url }}" class="worker-avatar">
+            {% else %}
+            <div class="worker-avatar"
+                style="display:flex; align-items:center; justify-content:center; background:#ccc;">
+                <i class="fa-solid fa-user" style="color:white; font-size:50px;"></i>
+            </div>
+            {% endif %}
+            <div class="worker-name">{{ app.worker.workerprofile.last_name_kanji }} {{
+                app.worker.workerprofile.first_name_kanji }}</div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-col">
+
+            <!-- Good/Bad -->
+            <div class="form-section">
+                <div class="section-label">good/badを選抁E/div>
+                <div class="gb-toggle">
+                    <div class="gb-btn good" data-val="good" onclick="toggleGoodBad(this, 'good')"><i
+                            class="fa-solid fa-thumbs-up"></i></div>
+                    <div class="gb-btn bad" data-val="bad" onclick="toggleGoodBad(this, 'bad')"><i
+                            class="fa-solid fa-thumbs-down"></i></div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="form-section">
+                <div class="section-label">良かったスキルを選抁E/div>
+                <button class="btn-select-skill" onclick="openSkillModal(this)">スキルを選抁E/button>
+                <div class="selected-skills-display"></div>
+            </div>
+
+            <!-- Groups -->
+            <div class="form-section">
+                <div class="section-label">所属するグループを変更</div>
+                <div class="group-desc">
+                    グループ�E新規作�E・編雁E�E<a href="{% url 'biz_group_management' store.id %}"
+                        class="group-link">グループ管琁E�Eージ</a>をご利用ください、E
+                </div>
+                <div class="checkbox-list">
+                    {% for group in group_definitions %}
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="group_{{ group.id }}" value="{{ group.id }}"
+                            class="group-checkbox">
+                        {{ group.name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Manually added Send Button inside card for individual sending as per previous logic, 
+                 though header has "Send All" button which is not implemented yet. 
+                 I'll add a per-card send button for now to match functionality. -->
+            <div style="text-align:right;">
+                <button onclick="submitReview(this)"
+                    style="background:#007AFF; color:white; border:none; padding:10px 30px; border-radius:4px; font-weight:bold; cursor:pointer;">送信</button>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align:center; padding:50px; color:#999;">
+        未レビューのワーカーはぁE��せん
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Skills Modal -->
+<div id="skillModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0;">スキルを選抁E/h3>
+        <div class="badge-options">
+            <div class="badge-option" onclick="selectSkill(this, '梱匁E)">梱匁E/div>
+            <div class="badge-option" onclick="selectSkill(this, 'ピッキング')">ピッキング</div>
+            <div class="badge-option" onclick="selectSkill(this, '検品')">検品</div>
+            <div class="badge-option" onclick="selectSkill(this, '仕�EぁE)">仕�EぁE/div>
+            <div class="badge-option" onclick="selectSkill(this, '搬入出')">搬入出</div>
+            <div class="badge-option" onclick="selectSkill(this, 'ホ�Eル')">ホ�Eル</div>
+            <div class="badge-option" onclick="selectSkill(this, 'キチE��ン')">キチE��ン</div>
+            <div class="badge-option" onclick="selectSkill(this, '渁E��')">渁E��</div>
+        </div>
+        <div style="text-align:right;">
+            <button onclick="closeSkillModal()"
+                style="background:#007AFF; color:white; border:none; padding:5px 15px; border-radius:4px;">決宁E/button>
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+<script>
+    let currentSkillButton = null;
+    let selectedSkillsMap = new Map(); // cardIndex -> Set of skills
+
+    function toggleGoodBad(btn, type) {
+        btn.parentElement.querySelectorAll('.gb-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function openSkillModal(btn) {
+        currentSkillButton = btn;
+        document.getElementById('skillModal').classList.add('show');
+        // Clear selection visual in modal (simple implementation: clear all then re-select based on saved skills for this card... 
+        // but for MVP let's just show options. Ideally we track per card.)
+    }
+
+    function closeSkillModal() {
+        document.getElementById('skillModal').classList.remove('show');
+        currentSkillButton = null;
+    }
+
+    function selectSkill(option, skillName) {
+        if (!currentSkillButton) return;
+
+        // Add skill tag to display
+        const displayDiv = currentSkillButton.nextElementSibling;
+
+        // Check if already added
+        if (Array.from(displayDiv.children).some(el => el.textContent === skillName)) {
+            return; // Already added
+        }
+
+        const tag = document.createElement('span');
+        tag.className = 'skill-tag';
+        tag.textContent = skillName;
+        displayDiv.appendChild(tag);
+
+        // Flash effect
+        option.style.backgroundColor = '#ddd';
+        setTimeout(() => option.style.backgroundColor = '', 200);
+    }
+
+    function submitReview(btn) {
+        const card = btn.closest('.review-card');
+        const appId = card.dataset.appId;
+
+        // Good/Bad
+        const activeGb = card.querySelector('.gb-btn.active');
+        if (!activeGb) {
+            alert('Goodまた�EBadを選択してください');
+            return;
+        }
+        const reviewType = activeGb.dataset.val;
+
+        // Skills
+        const skillTags = card.querySelectorAll('.skill-tag');
+        const skills = Array.from(skillTags).map(el => el.textContent);
+
+        // Groups
+        const checkedGroups = card.querySelectorAll('.group-checkbox:checked');
+        const groupIds = Array.from(checkedGroups).map(el => el.value);
+
+        // CSRF
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const url = "{% url 'biz_worker_review_submit' store.id %}";
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                app_id: appId,
+                review_type: reviewType,
+                skills: skills,
+                group_ids: groupIds,
+                message: "" // No message field in new design? Image 2 doesn't show message box. I'll omit or add if needed.
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('レビューを送信しました');
+                    card.remove();
+                    if (document.querySelectorAll('.review-card').length === 0) {
+                        window.location.href = "{% url 'biz_worker_review_job_list' store.id %}";
+                    }
+                } else {
+                    alert('エラーが発生しました: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('通信エラーが発生しました');
+            });
+    }
+</script>
+{% endblock %}

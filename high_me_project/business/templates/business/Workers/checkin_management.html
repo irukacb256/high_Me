@@ -1,0 +1,265 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* 逕ｻ髱｢蜈ｨ菴薙ｒ鮟・牡縺上☆繧・*/
+    .qr-management-container {
+        background-color: #FFD700;
+        /* Timee Yellow */
+        min-height: calc(100vh - 80px);
+        /* Adjust for header if needed */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .qr-title {
+        font-size: 60px;
+        font-weight: 900;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        color: #333;
+    }
+
+    .qr-label-capsule {
+        background: #333;
+        color: white;
+        padding: 10px 40px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 40px;
+        display: inline-block;
+    }
+
+    .company-name {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .qr-box {
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .qr-placeholder {
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 10h30v30h-30zM50 10h40v40h-40zM10 50h30v40h-30z' fill='%23333'/%3E%3Cpath d='M50 60h10v10h-10zM70 60h20v10h-20zM50 80h10v10h-10zM70 80h20v10h-20z' fill='%23333'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        /* Note: For a real app, use a real QR code library */
+    }
+
+    .instruction-text {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 40px;
+    }
+
+    .instruction-box {
+        display: inline-block;
+        border: 2px solid #333;
+        padding: 2px 10px;
+        background: white;
+        margin: 0 5px;
+    }
+
+    /* 繝代Φ繝縺ｮ繧､繝ｩ繧ｹ繝・(CSS縺ｧ邁｡譏灘・迴ｾ or 逕ｻ蜒乗耳螂ｨ) */
+    .panda-area {
+        margin-top: 20px;
+    }
+
+    .panda-face {
+        width: 200px;
+        height: 100px;
+        /* 蜊雁・ */
+        background: #f8c67d;
+        /* 鬘斐・濶ｲ (莉ｮ) */
+        border-radius: 100px 100px 0 0;
+        margin: 0 auto;
+        position: relative;
+        border: 3px solid #333;
+        border-bottom: none;
+        background-color: #eecfa1;
+    }
+
+    .ear {
+        width: 60px;
+        height: 60px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: -20px;
+        z-index: -1;
+    }
+
+    .ear.left {
+        left: -10px;
+    }
+
+    .ear.right {
+        right: -10px;
+    }
+
+    .eye {
+        width: 20px;
+        height: 20px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: 40px;
+    }
+
+    .eye.left {
+        left: 50px;
+    }
+
+    .eye.right {
+        right: 50px;
+    }
+
+    .nose {
+        width: 15px;
+        height: 10px;
+        background: #333;
+        border-radius: 50%;
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* 繝輔ャ繧ｿ繝ｼ繧｢繧ｯ繧ｷ繝ｧ繝ｳ (繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ縺ｫ螟画峩) */
+    .footer-actions {
+        /* position: fixed; removed */
+        /* bottom: 0; removed */
+        /* left: 260px; removed */
+        /* right: 0; removed */
+        width: 100%;
+        background: white;
+        padding: 20px;
+        /* border-top: 1px solid #ddd; removed border to look like part of content if needed, or keep */
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        box-sizing: border-box;
+        /* Ensure padding doesn't overflow width */
+        margin-top: auto;
+        /* Push to bottom if container has height */
+        border-radius: 12px;
+        /* Optional: Make it look like a card if floating */
+        /* Adjusting to sit inside the container or below based on request. 
+           User said "make it a section". I will put it inside the container for better flow or just below.
+           Let's place it inside the yellow background but as a white card, or a full width section below.
+           Given the design "Timee" style often has a white area at bottom.
+        */
+    }
+
+    .footer-section-container {
+        background: white;
+        width: 100%;
+        padding: 15px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .note-box {
+        font-size: 11px;
+        color: #666;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-action {
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-blue {
+        background: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-white {
+        background: white;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<div class="qr-management-container">
+    <div class="qr-title">Timee</div>
+
+    <div class="qr-label-capsule">
+        繝√ぉ繝・け繧､繝ｳ / 繝√ぉ繝・け繧｢繧ｦ繝育畑QR繧ｳ繝ｼ繝・
+    </div>
+
+    <div class="company-name">(譬ｪ)繧ｿ繧､繝溘・</div>
+
+    <div class="qr-box">
+        <!-- QR繧ｳ繝ｼ繝臥判蜒・(譛ｬ譚･縺ｯ蜍慕噪逕滓・) -->
+        <i class="fa-solid fa-qrcode fa-10x" style="font-size: 200px; color:#333;"></i>
+    </div>
+
+    <div class="instruction-text">
+        讌ｭ蜍咎幕蟋区凾 <span class="instruction-box">繝√ぉ繝・け繧､繝ｳ</span> 縺ｨ 讌ｭ蜍咏ｵゆｺ・凾 <span class="instruction-box">繝√ぉ繝・け繧｢繧ｦ繝・/span> 縺ｫ<br>
+        縺薙・ <span style="text-decoration: underline;">QR繧ｳ繝ｼ繝・/span> 繧偵い繝励Μ縺九ｉ隱ｭ縺ｿ霎ｼ繧薙〒縺上□縺輔＞・・
+    </div>
+
+    <div class="panda-area">
+        <div style="position:relative; width: 220px; margin: 0 auto;">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+            <div class="panda-face">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="nose"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ縺ｨ縺励※驟咲ｽｮ -->
+<div class="footer-section-container">
+    <div class="note-box">
+        <div><i class="fa-solid fa-circle-question text-secondary"></i> 隱ｭ縺ｿ蜿悶ｊ繧貞ｿ倥ｌ縺・/div>
+        <div><i class="fa-solid fa-rotate-left text-secondary"></i> 驕・綾繝ｻ蟒ｶ髟ｷ繝ｻ譌ｩ荳翫′繧翫〒蝣ｱ驟ｬ縺ｮ螟画峩縺悟ｿ・ｦ・/div>
+        <div style="margin-left: 20px; color:#999;">荳願ｨ倥・蝣ｴ蜷医√Ρ繝ｼ繧ｫ繝ｼ縺九ｉ縲御ｿｮ豁｣萓晞ｼ縲阪′螻翫″縺ｾ縺吶・/div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-action btn-blue">菫ｮ豁｣萓晞ｼ繧堤｢ｺ隱阪☆繧・/button>
+        <button class="btn-action btn-white">QR繧ｳ繝ｼ繝峨ｒ蜊ｰ蛻ｷ縺吶ｋ</button>
+    </div>
+</div>
+<div style="text-align:right; padding: 10px 40px; background:white;">
+    <a href="#" style="font-size:12px;">繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育畑QR繧ｳ繝ｼ繝峨ｒ譖ｴ譁ｰ縺吶ｋ</a>
+</div>
+{% endblock %}

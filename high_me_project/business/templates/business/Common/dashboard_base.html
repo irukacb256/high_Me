@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timee 莠区･ｭ閠・ｮ｡逅・判髱｢ | {{ store.store_name|default:"蠎苓・邂｡逅・ }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --timee-active-bg: #fff3c4;
+            /* 逕ｻ蜒上・繧医≧縺ｪ阮・＞鮟・牡 */
+            --timee-hover-bg: #fff9e6;
+            --sidebar-width: 260px;
+        }
+
+        .notification-badge {
+            background-color: #ff5252;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+
+        body {
+            display: flex;
+            margin: 0;
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        /* 繧ｵ繧､繝峨ヰ繝ｼ繝倥ャ繝繝ｼ・医Ο繧ｴ縺ｨID・・*/
+        .sidebar-header {
+            padding: 20px 20px 10px 20px;
+        }
+
+        .sidebar-brand-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-brand-row strong {
+            font-size: 24px;
+            letter-spacing: -1px;
+        }
+
+        .store-id-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .store-name-display {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* 繝｡繝九Η繝ｼ繧ｨ繝ｪ繧｢ */
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-item i {
+            width: 28px;
+            margin-right: 10px;
+            font-size: 17px;
+            color: #444;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background: var(--timee-hover-bg);
+        }
+
+        /* 繧｢繧ｯ繝・ぅ繝悶↑鬆・岼縺ｮ繧ｹ繧ｿ繧､繝ｫ・育判蜒丞・迴ｾ・・*/
+        .nav-item.active {
+            background: var(--timee-active-bg);
+            font-weight: bold;
+        }
+
+        .back-to-portal {
+            padding: 15px 20px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #007AFF;
+            text-decoration: none;
+            display: block;
+            background: #fff;
+        }
+
+        /* 繝｡繧､繝ｳ繧ｳ繝ｳ繝・Φ繝・*/
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .top-header {
+            background: #f5f5f5;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .btn-header-white {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-header-blue {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .content-body {
+            padding: 0 30px 40px;
+            flex: 1;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-row">
+                <strong>Timee</strong>
+                <span class="store-id-label">蠎苓・ID {{ store.id|default:"9999" }}</span>
+            </div>
+            <div class="store-name-display">{{ store.store_name|default:"繧ｿ繧､繝溘・ 豎千蕗蠎・ }}</div>
+        </div>
+
+        <nav class="nav-menu">
+            <!-- 繝帙・繝 -->
+            <a href="{% url 'biz_dashboard' store.id %}"
+                class="nav-item {% if request.resolver_match.url_name == 'biz_dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-house"></i> 繝帙・繝
+            </a>
+
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ邂｡逅・-->
+            <a href="{% url 'biz_worker_management' store.id %}"
+                class="nav-item {% if request.resolver_match.url_name == 'biz_worker_management' %}active{% endif %}">
+                <i class="fa-solid fa-user-group"></i> 繝ｯ繝ｼ繧ｫ繝ｼ邂｡逅・
+            </a>
+
+            <!-- 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢ -->
+            <a href="{% url 'biz_template_list' store.id %}"
+                class="nav-item {% if 'template' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-circle-plus"></i> 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢
+            </a>
+
+            <!-- 豎ゆｺｺ荳隕ｧ -->
+            <a href="{% url 'biz_job_posting_list' store.id %}"
+                class="nav-item {% if 'postings' in request.path or '/biz/job/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-file-lines"></i> 豎ゆｺｺ荳隕ｧ
+            </a>
+
+            <!-- 繝｡繝・そ繝ｼ繧ｸ -->
+            <a href="{% url 'biz_message_list' %}" class="nav-item">
+                <i class="fa-solid fa-comment-dots"></i> 繝｡繝・そ繝ｼ繧ｸ
+            </a>
+
+            <!-- 繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育ｮ｡逅・-->
+            <a href="{% url 'biz_checkin_management' %}" class="nav-item">
+                <i class="fa-solid fa-qrcode"></i> 繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育ｮ｡逅・
+            </a>
+
+            <!-- 菫ｮ豁｣萓晞ｼ -->
+            <a href="{% url 'biz_attendance_correction_list' store.id %}" class="nav-item">
+                <i class="fa-solid fa-circle-exclamation"></i> 菫ｮ豁｣萓晞ｼ
+                {% load business_tags %}
+                {% with count=store|get_pending_correction_count %}
+                {% if count > 0 %}
+                <span class="notification-badge">{{ count }}</span>
+                {% endif %}
+                {% endwith %}
+            </a>
+
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡ -->
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡ -->
+            <a href="{% url 'biz_worker_review_job_list' store.id %}" class="nav-item">
+                <i class="fa-solid fa-user-check"></i> 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡
+                {% with count=store|get_unreviewed_worker_count %}
+                {% if count > 0 %}
+                <span class="notification-badge">{{ count }}</span>
+                {% endif %}
+                {% endwith %}
+            </a>
+
+            <!-- 蠎苓・縺ｸ縺ｮ繝ｬ繝薙Η繝ｼ -->
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-thumbs-up"></i> 蠎苓・縺ｸ縺ｮ繝ｬ繝薙Η繝ｼ
+            </a>
+
+            <!-- 蛻ｩ逕ｨ譏守ｴｰ -->
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-receipt"></i> 蛻ｩ逕ｨ譏守ｴｰ
+            </a>
+
+            <!-- 蠎苓・諠・ｱ -->
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-store"></i> 蠎苓・諠・ｱ
+            </a>
+
+            <!-- 讖溯・縺ｫ蟇ｾ縺吶ｋ縺疲э隕九・縺碑ｦ∵悍 -->
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-comment-medical"></i> 讖溯・縺ｫ蟇ｾ縺吶ｋ縺疲э隕九・縺碑ｦ∵悍
+            </a>
+
+            <!-- 縺碑ｳｪ蝠上・縺雁撫縺・粋繧上○ -->
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-question-circle"></i> 縺碑ｳｪ蝠上・縺雁撫縺・粋繧上○
+            </a>
+        </nav>
+
+        <a href="{% url 'biz_portal' %}" class="back-to-portal">
+            <i class="fa-solid fa-chevron-left"></i> 莨∵･ｭ / 蠎苓・荳隕ｧ縺ｫ謌ｻ繧・
+        </a>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="top-header">
+            {% block header_actions %}
+            <a href="{% url 'biz_checkin_management' %}" class="btn-header-white"><i class="fa-solid fa-qrcode"></i>
+                繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・/a>
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">縺ｲ縺ｪ蠖｢縺九ｉ豎ゆｺｺ繧貞供髮・/a>
+            {% endblock %}
+        </div>
+
+        <div class="content-body">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</body>
+
+</html>

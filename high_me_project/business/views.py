@@ -81,10 +81,10 @@ def get_biz_calendar(store, year, month):
 # --- 登録フロー ---
 
 class LandingView(TemplateView):
-    template_name = 'business/landing.html'
+    template_name = 'business/Common/landing.html'
 
 class SignupView(FormView):
-    template_name = 'business/signup.html'
+    template_name = 'business/Auth/signup.html'
     form_class = SignupForm
     success_url = reverse_lazy('biz_account_register')
 
@@ -101,7 +101,7 @@ class SignupView(FormView):
         return context
 
 class AccountRegisterView(FormView):
-    template_name = 'business/account_register.html'
+    template_name = 'business/Auth/account_register.html'
     form_class = AccountRegisterForm
     success_url = reverse_lazy('biz_business_register')
 
@@ -122,7 +122,7 @@ class AccountRegisterView(FormView):
         return super().form_valid(form)
 
 class BusinessRegisterView(FormView):
-    template_name = 'business/business_register.html'
+    template_name = 'business/Auth/business_register.html'
     form_class = BusinessRegisterForm
     success_url = reverse_lazy('biz_verify')
 
@@ -152,13 +152,13 @@ class BusinessRegisterView(FormView):
         return super().form_valid(form)
 
 class VerifyDocsView(TemplateView):
-    template_name = 'business/verify_docs.html'
+    template_name = 'business/Auth/verify_docs.html'
     
     def post(self, request, *args, **kwargs):
         return redirect('biz_store_setup')
 
 class StoreSetupView(FormView):
-    template_name = 'business/store_setup.html'
+    template_name = 'business/Store/store_setup.html'
     form_class = StoreSetupForm
     success_url = reverse_lazy('biz_signup_complete')
 
@@ -220,10 +220,10 @@ class StoreSetupView(FormView):
             return self.form_invalid(form)
 
 class SignupCompleteView(TemplateView):
-    template_name = 'business/signup_complete.html'
+    template_name = 'business/Auth/signup_complete.html'
 
 class BizLoginView(LoginView):
-    template_name = 'business/login.html'
+    template_name = 'business/Auth/login.html'
     
     def dispatch(self, request, *args, **kwargs):
         # ログイン済みでも強制リダイレクトせず、ログイン画面を表示して別アカウントへの切り替えを許可する
@@ -234,14 +234,14 @@ class BizLoginView(LoginView):
         return reverse('biz_portal')
 
 class BizPasswordResetView(TemplateView):
-    template_name = 'business/password_reset.html'
+    template_name = 'business/Auth/password_reset.html'
     def post(self, request):
         return redirect('biz_login')
 
 # --- 業務画面 ---
 
 class BizPortalView(BusinessLoginRequiredMixin, TemplateView):
-    template_name = 'business/portal.html'
+    template_name = 'business/Dashboard/portal.html'
 
     # get method removed to rely on BusinessLoginRequiredMixin
 
@@ -257,7 +257,7 @@ class BizPortalView(BusinessLoginRequiredMixin, TemplateView):
         return context
 
 class DashboardView(BusinessLoginRequiredMixin, TemplateView):
-    template_name = 'business/dashboard.html'
+    template_name = 'business/Dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -279,7 +279,7 @@ class DashboardView(BusinessLoginRequiredMixin, TemplateView):
 
 class AddStoreView(BusinessLoginRequiredMixin, FormView):
     # StoreSetupForm を再利用できるが、BusinessProfileとの紐付けが必要
-    template_name = 'business/store_setup.html'
+    template_name = 'business/Store/store_setup.html'
     form_class = StoreSetupForm
     success_url = reverse_lazy('biz_portal')
 
@@ -300,7 +300,7 @@ class AddStoreView(BusinessLoginRequiredMixin, FormView):
 
 class TemplateListView(BusinessLoginRequiredMixin, ListView):
     model = JobTemplate
-    template_name = 'business/template_list.html'
+    template_name = 'business/Jobs/template_list.html'
     context_object_name = 'templates'
 
     def get_queryset(self):
@@ -316,7 +316,7 @@ class TemplateListView(BusinessLoginRequiredMixin, ListView):
 class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
     model = JobTemplate
     form_class = JobTemplateForm
-    template_name = 'business/template_form.html'
+    template_name = 'business/Jobs/template_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -357,7 +357,7 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
 
 class TemplateDetailView(BusinessLoginRequiredMixin, DetailView):
     model = JobTemplate
-    template_name = 'business/template_detail.html'
+    template_name = 'business/Jobs/template_detail.html'
     context_object_name = 'template'
 
     def get_queryset(self):
@@ -377,7 +377,7 @@ class TemplateDetailView(BusinessLoginRequiredMixin, DetailView):
 class TemplateUpdateView(BusinessLoginRequiredMixin, UpdateView):
     model = JobTemplate
     form_class = JobTemplateForm
-    template_name = 'business/template_form.html'
+    template_name = 'business/Jobs/template_form.html'
 
     def get_queryset(self):
         return JobTemplate.objects.filter(store__business__user=self.request.user)
@@ -406,7 +406,7 @@ class TemplateUpdateView(BusinessLoginRequiredMixin, UpdateView):
 
 class TemplateDeleteView(BusinessLoginRequiredMixin, DeleteView):
     model = JobTemplate
-    template_name = 'business/template_delete_confirm.html'
+    template_name = 'business/Jobs/template_delete_confirm.html'
     context_object_name = 'template'
 
     def get_queryset(self):
@@ -421,7 +421,7 @@ class TemplateDeleteView(BusinessLoginRequiredMixin, DeleteView):
         return context
 
 class JobCreateFromTemplateView(BusinessLoginRequiredMixin, FormView):
-    template_name = 'business/job_create_form.html'
+    template_name = 'business/Jobs/job_create_form.html'
     form_class = JobCreateFromTemplateForm
     success_url = reverse_lazy('biz_job_confirm')
 
@@ -460,7 +460,7 @@ class JobCreateFromTemplateView(BusinessLoginRequiredMixin, FormView):
         return redirect(self.success_url)
 
 class JobConfirmView(BusinessLoginRequiredMixin, TemplateView):
-    template_name = 'business/job_confirm.html'
+    template_name = 'business/Jobs/job_confirm.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -491,7 +491,7 @@ class JobConfirmView(BusinessLoginRequiredMixin, TemplateView):
             return redirect('biz_portal')
 
         if 'confirm_check' not in request.POST:
-            return render(request, 'business/job_confirm.html', {
+            return render(request, 'business/Jobs/job_confirm.html', {
                 'error': 'チェックがされていません。',
                 'data': pending_data,
                 'store': get_biz_context(request.user),
@@ -535,7 +535,7 @@ class JobConfirmView(BusinessLoginRequiredMixin, TemplateView):
 
 class JobPostingListView(BusinessLoginRequiredMixin, ListView):
     model = JobPosting
-    template_name = 'business/job_posting_list.html'
+    template_name = 'business/Jobs/job_posting_list.html'
     context_object_name = 'postings'
 
     def get_queryset(self):
@@ -556,7 +556,7 @@ class JobPostingListView(BusinessLoginRequiredMixin, ListView):
 
 class JobPostingDetailView(BusinessLoginRequiredMixin, DetailView):
     model = JobPosting
-    template_name = 'business/job_posting_detail.html'
+    template_name = 'business/Jobs/job_posting_detail.html'
     context_object_name = 'posting'
 
     def get_queryset(self):
@@ -571,7 +571,7 @@ class JobPostingDetailView(BusinessLoginRequiredMixin, DetailView):
 
 class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
     model = JobApplication
-    template_name = 'business/job_worker_list.html'
+    template_name = 'business/Jobs/job_worker_list.html'
     context_object_name = 'matched_workers'
 
     def get_queryset(self):
@@ -621,7 +621,7 @@ class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
 
 class JobWorkerDetailView(BusinessLoginRequiredMixin, DetailView):
     model = User
-    template_name = 'business/worker_detail.html'
+    template_name = 'business/Workers/worker_detail.html'
     context_object_name = 'worker'
     pk_url_kwarg = 'worker_id'
 
@@ -682,7 +682,7 @@ class JobWorkerDetailView(BusinessLoginRequiredMixin, DetailView):
 class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
     model = JobPosting
     form_class = JobPostingVisibilityForm
-    template_name = 'business/job_posting_visibility_edit.html'
+    template_name = 'business/Jobs/job_posting_visibility_edit.html'
 
     def get_queryset(self):
         # 自分の店舗の求人のみ編集可能にする
@@ -699,7 +699,7 @@ class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
         messages.success(self.request, '公開設定を変更しました。')
         return reverse('biz_job_posting_detail', kwargs={'store_id': self.object.template.store.id, 'pk': self.object.id})
 class BizWorkerManagementView(BusinessLoginRequiredMixin, ListView):
-    template_name = 'business/worker_management.html'
+    template_name = 'business/Workers/worker_management.html'
     context_object_name = 'workers'
     paginate_by = 25
 
@@ -836,9 +836,36 @@ class BizWorkerManagementView(BusinessLoginRequiredMixin, ListView):
 
         context['group_choices'] = StoreWorkerGroup.GROUP_TYPE_CHOICES
         return context
+
+class BizWorkerReviewJobListView(BusinessLoginRequiredMixin, ListView):
+    template_name = 'business/Workers/worker_review_job_list.html'
+    context_object_name = 'job_postings'
+
+    def get_queryset(self):
+        from django.db.models import Count, Q
+        
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        now = timezone.now()
+        
+        # 終了済みで、かつ未レビューの応募が少なくとも1つある求人
+        queryset = JobPosting.objects.filter(
+            template__store=self.store,
+            end_time__lt=now
+        ).annotate(
+            unreviewed_count=Count('applications', filter=Q(applications__worker_review__isnull=True))
+        ).filter(unreviewed_count__gt=0).order_by('-end_time')
+        
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = self.store
+        return context
         
 class BizGroupManagementView(BusinessLoginRequiredMixin, ListView):
-    template_name = 'business/group_management.html'
+    template_name = 'business/Store/group_management.html'
     context_object_name = 'groups'
 
     def get_queryset(self):
@@ -871,20 +898,17 @@ class BizGroupManagementView(BusinessLoginRequiredMixin, ListView):
         context['store'] = self.store
         return context
 class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
-    template_name = 'business/worker_review_list.html'
+    template_name = 'business/Workers/worker_review_list.html'
     context_object_name = 'applications'
 
     def get_queryset(self):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        self.job = get_object_or_404(JobPosting, id=self.kwargs['job_id'], template__store=self.store)
         
-        # 終了済み求人の応募で、まだレビューがないもの
-        from django.utils import timezone
-        now = timezone.now()
-        
+        # 指定求人の応募で、まだレビューがないもの
         queryset = JobApplication.objects.filter(
-            job_posting__template__store=self.store,
-            job_posting__end_time__lt=now,
+            job_posting=self.job,
             worker_review__isnull=True
         ).select_related('worker__workerprofile', 'job_posting')
         
@@ -893,6 +917,9 @@ class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['store'] = self.store
+        context['job'] = self.job
+        # グループ選択用
+        context['group_definitions'] = StoreGroupDefinition.objects.filter(store=self.store)
         return context
 
 class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
@@ -905,6 +932,7 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
             review_type = data.get('review_type')
             skills = data.get('skills', [])
             message = data.get('message', '')
+            group_ids = data.get('group_ids', [])
             
             store_id = self.kwargs['store_id']
             
@@ -935,6 +963,18 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
                     worker=app.worker.workerprofile,
                     group_definition=group_def
                 )
+
+            # Add to explicitly selected groups
+            for g_id in group_ids:
+                try:
+                    g_def = StoreGroupDefinition.objects.get(id=g_id, store_id=store_id)
+                    StoreWorkerGroup.objects.get_or_create(
+                        store_id=store_id,
+                        worker=app.worker.workerprofile,
+                        group_definition=g_def
+                    )
+                except StoreGroupDefinition.DoesNotExist:
+                    continue
             
             return JsonResponse({'status': 'success'})
         except Exception as e:
@@ -944,7 +984,7 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
 class BizMessageListView(BusinessLoginRequiredMixin, ListView):
     """メッセージ一覧 (チャットルーム一覧)"""
     model = ChatRoom
-    template_name = 'business/message_list.html'
+    template_name = 'business/Messages/message_list.html'
     context_object_name = 'rooms'
 
     def get_queryset(self):
@@ -972,7 +1012,7 @@ class BizMessageListView(BusinessLoginRequiredMixin, ListView):
 
 class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):
     """メッセージ詳細 (チャット画面)"""
-    template_name = 'business/message_detail.html'
+    template_name = 'business/Messages/message_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1017,7 +1057,7 @@ class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):
 
 class BizCheckinManagementView(BusinessLoginRequiredMixin, TemplateView):
     """チェックイン/アウト管理 (QRコード表示)"""
-    template_name = 'business/checkin_management.html'
+    template_name = 'business/Workers/checkin_management.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1033,7 +1073,7 @@ class BizCheckinManagementView(BusinessLoginRequiredMixin, TemplateView):
 
 class AttendanceCorrectionListView(BusinessLoginRequiredMixin, ListView):
     model = AttendanceCorrection
-    template_name = 'business/attendance_correction_list.html'
+    template_name = 'business/Workers/attendance_correction_list.html'
     context_object_name = 'corrections'
 
     def get_queryset(self):
@@ -1052,7 +1092,7 @@ class AttendanceCorrectionListView(BusinessLoginRequiredMixin, ListView):
 
 class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
     model = AttendanceCorrection
-    template_name = 'business/attendance_correction_detail.html'
+    template_name = 'business/Workers/attendance_correction_detail.html'
     context_object_name = 'correction'
 
     def get_queryset(self):

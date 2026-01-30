@@ -40,22 +40,22 @@ class CustomLoginView(LoginView):
 
 def onboarding1(request):
     """画像1の1枚目: すぐ働けて、すぐお金がもらえる"""
-    return render(request, 'accounts/onboarding1.html')
+    return render(request, 'Auth/onboarding1.html')
 
 def onboarding2(request):
     """画像1の2枚目: 働いたら、お金はすぐGET"""
-    return render(request, 'accounts/onboarding2.html')
+    return render(request, 'Auth/onboarding2.html')
 
 def onboarding3(request):
     """画像1の3枚目: 便利な機能で仕事をチェック"""
-    return render(request, 'accounts/onboarding3.html')
+    return render(request, 'Auth/onboarding3.html')
 
 def gate(request):
     """画像2: はじめる / ログイン選択画面"""
-    return render(request, 'accounts/gate.html')
+    return render(request, 'Auth/gate.html')
 
 class SignupView(FormView):
-    template_name = 'accounts/signup.html'
+    template_name = 'Auth/signup.html'
     form_class = SignupForm
     success_url = reverse_lazy('verify_dob')
 
@@ -73,7 +73,7 @@ class SignupView(FormView):
         return super().form_valid(form)
 
 class VerifyDobView(FormView):
-    template_name = 'accounts/verify_dob.html'
+    template_name = 'Auth/verify_dob.html'
     form_class = VerifyDobForm
 
     def get_context_data(self, **kwargs):
@@ -116,7 +116,7 @@ class VerifyDobView(FormView):
 
 
 class SetupNameView(FormView):
-    template_name = 'signup/step_name.html'
+    template_name = 'Auth/step_name.html'
     form_class = NameForm
     success_url = reverse_lazy('setup_kana')
 
@@ -142,7 +142,7 @@ def setup_kana(request):
         signup_data['first_name_kana'] = request.POST.get('first_name_kana')
         request.session['signup_data'] = signup_data
         return redirect('setup_gender')
-    return render(request, 'signup/step_kana.html')
+    return render(request, 'Auth/step_kana.html')
 
 def setup_gender(request):
     """画像3: 性別選択"""
@@ -154,7 +154,7 @@ def setup_gender(request):
         signup_data['gender'] = request.POST.get('gender')
         request.session['signup_data'] = signup_data
         return redirect('setup_photo')
-    return render(request, 'signup/step_gender.html')
+    return render(request, 'Auth/step_gender.html')
 
 def setup_photo(request):
     """画像4: 顔写真登録"""
@@ -179,10 +179,10 @@ def setup_photo(request):
         # 次へ（住所入力へ戻す）
         return redirect('setup_address')
             
-    return render(request, 'signup/step_photo.html')
+    return render(request, 'Auth/step_photo.html')
 
 class SetupKanaView(FormView):
-    template_name = 'signup/step_kana.html'
+    template_name = 'Auth/step_kana.html'
     form_class = KanaForm
     success_url = reverse_lazy('setup_gender')
 
@@ -199,7 +199,7 @@ class SetupKanaView(FormView):
         return super().form_valid(form)
 
 class SetupGenderView(FormView):
-    template_name = 'signup/step_gender.html'
+    template_name = 'Auth/step_gender.html'
     form_class = GenderForm
     success_url = reverse_lazy('setup_photo')
 
@@ -215,7 +215,7 @@ class SetupGenderView(FormView):
         return super().form_valid(form)
 
 class SetupPhotoView(FormView):
-    template_name = 'signup/step_photo.html'
+    template_name = 'Auth/step_photo.html'
     form_class = PhotoForm
     success_url = reverse_lazy('setup_address')
 
@@ -244,7 +244,7 @@ class SetupPhotoView(FormView):
     # フォームにrequired=Falseをつける (PhotoFormはrequired=Falseにしてある)
 
 class SignupVerifyIdentityView(TemplateView):
-    template_name = 'signup/step_identity.html'
+    template_name = 'Auth/step_identity.html'
 
     def dispatch(self, request, *args, **kwargs):
         # 既存のデコレータ @login_required がついていたが、signupフローでは不要
@@ -252,10 +252,10 @@ class SignupVerifyIdentityView(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 class VerifyIdentitySelectView(TemplateView):
-    template_name = 'accounts/verify_identity_select.html'
+    template_name = 'Auth/verify_identity_select.html'
 
 class VerifyIdentityUploadView(TemplateView):
-    template_name = 'accounts/verify_identity_upload.html'
+    template_name = 'Auth/verify_identity_upload.html'
 
     def post(self, request, *args, **kwargs):
         signup_data = request.session.get('signup_data')
@@ -304,7 +304,7 @@ def signup_verify_identity_skip(request):
     return redirect('signup_confirm')
 
 class SignupConfirmView(TemplateView):
-    template_name = 'signup/step_confirm.html'
+    template_name = 'Auth/step_confirm.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -335,7 +335,7 @@ class SignupConfirmView(TemplateView):
         return redirect('setup_pref_select')
 
 class SetupAddressView(FormView):
-    template_name = 'signup/step_address.html'
+    template_name = 'Auth/step_address.html'
     form_class = AddressForm
     success_url = reverse_lazy('signup_verify_identity')
 
@@ -360,7 +360,7 @@ class SetupAddressView(FormView):
         return super().form_valid(form)
 
 class SetupWorkstyleView(FormView):
-    template_name = 'signup/step_workstyle.html'
+    template_name = 'Auth/step_workstyle.html'
     form_class = WorkstyleForm
     success_url = reverse_lazy('signup_confirm')
 
@@ -382,7 +382,7 @@ class SetupWorkstyleView(FormView):
         return super().form_valid(form)
 
 class SetupPrefSelectView(FormView):
-    template_name = 'signup/step_pref.html'
+    template_name = 'Auth/step_pref.html'
     form_class = PrefectureSelectForm
     success_url = reverse_lazy('index')
 
@@ -511,7 +511,7 @@ class SetupPrefSelectView(FormView):
 def verify_identity(request):
     """本人確認画面（南京錠アイコンの画面）"""
     phone = request.user.username
-    return render(request, 'accounts/verify_identity.html', {'phone': phone})
+    return render(request, 'Auth/verify_identity.html', {'phone': phone})
 
 
 @login_required
@@ -544,15 +544,15 @@ def verify_dob(request):
                 profile.save()
                 return redirect('index')
             else:
-                return render(request, 'accounts/verify_dob.html', {
+                return render(request, 'Auth/verify_dob.html', {
                     'error': '生年月日が登録情報と一致しません。'
                 })
         except ValueError:
-            return render(request, 'accounts/verify_dob.html', {
+            return render(request, 'Auth/verify_dob.html', {
                 'error': '正しい日付を入力してください。'
             })
 
-    return render(request, 'accounts/verify_dob.html', {'auth_flow': auth_flow})
+    return render(request, 'Auth/verify_dob.html', {'auth_flow': auth_flow})
 
 def verify_dob_signup(request):
     """生年月日入力 (サインアップ時)"""
@@ -575,12 +575,12 @@ def verify_dob_signup(request):
             return redirect('setup_name')
             
         except ValueError:
-            return render(request, 'accounts/verify_dob.html', {
+            return render(request, 'Auth/verify_dob.html', {
                 'error': '正しい日付を入力してください。',
                 'auth_flow': 'signup'
             })
             
-    return render(request, 'accounts/verify_dob.html', {'auth_flow': 'signup'})
+    return render(request, 'Auth/verify_dob.html', {'auth_flow': 'signup'})
 
 
 def profile_setup(request):
@@ -604,7 +604,7 @@ def profile_setup(request):
         
         return redirect('index') # 登録内容の確認画面を挟む場合は別途作成
 
-    return render(request, 'accounts/profile_setup.html')
+    return render(request, 'MyPage/Settings/profile_setup.html')
 
 
 def login_view(request):
@@ -615,11 +615,11 @@ def login_view(request):
 
         # 1. 電話番号が無記入の場合
         if not phone:
-            return render(request, 'accounts/login.html', {'error': '電話番号が入力されていません'})
+            return render(request, 'Auth/login.html', {'error': '電話番号が入力されていません'})
         
         # 2. パスワードが無記入の場合
         if not password:
-            return render(request, 'accounts/login.html', {'error': 'パスワードが入力されていません'})
+            return render(request, 'Auth/login.html', {'error': 'パスワードが入力されていません'})
 
         # 3. 参照（認証）
         user = authenticate(request, username=phone, password=password)
@@ -631,13 +631,13 @@ def login_view(request):
             return redirect('verify_dob')
         else:
             # 電話番号もしくはパスワードが正しくない場合
-            return render(request, 'accounts/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
+            return render(request, 'Auth/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
 
-    return render(request, 'accounts/login.html')
+    return render(request, 'Auth/login.html')
 
 # accounts/views.py 内に追加
 class MypageView(LoginRequiredMixin, TemplateView):
-    template_name = 'accounts/mypage.html'
+    template_name = 'MyPage/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -655,7 +655,7 @@ class MypageView(LoginRequiredMixin, TemplateView):
         return context
 
 class AchievementsView(LoginRequiredMixin, TemplateView):
-    template_name = 'accounts/achievements.html'
+    template_name = 'MyPage/Achievements/achievements.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -713,7 +713,7 @@ class AchievementsView(LoginRequiredMixin, TemplateView):
 
 
 class PastJobsView(LoginRequiredMixin, TemplateView):
-    template_name = 'accounts/past_jobs.html'
+    template_name = 'MyPage/PastJobs/past_jobs.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -754,7 +754,7 @@ class PastJobsView(LoginRequiredMixin, TemplateView):
 @login_required
 def account_settings(request):
     """アカウント設定メイン画面（設定項目の一覧）"""
-    return render(request, 'accounts/account_settings.html')
+    return render(request, 'MyPage/Settings/index.html')
 
 @login_required
 def profile_edit(request):
@@ -797,7 +797,7 @@ def profile_address_edit(request):
         profile.save()
         return redirect('profile_edit')
 
-    return render(request, 'accounts/profile_address_edit.html', {
+    return render(request, 'MyPage/Settings/profile_address_edit.html', {
         'profile': profile,
         'prefectures_list': PREFECTURES
     })
@@ -807,7 +807,7 @@ def profile_address_edit(request):
 class WorkerMessageListView(LoginRequiredMixin, ListView):
     """ワーカー用メッセージ一覧"""
     model = ChatRoom
-    template_name = 'accounts/message_list.html'
+    template_name = 'Messages/message_list.html'
     context_object_name = 'rooms'
 
     def get_queryset(self):
@@ -820,7 +820,7 @@ class WorkerMessageListView(LoginRequiredMixin, ListView):
 
 class WorkerMessageDetailView(LoginRequiredMixin, TemplateView):
     """ワーカー用メッセージ詳細 (チャット)"""
-    template_name = 'accounts/message_detail.html'
+    template_name = 'Messages/message_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -872,7 +872,7 @@ def other_profile_edit(request):
         profile.affiliation = request.POST.get('affiliation')
         profile.save()
         return redirect('account_settings')
-    return render(request, 'accounts/other_profile.html', {'profile': profile})
+    return render(request, 'MyPage/Settings/other_profile.html', {'profile': profile})
 
 @login_required
 def emergency_contact_edit(request):
@@ -884,7 +884,7 @@ def emergency_contact_edit(request):
         profile.emergency_relation = request.POST.get('emergency_relation')
         profile.save()
         return redirect('account_settings')
-    return render(request, 'accounts/emergency_contact.html', {'profile': profile})
+    return render(request, 'MyPage/Settings/emergency_contact.html', {'profile': profile})
 
 #
 @login_required
@@ -892,7 +892,7 @@ def phone_change(request):
     """画像1: 現在の番号表示"""
     phone = request.user.username
     masked_phone = "*" * (len(phone) - 4) + phone[-4:] if len(phone) > 4 else phone
-    return render(request, 'accounts/phone_change_home.html', {'masked_phone': masked_phone})
+    return render(request, 'MyPage/Settings/phone_change_home.html', {'masked_phone': masked_phone})
 
 @login_required
 def phone_change_confirm(request):
@@ -902,8 +902,8 @@ def phone_change_confirm(request):
         if input_phone == request.user.username:
             return redirect('phone_input_new')  # 次のステップ名を確認
         else:
-            return render(request, 'accounts/phone_change_confirm.html', {'error': '電話番号が一致しません。'})
-    return render(request, 'accounts/phone_change_confirm.html')
+            return render(request, 'MyPage/Settings/phone_change_confirm.html', {'error': '電話番号が一致しません。'})
+    return render(request, 'MyPage/Settings/phone_change_confirm.html')
 
 @login_required
 def phone_input_new(request):
@@ -912,7 +912,7 @@ def phone_input_new(request):
         new_phone = request.POST.get('new_phone')
         request.session['pending_new_phone'] = new_phone
         return redirect('phone_confirm_password') # 次のステップ名を確認
-    return render(request, 'accounts/phone_input_new.html')
+    return render(request, 'MyPage/Settings/phone_input_new.html')
 
 
 @login_required
@@ -937,16 +937,16 @@ def phone_confirm_password(request):
             del request.session['pending_new_phone']
             return redirect('account_settings') # 完了後、設定トップへ戻る
         else:
-            return render(request, 'accounts/phone_confirm_password.html', {
+            return render(request, 'MyPage/Settings/phone_confirm_password.html', {
                 'new_phone': new_phone,
                 'error': 'パスワードが正しくありません。'
             })
-    return render(request, 'accounts/phone_confirm_password.html', {'new_phone': new_phone})
+    return render(request, 'MyPage/Settings/phone_confirm_password.html', {'new_phone': new_phone})
 
 @login_required
 def verify_identity_select(request):
     """詳細画面: 本人確認書類の選択画面"""
-    return render(request, 'accounts/verify_identity_select.html')
+    return render(request, 'Auth/verify_identity_select.html')
 
 @login_required
 def verify_identity_upload(request):
@@ -972,7 +972,7 @@ def verify_identity_upload(request):
         else:
             return redirect('login')
             
-    return render(request, 'accounts/verify_identity_upload.html')
+    return render(request, 'Auth/verify_identity_upload.html')
 
 
 # --- 報酬管理 (ウォレット) ---
@@ -992,7 +992,7 @@ def reward_management(request):
     except WorkerBankAccount.DoesNotExist:
         bank_account = None
         
-    return render(request, 'accounts/reward_management.html', {
+    return render(request, 'MyPage/Wallet/reward_management.html', {
         'balance': balance,
         'bank_account': bank_account,
         'profile': profile
@@ -1004,7 +1004,7 @@ def wallet_history(request):
     profile = get_object_or_404(WorkerProfile, user=request.user)
     transactions = profile.wallet_transactions.all().order_by('-created_at')
     
-    return render(request, 'accounts/wallet_history.html', {
+    return render(request, 'MyPage/Wallet/wallet_history.html', {
         'transactions': transactions
     })
 
@@ -1038,7 +1038,7 @@ def bank_account_edit(request):
     except WorkerBankAccount.DoesNotExist:
         account = None
         
-    return render(request, 'accounts/bank_account_edit.html', {'account': account})
+    return render(request, 'MyPage/Wallet/bank_account_edit.html', {'account': account})
 
 @login_required
 def withdraw_application(request):
@@ -1062,11 +1062,11 @@ def withdraw_application(request):
                 description='振込申請'
             )
             # 成功時はその場で完了画面を出すために success フラグを渡す
-            return render(request, 'accounts/withdraw_application.html', {'success': True})
+            return render(request, 'MyPage/Wallet/withdraw_application.html', {'success': True})
         # 残高0などでPOSTされた場合はリダイレクトまたはエラー表示（今回はリダイレクト）
         return redirect('reward_management')
         
-    return render(request, 'accounts/withdraw_application.html', {
+    return render(request, 'MyPage/Wallet/withdraw_application.html', {
         'balance': balance,
         'bank_account': bank_account
     })
@@ -1092,7 +1092,7 @@ def review_penalty(request):
     cancel_rate = profile.cancellations # 仮: そのままパーセントとして表示
     lastminute_cancel_rate = profile.lastminute_cancel # 仮
 
-    return render(request, 'accounts/review_penalty.html', {
+    return render(request, 'MyPage/Review/review_penalty.html', {
         'profile': profile,
         'reviews': reviews,
         'cancel_rate': cancel_rate,
@@ -1103,27 +1103,27 @@ def review_penalty(request):
 def penalty_detail(request):
     """画像4: ペナルティ詳細画面"""
     profile = get_object_or_404(WorkerProfile, user=request.user)
-    return render(request, 'accounts/penalty_detail.html', {'profile': profile})
+    return render(request, 'MyPage/Review/penalty_detail.html', {'profile': profile})
 
 @login_required
 def qualification_list(request):
     """画像3: 保有資格一覧"""
     profile = get_object_or_404(WorkerProfile, user=request.user)
     qualifications = profile.qualifications.all().select_related('qualification')
-    return render(request, 'accounts/qualification_list.html', {'qualifications': qualifications})
+    return render(request, 'MyPage/Qualifications/qualification_list.html', {'qualifications': qualifications})
 
 @login_required
 def qualification_category_select(request):
     """画像5: 資格分野選択"""
     categories = QualificationCategory.objects.all().order_by('display_order')
-    return render(request, 'accounts/qualification_category_select.html', {'categories': categories})
+    return render(request, 'MyPage/Qualifications/qualification_category_select.html', {'categories': categories})
 
 @login_required
 def qualification_item_select(request, category_id):
     """資格名称選択"""
     category = get_object_or_404(QualificationCategory, pk=category_id)
     items = category.items.all()
-    return render(request, 'accounts/qualification_item_select.html', {'category': category, 'items': items})
+    return render(request, 'MyPage/Qualifications/qualification_item_select.html', {'category': category, 'items': items})
 
 @login_required
 def qualification_create(request):
@@ -1187,12 +1187,12 @@ def qualification_create(request):
                 if 'qualification_item_id' in request.session:
                     del request.session['qualification_item_id']
                 
-                return render(request, 'accounts/qualification_form.html', {
+                return render(request, 'MyPage/Qualifications/qualification_form.html', {
                     'selected_item': selected_item,
                     'success': True 
                 })
 
-    return render(request, 'accounts/qualification_form.html', {
+    return render(request, 'MyPage/Qualifications/qualification_form.html', {
         'selected_item': selected_item,
         'temp_image_url': f"{settings.MEDIA_URL}{curr_temp_path}" if curr_temp_path else None
     })
@@ -1230,7 +1230,7 @@ def qualification_photo_confirm(request):
         # OKボタン押下時 -> 作成画面に戻る
         return redirect('qualification_create')
 
-    return render(request, 'accounts/qualification_photo_confirm.html', {
+    return render(request, 'MyPage/Qualifications/qualification_photo_confirm.html', {
         'temp_image_url': f"{settings.MEDIA_URL}{temp_path}",
         'selected_item': selected_item
     })

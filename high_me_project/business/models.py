@@ -243,6 +243,16 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
+    def is_ended(self):
+        from django.utils import timezone
+        now = timezone.now()
+        if self.work_date < now.date():
+            return True
+        if self.work_date == now.date():
+            return self.end_time < now.time()
+        return False
+
+    @property
     def matched_count(self):
         """確定済みのマッチング人数を返す"""
         return self.applications.filter(status="確定済み").count()

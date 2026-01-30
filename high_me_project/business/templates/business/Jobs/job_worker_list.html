@@ -1,0 +1,285 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .matching-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .btn-tool {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+    }
+
+    .btn-dark {
+        background: #333;
+        color: white;
+        border: none;
+    }
+
+    .info-banner {
+        background: #f3eefc;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #5a2ea6;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .worker-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    .worker-table th {
+        background: #f9f9f9;
+        padding: 12px 15px;
+        text-align: left;
+        color: #888;
+        font-size: 12px;
+        border-bottom: 1px solid #eee;
+        font-weight: normal;
+    }
+
+    .worker-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .worker-info-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .worker-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #eee;
+        object-fit: cover;
+    }
+
+    .worker-name-box {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.4;
+    }
+
+    .name-kanji {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .name-kana {
+        color: #888;
+        font-size: 11px;
+    }
+
+    .worker-meta {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .status-badge {
+        background: #b2f2bb;
+        color: #2b8a3e;
+        padding: 4px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .tag-row {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .skill-tag {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .tag-orange {
+        background: #fff4e6;
+        color: #d9480f;
+    }
+
+    .tag-purple {
+        background: #f3f0ff;
+        color: #5f3dc4;
+    }
+
+    .back-link {
+        color: #666;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 30px;
+        font-size: 14px;
+    }
+
+    /* チェチE��ボックス */
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="header-row">
+    <h1 class="matching-title">マッチングしたワーカー ({{ matched_workers|length }}/{{ posting.count }}人)</h1>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-tool" onclick="location.reload()">更新</button>
+        <button class="btn-tool">CSVダウンローチE/button>
+        <button class="btn-tool btn-dark"><i class="fa-regular fa-envelope"></i> 一括でメチE��ージを送る</button>
+    </div>
+</div>
+
+<div class="info-banner">
+    <i class="fa-solid fa-bullhorn"></i> [そ�E他] ボタンからワーカーの欠勤を報告できるようになりました
+</div>
+
+<table class="worker-table">
+    <thead>
+        <tr>
+            <th style="width: 40px; text-align: center;"><input type="checkbox"></th>
+            <th>ワーカー</th>
+            <th>状慁E/th>
+            <th>電話</th>
+            <th>チェチE��イン/アウチE/th>
+            <th>Good玁E�E稼働回数</th>
+            <th>操佁E/th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match in matched_workers %}
+        <tr>
+            <td style="text-align: center;"><input type="checkbox"></td>
+            <td>
+                <div class="worker-info-cell">
+                    <!-- 顔�E真�E反映 -->
+                    {% if match.safe_profile and match.safe_profile.face_photo %}
+                    <img src="{{ match.safe_profile.face_photo.url }}" class="worker-img">
+                    {% else %}
+                    <div class="worker-img"
+                        style="display:flex; align-items:center; justify-content:center; background:#ffeb3b;">
+                        <i class="fa-solid fa-face-smile" style="color:white; font-size:24px;"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="worker-name-box">
+                        <!-- リンクを追加 -->
+                        <a href="{% url 'biz_worker_detail' store.id match.worker.id %}"
+                            style="text-decoration: none; color: inherit;">
+                            {% if match.safe_profile %}
+                            <span class="name-kanji">{{ match.safe_profile.last_name_kanji }} {{
+                                match.safe_profile.first_name_kanji }}</span>
+                            <span class="name-kana">{{ match.safe_profile.last_name_kana }} {{
+                                match.safe_profile.first_name_kana }}</span>
+                            <div class="worker-meta">
+                                {{ match.worker_age }}歳
+                                {% if match.safe_profile.gender == '男性' %}男性{% elif match.safe_profile.gender == '女性'
+                                %}女性{% else %}{{ match.safe_profile.gender }}{% endif %}
+                            </div>
+                            {% else %}
+                            <span class="name-kanji">プロフィール未設宁E/span>
+                            <div class="worker-meta">
+                                {{ match.worker.username }}
+                            </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+                <!-- スキルバッジ�E�固定サンプル�E�E-->
+                <div class="tag-row">
+                    <span class="skill-tag tag-orange"><i class="fa-solid fa-magnifying-glass"></i> ホ�Eル</span>
+                    <span class="skill-tag tag-purple"><i class="fa-solid fa-utensils"></i> 洗い場</span>
+                </div>
+            </td>
+            <td><span class="status-badge">確定済み</span></td>
+            <td style="color:#aaa;">...</td>
+            <td style="font-size:12px; line-height:1.5;">
+                {% if match.attendance_at %}
+                <span style="color: #2b8a3e; font-weight: bold;">チェチE��イン渁E/span>
+                {% else %}
+                <span style="color: #888;">未チェチE��イン</span>
+                {% endif %}
+                <br>
+                {% if match.leaving_at %}
+                <span style="color: #2b8a3e; font-weight: bold;">チェチE��アウト渁E/span>
+                {% else %}
+                <span style="color: #888;">未チェチE��アウチE/span>
+                {% endif %}
+            </td>
+            <td>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span><i class="fa-regular fa-thumbs-up"></i> 100%</span>
+                    <span><i class="fa-solid fa-briefcase"></i> 1囁E/span>
+                </div>
+            </td>
+            <td>
+                <div style="display: flex; gap: 8px;">
+                    {% if match.room_id %}
+                    <a href="{% url 'biz_message_detail' match.room_id %}" class="btn-tool"
+                        style="padding: 8px 12px; text-decoration: none; color: inherit;">
+                        <i class="fa-regular fa-envelope"></i>
+                    </a>
+                    {% else %}
+                    <button class="btn-tool" disabled style="padding: 8px 12px; color: #ccc;">
+                        <i class="fa-regular fa-envelope"></i>
+                    </button>
+                    {% endif %}
+                    <button class="btn-tool">そ�E仁E<i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 50px; color: #999;">
+                マッチングしたワーカーはまだぁE��せん
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'biz_job_posting_detail' store.id posting.id %}" class="back-link">
+    <i class="fa-solid fa-chevron-left"></i> 求人詳細へ戻めE
+</a>
+
+{% endblock %}

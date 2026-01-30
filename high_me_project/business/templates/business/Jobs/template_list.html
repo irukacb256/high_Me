@@ -1,0 +1,225 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 25px;
+    }
+
+    .list-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .list-sub {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    /* 荳ｦ縺ｳ譖ｿ縺医お繝ｪ繧｢ */
+    .sort-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .btn-sort {
+        border: 1px solid #007AFF;
+        color: #007AFF;
+        background: white;
+        padding: 6px 188px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-sort.active {
+        background: #eef6ff;
+    }
+
+    /* 繝懊ち繝ｳ縺ｮ蟷・ｒ隱ｿ謨ｴ・・88px縺ｯ萓九→縺励※蠕ｮ隱ｿ謨ｴ・・*/
+    .btn-sort {
+        padding: 6px 18px;
+    }
+
+    /* 縺ｲ縺ｪ蠖｢繧ｫ繝ｼ繝・*/
+    .template-card {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        display: flex;
+        padding: 20px;
+        margin-bottom: 15px;
+        gap: 20px;
+        transition: 0.2s;
+    }
+
+    .template-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .template-img {
+        width: 220px;
+        height: 140px;
+        background: #f9f9f9;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .template-img span {
+        font-size: 50px;
+    }
+
+    .template-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-text {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+    }
+
+    .template-link-title {
+        color: #007AFF;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-bottom: 10px;
+    }
+
+    .template-link-title:hover {
+        text-decoration: underline;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 15px;
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-action {
+        border: 1px solid #ddd;
+        background: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-action i {
+        margin-right: 5px;
+        color: #666;
+    }
+
+    .btn-create-job-now {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-blue {
+        background: #007AFF;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
+</style>
+
+<div class="list-header">
+    <div>
+        <h1 class="list-title">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢荳隕ｧ</h1>
+        <p class="list-sub">菴懈・縺励◆豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢荳隕ｧ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺・/p>
+    </div>
+    <!-- 縺薙％縺ｯ store.id 縺悟ｿ・ｦ・(urls.py 縺ｧ store_id 繧呈ｱゅａ縺ｦ縺・ｋ縺溘ａ) -->
+    <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">
+        <i class="fa-solid fa-plus"></i> 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧呈眠隕丈ｽ懈・
+    </a>
+</div>
+
+<div class="sort-section">
+    <span style="font-size: 12px; font-weight: bold;">荳ｦ縺ｳ譖ｿ縺・/span>
+    <button class="btn-sort active">菴懈・譌･縺梧眠縺励＞</button>
+    <button class="btn-sort">豎ゆｺｺ縺ｮ菴懈・縺梧眠縺励＞</button>
+</div>
+
+<div class="template-list-container">
+    {% for template in templates %}
+    <div class="template-card">
+        <div class="template-img">
+            {% with photo=template.photos.first %}
+            {% if photo %}
+            <img src="{{ photo.image.url }}" alt="{{ template.title }}"
+                style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
+            <span>黒</span>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="template-info">
+            <div class="meta-text">{{ template.industry }} / {{ template.occupation }}</div>
+
+            <!-- 縲蝉ｿｮ豁｣1縲題ｩｳ邏ｰURL縺九ｉ store.id 繧貞炎髯､ -->
+            <a href="{% url 'biz_template_detail' template.pk %}" class="template-link-title">{{ template.title }}</a>
+
+            <div class="meta-text"><i class="fa-solid fa-location-dot"></i> {{ template.address }}</div>
+            <div class="meta-text">譛邨よ峩譁ｰ譌･譎・ {{ template.created_at|date:"Y/m/d H:i" }}</div>
+
+            <div class="card-footer">
+                <div class="action-btns">
+                    <!-- 縲蝉ｿｮ豁｣2縲醍ｷｨ髮・RL縺九ｉ store.id 繧貞炎髯､ -->
+                    <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action"><i
+                            class="fa-solid fa-pen"></i> 邱ｨ髮・/a>
+                    <button class="btn-action"><i class="fa-solid fa-copy"></i> 繧ｳ繝斐・</button>
+                    <!-- 霑ｽ蜉・壼炎髯､繝懊ち繝ｳ縺ｮ繝ｪ繝ｳ繧ｯ蜈郁ｨｭ螳・-->
+                    <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action"><i
+                            class="fa-solid fa-trash"></i> 蜑企勁</a>
+                </div>
+                <!-- 縲蝉ｿｮ豁｣3縲第ｱゆｺｺ菴懈・URL縺九ｉ store.id 繧貞炎髯､ (urls.py 縺ｧ template_pk 縺ｮ縺ｿ繧呈欠螳壹＠縺ｦ縺・ｋ縺溘ａ) -->
+                <a href="{% url 'biz_job_create' template.pk %}" class="btn-create-job-now">
+                    <i class="fa-solid fa-circle-plus"></i> 縺薙・縺ｲ縺ｪ蠖｢繧貞・縺ｫ豎ゆｺｺ繧剃ｽ懈・
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="background: white; padding: 80px; text-align: center; border: 1px dashed #ccc; border-radius: 8px;">
+        <p style="color: #999; margin-bottom: 20px;">菴懈・貂医∩縺ｮ縺ｲ縺ｪ蠖｢縺後≠繧翫∪縺帙ｓ</p>
+        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">譛蛻昴・縺ｲ縺ｪ蠖｢繧剃ｽ懈・縺吶ｋ</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

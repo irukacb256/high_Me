@@ -1,0 +1,118 @@
+{% extends 'business/Common/base_signup.html' %}
+{% block content %}
+<style>
+    /* 繧ｹ繝・ャ繝代・: 蜈ｨ縺ｦ螳御ｺ・憾諷九↓縺吶ｋ */
+    .stepper {
+        display: flex;
+        margin: -40px -40px 40px -40px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+
+    .step {
+        flex: 1;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 11px;
+        color: #007AFF;
+        position: relative;
+        font-weight: bold;
+    }
+
+    .step.active {
+        border-bottom: 3px solid #007AFF;
+    }
+
+    .step::before {
+        content: '笨・';
+    }
+
+    .complete-container {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .complete-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 40px;
+    }
+
+    .check-icon {
+        width: 80px;
+        height: 80px;
+        background: #007AFF;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        margin: 0 auto 40px auto;
+    }
+
+    .complete-msg {
+        font-size: 16px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .highlight-text {
+        font-weight: bold;
+        background: linear-gradient(transparent 60%, #fffacd 60%);
+    }
+
+    .btn-login {
+        background: #007AFF;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    .btn-login:hover {
+        background: #0063cc;
+    }
+
+    .footer-notes {
+        margin-top: 40px;
+        text-align: left;
+        font-size: 13px;
+        color: #333;
+        line-height: 1.8;
+    }
+</style>
+
+<!-- 騾ｲ陦後ヰ繝ｼ: 蜈ｨ縺ｦ螳御ｺ・-->
+<div class="stepper">
+    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
+    <div class="step">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
+    <div class="step">莠区･ｭ閠・匳骭ｲ</div>
+    <div class="step active">蠎苓・逋ｻ骭ｲ</div>
+</div>
+
+<div class="complete-container">
+    <div class="complete-title">繧ｿ繧､繝溘・繧貞茜逕ｨ縺吶ｋ貅門ｙ縺悟ｮ御ｺ・＠縺ｾ縺励◆</div>
+
+    <div class="check-icon">笨・/div>
+
+    <div class="complete-msg">
+        繧ｿ繧､繝溘・縺ｪ繧・span class="highlight-text">蠖捺律</span>縺ｧ繧ょロ縺肴焔縺後☆縺舌↓隕九▽縺九ｊ縺ｾ縺呻ｼ・br>
+        莉翫☆縺舌Ο繧ｰ繧､繝ｳ縺励※豎ゆｺｺ繧呈軸霈峨＠縺ｾ縺励ｇ縺・ｼ・
+    </div>
+
+    <a href="{% url 'biz_login' %}" class="btn-login">繝ｭ繧ｰ繧､繝ｳ逕ｻ髱｢縺ｸ</a>
+
+    <div class="footer-notes">
+        窶ｻ 豎ゆｺｺ謗ｲ霈峨∪縺ｧ縺ｮ豬√ｌ縺ｫ縺､縺・※縺ｯ縲後ぎ繧､繝峨ヶ繝・け縲阪ｒ縺泌盾辣ｧ縺上□縺輔＞縲・br>
+        窶ｻ 縺昴・莉悶＃荳肴・縺ｪ轤ｹ繧・＃諢剰ｦ九′縺ゅｊ縺ｾ縺励◆繧峨∫ｮ｡逅・判髱｢縺ｮ蟾ｦ繝｡繝九Η繝ｼ縺ｮ荳矩Κ縺ｫ縺ゅｋ縲後＃雉ｪ蝠上・縺雁撫縺・粋繧上○縲阪°繧峨♀蝠上＞蜷医ｏ縺帙￥縺縺輔＞縲・
+    </div>
+</div>
+{% endblock %}

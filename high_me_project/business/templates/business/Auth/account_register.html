@@ -1,0 +1,161 @@
+{% extends 'business/Common/base_signup.html' %}
+{% block content %}
+<style>
+    .form-header {
+        margin-bottom: 30px;
+    }
+
+    .form-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .form-desc {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .label-text {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .input-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .input-note {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        border-color: #007AFF;
+        outline: none;
+    }
+
+    .eye-btn {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        color: #999;
+        cursor: pointer;
+    }
+
+    .btn-submit {
+        background: #007AFF;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 16px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+    /* 繧ｹ繝・ャ繝代・ */
+    .stepper {
+        display: flex;
+        margin: -40px -40px 30px -40px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+
+    .step {
+        flex: 1;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 11px;
+        color: #007AFF;
+        position: relative;
+    }
+
+    .step.inactive {
+        color: #999;
+    }
+
+    .step.active {
+        font-weight: bold;
+        border-bottom: 3px solid #007AFF;
+    }
+
+    .step::before {
+        content: '笨・';
+    }
+
+    .step.no-check::before {
+        content: '';
+    }
+</style>
+
+<!-- 騾ｲ陦後ヰ繝ｼ -->
+<div class="stepper">
+    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
+    <div class="step active no-check">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
+    <div class="step inactive no-check">3. 莠区･ｭ閠・匳骭ｲ</div>
+    <div class="step inactive no-check">4. 蠎苓・逋ｻ骭ｲ</div>
+</div>
+
+<div class="form-header">
+    <div class="form-title">繧｢繧ｫ繧ｦ繝ｳ繝・/div>
+    <div class="form-desc">繧ｿ繧､繝溘・縺ｮ邂｡逅・判髱｢繧呈桃菴懊☆繧区婿縺ｮ諠・ｱ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/div>
+</div>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {% if error %}
+    <div
+        style="background:#ffebee; color:#d32f2f; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="grid-2">
+        <div><label class="label-text">蟋・/label><input type="text" name="last_name" placeholder="萓・ 螻ｱ逕ｰ" required></div>
+        <div><label class="label-text">蜷・/label><input type="text" name="first_name" placeholder="萓・ 螟ｪ驛・ required></div>
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">繝ｭ繧ｰ繧､繝ｳ逕ｨ繝｡繝ｼ繝ｫ繧｢繝峨Ξ繧ｹ</label>
+        <span class="input-note">・・繝ｯ繝ｼ繧ｫ繝ｼ縺後・繝・メ繝ｳ繧ｰ縺励◆髫帙↓繧る夂衍縺悟ｱ翫″縺ｾ縺吶・/span>
+        <input type="email" name="email" value="{{ email }}" required>
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">繝代せ繝ｯ繝ｼ繝・/label>
+        <input type="password" name="password" required>
+    </div>
+
+    <div class="input-group">
+        <label class="label-text">繝代せ繝ｯ繝ｼ繝・(遒ｺ隱咲畑)</label>
+        <input type="password" name="password_confirm" required>
+    </div>
+
+    <button type="submit" class="btn-submit">繧｢繧ｫ繧ｦ繝ｳ繝医ｒ逋ｻ骭ｲ縺吶ｋ</button>
+</form>
+{% endblock %}

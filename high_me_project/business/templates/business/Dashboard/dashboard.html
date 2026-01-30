@@ -1,0 +1,323 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block header_actions %}
+<a href="{% url 'biz_checkin_management' %}" class="btn-header-white"><i class="fa-solid fa-qrcode"></i> 繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・/a>
+<a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">縺ｲ縺ｪ蠖｢縺九ｉ豎ゆｺｺ繧貞供髮・/a>
+{% endblock %}
+
+{% block content %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<style>
+    .notice-section {
+        background: white;
+        padding: 20px 25px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        margin-bottom: 25px;
+    }
+
+    .notice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .notice-title {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .notice-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .notice-item {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .notice-date {
+        color: #333;
+        margin-right: 15px;
+        font-weight: 500;
+    }
+
+    .notice-text {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .action-btn {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 18px 5px;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        font-size: 11px;
+        font-weight: bold;
+        transition: 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .action-btn i {
+        font-size: 26px;
+        margin-bottom: 12px;
+        color: #555;
+    }
+
+    .action-btn.primary {
+        background: #007AFF;
+        border: none;
+        color: white;
+    }
+
+    .action-btn.primary i {
+        color: white;
+    }
+
+    .badge-new {
+        position: absolute;
+        top: -8px;
+        right: 5px;
+        background: #ff3b30;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-size: 9px;
+    }
+
+    .calendar-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+    .calendar-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .view-tabs {
+        display: flex;
+        background: #f0f0f0;
+        padding: 4px;
+        border-radius: 6px;
+    }
+
+    .tab-item {
+        padding: 6px 15px;
+        border-radius: 4px;
+        border: none;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #666;
+        background: transparent;
+    }
+
+    .tab-item.active {
+        background: white;
+        color: #007AFF;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-slot {
+        font-size: 10px;
+        padding: 2px 4px;
+        background: #e6f7ed;
+        color: #1f8b4d;
+        border-left: 3px solid #1f8b4d;
+        border-radius: 2px;
+    }
+</style>
+
+<div class="notice-section">
+    <div class="notice-header">
+        <span class="notice-title">繧ｿ繧､繝溘・縺九ｉ縺ｮ驥崎ｦ√↑縺顔衍繧峨○</span>
+        <a href="#" style="font-size: 12px; color: #999; text-decoration: none;">縺吶∋縺ｦ縺ｮ縺顔衍繧峨○繧定ｦ九ｋ</a>
+    </div>
+    <ul class="notice-list">
+        <li class="notice-item"><span class="notice-date">2024蟷ｴ3譛・譌･</span><a href="#"
+                class="notice-text">螳壽悄繝｡繝ｳ繝・リ繝ｳ繧ｹ縺ｫ縺､縺・※</a></li>
+    </ul>
+</div>
+
+<div class="quick-actions-grid">
+    <a href="{% url 'biz_template_list' store.id %}" class="action-btn primary">
+        <i class="fa-solid fa-circle-plus"></i>譁ｰ隕丞供髮・
+    </a>
+    <a href="{% url 'biz_checkin_management' %}" class="action-btn"><i class="fa-solid fa-qrcode"></i>繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・/a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-circle-exclamation"></i>菫ｮ豁｣萓晞ｼ</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-user-check"></i>繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-envelope"></i>繝｡繝・そ繝ｼ繧ｸ</a>
+    <a href="#" class="action-btn"><i class="fa-solid fa-user-plus"></i>諡帛ｾ・ｩ溯・</a>
+    <a href="#" class="action-btn"><span class="badge-new">NEW</span><i class="fa-solid fa-address-book"></i>蟆ｱ讌ｭ莠亥ｮ夊｡ｨ</a>
+</div>
+
+<div class="calendar-card">
+    <div class="calendar-top">
+        <div style="display:flex; align-items:center;">
+            <button onclick="navigateCalendar(-1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
+            <span class="calendar-title" style="margin:0 15px;">{{ current_year }}蟷ｴ{{ current_month }}譛・/span>
+            <button onclick="navigateCalendar(1)"
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
+        </div>
+        <div class="view-tabs">
+            <button class="tab-item active">繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ</button>
+            <button class="tab-item" onclick="location.href='{% url 'biz_job_posting_list' store.id %}'">繝ｪ繧ｹ繝郁｡ｨ遉ｺ</button>
+        </div>
+    </div>
+
+    {% include 'business/components/calendar_grid.html' %}
+</div>
+
+<!-- Day Detail Modal (Image 2) -->
+<div id="dayModal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+    <div
+        style="background:white; width:90%; max-width:500px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
+        <!-- Modal Header -->
+        <div
+            style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024蟷ｴ1譛・0譌･・亥悄・・/div>
+            <button onclick="closeDayModal()"
+                style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div id="modalContent" style="padding:20px; overflow-y:auto; flex:1;">
+            <!-- Job Items injected here -->
+        </div>
+
+        <div style="padding:15px; border-top:1px solid #eee; text-align:center;">
+            <button onclick="closeDayModal()"
+                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">髢峨§繧・/button>
+        </div>
+    </div>
+</div>
+
+<template id="jobItemTemplate">
+    <div style="margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0;">
+        <a href="#" class="job-link"
+            style="color:#007AFF; font-weight:bold; font-size:15px; text-decoration:underline; display:block; margin-bottom:10px;">TITLE_HERE</a>
+
+        <div
+            style="display:grid; grid-template-columns: 80px 1fr; gap:10px; font-size:13px; color:#666; margin-bottom:8px;">
+            <div>譎る俣</div>
+            <div>
+                <i class="fa-regular fa-clock"></i> TIME_HERE
+            </div>
+
+            <div>豎ゆｺｺ縺ｮ迥ｶ諷・/div>
+            <div>
+                <span class="status-badge BADGE_CLASS">STATUS_HERE</span>
+            </div>
+
+            <div>蜈ｬ髢玖ｨｭ螳・/div>
+            <div>VISIBILITY_HERE</div>
+
+            <div>蜍滄寔莠ｺ謨ｰ</div>
+            <div><i class="fa-solid fa-user"></i> PEOPLE_HERE</div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .badge-active {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+
+    .badge-done {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #1f8b4d;
+        font-size: 11px;
+    }
+
+    .badge-ended {
+        background: #eee;
+        color: #999;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 11px;
+    }
+
+    /* Image 2 shows green for both? assuming "confirmed" is green */
+    /* Adjustment if needed */
+</style>
+
+<script>
+    function openDayModal(dateYMD, dateFormatted, dayOfWeekIdx) {
+        const days = ['・域律・・, '・域怦・・, '・育↓・・, '・域ｰｴ・・, '・域惠・・, '・磯≡・・, '・亥悄・・];
+        const dayStr = days[dayOfWeekIdx] || '';
+
+        document.getElementById('modalDate').innerText = dateFormatted + ' ' + dayStr;
+
+        const dataContainer = document.getElementById('data-' + dateYMD);
+        const modalContent = document.getElementById('modalContent');
+        const template = document.getElementById('jobItemTemplate').innerHTML;
+
+        modalContent.innerHTML = '';
+
+        if (dataContainer && dataContainer.children.length > 0) {
+            Array.from(dataContainer.children).forEach(item => {
+                let html = template
+                    .replace('TITLE_HERE', item.dataset.title)
+                    .replace('TIME_HERE', item.dataset.time)
+                    .replace('STATUS_HERE', item.dataset.status)
+                    .replace('BADGE_CLASS', item.dataset.statusClass)
+                    .replace('VISIBILITY_HERE', item.dataset.visibility)
+                    .replace('PEOPLE_HERE', item.dataset.people)
+                    .replace('href="#"', 'href="' + item.dataset.detailUrl + '"'); // Updated link
+                modalContent.innerHTML += html;
+            });
+        } else {
+            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">莠亥ｮ壹・縺ゅｊ縺ｾ縺帙ｓ</div>';
+        }
+
+        document.getElementById('dayModal').style.display = 'flex';
+    }
+
+    function closeDayModal() {
+        document.getElementById('dayModal').style.display = 'none';
+    }
+
+    // Outside click to close
+    document.getElementById('dayModal').addEventListener('click', function (e) {
+        if (e.target === this) closeDayModal();
+    });
+</script>
+{% endblock %}

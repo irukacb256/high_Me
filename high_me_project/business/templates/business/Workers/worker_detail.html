@@ -1,0 +1,411 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+{% load jobs_extras %}
+
+{% block content %}
+<style>
+    .worker-detail-container {
+        padding: 20px;
+        background: #F9F9F9;
+        min-height: 100vh;
+    }
+
+    .section-box {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .page-desc {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* 基本惁E��エリア */
+    .profile-header {
+        display: flex;
+        gap: 20px;
+        position: relative;
+    }
+
+    .profile-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #eee;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .block-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: 1px solid #ccc;
+        background: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .badge-brief {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .main-badge-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #FFD700;
+        /* ダミ�E */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+    }
+
+    /* グループタグ */
+    .group-row {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .group-label {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .tag-list {
+        display: flex;
+        gap: 5px;
+    }
+
+    .tag {
+        border: 1px solid #007AFF;
+        color: #007AFF;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #EAF4FF;
+    }
+
+    .btn-group-change {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        margin-left: auto;
+        cursor: pointer;
+    }
+
+    /* チE�EタリスチE*/
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    .data-row:last-child {
+        border-bottom: none;
+    }
+
+    .data-label {
+        color: #333;
+    }
+
+    .data-value {
+        font-weight: bold;
+    }
+
+    /* メモ */
+    .memo-area {
+        background: #FAFAFA;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    .memo-content {
+        font-size: 14px;
+        color: #333;
+        min-height: 40px;
+    }
+
+    .memo-note {
+        font-size: 11px;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .btn-edit-memo {
+        float: right;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 5px 15px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    /* 緊急連絡允E*/
+    .emergency-box {
+        background: white;
+        border: 1px solid #eee;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .emergency-title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .emergency-desc {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+    }
+
+    .btn-show-contact {
+        background: #ccc;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* バッジ詳細 */
+    .badge-detail-title {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .badge-detail-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .badge-detail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #FF9500;
+        /* アイコン背景 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+    }
+
+    .badge-detail-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .badge-detail-counts {
+        text-align: right;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .count-highlight {
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+        background: #FFD700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin: 0 2px;
+    }
+
+    .btn-detail-toggle {
+        background: white;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="worker-detail-container">
+    <div class="page-title">ワーカー詳細</div>
+    <div class="page-desc">
+        ワーカーさんの詳細が閲覧できます。お気に入り�E登録/解除、ブロチE��の追加/解除を行うことができます、E
+    </div>
+
+    <!-- 基本惁E��セクション -->
+    <div class="section-box">
+        <div class="profile-header">
+            {% if worker.workerprofile.face_photo %}
+            <img src="{{ worker.workerprofile.face_photo.url }}" class="profile-icon">
+            {% else %}
+            <div class="profile-icon"
+                style="display:flex;align-items:center;justify-content:center;font-size:30px;color:#ccc;">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            {% endif %}
+
+            <div class="profile-info">
+                <!-- 名前は個人惁E��保護の観点からイニシャル等にする場合もあるが、仕様上�E詳細なので表示 -->
+                <!-- <div style="width:100px; height:20px; background:#eee;"></div> マスキング表現 -->
+            </div>
+
+            <a href="#" class="block-btn">ブロチE��設宁E/a>
+        </div>
+
+        <div class="badge-brief">
+            <span style="font-size:13px; color:#666;">バッジ</span>
+            <i class="fa-regular fa-circle-question" style="color:#999;"></i>
+
+            <div style="display:flex; gap:10px; margin-left:10px;">
+                <!-- ここに獲得済みバッジの主要なも�Eを表示 -->
+                <!-- ダミ�E -->
+                <div class="main-badge-icon"><i class="fa-solid fa-bell-concierge"></i></div>
+                <div style="font-size:12px; text-align:center;">ホ�Eル</div>
+            </div>
+        </div>
+
+        <div class="group-row">
+            <div class="group-label">所属グルーチE/div>
+            <div class="tag-list">
+                {% for g in groups %}
+                <span class="tag">{{ g.get_group_type_display }}</span>
+                {% empty %}
+                <span style="font-size:12px; color:#999;">なぁE/span>
+                {% endfor %}
+            </div>
+            <button class="btn-group-change">グループ�E変更</button>
+        </div>
+    </div>
+
+    <!-- スタチE��セクション -->
+    <div class="section-box" style="padding:0;">
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">平均Good玁E��直迁E0回�E評価�E�E/div>
+            <div class="data-value">100%</div>
+        </div>
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">直前キャンセル玁E/div>
+            <div class="data-value">0%</div>
+        </div>
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">こ�E店�Eで働いた回数</div>
+            <div class="data-value">1囁E/div>
+        </div>
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">働いた回数</div>
+            <div class="data-value">2囁E/div>
+        </div>
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">働いた合計時閁E/div>
+            <div class="data-value">4.0時間</div>
+        </div>
+        <div class="data-row" style="padding:15px 20px;">
+            <div class="data-label">今週働ける残り時間</div>
+            <div class="data-value">39.0時間</div>
+        </div>
+
+        <div style="padding:15px 20px; border-top:1px solid #eee;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                <div class="data-label">管琁E��メモ</div>
+                <button class="btn-edit-memo">編雁E/button>
+            </div>
+            <div class="memo-note">※ワーカーには公開されません</div>
+            {% if memo %}
+            <div style="margin-top:5px; font-size:14px;">{{ memo.memo }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 緊急連絡允E-->
+    <div class="section-box">
+        <div class="emergency-title">ワーカーの緊急連絡允E/div>
+        <div class="emergency-desc">
+            ワーカーさんの緊急連絡先を取得することができます、Ebr>
+            個人惁E��です�Eで、怪我や事故など緊急の場合にのみご利用ください、E
+        </div>
+        <button class="btn-show-contact">緊急連絡先を表示する</button>
+        <div style="font-size:12px; color:#666; margin-top:10px;">
+            以下�EぁE��れかに該当するため、緊急連絡先を表示できません、Ebr>
+            ・ ワーカーさんが緊急連絡先を登録してぁE��ぁEbr>
+            ・ ワーカーさんの緊急連絡先を取得できる期間に該当しなぁE
+        </div>
+    </div>
+
+    <!-- バッジ詳細 -->
+    <div class="section-box">
+        <div class="badge-detail-title">バッジ詳細</div>
+
+        <div style="font-size:12px; color:#666; margin-bottom:20px;">
+            認定された回数�E�「次回も頼みたい業務」として選択された回数<br>
+            認定した店�E数�E�「次回も頼みたい業務」として選択した店�Eの数
+        </div>
+
+        {% for wb in worker_badges %}
+        <div class="badge-detail-row">
+            <div class="badge-left">
+                <div class="badge-detail-icon" style="background-color: #FF9500;">
+                    {% if wb.badge.icon %}
+                    <img src="{{ wb.badge.icon.url }}" style="width:100%; height:100%; border-radius:50%;">
+                    {% else %}
+                    <i class="fa-solid fa-medal"></i>
+                    {% endif %}
+                </div>
+                <div class="badge-detail-name">{{ wb.badge.name }}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="badge-detail-counts">
+                    認定された回数 <span class="count-highlight">{{ wb.certified_count }}</span>
+                    認定した店�E数 <span class="count-highlight">{{ wb.certified_store_count }}</span>
+                </div>
+                <button class="btn-detail-toggle">詳細 <i class="fa-solid fa-chevron-down"></i></button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

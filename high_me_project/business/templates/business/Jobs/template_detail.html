@@ -1,0 +1,299 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .detail-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding-bottom: 40px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        font-size: 13px;
+        color: #007AFF;
+        margin-bottom: 15px;
+    }
+
+    .breadcrumb a {
+        text-decoration: none;
+        color: #007AFF;
+    }
+
+    .breadcrumb span {
+        color: #666;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1c1c1e;
+        margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        overflow: hidden;
+    }
+
+    .card-header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 30px;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-action-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        color: #333;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-action-outline:hover {
+        background: #f5f5f5;
+    }
+
+    .btn-action-outline i {
+        color: #666;
+    }
+
+    .detail-row {
+        display: flex;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Zebra striping: Odd rows gray, Even rows white */
+    .detail-row:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .detail-row:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    .detail-label {
+        width: 200px;
+        font-weight: bold;
+        color: #666;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        flex: 1;
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .btn-primary {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px 80px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #005bb5;
+    }
+
+    .tag-blue {
+        background: #eef6ff;
+        color: #007AFF;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        display: inline-block;
+    }
+</style>
+
+<div class="detail-container">
+    <div class="breadcrumb">
+        <a href="{% url 'biz_template_list' store.id %}">求人のひな形一覧</a>
+        <span>&gt;</span>
+        <span style="color:#666;">求人のひな形詳細</span>
+    </div>
+
+    <div class="page-header">
+        <div class="page-title">求人のひな形詳細</div>
+        <div class="page-subtitle">求人のひな形を確認できまぁE/div>
+    </div>
+
+    <div class="detail-card">
+        <div class="card-header-actions">
+            <div class="card-title">求人のひな形</div>
+            <div class="action-buttons">
+                <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action-outline">
+                    <i class="fa-regular fa-pen-to-square"></i> 編雁E��めE
+                </a>
+                <a href="#" class="btn-action-outline">
+                    <i class="fa-regular fa-copy"></i> 褁E��する
+                </a>
+                <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action-outline">
+                    <i class="fa-regular fa-trash-can"></i> 削除する
+                </a>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">求人タイトル</div>
+            <div class="detail-value"><strong>{{ template.title }}</strong></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">業種 / 職種</div>
+            <div class="detail-value">{{ template.industry }} / {{ template.occupation }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">写真</div>
+            <div class="detail-value">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
+                    {% for photo in template.photos.all %}
+                    <img src="{{ photo.image.url }}"
+                        style="width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px;">
+                    {% empty %}
+                    <span style="color:#999;">写真なぁE/span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">業務�E容</div>
+            <div class="detail-value">{{ template.work_content }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">注意事頁E/div>
+            <div class="detail-value">{{ template.precautions|default:"なぁE }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">征E��</div>
+            <div class="detail-value">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">未経験老E��迁E/span>{% endif %}
+                    {% if template.has_bike_car_commute %}<span class="tag-blue">バイク/車通勤可</span>{% endif %}
+                    {% if template.has_clothing_free %}<span class="tag-blue">服裁E�E由</span>{% endif %}
+                    {% if template.has_coupon_get %}<span class="tag-blue">クーポンGET</span>{% endif %}
+                    {% if template.has_meal %}<span class="tag-blue">まかなぁE��めE/span>{% endif %}
+                    {% if template.has_hair_color_free %}<span class="tag-blue">髪垁Eカラー自由</span>{% endif %}
+                    {% if template.has_bike_bicycle_commute %}<span class="tag-blue">バイク/自転車通勤可</span>{% endif %}
+                    {% if template.has_bicycle_commute %}<span class="tag-blue">自転車通勤可</span>{% endif %}
+                    {% if template.has_transportation_allowance %}<span class="tag-blue">交通費支給</span>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">持ち物</div>
+            <div class="detail-value">{{ template.belongings|default:"なぁE }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">条件</div>
+            <div class="detail-value">{{ template.requirements|default:"なぁE }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">就業場所</div>
+            <div class="detail-value">{{ template.address }}</div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">アクセス</div>
+            <div class="detail-value">{{ template.access|default:"なぁE }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">受動喫煙防止措置</div>
+            <div class="detail-value">
+                {{ template.get_smoking_prevention_display }}
+                {% if template.has_smoking_area %}�E�喫煙可能エリアでの作業あり�E�{% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">賁E��設宁E/div>
+            <div class="detail-value">
+                {% if template.requires_qualification %}
+                あり�E�E% if template.qualification %}{{ template.qualification.name }}{% else %}{{
+                template.get_qualification_type_display }}{% endif %}�E�E
+                {% if template.qualification_notes %}
+                <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                    {{ template.qualification_notes|linebreaksbr }}
+                </div>
+                {% endif %}
+                {% else %}
+                なぁE
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">マニュアル (PDF)</div>
+            <div class="detail-value">
+                {% if template.manual_pdf %}
+                <a href="{{ template.manual_pdf.url }}" target="_blank" style="color:#007AFF; text-decoration:none;">
+                    <i class="far fa-file-pdf"></i> PDFを確認すめE
+                </a>
+                {% else %}
+                なぁE
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row" style="border-bottom: none;">
+            <div class="detail-label">自動送信メチE��ージ</div>
+            <div class="detail-value">
+                {{ template.auto_message|default:"未設宁E }}
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center;">
+        <a href="{% url 'biz_job_create' template.pk %}" class="btn-primary">
+            こ�E冁E��で求人を募雁E��めE
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -20,7 +20,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 class MapSearchView(TemplateView):
-    template_name = 'jobs/map_search.html'
+    template_name = 'Searchjobs/map_search.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -60,7 +60,7 @@ class MapSearchView(TemplateView):
 
 class IndexView(ListView):
     model = JobPosting
-    template_name = 'jobs/index.html'
+    template_name = 'Searchjobs/index.html'
     context_object_name = 'main_jobs'
 
     def get_queryset(self):
@@ -116,7 +116,7 @@ class IndexView(ListView):
 
 # --- 場所フロー ---
 class LocationHomeView(TemplateView):
-    template_name = 'jobs/location_home.html'
+    template_name = 'Searchjobs/location_home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -135,7 +135,7 @@ class LocationHomeView(TemplateView):
         return context
 
 class PrefSelectView(FormView):
-    template_name = 'jobs/pref_select.html'
+    template_name = 'Searchjobs/pref_select.html'
     form_class = PrefectureForm
     success_url = reverse_lazy('index')
 
@@ -168,7 +168,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 class MapView(TemplateView):
-    template_name = 'jobs/map_view.html'
+    template_name = 'Searchjobs/map_view.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -221,13 +221,13 @@ class MapView(TemplateView):
 
 # --- 絞り込みフロー ---
 class RefineHomeView(TemplateView):
-    template_name = 'jobs/refine_home.html'
+    template_name = 'Searchjobs/refine_home.html'
 
 class TimeSelectView(TemplateView):
-    template_name = 'jobs/time_select.html'
+    template_name = 'Searchjobs/time_select.html'
 
 class TreatmentSelectView(TemplateView):
-    template_name = 'jobs/treatment_select.html'
+    template_name = 'Searchjobs/treatment_select.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -235,10 +235,10 @@ class TreatmentSelectView(TemplateView):
         return context
 
 class KeywordExcludeView(TemplateView):
-    template_name = 'jobs/keyword_exclude.html'
+    template_name = 'Searchjobs/keyword_exclude.html'
 
 class OccupationSelectView(TemplateView):
-    template_name = 'jobs/occupation_select.html'
+    template_name = 'Searchjobs/occupation_select.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -246,7 +246,7 @@ class OccupationSelectView(TemplateView):
         return context
 
 class RewardSelectView(TemplateView):
-    template_name = 'jobs/reward_select.html'
+    template_name = 'Searchjobs/reward_select.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -256,7 +256,7 @@ class RewardSelectView(TemplateView):
 
 class JobDetailView(DetailView):
     model = JobPosting
-    template_name = 'jobs/detail.html'
+    template_name = 'Searchjobs/detail.html'
     context_object_name = 'job'
 
     def get_queryset(self):
@@ -278,7 +278,7 @@ class JobDetailView(DetailView):
 
 
 class FavoritesView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/favorites.html'
+    template_name = 'Favorites/favorites.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -295,7 +295,7 @@ class FavoritesView(LoginRequiredMixin, TemplateView):
 
 class StoreProfileView(LoginRequiredMixin, DetailView):
     model = Store
-    template_name = 'jobs/store_profile.html'
+    template_name = 'Searchjobs/store_profile.html'
     context_object_name = 'store'
     pk_url_kwarg = 'store_id'
 
@@ -349,7 +349,7 @@ class ToggleFavoriteStoreView(LoginRequiredMixin, View):
 
 
 class WorkScheduleView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/work_schedule.html'
+    template_name = 'Work/work_schedule.html'
 
     def group_by_date(self, app_list):
         grouped = {}
@@ -392,7 +392,7 @@ class WorkScheduleView(LoginRequiredMixin, TemplateView):
 
 
 class MessagesView(TemplateView):
-    template_name = 'jobs/messages.html'
+    template_name = 'Messages/messages.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -420,7 +420,7 @@ class MessagesView(TemplateView):
 # --- 申し込みフロー ---
 
 class ApplyStep1BelongingsView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/apply_belongings.html'
+    template_name = 'Searchjobs/Apply/apply_belongings.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -433,11 +433,11 @@ class ApplyStep1BelongingsView(LoginRequiredMixin, TemplateView):
 
         # 本人確認をしていない場合
         if not profile.is_identity_verified:
-            return render(request, 'jobs/detail.html', {'job': job, 'needs_verification': True})
+            return render(request, 'Searchjobs/detail.html', {'job': job, 'needs_verification': True})
 
         # 求人が締切済み/満員の場合
         if job.is_expired:
-            return render(request, 'jobs/detail.html', {'job': job, 'is_closed': True})
+            return render(request, 'Searchjobs/detail.html', {'job': job, 'is_closed': True})
             
         return super().get(request, *args, **kwargs)
 
@@ -446,7 +446,7 @@ class ApplyStep1BelongingsView(LoginRequiredMixin, TemplateView):
 
 
 class ApplyStep2ConditionsView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/apply_conditions.html'
+    template_name = 'Searchjobs/Apply/apply_conditions.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -458,7 +458,7 @@ class ApplyStep2ConditionsView(LoginRequiredMixin, TemplateView):
 
 
 class ApplyStep3DocumentsView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/apply_documents.html'
+    template_name = 'Searchjobs/Apply/apply_documents.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -470,7 +470,7 @@ class ApplyStep3DocumentsView(LoginRequiredMixin, TemplateView):
 
 
 class ApplyStep4PolicyView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/apply_policy.html'
+    template_name = 'Searchjobs/Apply/apply_policy.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -482,7 +482,7 @@ class ApplyStep4PolicyView(LoginRequiredMixin, TemplateView):
 
 
 class ApplyStep5ReviewView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/apply_review.html'
+    template_name = 'Searchjobs/Apply/apply_review.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -505,10 +505,10 @@ class ApplyStep5ReviewView(LoginRequiredMixin, TemplateView):
             worker=request.user
         )
 
-        return render(request, 'jobs/apply_complete.html', {'job': job})
+        return render(request, 'Searchjobs/Apply/apply_complete.html', {'job': job})
 
 class JobWorkingDetailView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/job_working_detail.html'
+    template_name = 'Work/job_working_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -523,7 +523,7 @@ class JobWorkingDetailView(LoginRequiredMixin, TemplateView):
         return context
 
 class BadgeListView(LoginRequiredMixin, TemplateView):
-    template_name = 'jobs/badge_list.html'
+    template_name = 'MyPage/badge_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -540,7 +540,7 @@ class BadgeListView(LoginRequiredMixin, TemplateView):
 
 class JobQRReaderView(LoginRequiredMixin, TemplateView):
     """QRコード読み取り画面 (カメラシミュレーション)"""
-    template_name = 'jobs/job_qr_reader.html'
+    template_name = 'Work/job_qr_reader.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -562,7 +562,7 @@ class QRScanView(LoginRequiredMixin, View):
             application.attendance_at = now
             application.save()
             is_checkin = True
-            return render(request, 'jobs/qr_success.html', {
+            return render(request, 'Work/qr_success.html', {
                 'app': application, 
                 'is_checkin': is_checkin
             })
@@ -601,7 +601,7 @@ class AttendanceStepBaseView(LoginRequiredMixin, View):
 
 class AttendanceStep1CheckView(AttendanceStepBaseView):
     """Step 1: 就業時間は予定通りでしたか？"""
-    template_name = 'jobs/attendance_step1.html'
+    template_name = 'Work/attendance_step1.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -618,7 +618,7 @@ class AttendanceStep1CheckView(AttendanceStepBaseView):
             # 予定通り -> 完了画面(qr_success相当)へ
             # 必要であればここでAttendanceCorrectionを作る必要はないが、完了画面を表示する
             application = self.get_application(application_id)
-            return render(request, 'jobs/qr_success.html', {
+            return render(request, 'Work/qr_success.html', {
                 'app': application, 
                 'is_checkin': False
             })
@@ -629,7 +629,7 @@ class AttendanceStep1CheckView(AttendanceStepBaseView):
 
 class AttendanceStep2GuideView(AttendanceStepBaseView):
     """Step 2: 修正依頼の流れ (ガイド画面)"""
-    template_name = 'jobs/attendance_step2.html'
+    template_name = 'Work/attendance_step2.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -640,7 +640,7 @@ class AttendanceStep2GuideView(AttendanceStepBaseView):
 
 class AttendanceStep3TimeView(AttendanceStepBaseView):
     """Step 3: 業務開始・終了日時の入力"""
-    template_name = 'jobs/attendance_step3.html'
+    template_name = 'Work/attendance_step3.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -668,7 +668,7 @@ class AttendanceStep3TimeView(AttendanceStepBaseView):
 
 class AttendanceStep4BreakView(AttendanceStepBaseView):
     """Step 4: 休憩時間の入力"""
-    template_name = 'jobs/attendance_step4.html'
+    template_name = 'Work/attendance_step4.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -709,7 +709,7 @@ class AttendanceStep4BreakView(AttendanceStepBaseView):
 
 class AttendanceStep5LatenessView(AttendanceStepBaseView):
     """Step 5: 遅刻理由の入力 (遅刻時のみ)"""
-    template_name = 'jobs/attendance_step5.html'
+    template_name = 'Work/attendance_step5.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -724,7 +724,7 @@ class AttendanceStep5LatenessView(AttendanceStepBaseView):
 
 class AttendanceStep6ConfirmView(AttendanceStepBaseView):
     """Step 6: 最終確認"""
-    template_name = 'jobs/attendance_step6.html'
+    template_name = 'Work/attendance_step6.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -760,7 +760,7 @@ class AttendanceStep6ConfirmView(AttendanceStepBaseView):
 
 class AttendanceStep7FinishView(AttendanceStepBaseView):
     """Step 7: 完了画面"""
-    template_name = 'jobs/attendance_step7.html'
+    template_name = 'Work/attendance_step7.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
