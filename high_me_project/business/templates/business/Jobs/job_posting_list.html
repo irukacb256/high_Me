@@ -16,7 +16,7 @@
         font-weight: bold;
     }
 
-    /* 刁E��替えタチE*/
+    /* 蛻・ｊ譖ｿ縺医ち繝・*/
     .view-switcher {
         display: flex;
         border: 1px solid #ddd;
@@ -44,7 +44,7 @@
         color: #007AFF;
     }
 
-    /* リストテーブル�E�画僁E再現�E�E*/
+    /* 繝ｪ繧ｹ繝医ユ繝ｼ繝悶Ν・育判蜒・蜀咲樟・・*/
     .job-list-table {
         width: 100%;
         border-collapse: collapse;
@@ -109,7 +109,7 @@
         gap: 5px;
     }
 
-    /* 6ヶ月経過後�Eスタイル */
+    /* 6繝ｶ譛育ｵ碁℃蠕後・繧ｹ繧ｿ繧､繝ｫ */
     .job-old {
         background-color: #f5f5f5 !important;
         color: #999 !important;
@@ -137,7 +137,7 @@
         display: block !important;
     }
 
-    /* カレンダーの期限刁E��イベンチE*/
+    /* 繧ｫ繝ｬ繝ｳ繝繝ｼ縺ｮ譛滄剞蛻・ｌ繧､繝吶Φ繝・*/
     .fc-event.event-old {
         background-color: #d1d1d6 !important;
         border-color: #c7c7cc !important;
@@ -147,62 +147,62 @@
 </style>
 
 <div class="page-header">
-    <h1 class="page-title">すべての求人一覧</h1>
+    <h1 class="page-title">縺吶∋縺ｦ縺ｮ豎ゆｺｺ荳隕ｧ</h1>
     <div class="view-switcher">
         <button class="view-btn active" id="btn-calendar" onclick="switchView('calendar')"><i
-                class="fa-solid fa-calendar-days"></i> カレンダー表示</button>
+                class="fa-solid fa-calendar-days"></i> 繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ</button>
         <button class="view-btn" id="btn-list" onclick="switchView('list')"><i class="fa-solid fa-list-ul"></i>
-            リスト表示</button>
+            繝ｪ繧ｹ繝郁｡ｨ遉ｺ</button>
     </div>
 </div>
 
-<!-- カレンダー表示エリア -->
+<!-- 繧ｫ繝ｬ繝ｳ繝繝ｼ陦ｨ遉ｺ繧ｨ繝ｪ繧｢ -->
 <div id="calendar-view" class="visible">
     <div class="calendar-card">
         <div class="calendar-top" style="justify-content:center; margin-bottom:15px;">
             <button onclick="navigateCalendar(-1)"
-                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">�E�E/button>
-            <span class="calendar-title" style="margin:0 15px;">{{ current_year }}年{{ current_month }}朁E/span>
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
+            <span class="calendar-title" style="margin:0 15px;">{{ current_year }}蟷ｴ{{ current_month }}譛・/span>
             <button onclick="navigateCalendar(1)"
-                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">�E�E/button>
+                style="background:none; border:none; cursor:pointer; font-size:18px; color:#666;">・・/button>
         </div>
         {% include 'business/components/calendar_grid.html' %}
     </div>
 </div>
 
-<!-- リスト表示エリア�E�画僁E再現�E�E-->
+<!-- 繝ｪ繧ｹ繝郁｡ｨ遉ｺ繧ｨ繝ｪ繧｢・育判蜒・蜀咲樟・・-->
 <div id="list-view">
     <table class="job-list-table">
         <thead>
             <tr>
-                <th>求人の状慁E/th>
-                <th>公開設宁E/th>
-                <th>求人</th>
-                <th>求人日晁E/th>
-                <th>ワーカー</th>
-                <th>操佁E/th>
+                <th>豎ゆｺｺ縺ｮ迥ｶ諷・/th>
+                <th>蜈ｬ髢玖ｨｭ螳・/th>
+                <th>豎ゆｺｺ</th>
+                <th>豎ゆｺｺ譌･譎・/th>
+                <th>繝ｯ繝ｼ繧ｫ繝ｼ</th>
+                <th>謫堺ｽ・/th>
             </tr>
         </thead>
         <tbody>
             {% for job in postings %}
             <tr class="{% if job.is_old_posting %}job-old{% endif %}">
-                <td><span class="status-badge">{% if job.is_old_posting %}期限刁E��{% else %}求人中{% endif %}</span></td>
+                <td><span class="status-badge">{% if job.is_old_posting %}譛滄剞蛻・ｌ{% else %}豎ゆｺｺ荳ｭ{% endif %}</span></td>
                 <td>
-                    <div>{{ job.get_visibility_display|default:"一般公閁E }}</div>
-                    <!-- グループ限定等�E場合�Eタグを表示 -->
-                    {% if job.visibility == 'group' %}<span class="privacy-tag">グループ限宁E/span>{% endif %}
+                    <div>{{ job.get_visibility_display|default:"荳闊ｬ蜈ｬ髢・ }}</div>
+                    <!-- 繧ｰ繝ｫ繝ｼ繝鈴剞螳夂ｭ峨・蝣ｴ蜷医・繧ｿ繧ｰ繧定｡ｨ遉ｺ -->
+                    {% if job.visibility == 'group' %}<span class="privacy-tag">繧ｰ繝ｫ繝ｼ繝鈴剞螳・/span>{% endif %}
                 </td>
                 <td>
                     <a href="{% url 'biz_job_posting_detail' store.id job.id %}" class="job-link">{{ job.title }}</a>
                 </td>
                 <td>
-                    {{ job.work_date|date:"Y年n朁E日" }}�E�E{ job.work_date|date:"D" }}�E�Ebr>
-                    <strong>{{ job.start_time|time:"H:i" }} 、E{{ job.end_time|time:"H:i" }}</strong>
+                    {{ job.work_date|date:"Y蟷ｴn譛・譌･" }}・・{ job.work_date|date:"D" }}・・br>
+                    <strong>{{ job.start_time|time:"H:i" }} 縲・{{ job.end_time|time:"H:i" }}</strong>
                 </td>
-                <td>{{ job.matched_count }} / {{ job.recruitment_count }}人</td>
+                <td>{{ job.matched_count }} / {{ job.recruitment_count }}莠ｺ</td>
                 <td>
                     {% if not job.is_old_posting %}
-                    <button class="btn-copy-dropdown"><i class="fa-regular fa-copy"></i> コピ�E <i
+                    <button class="btn-copy-dropdown"><i class="fa-regular fa-copy"></i> 繧ｳ繝斐・ <i
                             class="fa-solid fa-chevron-down"></i></button>
                     {% endif %}
                 </td>
@@ -221,7 +221,7 @@
         <!-- Modal Header -->
         <div
             style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024年1朁E0日�E�土�E�E/div>
+            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024蟷ｴ1譛・0譌･・亥悄・・/div>
             <button onclick="closeDayModal()"
                 style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">&times;</button>
         </div>
@@ -231,7 +231,7 @@
 
         <div style="padding:15px; border-top:1px solid #eee; text-align:center;">
             <button onclick="closeDayModal()"
-                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">閉じめE/button>
+                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">髢峨§繧・/button>
         </div>
     </div>
 </div>
@@ -243,16 +243,16 @@
 
         <div
             style="display:grid; grid-template-columns: 80px 1fr; gap:10px; font-size:13px; color:#666; margin-bottom:8px;">
-            <div>時間</div>
+            <div>譎る俣</div>
             <div><i class="fa-regular fa-clock"></i> TIME_HERE</div>
 
-            <div>求人の状慁E/div>
+            <div>豎ゆｺｺ縺ｮ迥ｶ諷・/div>
             <div><span class="status-badge BADGE_CLASS">STATUS_HERE</span></div>
 
-            <div>公開設宁E/div>
+            <div>蜈ｬ髢玖ｨｭ螳・/div>
             <div>VISIBILITY_HERE</div>
 
-            <div>募集人数</div>
+            <div>蜍滄寔莠ｺ謨ｰ</div>
             <div><i class="fa-solid fa-user"></i> PEOPLE_HERE</div>
         </div>
     </div>
@@ -295,7 +295,7 @@
     }
 
     function openDayModal(dateYMD, dateFormatted, dayOfWeekIdx) {
-        const days = ['�E�日�E�E, '�E�月�E�E, '�E�火�E�E, '�E�水�E�E, '�E�木�E�E, '�E��߁E�E, '�E�土�E�E];
+        const days = ['・域律・・, '・域怦・・, '・育↓・・, '・域ｰｴ・・, '・域惠・・, '・磯≡・・, '・亥悄・・];
         const dayStr = days[dayOfWeekIdx] || '';
         document.getElementById('modalDate').innerText = dateFormatted + ' ' + dayStr;
 
@@ -318,7 +318,7 @@
                 modalContent.innerHTML += html;
             });
         } else {
-            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">予定�Eありません</div>';
+            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">莠亥ｮ壹・縺ゅｊ縺ｾ縺帙ｓ</div>';
         }
 
         document.getElementById('dayModal').style.display = 'flex';

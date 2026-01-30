@@ -77,7 +77,7 @@
         cursor: pointer;
     }
 
-    /* スチE��パ�E */
+    /* 繧ｹ繝・ャ繝代・ */
     .stepper {
         display: flex;
         margin: -40px -40px 30px -40px;
@@ -104,7 +104,7 @@
     }
 
     .step::before {
-        content: '✁E';
+        content: '笨・';
     }
 
     .step.no-check::before {
@@ -112,17 +112,17 @@
     }
 </style>
 
-<!-- 進行バー -->
+<!-- 騾ｲ陦後ヰ繝ｼ -->
 <div class="stepper">
-    <div class="step">メール登録</div>
-    <div class="step active no-check">アカウント登録</div>
-    <div class="step inactive no-check">3. 事業老E��録</div>
-    <div class="step inactive no-check">4. 店�E登録</div>
+    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
+    <div class="step active no-check">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
+    <div class="step inactive no-check">3. 莠区･ｭ閠・匳骭ｲ</div>
+    <div class="step inactive no-check">4. 蠎苓・逋ｻ骭ｲ</div>
 </div>
 
 <div class="form-header">
-    <div class="form-title">アカウンチE/div>
-    <div class="form-desc">タイミ�Eの管琁E��面を操作する方の惁E��を�E力してください、E/div>
+    <div class="form-title">繧｢繧ｫ繧ｦ繝ｳ繝・/div>
+    <div class="form-desc">繧ｿ繧､繝溘・縺ｮ邂｡逅・判髱｢繧呈桃菴懊☆繧区婿縺ｮ諠・ｱ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/div>
 </div>
 
 <form method="POST">
@@ -136,26 +136,26 @@
     {% endif %}
 
     <div class="grid-2">
-        <div><label class="label-text">姁E/label><input type="text" name="last_name" placeholder="侁E 山田" required></div>
-        <div><label class="label-text">吁E/label><input type="text" name="first_name" placeholder="侁E 太郁E required></div>
+        <div><label class="label-text">蟋・/label><input type="text" name="last_name" placeholder="萓・ 螻ｱ逕ｰ" required></div>
+        <div><label class="label-text">蜷・/label><input type="text" name="first_name" placeholder="萓・ 螟ｪ驛・ required></div>
     </div>
 
     <div class="input-group">
-        <label class="label-text">ログイン用メールアドレス</label>
-        <span class="input-note">�E�Eワーカーが�EチE��ングした際にも通知が届きます、E/span>
+        <label class="label-text">繝ｭ繧ｰ繧､繝ｳ逕ｨ繝｡繝ｼ繝ｫ繧｢繝峨Ξ繧ｹ</label>
+        <span class="input-note">・・繝ｯ繝ｼ繧ｫ繝ｼ縺後・繝・メ繝ｳ繧ｰ縺励◆髫帙↓繧る夂衍縺悟ｱ翫″縺ｾ縺吶・/span>
         <input type="email" name="email" value="{{ email }}" required>
     </div>
 
     <div class="input-group">
-        <label class="label-text">パスワーチE/label>
+        <label class="label-text">繝代せ繝ｯ繝ｼ繝・/label>
         <input type="password" name="password" required>
     </div>
 
     <div class="input-group">
-        <label class="label-text">パスワーチE(確認用)</label>
+        <label class="label-text">繝代せ繝ｯ繝ｼ繝・(遒ｺ隱咲畑)</label>
         <input type="password" name="password_confirm" required>
     </div>
 
-    <button type="submit" class="btn-submit">アカウントを登録する</button>
+    <button type="submit" class="btn-submit">繧｢繧ｫ繧ｦ繝ｳ繝医ｒ逋ｻ骭ｲ縺吶ｋ</button>
 </form>
 {% endblock %}

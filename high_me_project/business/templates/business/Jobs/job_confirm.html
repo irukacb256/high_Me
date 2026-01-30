@@ -19,7 +19,7 @@
         color: #333;
     }
 
-    /* 警告バナ�E (画僁E準拠) */
+    /* 隴ｦ蜻翫ヰ繝翫・ (逕ｻ蜒・貅匁侠) */
     .warning-banner {
         background: #FFF2F2;
         border: 1px solid #FF3B30;
@@ -58,7 +58,7 @@
         padding: 24px;
     }
 
-    /* 読み取り専用セクション */
+    /* 隱ｭ縺ｿ蜿悶ｊ蟆ら畑繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ */
     .readonly-grid {
         display: grid;
         grid-template-columns: 140px 1fr;
@@ -110,7 +110,7 @@
         flex: 1;
     }
 
-    /* 下部アクション */
+    /* 荳矩Κ繧｢繧ｯ繧ｷ繝ｧ繝ｳ */
     .footer-bar {
         position: fixed;
         bottom: 0;
@@ -205,21 +205,21 @@
 
 <div class="confirm-container">
     <div class="page-header">
-        <h1 class="page-title">求人冁E��を確誁E/h1>
+        <h1 class="page-title">豎ゆｺｺ蜀・ｮｹ繧堤｢ｺ隱・/h1>
     </div>
 
-    <!-- 警告バナ�E (画僁E) -->
+    <!-- 隴ｦ蜻翫ヰ繝翫・ (逕ｻ蜒・) -->
     <div class="warning-banner">
-        <strong>求人はまだ公開されてぁE��せん、E/strong>
-        入力した求人冁E��を確認して、問題なければ�E�求人を�E開］ボタンを押してください、E
+        <strong>豎ゆｺｺ縺ｯ縺ｾ縺蜈ｬ髢九＆繧後※縺・∪縺帙ｓ縲・/strong>
+        蜈･蜉帙＠縺滓ｱゆｺｺ蜀・ｮｹ繧堤｢ｺ隱阪＠縺ｦ縲∝撫鬘後↑縺代ｌ縺ｰ・ｻ豎ゆｺｺ繧貞・髢具ｼｽ繝懊ち繝ｳ繧呈款縺励※縺上□縺輔＞縲・
     </div>
 
     <form method="POST">
         {% csrf_token %}
 
-        <!-- 求人のひな形 -->
+        <!-- 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢ -->
         <div class="card">
-            <div class="card-header">求人のひな形</div>
+            <div class="card-header">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢</div>
             <div class="card-body">
                 <div class="template-summary">
                     <div class="template-img">
@@ -240,68 +240,68 @@
                 </div>
 
                 <div class="readonly-grid">
-                    <div class="readonly-label">業務�E容</div>
+                    <div class="readonly-label">讌ｭ蜍吝・螳ｹ</div>
                     <div class="readonly-value">{{ template.work_content|linebreaksbr }}</div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">注意事頁E/div>
+                    <div class="readonly-label">豕ｨ諢丈ｺ矩・/div>
                     <div class="readonly-value">{{ template.precautions|linebreaksbr }}</div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">持ち物</div>
-                    <div class="readonly-value">{{ template.belongings|default:"特になぁE }}</div>
+                    <div class="readonly-label">謖√■迚ｩ</div>
+                    <div class="readonly-value">{{ template.belongings|default:"迚ｹ縺ｫ縺ｪ縺・ }}</div>
                 </div>
             </div>
         </div>
 
-        <!-- 入力した求人冁E�� -->
+        <!-- 蜈･蜉帙＠縺滓ｱゆｺｺ蜀・ｮｹ -->
         <div class="card">
-            <div class="card-header">入力した求人冁E��</div>
+            <div class="card-header">蜈･蜉帙＠縺滓ｱゆｺｺ蜀・ｮｹ</div>
             <div class="card-body">
                 <div class="readonly-grid">
-                    <div class="readonly-label">勤務日晁E/div>
-                    <div class="readonly-value bold">{{ data.work_date }} {{ data.start_time }} 、E{{ data.end_time }}
+                    <div class="readonly-label">蜍､蜍呎律譎・/div>
+                    <div class="readonly-value bold">{{ data.work_date }} {{ data.start_time }} 縲・{{ data.end_time }}
                     </div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">報酬</div>
-                    <div class="readonly-value bold">時給 ¥{{ data.wage|default:1300 }} / 交通費 ¥{{
+                    <div class="readonly-label">蝣ｱ驟ｬ</div>
+                    <div class="readonly-value bold">譎らｵｦ ﾂ･{{ data.wage|default:1300 }} / 莠､騾夊ｲｻ ﾂ･{{
                         data.transport|default:700 }}</div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">募集人数</div>
-                    <div class="readonly-value">{{ data.count|default:1 }} 人</div>
+                    <div class="readonly-label">蜍滄寔莠ｺ謨ｰ</div>
+                    <div class="readonly-value">{{ data.count|default:1 }} 莠ｺ</div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">公開篁E��</div>
+                    <div class="readonly-label">蜈ｬ髢狗ｯ・峇</div>
                     <div class="readonly-value">
-                        {% if data.visibility == 'public' %}一般公閁E
-                        {% elif data.visibility == 'badge' %}バッジ限宁E
-                        {% elif data.visibility == 'group' %}グループ限宁E
-                        {% else %}一般公開{% endif %}
+                        {% if data.visibility == 'public' %}荳闊ｬ蜈ｬ髢・
+                        {% elif data.visibility == 'badge' %}繝舌ャ繧ｸ髯仙ｮ・
+                        {% elif data.visibility == 'group' %}繧ｰ繝ｫ繝ｼ繝鈴剞螳・
+                        {% else %}荳闊ｬ蜈ｬ髢宮% endif %}
                     </div>
                 </div>
                 <div class="readonly-grid">
-                    <div class="readonly-label">自動メチE��ージ</div>
+                    <div class="readonly-label">閾ｪ蜍輔Γ繝・そ繝ｼ繧ｸ</div>
                     <div class="readonly-value">
                         {% if data.msg_send %}
-                        <span style="color: #28a745;"><i class="fa-solid fa-check-circle"></i> 送信する</span><br>
-                        <span style="font-size: 13px; color: #666;">�E�E{ data.auto_message|linebreaksbr }}�E�E/span>
+                        <span style="color: #28a745;"><i class="fa-solid fa-check-circle"></i> 騾∽ｿ｡縺吶ｋ</span><br>
+                        <span style="font-size: 13px; color: #666;">・・{ data.auto_message|linebreaksbr }}・・/span>
                         {% else %}
-                        <span style="color: #888;">送信しなぁE/span>
+                        <span style="color: #888;">騾∽ｿ｡縺励↑縺・/span>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 同意チェチE�� -->
+        <!-- 蜷梧э繝√ぉ繝・け -->
         <label class="check-section">
             <input type="checkbox" name="confirm_check" required>
             <div class="check-content">
-                <div class="check-title">休業手当に関する事頁E��確認しました</div>
+                <div class="check-title">莨第･ｭ謇句ｽ薙↓髢｢縺吶ｋ莠矩・ｒ遒ｺ隱阪＠縺ｾ縺励◆</div>
                 <div class="check-desc">
-                    法令に基づき、募雁E�Eの都合で仕事が中止になった場合�E休業手当等につぁE��確認をお願いします、E
+                    豕穂ｻ､縺ｫ蝓ｺ縺･縺阪∝供髮・・縺ｮ驛ｽ蜷医〒莉穂ｺ九′荳ｭ豁｢縺ｫ縺ｪ縺｣縺溷ｴ蜷医・莨第･ｭ謇句ｽ鍋ｭ峨↓縺､縺・※遒ｺ隱阪ｒ縺企｡倥＞縺励∪縺吶・
                 </div>
             </div>
         </label>
@@ -315,8 +315,8 @@
 
         <div class="footer-bar">
             <div class="btn-row">
-                <a href="javascript:history.back()" class="btn-back">求人冁E��を変更</a>
-                <button type="submit" class="btn-submit">求人を�E開すめE/button>
+                <a href="javascript:history.back()" class="btn-back">豎ゆｺｺ蜀・ｮｹ繧貞､画峩</a>
+                <button type="submit" class="btn-submit">豎ゆｺｺ繧貞・髢九☆繧・/button>
             </div>
         </div>
     </form>

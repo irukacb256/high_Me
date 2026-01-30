@@ -46,7 +46,7 @@
         padding: 24px;
     }
 
-    /* ひな形プレビュー */
+    /* 縺ｲ縺ｪ蠖｢繝励Ξ繝薙Η繝ｼ */
     .template-preview {
         display: flex;
         gap: 20px;
@@ -115,7 +115,7 @@
         line-height: 1.5;
     }
 
-    /* 二段絁E��イアウチE*/
+    /* 莠梧ｮｵ邨・Ξ繧､繧｢繧ｦ繝・*/
     .form-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -192,7 +192,7 @@
         white-space: nowrap;
     }
 
-    /* 公開設宁E*/
+    /* 蜈ｬ髢玖ｨｭ螳・*/
     .radio-option {
         display: flex;
         align-items: flex-start;
@@ -240,7 +240,7 @@
         color: #444;
     }
 
-    /* 下部固定�Eタン */
+    /* 荳矩Κ蝗ｺ螳壹・繧ｿ繝ｳ */
     .footer-bar {
         position: fixed;
         bottom: 0;
@@ -267,7 +267,7 @@
         max-width: 600px;
     }
 
-    /* ヘルプテキスチE*/
+    /* 繝倥Ν繝励ユ繧ｭ繧ｹ繝・*/
     .help-text {
         font-size: 11px;
         color: #888;
@@ -278,13 +278,13 @@
 
 <div class="form-container">
     <div class="page-header">
-        <h1 class="page-title">求人を作�E</h1>
-        <p class="page-subtitle">求人に忁E��な惁E��を�E力してください、E/p>
+        <h1 class="page-title">豎ゆｺｺ繧剃ｽ懈・</h1>
+        <p class="page-subtitle">豎ゆｺｺ縺ｫ蠢・ｦ√↑諠・ｱ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/p>
     </div>
 
-    <!-- ひな形プレビュー -->
+    <!-- 縺ｲ縺ｪ蠖｢繝励Ξ繝薙Η繝ｼ -->
     <div class="card">
-        <div class="card-header">求人のひな形</div>
+        <div class="card-header">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢</div>
         <!-- Image 2 Style -->
         <div style="padding: 20px;">
             <div style="display:flex; gap:20px;">
@@ -309,8 +309,8 @@
 
             <!-- Admin Label Section (Below Card Content) -->
             <div style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
-                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">管琁E��ラベル</div>
-                <div style="font-size:11px; color:#666;">※ワーカーには公開されません</div>
+                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">邂｡逅・畑繝ｩ繝吶Ν</div>
+                <div style="font-size:11px; color:#666;">窶ｻ繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ縺ｯ蜈ｬ髢九＆繧後∪縺帙ｓ</div>
                 <div style="margin-top:5px; font-size:14px;">{{ template.title }}</div>
             </div>
         </div>
@@ -320,23 +320,23 @@
         {% csrf_token %}
         <input type="hidden" name="template_id" value="{{ template.pk }}">
 
-        <!-- 求人冁E�� -->
+        <!-- 豎ゆｺｺ蜀・ｮｹ -->
         <div class="card">
-            <div class="card-header">求人冁E��</div>
+            <div class="card-header">豎ゆｺｺ蜀・ｮｹ</div>
             <div class="card-body">
                 <div class="form-grid">
                     <div class="form-group">
-                        <div class="label-row"><span class="label-text">求人日</span></div>
+                        <div class="label-row"><span class="label-text">豎ゆｺｺ譌･</span></div>
                         <input type="date" name="work_date" id="work_date" value="{{ tomorrow|date:'Y-m-d' }}" required>
                     </div>
                     <div class="form-group">
-                        <div class="label-row"><span class="label-text">開始〜終亁E/span></div>
+                        <div class="label-row"><span class="label-text">髢句ｧ九懃ｵゆｺ・/span></div>
                         <div class="time-range">
                             <div class="input-with-icon">
                                 <input type="time" name="start_time" id="start_time" required>
                                 <i class="fa-regular fa-clock"></i>
                             </div>
-                            <span>、E/span>
+                            <span>縲・/span>
                             <div class="input-with-icon">
                                 <input type="time" name="end_time" id="end_time" required>
                                 <i class="fa-regular fa-clock"></i>
@@ -348,183 +348,183 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <div class="label-row"><span class="label-text">休�Eの開姁E/span></div>
+                        <div class="label-row"><span class="label-text">莨第・縺ｮ髢句ｧ・/span></div>
                         <input type="time" name="break_start" id="break_start" placeholder="--:--">
                     </div>
                     <div class="form-group">
-                        <div class="label-row"><span class="label-text">休�E時間</span></div>
+                        <div class="label-row"><span class="label-text">莨第・譎る俣</span></div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="break_duration" id="break_duration" value="0"
                                 style="width: 80px;">
-                            <span>刁E/span>
+                            <span>蛻・/span>
                         </div>
                     </div>
                 </div>
                 <p class="help-text">
-                    労働時間が、E時間を趁E��、E時間以下」�E場合�E、E5刁E��上�E休�Eを設定してください、Ebr>
-                    労働時間が、E時間を趁E��る」場合�E、E0刁E��上�E休�Eを設定してください、E
+                    蜉ｴ蜒肴凾髢薙′縲・譎る俣繧定ｶ・∴縲・譎る俣莉･荳九阪・蝣ｴ蜷医・縲・5蛻・ｻ･荳翫・莨第・繧定ｨｭ螳壹＠縺ｦ縺上□縺輔＞縲・br>
+                    蜉ｴ蜒肴凾髢薙′縲・譎る俣繧定ｶ・∴繧九榊ｴ蜷医・縲・0蛻・ｻ･荳翫・莨第・繧定ｨｭ螳壹＠縺ｦ縺上□縺輔＞縲・
                 </p>
 
                 <div class="form-group" id="break_warning"
                     style="display:none; color: #FF3B30; font-size: 12px; font-weight: bold; margin-bottom: 15px;">
-                    <i class="fa-solid fa-triangle-exclamation"></i> 休�E時間が不足してぁE��す、E
+                    <i class="fa-solid fa-triangle-exclamation"></i> 莨第・譎る俣縺御ｸ崎ｶｳ縺励※縺・∪縺吶・
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
-                    <div class="label-row"><span class="label-text">求人の締刁E��閁E/span></div>
+                    <div class="label-row"><span class="label-text">豎ゆｺｺ縺ｮ邱蛻・凾髢・/span></div>
                     <select name="deadline"
                         style="max-width: 300px; padding:10px; border-radius:8px; border:1px solid #ccc;">
-                        <option value="start">【推奨】開始時刻と同時</option>
-                        <option value="1h">開始時刻の1時間剁E/option>
-                        <option value="2h">開始時刻の2時間剁E/option>
-                        <option value="3h">開始時刻の3時間剁E/option>
-                        <option value="5h">開始時刻の5時間剁E/option>
-                        <option value="8h">開始時刻の8時間剁E/option>
-                        <option value="12h">開始時刻の12時間剁E/option>
-                        <option value="day_before">開始時刻の1日�E�E4時間�E�前</option>
-                        <option value="2days_before">開始時刻の2日�E�E8時間�E�前</option>
+                        <option value="start">縲先耳螂ｨ縲鷹幕蟋区凾蛻ｻ縺ｨ蜷梧凾</option>
+                        <option value="1h">髢句ｧ区凾蛻ｻ縺ｮ1譎る俣蜑・/option>
+                        <option value="2h">髢句ｧ区凾蛻ｻ縺ｮ2譎る俣蜑・/option>
+                        <option value="3h">髢句ｧ区凾蛻ｻ縺ｮ3譎る俣蜑・/option>
+                        <option value="5h">髢句ｧ区凾蛻ｻ縺ｮ5譎る俣蜑・/option>
+                        <option value="8h">髢句ｧ区凾蛻ｻ縺ｮ8譎る俣蜑・/option>
+                        <option value="12h">髢句ｧ区凾蛻ｻ縺ｮ12譎る俣蜑・/option>
+                        <option value="day_before">髢句ｧ区凾蛻ｻ縺ｮ1譌･・・4譎る俣・牙燕</option>
+                        <option value="2days_before">髢句ｧ区凾蛻ｻ縺ｮ2譌･・・8譎る俣・牙燕</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <div class="label-row">
-                        <span class="label-text">募集人数</span>
-                        <span class="required-badge">忁E��E/span>
+                        <span class="label-text">蜍滄寔莠ｺ謨ｰ</span>
+                        <span class="required-badge">蠢・・/span>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
                         <input type="number" name="count" value="1" style="width: 80px;" required>
-                        <span>人</span>
+                        <span>莠ｺ</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 公開設宁E-->
+        <!-- 蜈ｬ髢玖ｨｭ螳・-->
         <div class="card">
-            <div class="card-header">公開設宁E/div>
+            <div class="card-header">蜈ｬ髢玖ｨｭ螳・/div>
             <div class="card-body">
-                <!-- 1. 一般 -->
+                <!-- 1. 荳闊ｬ -->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="public" checked>
                     <div class="option-content">
-                        <div class="option-title">一般公閁E/div>
+                        <div class="option-title">荳闊ｬ蜈ｬ髢・/div>
                     </div>
                 </label>
 
-                <!-- 2. バッジ -->
+                <!-- 2. 繝舌ャ繧ｸ -->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="badge">
                     <div class="option-content">
-                        <div class="option-title">バッジ限定�E閁E<i class="fa-regular fa-circle-question"
+                        <div class="option-title">繝舌ャ繧ｸ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question"
                                 style="color:#C7C7CC; cursor:pointer;"></i></div>
-                        <div class="option-desc">経験豊富なワーカーに働いてほしい求人におすすめです、Ebr>設定可能な時給�E�E,363冁E��丁E/div>
+                        <div class="option-desc">邨碁ｨ楢ｱ雁ｯ後↑繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ蜒阪＞縺ｦ縺ｻ縺励＞豎ゆｺｺ縺ｫ縺翫☆縺吶ａ縺ｧ縺吶・br>險ｭ螳壼庄閭ｽ縺ｪ譎らｵｦ・・,363蜀・ｻ･荳・/div>
                     </div>
                 </label>
 
-                <!-- 3. グルーチE-->
+                <!-- 3. 繧ｰ繝ｫ繝ｼ繝・-->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="group">
                     <div class="option-content">
-                        <div class="option-title">グループ限定�E閁E(59個�EグループあめE</div>
+                        <div class="option-title">繧ｰ繝ｫ繝ｼ繝鈴剞螳壼・髢・(59蛟九・繧ｰ繝ｫ繝ｼ繝励≠繧・</div>
                         <div class="checkbox-item" style="margin-top: 8px;">
                             <input type="checkbox" name="auto_switch" checked>
-                            <span>自動で「一般公開」に刁E��替える�E��Eータ版！E/span>
+                            <span>閾ｪ蜍輔〒縲御ｸ闊ｬ蜈ｬ髢九阪↓蛻・ｊ譖ｿ縺医ｋ・医・繝ｼ繧ｿ迚茨ｼ・/span>
                         </div>
                         <div class="option-desc" style="margin-left: 20px;">
-                            「グループ限定�E開」で募集人数を満たせなぁE��合に自動で「一般公開」に刁E��替えて、�EチE��ングの機会を増やします、E
+                            縲後げ繝ｫ繝ｼ繝鈴剞螳壼・髢九阪〒蜍滄寔莠ｺ謨ｰ繧呈ｺ縺溘○縺ｪ縺・ｴ蜷医↓閾ｪ蜍輔〒縲御ｸ闊ｬ蜈ｬ髢九阪↓蛻・ｊ譖ｿ縺医※縲√・繝・メ繝ｳ繧ｰ縺ｮ讖滉ｼ壹ｒ蠅励ｄ縺励∪縺吶・
                         </div>
                     </div>
                 </label>
 
-                <!-- 4. 初回限宁E-->
+                <!-- 4. 蛻晏屓髯仙ｮ・-->
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="first_time">
                     <div class="option-content">
-                        <div class="option-title">初回ワーカー限定�E閁E<i class="fa-regular fa-circle-question"
+                        <div class="option-title">蛻晏屓繝ｯ繝ｼ繧ｫ繝ｼ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question"
                                 style="color:#C7C7CC; cursor:pointer;"></i></div>
-                        <div class="option-desc">こ�E店�Eで直近�E2年間、一度も勤務経験がなぁE��ーカーだけに求人が表示されます、E/div>
+                        <div class="option-desc">縺薙・蠎苓・縺ｧ逶ｴ霑代・2蟷ｴ髢薙∽ｸ蠎ｦ繧ょ共蜍咏ｵ碁ｨ薙′縺ｪ縺・Ρ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/div>
                     </div>
                 </label>
 
-                <!-- 5. URL限宁E-->
+                <!-- 5. URL髯仙ｮ・-->
                 <label class="radio-option" style="margin-bottom: 0;">
                     <input type="radio" name="visibility" value="url">
                     <div class="option-content">
-                        <div class="option-title">URL限定�E閁E/div>
-                        <div class="option-desc">求人詳細ペ�Eジの「�E有URL」を知ってぁE��ワーカーだけに求人が表示されます、E/div>
+                        <div class="option-title">URL髯仙ｮ壼・髢・/div>
+                        <div class="option-desc">豎ゆｺｺ隧ｳ邏ｰ繝壹・繧ｸ縺ｮ縲悟・譛蔚RL縲阪ｒ遏･縺｣縺ｦ縺・ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・/div>
                     </div>
                 </label>
             </div>
         </div>
 
-        <!-- 時給・交通費 -->
+        <!-- 譎らｵｦ繝ｻ莠､騾夊ｲｻ -->
         <div class="card">
             <div class="card-body">
                 <div class="form-grid" style="align-items: flex-end;">
                     <div class="form-group">
                         <div class="label-row">
-                            <span class="label-text">時給</span>
-                            <span class="required-badge">忁E��E/span>
+                            <span class="label-text">譎らｵｦ</span>
+                            <span class="required-badge">蠢・・/span>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="wage" value="1300" style="width: 120px;" required>
-                            <span>冁E/span>
+                            <span>蜀・/span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="label-row">
-                            <span class="label-text">交通費</span>
-                            <span class="required-badge">忁E��E/span>
+                            <span class="label-text">莠､騾夊ｲｻ</span>
+                            <span class="required-badge">蠢・・/span>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="transport" value="700" style="width: 120px;" required>
-                            <span>冁E/span>
+                            <span>蜀・/span>
                         </div>
                     </div>
                 </div>
                 <div class="option-desc" style="color: #666;">
-                    深夜手当！E2時以降�E勤務）、残業手当！E時間を趁E��る勤務）�E、�E力した時給に応じて自動計算されます、Ebr>
-                    都道府県ごとの最低賁E��は<a href="#" style="color:#007AFF;">こちめE/a>をご確認ください、Ebr>
+                    豺ｱ螟懈焔蠖難ｼ・2譎ゆｻ･髯阪・蜍､蜍呻ｼ峨∵ｮ区･ｭ謇句ｽ難ｼ・譎る俣繧定ｶ・∴繧句共蜍呻ｼ峨・縲∝・蜉帙＠縺滓凾邨ｦ縺ｫ蠢懊§縺ｦ閾ｪ蜍戊ｨ育ｮ励＆繧後∪縺吶・br>
+                    驛ｽ驕灘ｺ懃恁縺斐→縺ｮ譛菴手ｳ・≡縺ｯ<a href="#" style="color:#007AFF;">縺薙■繧・/a>繧偵＃遒ｺ隱阪￥縺縺輔＞縲・br>
                     <span
-                        style="color: #D67A00; font-weight: bold;">毎年10月頁E��吁E�E道府県の最低賁E��が変更される可能性があります。求人日に適用される最低賁E��の時給を下回らなぁE��ぁE��注意してください、E/span>
+                        style="color: #D67A00; font-weight: bold;">豈主ｹｴ10譛磯・↓蜷・・驕灘ｺ懃恁縺ｮ譛菴手ｳ・≡縺悟､画峩縺輔ｌ繧句庄閭ｽ諤ｧ縺後≠繧翫∪縺吶よｱゆｺｺ譌･縺ｫ驕ｩ逕ｨ縺輔ｌ繧区怙菴手ｳ・≡縺ｮ譎らｵｦ繧剃ｸ句屓繧峨↑縺・ｈ縺・↓豕ｨ諢上＠縺ｦ縺上□縺輔＞縲・/span>
                 </div>
             </div>
         </div>
 
-        <!-- 自動送信メチE��ージ -->
+        <!-- 閾ｪ蜍暮∽ｿ｡繝｡繝・そ繝ｼ繧ｸ -->
         <div class="card">
-            <div class="card-header">自動送信メチE��ージ</div>
+            <div class="card-header">閾ｪ蜍暮∽ｿ｡繝｡繝・そ繝ｼ繧ｸ</div>
             <div class="card-body">
                 <div class="form-group">
-                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">送信設宁E/div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">騾∽ｿ｡險ｭ螳・/div>
                     <div style="display:flex; gap:20px; font-size: 13px;">
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_send"
-                                value="true" checked> 送信する</label>
+                                value="true" checked> 騾∽ｿ｡縺吶ｋ</label>
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_send"
-                                value="false"> 送信しなぁE/label>
+                                value="false"> 騾∽ｿ｡縺励↑縺・/label>
                     </div>
                 </div>
                 <div class="form-group" style="margin-top: 15px;">
-                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">送信対象</div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">騾∽ｿ｡蟇ｾ雎｡</div>
                     <div style="display:flex; gap:20px; font-size: 13px;">
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_target"
-                                value="all"> 全員</label>
+                                value="all"> 蜈ｨ蜩｡</label>
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_target"
-                                value="first" checked> はじめてマッチングしたワーカー</label>
+                                value="first" checked> 縺ｯ縺倥ａ縺ｦ繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ</label>
                     </div>
                 </div>
                 <div class="form-group" style="margin-top: 15px;">
-                    <div class="label-text" style="font-size: 13px; margin-bottom: 10px;">メチE��ージ冁E��</div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 10px;">繝｡繝・そ繝ｼ繧ｸ蜀・ｮｹ</div>
                     <textarea name="auto_message" rows="4" style="resize: none;">
-申し込みぁE��だきありがとぁE��ざいます！E
-当日到着しましたら�E口から入ってぁE��だき、「タイミ�Eから申し込んだ、E��E��す」と近くの店員にお伝えください、E
-不�E点などあればメチE��ージか緊急連絡先にご連絡ください、E/textarea>
+逕ｳ縺苓ｾｼ縺ｿ縺・◆縺縺阪≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺呻ｼ・
+蠖捺律蛻ｰ逹縺励∪縺励◆繧牙・蜿｣縺九ｉ蜈･縺｣縺ｦ縺・◆縺縺阪√後ち繧､繝溘・縺九ｉ逕ｳ縺苓ｾｼ繧薙□縲・・〒縺吶阪→霑代￥縺ｮ蠎怜藤縺ｫ縺贋ｼ昴∴縺上□縺輔＞縲・
+荳肴・轤ｹ縺ｪ縺ｩ縺ゅｌ縺ｰ繝｡繝・そ繝ｼ繧ｸ縺狗ｷ頑･騾｣邨｡蜈医↓縺秘｣邨｡縺上□縺輔＞縲・/textarea>
                 </div>
             </div>
         </div>
 
         <div class="form-container" style="text-align:center; padding-top:40px; border-top:1px solid #eee;">
-            <button type="submit" class="btn-submit">入力した求人冁E��を確誁E/button>
+            <button type="submit" class="btn-submit">蜈･蜉帙＠縺滓ｱゆｺｺ蜀・ｮｹ繧堤｢ｺ隱・/button>
         </div>
     </form>
 </div>
@@ -539,7 +539,7 @@
             const start = new Date(`2000-01-01T${startTime}:00`);
             let end = new Date(`2000-01-01T${endTime}:00`);
 
-            // 終亁E��間が開始時間より前なら翌日とみなぁE
+            // 邨ゆｺ・凾髢薙′髢句ｧ区凾髢薙ｈ繧雁燕縺ｪ繧臥ｿ梧律縺ｨ縺ｿ縺ｪ縺・
             if (end <= start) {
                 end.setDate(end.getDate() + 1);
             }
@@ -551,21 +551,21 @@
             const hours = Math.floor(netWorkMin / 60);
             const mins = netWorkMin % 60;
 
-            document.getElementById('duration_display').textContent = `(${hours}時間${mins}刁E`;
+            document.getElementById('duration_display').textContent = `(${hours}譎る俣${mins}蛻・`;
 
-            // 休�E時間の警告ロジチE��
+            // 莨第・譎る俣縺ｮ隴ｦ蜻翫Ο繧ｸ繝・け
             const warningEl = document.getElementById('break_warning');
-            if (diffMin > 480) { // 8時間趁E
+            if (diffMin > 480) { // 8譎る俣雜・
                 if (breakDuration < 60) {
                     warningEl.style.display = 'block';
-                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が8時間を趁E��るため、E0刁E��上�E休�Eが忁E��です、E;
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 蜉ｴ蜒肴凾髢薙′8譎る俣繧定ｶ・∴繧九◆繧√・0蛻・ｻ･荳翫・莨第・縺悟ｿ・ｦ√〒縺吶・;
                 } else {
                     warningEl.style.display = 'none';
                 }
-            } else if (diffMin > 360) { // 6時間趁E
+            } else if (diffMin > 360) { // 6譎る俣雜・
                 if (breakDuration < 45) {
                     warningEl.style.display = 'block';
-                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が6時間を趁E��るため、E5刁E��上�E休�Eが忁E��です、E;
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 蜉ｴ蜒肴凾髢薙′6譎る俣繧定ｶ・∴繧九◆繧√・5蛻・ｻ･荳翫・莨第・縺悟ｿ・ｦ√〒縺吶・;
                 } else {
                     warningEl.style.display = 'none';
                 }
@@ -579,7 +579,7 @@
     document.getElementById('end_time').addEventListener('change', calculateDuration);
     document.getElementById('break_duration').addEventListener('input', calculateDuration);
 
-    // 初期読み込み時にも計箁E
+    // 蛻晄悄隱ｭ縺ｿ霎ｼ縺ｿ譎ゅ↓繧りｨ育ｮ・
     window.addEventListener('load', calculateDuration);
 </script>
 {% endblock %}

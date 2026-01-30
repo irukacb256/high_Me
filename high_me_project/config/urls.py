@@ -1,7 +1,7 @@
 # config/urls.py
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from accounts import views as account_views
 from jobs import views as job_views
 from business import views as biz_views
@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin-portal/', include('administration.urls')),
 
     # --- オンボーディング ---
     path('', TemplateView.as_view(template_name='Auth/onboarding1.html'), name='onboarding1'),

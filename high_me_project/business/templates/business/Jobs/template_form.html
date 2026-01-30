@@ -147,7 +147,7 @@
     }
 
     .chip.selected::after {
-        content: '✁E;
+        content: '笨・;
         font-weight: bold;
     }
 
@@ -274,7 +274,7 @@
 </style>
 
 <div class="form-container">
-    <h1 style="font-size: 24px; margin-bottom: 24px; color: #1c1c1e;">求人のひな形を{% if is_edit %}編雁E% else %}新規作�E{% endif %}
+    <h1 style="font-size: 24px; margin-bottom: 24px; color: #1c1c1e;">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧畜% if is_edit %}邱ｨ髮・% else %}譁ｰ隕丈ｽ懈・{% endif %}
     </h1>
 
     <form method="POST" enctype="multipart/form-data" id="templateForm">
@@ -283,102 +283,102 @@
         <div class="section-card">
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">求人タイトル <span class="tag-required">忁E��E/span></div>
+                    <div class="field-label">豎ゆｺｺ繧ｿ繧､繝医Ν <span class="tag-required">蠢・・/span></div>
                     <input type="text" name="title" value="{{ template.title }}"
-                        placeholder="【新橋駁E��歩5刁E��笑顔溢れるレストランでホ�EルスタチE���E�タイミ�E新橋庁E required>
+                        placeholder="縲先眠讖矩ｧ・ｾ呈ｭｩ5蛻・醍ｬ鷹｡疲ｺ｢繧後ｋ繝ｬ繧ｹ繝医Λ繝ｳ縺ｧ繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ・√ち繧､繝溘・譁ｰ讖句ｺ・ required>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="field-group">
-                        <div class="field-label">業種 <span class="tag-required">忁E��E/span></div>
+                        <div class="field-label">讌ｭ遞ｮ <span class="tag-required">蠢・・/span></div>
                         <select name="industry" id="industrySelect" required>
-                            <option value="" disabled selected>選択してください</option>
-                            <option {% if template.industry=='飲食�Eフ�EチE %}selected{% endif %}>飲食�Eフ�EチE/option>
-                            <option {% if template.industry=='販売・接客' %}selected{% endif %}>販売・接客</option>
-                            <option {% if template.industry=='物流�E軽作業' %}selected{% endif %}>物流�E軽作業</option>
-                            <option {% if template.industry=='オフィス' %}selected{% endif %}>オフィス</option>
-                            <option {% if template.industry=='そ�E仁E %}selected{% endif %}>そ�E仁E/option>
+                            <option value="" disabled selected>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+                            <option {% if template.industry=='鬟ｲ鬟溘・繝輔・繝・ %}selected{% endif %}>鬟ｲ鬟溘・繝輔・繝・/option>
+                            <option {% if template.industry=='雋ｩ螢ｲ繝ｻ謗･螳｢' %}selected{% endif %}>雋ｩ螢ｲ繝ｻ謗･螳｢</option>
+                            <option {% if template.industry=='迚ｩ豬√・霆ｽ菴懈･ｭ' %}selected{% endif %}>迚ｩ豬√・霆ｽ菴懈･ｭ</option>
+                            <option {% if template.industry=='繧ｪ繝輔ぅ繧ｹ' %}selected{% endif %}>繧ｪ繝輔ぅ繧ｹ</option>
+                            <option {% if template.industry=='縺昴・莉・ %}selected{% endif %}>縺昴・莉・/option>
                         </select>
                     </div>
                     <div class="field-group">
-                        <div class="field-label">職種 <span class="tag-required">忁E��E/span></div>
+                        <div class="field-label">閨ｷ遞ｮ <span class="tag-required">蠢・・/span></div>
                         <select name="occupation" id="occupationSelect" required>
-                            <option value="" disabled selected>選択してください</option>
+                            <option value="" disabled selected>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
 
-                            <optgroup label="飲食�Eフ�EチE>
-                                <option {% if template.occupation=='ホ�EルスタチE��' %}selected{% endif %}>ホ�EルスタチE��</option>
-                                <option {% if template.occupation=='キチE��ンスタチE��' %}selected{% endif %}>キチE��ンスタチE��</option>
-                                <option {% if template.occupation=='レストランスタチE��' %}selected{% endif %}>レストランスタチE��</option>
-                                <option {% if template.occupation=='屁E�E屋スタチE��' %}selected{% endif %}>屁E�E屋スタチE��</option>
-                                <option {% if template.occupation=='カフェスタチE��' %}selected{% endif %}>カフェスタチE��</option>
-                                <option {% if template.occupation=='洗い場' %}selected{% endif %}>洗い場</option>
-                                <option {% if template.occupation=='調琁E��助' %}selected{% endif %}>調琁E��助</option>
-                                <option {% if template.occupation=='チE��バリー' %}selected{% endif %}>チE��バリー</option>
+                            <optgroup label="鬟ｲ鬟溘・繝輔・繝・>
+                                <option {% if template.occupation=='繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝帙・繝ｫ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｭ繝・メ繝ｳ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｭ繝・メ繝ｳ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繝ｬ繧ｹ繝医Λ繝ｳ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝ｬ繧ｹ繝医Λ繝ｳ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='螻・・螻九せ繧ｿ繝・ヵ' %}selected{% endif %}>螻・・螻九せ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｫ繝輔ぉ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｫ繝輔ぉ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='豢励＞蝣ｴ' %}selected{% endif %}>豢励＞蝣ｴ</option>
+                                <option {% if template.occupation=='隱ｿ逅・｣懷勧' %}selected{% endif %}>隱ｿ逅・｣懷勧</option>
+                                <option {% if template.occupation=='繝・Μ繝舌Μ繝ｼ' %}selected{% endif %}>繝・Μ繝舌Μ繝ｼ</option>
                             </optgroup>
 
-                            <optgroup label="販売・接客">
-                                <option {% if template.occupation=='コンビニスタチE��' %}selected{% endif %}>コンビニスタチE��</option>
-                                <option {% if template.occupation=='スーパ�E・レジ' %}selected{% endif %}>スーパ�E・レジ</option>
-                                <option {% if template.occupation=='アパレル販売' %}selected{% endif %}>アパレル販売</option>
-                                <option {% if template.occupation=='携帯販売' %}selected{% endif %}>携帯販売</option>
-                                <option {% if template.occupation=='キャンペ�Eン・イベンチE %}selected{% endif %}>キャンペ�Eン・イベンチE
+                            <optgroup label="雋ｩ螢ｲ繝ｻ謗･螳｢">
+                                <option {% if template.occupation=='繧ｳ繝ｳ繝薙ル繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｳ繝ｳ繝薙ル繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='繧ｹ繝ｼ繝代・繝ｻ繝ｬ繧ｸ' %}selected{% endif %}>繧ｹ繝ｼ繝代・繝ｻ繝ｬ繧ｸ</option>
+                                <option {% if template.occupation=='繧｢繝代Ξ繝ｫ雋ｩ螢ｲ' %}selected{% endif %}>繧｢繝代Ξ繝ｫ雋ｩ螢ｲ</option>
+                                <option {% if template.occupation=='謳ｺ蟶ｯ雋ｩ螢ｲ' %}selected{% endif %}>謳ｺ蟶ｯ雋ｩ螢ｲ</option>
+                                <option {% if template.occupation=='繧ｭ繝｣繝ｳ繝壹・繝ｳ繝ｻ繧､繝吶Φ繝・ %}selected{% endif %}>繧ｭ繝｣繝ｳ繝壹・繝ｳ繝ｻ繧､繝吶Φ繝・
                                 </option>
                             </optgroup>
 
-                            <optgroup label="物流�E軽作業">
-                                <option {% if template.occupation=='倉庫作業' %}selected{% endif %}>倉庫作業</option>
-                                <option {% if template.occupation=='仕�Eけ�Eピッキング' %}selected{% endif %}>仕�Eけ�Eピッキング</option>
-                                <option {% if template.occupation=='搬入・搬出' %}selected{% endif %}>搬入・搬出</option>
-                                <option {% if template.occupation=='引越しアシスタンチE %}selected{% endif %}>引越しアシスタンチE/option>
-                                <option {% if template.occupation=='ドライバ�E' %}selected{% endif %}>ドライバ�E</option>
+                            <optgroup label="迚ｩ豬√・霆ｽ菴懈･ｭ">
+                                <option {% if template.occupation=='蛟牙ｺｫ菴懈･ｭ' %}selected{% endif %}>蛟牙ｺｫ菴懈･ｭ</option>
+                                <option {% if template.occupation=='莉募・縺代・繝斐ャ繧ｭ繝ｳ繧ｰ' %}selected{% endif %}>莉募・縺代・繝斐ャ繧ｭ繝ｳ繧ｰ</option>
+                                <option {% if template.occupation=='謳ｬ蜈･繝ｻ謳ｬ蜃ｺ' %}selected{% endif %}>謳ｬ蜈･繝ｻ謳ｬ蜃ｺ</option>
+                                <option {% if template.occupation=='蠑戊ｶ翫＠繧｢繧ｷ繧ｹ繧ｿ繝ｳ繝・ %}selected{% endif %}>蠑戊ｶ翫＠繧｢繧ｷ繧ｹ繧ｿ繝ｳ繝・/option>
+                                <option {% if template.occupation=='繝峨Λ繧､繝舌・' %}selected{% endif %}>繝峨Λ繧､繝舌・</option>
                             </optgroup>
 
-                            <optgroup label="オフィス">
-                                <option {% if template.occupation=='チE�Eタ入劁E %}selected{% endif %}>チE�Eタ入劁E/option>
-                                <option {% if template.occupation=='コールセンター' %}selected{% endif %}>コールセンター</option>
-                                <option {% if template.occupation=='一般事務' %}selected{% endif %}>一般事務</option>
+                            <optgroup label="繧ｪ繝輔ぅ繧ｹ">
+                                <option {% if template.occupation=='繝・・繧ｿ蜈･蜉・ %}selected{% endif %}>繝・・繧ｿ蜈･蜉・/option>
+                                <option {% if template.occupation=='繧ｳ繝ｼ繝ｫ繧ｻ繝ｳ繧ｿ繝ｼ' %}selected{% endif %}>繧ｳ繝ｼ繝ｫ繧ｻ繝ｳ繧ｿ繝ｼ</option>
+                                <option {% if template.occupation=='荳闊ｬ莠句漁' %}selected{% endif %}>荳闊ｬ莠句漁</option>
                             </optgroup>
 
-                            <optgroup label="そ�E仁E>
-                                <option {% if template.occupation=='渁E��・ベッドメイク' %}selected{% endif %}>渁E��・ベッドメイク</option>
-                                <option {% if template.occupation=='ホテルスタチE��' %}selected{% endif %}>ホテルスタチE��</option>
-                                <option {% if template.occupation=='警備員' %}selected{% endif %}>警備員</option>
-                                <option {% if template.occupation=='カラオケスタチE��' %}selected{% endif %}>カラオケスタチE��</option>
-                                <option {% if template.occupation=='介護補助' %}selected{% endif %}>介護補助</option>
+                            <optgroup label="縺昴・莉・>
+                                <option {% if template.occupation=='貂・祉繝ｻ繝吶ャ繝峨Γ繧､繧ｯ' %}selected{% endif %}>貂・祉繝ｻ繝吶ャ繝峨Γ繧､繧ｯ</option>
+                                <option {% if template.occupation=='繝帙ユ繝ｫ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繝帙ユ繝ｫ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='隴ｦ蛯吝藤' %}selected{% endif %}>隴ｦ蛯吝藤</option>
+                                <option {% if template.occupation=='繧ｫ繝ｩ繧ｪ繧ｱ繧ｹ繧ｿ繝・ヵ' %}selected{% endif %}>繧ｫ繝ｩ繧ｪ繧ｱ繧ｹ繧ｿ繝・ヵ</option>
+                                <option {% if template.occupation=='莉玖ｭｷ陬懷勧' %}selected{% endif %}>莉玖ｭｷ陬懷勧</option>
                             </optgroup>
                         </select>
                     </div>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">業務�E容 <span class="tag-required">忁E��E/span></div>
-                    <textarea name="work_content" placeholder="業務�E容を�E力してください">{{ template.work_content }}</textarea>
+                    <div class="field-label">讌ｭ蜍吝・螳ｹ <span class="tag-required">蠢・・/span></div>
+                    <textarea name="work_content" placeholder="讌ｭ蜍吝・螳ｹ繧貞・蜉帙＠縺ｦ縺上□縺輔＞">{{ template.work_content }}</textarea>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">注意事頁E/div>
-                    <textarea name="precautions" placeholder="注意事頁E��入力してください">{{ template.precautions }}</textarea>
+                    <div class="field-label">豕ｨ諢丈ｺ矩・/div>
+                    <textarea name="precautions" placeholder="豕ｨ諢丈ｺ矩・ｒ蜈･蜉帙＠縺ｦ縺上□縺輔＞">{{ template.precautions }}</textarea>
                 </div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-header">征E��</div>
+            <div class="section-header">蠕・∞</div>
             <div class="section-body">
                 <div class="treatment-grid">
                     <label class="checkbox-item"><input type="checkbox" name="has_unexperienced_welcome" {% if
-                            template.has_unexperienced_welcome %}checked{% endif %}> 未経験老E��迁E/label>
+                            template.has_unexperienced_welcome %}checked{% endif %}> 譛ｪ邨碁ｨ楢・ｭ楢ｿ・/label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bike_car_commute" {% if
-                            template.has_bike_car_commute %}checked{% endif %}> バイク�E�車通勤可</label>
+                            template.has_bike_car_commute %}checked{% endif %}> 繝舌う繧ｯ・剰ｻ企壼共蜿ｯ</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_clothing_free" {% if
-                            template.has_clothing_free %}checked{% endif %}> 服裁E�E由</label>
+                            template.has_clothing_free %}checked{% endif %}> 譛崎｣・・逕ｱ</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_coupon_get" {% if
-                            template.has_coupon_get %}checked{% endif %}> クーポンGET</label>
+                            template.has_coupon_get %}checked{% endif %}> 繧ｯ繝ｼ繝昴ΦGET</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_meal" {% if template.has_meal
-                            %}checked{% endif %}> まかなぁE��めE/label>
+                            %}checked{% endif %}> 縺ｾ縺九↑縺・≠繧・/label>
                     <label class="checkbox-item"><input type="checkbox" name="has_hair_color_free" {% if
-                            template.has_hair_color_free %}checked{% endif %}> 髪型／カラー自由</label>
+                            template.has_hair_color_free %}checked{% endif %}> 鬮ｪ蝙具ｼ上き繝ｩ繝ｼ閾ｪ逕ｱ</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bike_bicycle_commute" {% if
-                            template.has_bike_bicycle_commute %}checked{% endif %}> バイク�E��E転車通勤可</label>
+                            template.has_bike_bicycle_commute %}checked{% endif %}> 繝舌う繧ｯ・剰・霆｢霆企壼共蜿ｯ</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bicycle_commute" {% if
-                            template.has_bicycle_commute %}checked{% endif %}> 自転車通勤可</label>
+                            template.has_bicycle_commute %}checked{% endif %}> 閾ｪ霆｢霆企壼共蜿ｯ</label>
                 </div>
             </div>
         </div>
@@ -386,22 +386,22 @@
         <div class="section-card">
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">持ち物</div>
+                    <div class="field-label">謖√■迚ｩ</div>
                     <div id="belongings-chips" class="chip-container"></div>
                     <div class="add-custom-group">
-                        <input type="text" id="custom-belonging-input" placeholder="頁E��を�E力して追加">
+                        <input type="text" id="custom-belonging-input" placeholder="鬆・岼繧貞・蜉帙＠縺ｦ霑ｽ蜉">
                         <button type="button" class="btn-add-custom"
-                            onclick="addCustomChip('belongings-chips', 'custom-belonging-input')">追加</button>
+                            onclick="addCustomChip('belongings-chips', 'custom-belonging-input')">霑ｽ蜉</button>
                     </div>
                     <input type="hidden" name="belongings" id="final-belongings">
                 </div>
                 <div class="field-group">
-                    <div class="field-label">働くための条件</div>
+                    <div class="field-label">蜒阪￥縺溘ａ縺ｮ譚｡莉ｶ</div>
                     <div id="requirements-chips" class="chip-container"></div>
                     <div class="add-custom-group">
-                        <input type="text" id="custom-requirement-input" placeholder="頁E��を�E力して追加">
+                        <input type="text" id="custom-requirement-input" placeholder="鬆・岼繧貞・蜉帙＠縺ｦ霑ｽ蜉">
                         <button type="button" class="btn-add-custom"
-                            onclick="addCustomChip('requirements-chips', 'custom-requirement-input')">追加</button>
+                            onclick="addCustomChip('requirements-chips', 'custom-requirement-input')">霑ｽ蜉</button>
                     </div>
                     <input type="hidden" name="requirements" id="final-requirements">
                 </div>
@@ -409,36 +409,36 @@
         </div>
 
         <div class="section-card">
-            <div class="section-header">賁E��設宁E/div>
+            <div class="section-header">雉・ｼ險ｭ螳・/div>
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">こ�E求人は賁E��が忁E��ですか�E�E<span class="tag-required">忁E��E/span></div>
-                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">賁E��惁E��の登録がなぁE��ーカーは、求人に申し込むことができなくなります、E
+                    <div class="field-label">縺薙・豎ゆｺｺ縺ｯ雉・ｼ縺悟ｿ・ｦ√〒縺吶°・・<span class="tag-required">蠢・・/span></div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">雉・ｼ諠・ｱ縺ｮ逋ｻ骭ｲ縺後↑縺・Ρ繝ｼ繧ｫ繝ｼ縺ｯ縲∵ｱゆｺｺ縺ｫ逕ｳ縺苓ｾｼ繧縺薙→縺後〒縺阪↑縺上↑繧翫∪縺吶・
                     </p>
                     <div style="display: flex; gap: 20px;">
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="radio" name="requires_qualification" value="true"
                                 onchange="toggleQualification(true)" {% if template.requires_qualification %}checked{%
-                                endif %}> はぁE
+                                endif %}> 縺ｯ縺・
                         </label>
                         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="radio" name="requires_qualification" value="false"
                                 onchange="toggleQualification(false)" {% if not template.requires_qualification
-                                %}checked{% endif %}> ぁE��ぁE
+                                %}checked{% endif %}> 縺・＞縺・
                         </label>
                     </div>
                     <p style="font-size: 12px; color: #b8860b; margin-top: 12px; line-height: 1.4;">
-                        ワーカーが登録する賁E��証明書の有効性めE��像�E正確性は、タイミ�Eが保証するも�Eではありません、Ebr>
-                        忁E��求人詳細画面にてマッチングしたワーカーの賁E��証明書を表示し、�E容をご確認ください、E
+                        繝ｯ繝ｼ繧ｫ繝ｼ縺檎匳骭ｲ縺吶ｋ雉・ｼ險ｼ譏取嶌縺ｮ譛牙柑諤ｧ繧・判蜒上・豁｣遒ｺ諤ｧ縺ｯ縲√ち繧､繝溘・縺御ｿ晁ｨｼ縺吶ｋ繧ゅ・縺ｧ縺ｯ縺ゅｊ縺ｾ縺帙ｓ縲・br>
+                        蠢・★豎ゆｺｺ隧ｳ邏ｰ逕ｻ髱｢縺ｫ縺ｦ繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ縺ｮ雉・ｼ險ｼ譏取嶌繧定｡ｨ遉ｺ縺励∝・螳ｹ繧偵＃遒ｺ隱阪￥縺縺輔＞縲・
                     </p>
                 </div>
 
                 <div class="field-group" id="qualification-type-group"
                     style="{% if not template.requires_qualification %}display: none;{% endif %}">
-                    <div class="field-label">賁E��種別 <span class="tag-required">忁E��E/span></div>
-                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">求人の応募に忁E��な賁E��種別を選択してください、E/p>
+                    <div class="field-label">雉・ｼ遞ｮ蛻･ <span class="tag-required">蠢・・/span></div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">豎ゆｺｺ縺ｮ蠢懷供縺ｫ蠢・ｦ√↑雉・ｼ遞ｮ蛻･繧帝∈謚槭＠縺ｦ縺上□縺輔＞縲・/p>
                     <select name="qualification_id">
-                        <option value="none" {% if not template.qualification %}selected{% endif %}>選択してください</option>
+                        <option value="none" {% if not template.qualification %}selected{% endif %}>驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
                         {% regroup qualifications by category as category_list %}
                         {% for category in category_list %}
                         <optgroup label="{{ category.grouper }}">
@@ -450,101 +450,101 @@
                         {% endfor %}
                     </select>
                     <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                        ※選択したいずれか�E賁E��の登録が完亁E��てぁE��ユーザーは、求人へ申し込むことが可能になります、E/p>
+                        窶ｻ驕ｸ謚槭＠縺溘＞縺壹ｌ縺九・雉・ｼ縺ｮ逋ｻ骭ｲ縺悟ｮ御ｺ・＠縺ｦ縺・ｋ繝ｦ繝ｼ繧ｶ繝ｼ縺ｯ縲∵ｱゆｺｺ縺ｸ逕ｳ縺苓ｾｼ繧縺薙→縺悟庄閭ｽ縺ｫ縺ｪ繧翫∪縺吶・/p>
 
-                    <div class="field-label" style="margin-top: 20px;">賁E��の補足惁E��</div>
-                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">具体的な要件めE��E��択肢になぁE��E��名などを�E力してください、E/p>
+                    <div class="field-label" style="margin-top: 20px;">雉・ｼ縺ｮ陬懆ｶｳ諠・ｱ</div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">蜈ｷ菴鍋噪縺ｪ隕∽ｻｶ繧・・∈謚櫁い縺ｫ縺ｪ縺・ｳ・ｼ蜷阪↑縺ｩ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・/p>
                     <textarea name="qualification_notes"
-                        placeholder="�E�例）AT限定不可、、E��E��修修亁E��E��ど">{{ template.qualification_notes|default:'' }}</textarea>
+                        placeholder="・井ｾ具ｼ陰T髯仙ｮ壻ｸ榊庄縲√・・比ｿｮ菫ｮ莠・・↑縺ｩ">{{ template.qualification_notes|default:'' }}</textarea>
                 </div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-header">写真とマニュアル</div>
+            <div class="section-header">蜀咏悄縺ｨ繝槭ル繝･繧｢繝ｫ</div>
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">写真 <span class="tag-required">忁E��E/span></div>
+                    <div class="field-label">蜀咏悄 <span class="tag-required">蠢・・/span></div>
                     <div class="photo-grid" id="photo-grid">
                         <label class="photo-add-card">
                             <i class="fas fa-plus" style="font-size: 24px; margin-bottom: 8px;"></i>
-                            <span style="font-size: 12px;">追加する</span>
+                            <span style="font-size: 12px;">霑ｽ蜉縺吶ｋ</span>
                             <input type="file" name="photos" multiple accept="image/*" style="display: none;"
                                 onchange="handlePhotoUpload(this)">
                         </label>
                         {% for photo in template.photos.all %}
                         <div class="photo-preview">
                             <img src="{{ photo.image.url }}">
-                            <button type="button" class="photo-remove" onclick="this.parentElement.remove()">ÁE/button>
+                            <button type="button" class="photo-remove" onclick="this.parentElement.remove()">ﾃ・/button>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">業務に関する書顁E(PDF)</div>
+                    <div class="field-label">讌ｭ蜍吶↓髢｢縺吶ｋ譖ｸ鬘・(PDF)</div>
                     <input type="file" name="manual_pdf" accept="application/pdf">
                 </div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-header">就業場所と環墁E/div>
+            <div class="section-header">蟆ｱ讌ｭ蝣ｴ謇縺ｨ迺ｰ蠅・/div>
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">就業場所の住所 <span class="tag-required">忁E��E/span></div>
+                    <div class="field-label">蟆ｱ讌ｭ蝣ｴ謇縺ｮ菴乗園 <span class="tag-required">蠢・・/span></div>
                     <input type="text" name="address" value="{{ template.address|default:store.full_address }}"
                         required>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">アクセス</div>
+                    <div class="field-label">繧｢繧ｯ繧ｻ繧ｹ</div>
                     <textarea name="access">{{ template.access }}</textarea>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">緊急連絡允E<span class="tag-required">忁E��E/span></div>
+                    <div class="field-label">邱頑･騾｣邨｡蜈・<span class="tag-required">蠢・・/span></div>
                     <input type="tel" name="contact_number" value="{{ template.contact_number }}" required>
                 </div>
                 <div class="field-group">
-                    <div class="field-label">受動喫煙防止措置 <span class="tag-required">忁E��E/span></div>
+                    <div class="field-label">蜿怜虚蝟ｫ辣咎亟豁｢謗ｪ鄂ｮ <span class="tag-required">蠢・・/span></div>
                     <select name="smoking_prevention">
                         <option value="indoor_no_smoking" {% if template.smoking_prevention=='indoor_no_smoking'
-                            %}selected{% endif %}>屋�E禁�E</option>
+                            %}selected{% endif %}>螻句・遖∫・</option>
                         <option value="indoor_smoking_separate" {% if
-                            template.smoking_prevention=='indoor_smoking_separate' %}selected{% endif %}>刁E�E</option>
+                            template.smoking_prevention=='indoor_smoking_separate' %}selected{% endif %}>蛻・・</option>
                         <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok'
-                            %}selected{% endif %}>屋�E喫煙可</option>
+                            %}selected{% endif %}>螻句・蝟ｫ辣吝庄</option>
                     </select>
                 </div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-header">申し込み条件</div>
+            <div class="section-header">逕ｳ縺苓ｾｼ縺ｿ譚｡莉ｶ</div>
             <div class="section-body">
                 <div class="field-group">
-                    <div class="field-label">忁E��なスキル</div>
-                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">業務に忁E��なスキルを選択してください、E/p>
+                    <div class="field-label">蠢・ｦ√↑繧ｹ繧ｭ繝ｫ</div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">讌ｭ蜍吶↓蠢・ｦ√↑繧ｹ繧ｭ繝ｫ繧帝∈謚槭＠縺ｦ縺上□縺輔＞縲・/p>
                     <div class="treatment-grid">
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="英誁E> 英誁E/label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="中国誁E> 中国誁E/label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="体力"> 体力</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="允E��E> 允E��E/label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="笑顁E> 笑顁E/label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="コミュニケーション劁E>
-                            コミュニケーション劁E/label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="接客"> 接客</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="オーダー"> オーダー</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="キチE��ン"> キチE��ン</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="ホ�Eル・配�E"> ホ�Eル・配�E</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="ドリンク・バ�Eカウンター">
-                            ドリンク・バ�Eカウンター</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="洗い場"> 洗い場</label>
-                        <label class="checkbox-item"><input type="checkbox" name="skills" value="バッシング・渁E��">
-                            バッシング・渁E��</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="闍ｱ隱・> 闍ｱ隱・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="荳ｭ蝗ｽ隱・> 荳ｭ蝗ｽ隱・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="菴灘鴨"> 菴灘鴨</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="蜈・ｰ・> 蜈・ｰ・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="隨鷹｡・> 隨鷹｡・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｳ繝溘Η繝九こ繝ｼ繧ｷ繝ｧ繝ｳ蜉・>
+                            繧ｳ繝溘Η繝九こ繝ｼ繧ｷ繝ｧ繝ｳ蜉・/label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="謗･螳｢"> 謗･螳｢</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｪ繝ｼ繝繝ｼ"> 繧ｪ繝ｼ繝繝ｼ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繧ｭ繝・メ繝ｳ"> 繧ｭ繝・メ繝ｳ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝帙・繝ｫ繝ｻ驟崎・"> 繝帙・繝ｫ繝ｻ驟崎・</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝峨Μ繝ｳ繧ｯ繝ｻ繝舌・繧ｫ繧ｦ繝ｳ繧ｿ繝ｼ">
+                            繝峨Μ繝ｳ繧ｯ繝ｻ繝舌・繧ｫ繧ｦ繝ｳ繧ｿ繝ｼ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="豢励＞蝣ｴ"> 豢励＞蝣ｴ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="skills" value="繝舌ャ繧ｷ繝ｳ繧ｰ繝ｻ貂・祉">
+                            繝舌ャ繧ｷ繝ｳ繧ｰ繝ｻ貂・祉</label>
                     </div>
                 </div>
 
                 <div class="field-group">
-                    <div class="field-label">そ�E他�E条件</div>
+                    <div class="field-label">縺昴・莉悶・譚｡莉ｶ</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;" id="other-conditions-container">
                         <input type="text" name="other_conditions" placeholder="">
                         <input type="text" name="other_conditions" placeholder="">
@@ -557,8 +557,8 @@
         </div>
 
         <div class="form-footer">
-            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">キャンセル</a>
-            <button type="submit" class="btn-submit">{% if is_edit %}変更を保孁E% else %}ひな形を作�E{% endif %}</button>
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</a>
+            <button type="submit" class="btn-submit">{% if is_edit %}螟画峩繧剃ｿ晏ｭ・% else %}縺ｲ縺ｪ蠖｢繧剃ｽ懈・{% endif %}</button>
         </div>
     </form>
 </div>
@@ -572,7 +572,7 @@
         function filterOccupations() {
             const selectedIndustry = industrySelect.value;
 
-            // 全てのoptgroupを非表示
+            // 蜈ｨ縺ｦ縺ｮoptgroup繧帝撼陦ｨ遉ｺ
             optgroups.forEach(group => {
                 const label = group.getAttribute('label');
                 if (label === selectedIndustry) {
@@ -584,7 +584,7 @@
                 }
             });
 
-            // 選択中の職種が表示されてぁE��ぁE��ループ�Eも�EならリセチE��
+            // 驕ｸ謚樔ｸｭ縺ｮ閨ｷ遞ｮ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｦ縺・↑縺・げ繝ｫ繝ｼ繝励・繧ゅ・縺ｪ繧峨Μ繧ｻ繝・ヨ
             const selectedOption = occupationSelect.options[occupationSelect.selectedIndex];
             if (selectedOption && selectedOption.parentElement.tagName === 'OPTGROUP') {
                 if (selectedOption.parentElement.hidden) {
@@ -593,29 +593,29 @@
             }
         }
 
-        // 初期実衁E
+        // 蛻晄悄螳溯｡・
         filterOccupations();
 
-        // 変更時実衁E
+        // 螟画峩譎ょｮ溯｡・
         industrySelect.addEventListener('change', function () {
-            occupationSelect.value = ""; // 業種が変わったら職種はリセチE��
+            occupationSelect.value = ""; // 讌ｭ遞ｮ縺悟､峨ｏ縺｣縺溘ｉ閨ｷ遞ｮ縺ｯ繝ｪ繧ｻ繝・ヨ
             filterOccupations();
         });
     });
 
-    const savedBelongings = "{{ template.belongings|default:'' }}".split('、E).filter(s => s);
-    const savedRequirements = "{{ template.requirements|default:'' }}".split('、E).filter(s => s);
+    const savedBelongings = "{{ template.belongings|default:'' }}".split('縲・).filter(s => s);
+    const savedRequirements = "{{ template.requirements|default:'' }}".split('縲・).filter(s => s);
 
-    const defaultBelongings = ['ボ�Eルペン', 'メモ帳', '無地のTシャチE, '動きめE��ぁE��いズボン', '汚れても良ぁE��'];
-    const defaultRequirements = ['GOOD玁E0%以上�E直前キャンセル玁E%以下�E方', '渁E��感のある方', '飲食店での勤務経験�Eある方', '明るく接客ができる方'];
+    const defaultBelongings = ['繝懊・繝ｫ繝壹Φ', '繝｡繝｢蟶ｳ', '辟｡蝨ｰ縺ｮT繧ｷ繝｣繝・, '蜍輔″繧・☆縺・ｻ偵＞繧ｺ繝懊Φ', '豎壹ｌ縺ｦ繧り憶縺・擽'];
+    const defaultRequirements = ['GOOD邇・0%莉･荳翫・逶ｴ蜑阪く繝｣繝ｳ繧ｻ繝ｫ邇・%莉･荳九・譁ｹ', '貂・ｽ疲─縺ｮ縺ゅｋ譁ｹ', '鬟ｲ鬟溷ｺ励〒縺ｮ蜍､蜍咏ｵ碁ｨ薙・縺ゅｋ譁ｹ', '譏弱ｋ縺乗磁螳｢縺後〒縺阪ｋ譁ｹ'];
 
     function initChips(containerId, defaults, saved) {
         const container = document.getElementById(containerId);
-        // 重褁E��除ぁE��全アイチE���E�デフォルチE+ 保存済み�E�E
+        // 驥崎､・ｒ髯､縺・◆蜈ｨ繧｢繧､繝・Β・医ョ繝輔か繝ｫ繝・+ 菫晏ｭ俶ｸ医∩・・
         const allItems = [...new Set([...defaults, ...saved])];
         allItems.forEach(item => {
-            // 保存済みチE�Eタがある場合�Eみ、そのアイチE��を選択状態にする
-            // saved が空の場合�E、新規作�E時なので何も選択しなぁE
+            // 菫晏ｭ俶ｸ医∩繝・・繧ｿ縺後≠繧句ｴ蜷医・縺ｿ縲√◎縺ｮ繧｢繧､繝・Β繧帝∈謚樒憾諷九↓縺吶ｋ
+            // saved 縺檎ｩｺ縺ｮ蝣ｴ蜷医・縲∵眠隕丈ｽ懈・譎ゅ↑縺ｮ縺ｧ菴輔ｂ驕ｸ謚槭＠縺ｪ縺・
             const isSelected = saved.includes(item);
             createChip(container, item, isSelected);
         });
@@ -634,7 +634,7 @@
         const text = input.value.trim();
         if (text) {
             const container = document.getElementById(containerId);
-            // 既存�Eチップに同じチE��ストがあればそれを選択状態にするのみ
+            // 譌｢蟄倥・繝√ャ繝励↓蜷後§繝・く繧ｹ繝医′縺ゅｌ縺ｰ縺昴ｌ繧帝∈謚樒憾諷九↓縺吶ｋ縺ｮ縺ｿ
             const existing = Array.from(container.querySelectorAll('.chip')).find(c => c.textContent === text);
             if (existing) {
                 existing.classList.add('selected');
@@ -645,15 +645,15 @@
         }
     }
 
-    // 初期匁E
+    // 蛻晄悄蛹・
     initChips('belongings-chips', defaultBelongings, savedBelongings);
     initChips('requirements-chips', defaultRequirements, savedRequirements);
 
     document.getElementById('templateForm').onsubmit = function () {
         const b = Array.from(document.querySelectorAll('#belongings-chips .chip.selected')).map(c => c.textContent);
-        document.getElementById('final-belongings').value = b.join('、E);
+        document.getElementById('final-belongings').value = b.join('縲・);
         const r = Array.from(document.querySelectorAll('#requirements-chips .chip.selected')).map(c => c.textContent);
-        document.getElementById('final-requirements').value = r.join('、E);
+        document.getElementById('final-requirements').value = r.join('縲・);
     };
 
     function handlePhotoUpload(input) {
@@ -664,7 +664,7 @@
                 reader.onload = function (e) {
                     const div = document.createElement('div');
                     div.className = 'photo-preview';
-                    div.innerHTML = `<img src="${e.target.result}"><button type="button" class="photo-remove" onclick="this.parentElement.remove()">ÁE/button>`;
+                    div.innerHTML = `<img src="${e.target.result}"><button type="button" class="photo-remove" onclick="this.parentElement.remove()">ﾃ・/button>`;
                     grid.appendChild(div);
                 };
                 reader.readAsDataURL(file);
@@ -679,9 +679,9 @@
         }
     }
 
-    // スキルとそ�E他条件の反映
+    // 繧ｹ繧ｭ繝ｫ縺ｨ縺昴・莉匁擅莉ｶ縺ｮ蜿肴丐
     document.addEventListener('DOMContentLoaded', function () {
-        // スキル
+        // 繧ｹ繧ｭ繝ｫ
         const savedSkills = "{{ template.skills|default:'' }}".split(',');
         document.querySelectorAll('input[name="skills"]').forEach(cb => {
             if (savedSkills.includes(cb.value)) {
@@ -689,8 +689,8 @@
             }
         });
 
-        // そ�E他条件
-        // 改行コード正規化してから刁E��
+        // 縺昴・莉匁擅莉ｶ
+        // 謾ｹ陦後さ繝ｼ繝画ｭ｣隕丞喧縺励※縺九ｉ蛻・牡
         const savedConditions = `{{ template.other_conditions|default:''|escapejs }}`.replace(/\r\n/g, '\n').split('\n');
         const inputs = document.querySelectorAll('input[name="other_conditions"]');
         savedConditions.forEach((cond, index) => {

@@ -105,9 +105,18 @@
 
     <h1 class="title">おかえりなさい！<br>電話番号でログインしてください。</h1>
 
-    {% if error %}
+    {% if form.non_field_errors %}
     <div class="error-banner">
-        {{ error }}
+        {% for error in form.non_field_errors %}
+        {{ error }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if form.username.errors %}
+    <div class="error-banner">
+        {% for error in form.username.errors %}
+        {{ error }}<br>
+        {% endfor %}
     </div>
     {% endif %}
 
@@ -116,8 +125,8 @@
 
         <div class="input-group">
             <label>電話番号</label>
-            <input type="tel" name="phone" id="phoneInput" placeholder="09000000000" maxlength="11" required
-                autocomplete="username" value="{{ request.POST.phone|default:'' }}">
+            <input type="tel" name="username" id="phoneInput" placeholder="09000000000" maxlength="11" required
+                autocomplete="username" value="{{ form.username.value|default:'' }}">
         </div>
 
         <div class="input-group">

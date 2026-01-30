@@ -21,7 +21,7 @@
         margin-top: 5px;
     }
 
-    /* 並び替えエリア */
+    /* 荳ｦ縺ｳ譖ｿ縺医お繝ｪ繧｢ */
     .sort-section {
         display: flex;
         align-items: center;
@@ -44,12 +44,12 @@
         background: #eef6ff;
     }
 
-    /* ボタンの幁E��調整�E�E88pxは例として微調整�E�E*/
+    /* 繝懊ち繝ｳ縺ｮ蟷・ｒ隱ｿ謨ｴ・・88px縺ｯ萓九→縺励※蠕ｮ隱ｿ謨ｴ・・*/
     .btn-sort {
         padding: 6px 18px;
     }
 
-    /* ひな形カーチE*/
+    /* 縺ｲ縺ｪ蠖｢繧ｫ繝ｼ繝・*/
     .template-card {
         background: white;
         border-radius: 8px;
@@ -161,19 +161,19 @@
 
 <div class="list-header">
     <div>
-        <h1 class="list-title">求人のひな形一覧</h1>
-        <p class="list-sub">作�Eした求人のひな形一覧が表示されまぁE/p>
+        <h1 class="list-title">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢荳隕ｧ</h1>
+        <p class="list-sub">菴懈・縺励◆豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢荳隕ｧ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺・/p>
     </div>
-    <!-- ここは store.id が忁E��E(urls.py で store_id を求めてぁE��ため) -->
+    <!-- 縺薙％縺ｯ store.id 縺悟ｿ・ｦ・(urls.py 縺ｧ store_id 繧呈ｱゅａ縺ｦ縺・ｋ縺溘ａ) -->
     <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">
-        <i class="fa-solid fa-plus"></i> 求人のひな形を新規作�E
+        <i class="fa-solid fa-plus"></i> 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧呈眠隕丈ｽ懈・
     </a>
 </div>
 
 <div class="sort-section">
-    <span style="font-size: 12px; font-weight: bold;">並び替ぁE/span>
-    <button class="btn-sort active">作�E日が新しい</button>
-    <button class="btn-sort">求人の作�Eが新しい</button>
+    <span style="font-size: 12px; font-weight: bold;">荳ｦ縺ｳ譖ｿ縺・/span>
+    <button class="btn-sort active">菴懈・譌･縺梧眠縺励＞</button>
+    <button class="btn-sort">豎ゆｺｺ縺ｮ菴懈・縺梧眠縺励＞</button>
 </div>
 
 <div class="template-list-container">
@@ -185,40 +185,40 @@
             <img src="{{ photo.image.url }}" alt="{{ template.title }}"
                 style="width:100%; height:100%; object-fit:cover;">
             {% else %}
-            <span>🍕</span>
+            <span>黒</span>
             {% endif %}
             {% endwith %}
         </div>
         <div class="template-info">
             <div class="meta-text">{{ template.industry }} / {{ template.occupation }}</div>
 
-            <!-- 【修正1】詳細URLから store.id を削除 -->
+            <!-- 縲蝉ｿｮ豁｣1縲題ｩｳ邏ｰURL縺九ｉ store.id 繧貞炎髯､ -->
             <a href="{% url 'biz_template_detail' template.pk %}" class="template-link-title">{{ template.title }}</a>
 
             <div class="meta-text"><i class="fa-solid fa-location-dot"></i> {{ template.address }}</div>
-            <div class="meta-text">最終更新日晁E {{ template.created_at|date:"Y/m/d H:i" }}</div>
+            <div class="meta-text">譛邨よ峩譁ｰ譌･譎・ {{ template.created_at|date:"Y/m/d H:i" }}</div>
 
             <div class="card-footer">
                 <div class="action-btns">
-                    <!-- 【修正2】編雁ERLから store.id を削除 -->
+                    <!-- 縲蝉ｿｮ豁｣2縲醍ｷｨ髮・RL縺九ｉ store.id 繧貞炎髯､ -->
                     <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action"><i
-                            class="fa-solid fa-pen"></i> 編雁E/a>
-                    <button class="btn-action"><i class="fa-solid fa-copy"></i> コピ�E</button>
-                    <!-- 追加�E�削除ボタンのリンク先設宁E-->
+                            class="fa-solid fa-pen"></i> 邱ｨ髮・/a>
+                    <button class="btn-action"><i class="fa-solid fa-copy"></i> 繧ｳ繝斐・</button>
+                    <!-- 霑ｽ蜉・壼炎髯､繝懊ち繝ｳ縺ｮ繝ｪ繝ｳ繧ｯ蜈郁ｨｭ螳・-->
                     <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action"><i
-                            class="fa-solid fa-trash"></i> 削除</a>
+                            class="fa-solid fa-trash"></i> 蜑企勁</a>
                 </div>
-                <!-- 【修正3】求人作�EURLから store.id を削除 (urls.py で template_pk のみを指定してぁE��ため) -->
+                <!-- 縲蝉ｿｮ豁｣3縲第ｱゆｺｺ菴懈・URL縺九ｉ store.id 繧貞炎髯､ (urls.py 縺ｧ template_pk 縺ｮ縺ｿ繧呈欠螳壹＠縺ｦ縺・ｋ縺溘ａ) -->
                 <a href="{% url 'biz_job_create' template.pk %}" class="btn-create-job-now">
-                    <i class="fa-solid fa-circle-plus"></i> こ�Eひな形を�Eに求人を作�E
+                    <i class="fa-solid fa-circle-plus"></i> 縺薙・縺ｲ縺ｪ蠖｢繧貞・縺ｫ豎ゆｺｺ繧剃ｽ懈・
                 </a>
             </div>
         </div>
     </div>
     {% empty %}
     <div style="background: white; padding: 80px; text-align: center; border: 1px dashed #ccc; border-radius: 8px;">
-        <p style="color: #999; margin-bottom: 20px;">作�E済みのひな形がありません</p>
-        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">最初�Eひな形を作�Eする</a>
+        <p style="color: #999; margin-bottom: 20px;">菴懈・貂医∩縺ｮ縺ｲ縺ｪ蠖｢縺後≠繧翫∪縺帙ｓ</p>
+        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">譛蛻昴・縺ｲ縺ｪ蠖｢繧剃ｽ懈・縺吶ｋ</a>
     </div>
     {% endfor %}
 </div>

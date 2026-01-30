@@ -2,7 +2,7 @@
 
 {% block content %}
 <style>
-    /* プログレスバ�E (スチE��チE: 店�E登録がアクチE��チE */
+    /* 繝励Ο繧ｰ繝ｬ繧ｹ繝舌・ (繧ｹ繝・ャ繝・: 蠎苓・逋ｻ骭ｲ縺後い繧ｯ繝・ぅ繝・ */
     .stepper {
         display: flex;
         margin: -40px -40px 40px -40px;
@@ -29,14 +29,14 @@
     }
 
     .step::before {
-        content: '✁E';
+        content: '笨・';
     }
 
     .step.no-check::before {
         content: '';
     }
 
-    /* フォームスタイル (画僁E準拠) */
+    /* 繝輔か繝ｼ繝繧ｹ繧ｿ繧､繝ｫ (逕ｻ蜒・貅匁侠) */
     .section-header {
         display: flex;
         justify-content: space-between;
@@ -102,12 +102,12 @@
     }
 </style>
 
-<!-- 進行バー -->
+<!-- 騾ｲ陦後ヰ繝ｼ -->
 <div class="stepper">
-    <div class="step">メール登録</div>
-    <div class="step">アカウント登録</div>
-    <div class="step">3. 事業老E��録</div>
-    <div class="step active no-check">4. 店�E登録</div>
+    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
+    <div class="step">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
+    <div class="step">3. 莠区･ｭ閠・匳骭ｲ</div>
+    <div class="step active no-check">4. 蠎苓・逋ｻ骭ｲ</div>
 </div>
 
 <div class="form-body">
@@ -131,120 +131,120 @@
         {% endif %}
 
         <div class="section-header">
-            <span class="section-title">店�Eの基本惁E��</span>
+            <span class="section-title">蠎苓・縺ｮ蝓ｺ譛ｬ諠・ｱ</span>
         </div>
         <div class="form-item">
-            <label>店�E吁E/label>
-            <input type="text" name="store_name" placeholder="侁E タイミ�E 汐留庁E
+            <label>蠎苓・蜷・/label>
+            <input type="text" name="store_name" placeholder="萓・ 繧ｿ繧､繝溘・ 豎千蕗蠎・
                 value="{{ form.store_name.value|default:'' }}" required>
         </div>
 
         <div class="section-header" style="margin-top: 40px;">
-            <span class="section-title">業務�E容</span>
+            <span class="section-title">讌ｭ蜍吝・螳ｹ</span>
         </div>
         <div class="form-item">
-            <label>業種</label>
+            <label>讌ｭ遞ｮ</label>
             <select name="industry" id="industrySelect" required>
-                <option value="">選択してください</option>
-                <option value="飲食�Eフ�EチE>飲食�Eフ�EチE/option>
-                <option value="販売・接客">販売・接客</option>
-                <option value="物流�E軽作業">物流�E軽作業</option>
-                <option value="オフィス">オフィス</option>
-                <option value="そ�E仁E>そ�E仁E/option>
+                <option value="">驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+                <option value="鬟ｲ鬟溘・繝輔・繝・>鬟ｲ鬟溘・繝輔・繝・/option>
+                <option value="雋ｩ螢ｲ繝ｻ謗･螳｢">雋ｩ螢ｲ繝ｻ謗･螳｢</option>
+                <option value="迚ｩ豬√・霆ｽ菴懈･ｭ">迚ｩ豬√・霆ｽ菴懈･ｭ</option>
+                <option value="繧ｪ繝輔ぅ繧ｹ">繧ｪ繝輔ぅ繧ｹ</option>
+                <option value="縺昴・莉・>縺昴・莉・/option>
             </select>
         </div>
 
         <div class="section-header" style="margin-top: 40px;">
-            <span class="section-title">店�Eの所在地</span>
-            <button type="button" class="reflect-btn">事業老E�E所在地を反映する</button>
+            <span class="section-title">蠎苓・縺ｮ謇蝨ｨ蝨ｰ</span>
+            <button type="button" class="reflect-btn">莠区･ｭ閠・・謇蝨ｨ蝨ｰ繧貞渚譏縺吶ｋ</button>
         </div>
 
         <div class="form-item">
-            <label>郵便番号</label>
-            <input type="text" name="post_code" class="p-postal-code" placeholder="侁E 1700013"
+            <label>驛ｵ萓ｿ逡ｪ蜿ｷ</label>
+            <input type="text" name="post_code" class="p-postal-code" placeholder="萓・ 1700013"
                 value="{{ form.post_code.value|default:'' }}" required>
         </div>
 
         <div class="form-item">
-            <label>都道府県</label>
+            <label>驛ｽ驕灘ｺ懃恁</label>
             <select name="prefecture" class="p-region">
-                <option value="">選択してください</option>
-                <option value="北海遁E>北海遁E/option>
-                <option value="青森省E>青森省E/option>
-                <option value="岩手県">岩手県</option>
-                <option value="宮城県">宮城県</option>
-                <option value="秋田省E>秋田省E/option>
-                <option value="山形省E>山形省E/option>
-                <option value="福島省E>福島省E/option>
-                <option value="茨城県">茨城県</option>
-                <option value="栁E��省E>栁E��省E/option>
-                <option value="群馬省E>群馬省E/option>
-                <option value="埼玉県">埼玉県</option>
-                <option value="十E��省E>十E��省E/option>
-                <option value="東京都">東京都</option>
-                <option value="神奈川県">神奈川県</option>
-                <option value="新潟県">新潟県</option>
-                <option value="富山省E>富山省E/option>
-                <option value="石川県">石川県</option>
-                <option value="福井県">福井県</option>
-                <option value="山梨省E>山梨省E/option>
-                <option value="長野県">長野県</option>
-                <option value="岐�E省E>岐�E省E/option>
-                <option value="静岡省E>静岡省E/option>
-                <option value="愛知省E>愛知省E/option>
-                <option value="三重省E>三重省E/option>
-                <option value="滋賀省E>滋賀省E/option>
-                <option value="京都庁E>京都庁E/option>
-                <option value="大阪庁E>大阪庁E/option>
-                <option value="兵庫省E>兵庫省E/option>
-                <option value="奈良省E>奈良省E/option>
-                <option value="和歌山省E>和歌山省E/option>
-                <option value="鳥取県">鳥取県</option>
-                <option value="島根省E>島根省E/option>
-                <option value="岡山省E>岡山省E/option>
-                <option value="庁E��省E>庁E��省E/option>
-                <option value="山口省E>山口省E/option>
-                <option value="徳島省E>徳島省E/option>
-                <option value="香川県">香川県</option>
-                <option value="愛媛県">愛媛県</option>
-                <option value="高知省E>高知省E/option>
-                <option value="福岡省E>福岡省E/option>
-                <option value="佐賀省E>佐賀省E/option>
-                <option value="長崎県">長崎県</option>
-                <option value="熊本省E>熊本省E/option>
-                <option value="大刁E��">大刁E��</option>
-                <option value="宮崎県">宮崎県</option>
-                <option value="鹿児島省E>鹿児島省E/option>
-                <option value="沖縁E��">沖縁E��</option>
+                <option value="">驕ｸ謚槭＠縺ｦ縺上□縺輔＞</option>
+                <option value="蛹玲ｵｷ驕・>蛹玲ｵｷ驕・/option>
+                <option value="髱呈｣ｮ逵・>髱呈｣ｮ逵・/option>
+                <option value="蟯ｩ謇狗恁">蟯ｩ謇狗恁</option>
+                <option value="螳ｮ蝓守恁">螳ｮ蝓守恁</option>
+                <option value="遘狗伐逵・>遘狗伐逵・/option>
+                <option value="螻ｱ蠖｢逵・>螻ｱ蠖｢逵・/option>
+                <option value="遖丞ｳｶ逵・>遖丞ｳｶ逵・/option>
+                <option value="闌ｨ蝓守恁">闌ｨ蝓守恁</option>
+                <option value="譬・惠逵・>譬・惠逵・/option>
+                <option value="鄒､鬥ｬ逵・>鄒､鬥ｬ逵・/option>
+                <option value="蝓ｼ邇臥恁">蝓ｼ邇臥恁</option>
+                <option value="蜊・痩逵・>蜊・痩逵・/option>
+                <option value="譚ｱ莠ｬ驛ｽ">譚ｱ莠ｬ驛ｽ</option>
+                <option value="逾槫･亥ｷ晉恁">逾槫･亥ｷ晉恁</option>
+                <option value="譁ｰ貎溽恁">譁ｰ貎溽恁</option>
+                <option value="蟇悟ｱｱ逵・>蟇悟ｱｱ逵・/option>
+                <option value="遏ｳ蟾晉恁">遏ｳ蟾晉恁</option>
+                <option value="遖丈ｺ慕恁">遖丈ｺ慕恁</option>
+                <option value="螻ｱ譴ｨ逵・>螻ｱ譴ｨ逵・/option>
+                <option value="髟ｷ驥守恁">髟ｷ驥守恁</option>
+                <option value="蟯宣・逵・>蟯宣・逵・/option>
+                <option value="髱吝ｲ｡逵・>髱吝ｲ｡逵・/option>
+                <option value="諢帷衍逵・>諢帷衍逵・/option>
+                <option value="荳蛾㍾逵・>荳蛾㍾逵・/option>
+                <option value="貊玖ｳ逵・>貊玖ｳ逵・/option>
+                <option value="莠ｬ驛ｽ蠎・>莠ｬ驛ｽ蠎・/option>
+                <option value="螟ｧ髦ｪ蠎・>螟ｧ髦ｪ蠎・/option>
+                <option value="蜈ｵ蠎ｫ逵・>蜈ｵ蠎ｫ逵・/option>
+                <option value="螂郁憶逵・>螂郁憶逵・/option>
+                <option value="蜥梧ｭ悟ｱｱ逵・>蜥梧ｭ悟ｱｱ逵・/option>
+                <option value="魑･蜿也恁">魑･蜿也恁</option>
+                <option value="蟲ｶ譬ｹ逵・>蟲ｶ譬ｹ逵・/option>
+                <option value="蟯｡螻ｱ逵・>蟯｡螻ｱ逵・/option>
+                <option value="蠎・ｳｶ逵・>蠎・ｳｶ逵・/option>
+                <option value="螻ｱ蜿｣逵・>螻ｱ蜿｣逵・/option>
+                <option value="蠕ｳ蟲ｶ逵・>蠕ｳ蟲ｶ逵・/option>
+                <option value="鬥吝ｷ晉恁">鬥吝ｷ晉恁</option>
+                <option value="諢帛ｪ帷恁">諢帛ｪ帷恁</option>
+                <option value="鬮倡衍逵・>鬮倡衍逵・/option>
+                <option value="遖丞ｲ｡逵・>遖丞ｲ｡逵・/option>
+                <option value="菴占ｳ逵・>菴占ｳ逵・/option>
+                <option value="髟ｷ蟠守恁">髟ｷ蟠守恁</option>
+                <option value="辭頑悽逵・>辭頑悽逵・/option>
+                <option value="螟ｧ蛻・恁">螟ｧ蛻・恁</option>
+                <option value="螳ｮ蟠守恁">螳ｮ蟠守恁</option>
+                <option value="鮖ｿ蜈仙ｳｶ逵・>鮖ｿ蜈仙ｳｶ逵・/option>
+                <option value="豐也ｸ・恁">豐也ｸ・恁</option>
             </select>
         </div>
 
         <div class="form-item">
-            <label>市区町村名</label>
-            <input type="text" name="city" class="p-locality" placeholder="侁E 豊島区"
+            <label>蟶ょ玄逕ｺ譚大錐</label>
+            <input type="text" name="city" class="p-locality" placeholder="萓・ 雎雁ｳｶ蛹ｺ"
                 value="{{ form.city.value|default:'' }}">
         </div>
 
         <div class="form-item">
-            <label>町域�E番地</label>
-            <input type="text" name="address_line" class="p-street-address" placeholder="侁E 東池袁E-1-18-1"
+            <label>逕ｺ蝓溘・逡ｪ蝨ｰ</label>
+            <input type="text" name="address_line" class="p-street-address" placeholder="萓・ 譚ｱ豎陲・-1-18-1"
                 value="{{ form.address_line.value|default:'' }}">
         </div>
 
         <div class="form-item">
-            <label>建物名など</label>
-            <input type="text" name="building" class="p-extended-address" placeholder="侁E Hareza Tower 27隁E
+            <label>蟒ｺ迚ｩ蜷阪↑縺ｩ</label>
+            <input type="text" name="building" class="p-extended-address" placeholder="萓・ Hareza Tower 27髫・
                 value="{{ form.building.value|default:'' }}">
         </div>
 
-        <button type="submit" class="btn-register">店�Eを登録する</button>
+        <button type="submit" class="btn-register">蠎苓・繧堤匳骭ｲ縺吶ｋ</button>
     </form>
 </div>
 
 <script>
     document.querySelector('.reflect-btn').addEventListener('click', function () {
-        // セチE��ョンから渡されたbiz_dataをJSで使えるようにする�E�簡易的�E�E
-        // チE��プレート変数で直接JS変数に埋め込む
+        // 繧ｻ繝・す繝ｧ繝ｳ縺九ｉ貂｡縺輔ｌ縺歟iz_data繧谷S縺ｧ菴ｿ縺医ｋ繧医≧縺ｫ縺吶ｋ・育ｰ｡譏鍋噪・・
+        // 繝・Φ繝励Ξ繝ｼ繝亥､画焚縺ｧ逶ｴ謗･JS螟画焚縺ｫ蝓九ａ霎ｼ繧
         var bizPostCode = "{{ biz_data.biz_post_code|default:'' }}";
         var bizPrefecture = "{{ biz_data.biz_prefecture|default:'' }}";
         var bizCity = "{{ biz_data.biz_city|default:'' }}";

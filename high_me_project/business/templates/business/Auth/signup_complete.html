@@ -1,7 +1,7 @@
 {% extends 'business/Common/base_signup.html' %}
 {% block content %}
 <style>
-    /* スチE��パ�E: 全て完亁E��態にする */
+    /* 繧ｹ繝・ャ繝代・: 蜈ｨ縺ｦ螳御ｺ・憾諷九↓縺吶ｋ */
     .stepper {
         display: flex;
         margin: -40px -40px 40px -40px;
@@ -24,7 +24,7 @@
     }
 
     .step::before {
-        content: '✁E';
+        content: '笨・';
     }
 
     .complete-container {
@@ -90,29 +90,29 @@
     }
 </style>
 
-<!-- 進行バー: 全て完亁E-->
+<!-- 騾ｲ陦後ヰ繝ｼ: 蜈ｨ縺ｦ螳御ｺ・-->
 <div class="stepper">
-    <div class="step">メール登録</div>
-    <div class="step">アカウント登録</div>
-    <div class="step">事業老E��録</div>
-    <div class="step active">店�E登録</div>
+    <div class="step">繝｡繝ｼ繝ｫ逋ｻ骭ｲ</div>
+    <div class="step">繧｢繧ｫ繧ｦ繝ｳ繝育匳骭ｲ</div>
+    <div class="step">莠区･ｭ閠・匳骭ｲ</div>
+    <div class="step active">蠎苓・逋ｻ骭ｲ</div>
 </div>
 
 <div class="complete-container">
-    <div class="complete-title">タイミ�Eを利用する準備が完亁E��ました</div>
+    <div class="complete-title">繧ｿ繧､繝溘・繧貞茜逕ｨ縺吶ｋ貅門ｙ縺悟ｮ御ｺ・＠縺ｾ縺励◆</div>
 
-    <div class="check-icon">✁E/div>
+    <div class="check-icon">笨・/div>
 
     <div class="complete-msg">
-        タイミ�EなめEspan class="highlight-text">当日</span>でも働き手がすぐに見つかります！Ebr>
-        今すぐログインして求人を掲載しましょぁE��E
+        繧ｿ繧､繝溘・縺ｪ繧・span class="highlight-text">蠖捺律</span>縺ｧ繧ょロ縺肴焔縺後☆縺舌↓隕九▽縺九ｊ縺ｾ縺呻ｼ・br>
+        莉翫☆縺舌Ο繧ｰ繧､繝ｳ縺励※豎ゆｺｺ繧呈軸霈峨＠縺ｾ縺励ｇ縺・ｼ・
     </div>
 
-    <a href="{% url 'biz_login' %}" class="btn-login">ログイン画面へ</a>
+    <a href="{% url 'biz_login' %}" class="btn-login">繝ｭ繧ｰ繧､繝ｳ逕ｻ髱｢縺ｸ</a>
 
     <div class="footer-notes">
-        ※ 求人掲載までの流れにつぁE��は「ガイドブチE��」をご参照ください、Ebr>
-        ※ そ�E他ご不�Eな点めE��意見がありましたら、管琁E��面の左メニューの下部にある「ご質問�Eお問ぁE��わせ」からお問い合わせください、E
+        窶ｻ 豎ゆｺｺ謗ｲ霈峨∪縺ｧ縺ｮ豬√ｌ縺ｫ縺､縺・※縺ｯ縲後ぎ繧､繝峨ヶ繝・け縲阪ｒ縺泌盾辣ｧ縺上□縺輔＞縲・br>
+        窶ｻ 縺昴・莉悶＃荳肴・縺ｪ轤ｹ繧・＃諢剰ｦ九′縺ゅｊ縺ｾ縺励◆繧峨∫ｮ｡逅・判髱｢縺ｮ蟾ｦ繝｡繝九Η繝ｼ縺ｮ荳矩Κ縺ｫ縺ゅｋ縲後＃雉ｪ蝠上・縺雁撫縺・粋繧上○縲阪°繧峨♀蝠上＞蜷医ｏ縺帙￥縺縺輔＞縲・
     </div>
 </div>
 {% endblock %}

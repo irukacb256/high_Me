@@ -23,7 +23,7 @@ from .forms import (
 )
 
 class CustomLoginView(LoginView):
-    template_name = 'registration/login.html'
+    template_name = 'Auth/login.html'
 
     def form_valid(self, form):
         # ログイン処理は親クラスで行われる
@@ -779,7 +779,7 @@ def profile_edit(request):
         profile.save()
         return redirect('account_settings')
 
-    return render(request, 'accounts/profile_edit.html', {
+    return render(request, 'MyPage/Settings/profile_edit.html', {
         'profile': profile,
         'prefectures_list': PREFECTURES
     })

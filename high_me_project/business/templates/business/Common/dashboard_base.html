@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timee 事業老E��琁E��面 | {{ store.store_name|default:"店�E管琁E }}</title>
+    <title>Timee 莠区･ｭ閠・ｮ｡逅・判髱｢ | {{ store.store_name|default:"蠎苓・邂｡逅・ }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --timee-active-bg: #fff3c4;
-            /* 画像�Eような薁E��黁E�� */
+            /* 逕ｻ蜒上・繧医≧縺ｪ阮・＞鮟・牡 */
             --timee-hover-bg: #fff9e6;
             --sidebar-width: 260px;
         }
@@ -45,7 +45,7 @@
             flex-shrink: 0;
         }
 
-        /* サイドバーヘッダー�E�ロゴとID�E�E*/
+        /* 繧ｵ繧､繝峨ヰ繝ｼ繝倥ャ繝繝ｼ・医Ο繧ｴ縺ｨID・・*/
         .sidebar-header {
             padding: 20px 20px 10px 20px;
         }
@@ -75,7 +75,7 @@
             margin-bottom: 10px;
         }
 
-        /* メニューエリア */
+        /* 繝｡繝九Η繝ｼ繧ｨ繝ｪ繧｢ */
         .nav-menu {
             flex: 1;
             overflow-y: auto;
@@ -105,7 +105,7 @@
             background: var(--timee-hover-bg);
         }
 
-        /* アクチE��ブな頁E��のスタイル�E�画像�E現�E�E*/
+        /* 繧｢繧ｯ繝・ぅ繝悶↑鬆・岼縺ｮ繧ｹ繧ｿ繧､繝ｫ・育判蜒丞・迴ｾ・・*/
         .nav-item.active {
             background: var(--timee-active-bg);
             font-weight: bold;
@@ -121,7 +121,7 @@
             background: #fff;
         }
 
-        /* メインコンチE��チE*/
+        /* 繝｡繧､繝ｳ繧ｳ繝ｳ繝・Φ繝・*/
         .main-wrapper {
             flex: 1;
             display: flex;
@@ -179,49 +179,49 @@
         <div class="sidebar-header">
             <div class="sidebar-brand-row">
                 <strong>Timee</strong>
-                <span class="store-id-label">店�EID {{ store.id|default:"9999" }}</span>
+                <span class="store-id-label">蠎苓・ID {{ store.id|default:"9999" }}</span>
             </div>
-            <div class="store-name-display">{{ store.store_name|default:"タイミ�E 汐留庁E }}</div>
+            <div class="store-name-display">{{ store.store_name|default:"繧ｿ繧､繝溘・ 豎千蕗蠎・ }}</div>
         </div>
 
         <nav class="nav-menu">
-            <!-- ホ�Eム -->
+            <!-- 繝帙・繝 -->
             <a href="{% url 'biz_dashboard' store.id %}"
                 class="nav-item {% if request.resolver_match.url_name == 'biz_dashboard' %}active{% endif %}">
-                <i class="fa-solid fa-house"></i> ホ�Eム
+                <i class="fa-solid fa-house"></i> 繝帙・繝
             </a>
 
-            <!-- ワーカー管琁E-->
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ邂｡逅・-->
             <a href="{% url 'biz_worker_management' store.id %}"
                 class="nav-item {% if request.resolver_match.url_name == 'biz_worker_management' %}active{% endif %}">
-                <i class="fa-solid fa-user-group"></i> ワーカー管琁E
+                <i class="fa-solid fa-user-group"></i> 繝ｯ繝ｼ繧ｫ繝ｼ邂｡逅・
             </a>
 
-            <!-- 求人のひな形 -->
+            <!-- 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢ -->
             <a href="{% url 'biz_template_list' store.id %}"
                 class="nav-item {% if 'template' in request.path %}active{% endif %}">
-                <i class="fa-solid fa-circle-plus"></i> 求人のひな形
+                <i class="fa-solid fa-circle-plus"></i> 豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢
             </a>
 
-            <!-- 求人一覧 -->
+            <!-- 豎ゆｺｺ荳隕ｧ -->
             <a href="{% url 'biz_job_posting_list' store.id %}"
                 class="nav-item {% if 'postings' in request.path or '/biz/job/' in request.path %}active{% endif %}">
-                <i class="fa-solid fa-file-lines"></i> 求人一覧
+                <i class="fa-solid fa-file-lines"></i> 豎ゆｺｺ荳隕ｧ
             </a>
 
-            <!-- メチE��ージ -->
+            <!-- 繝｡繝・そ繝ｼ繧ｸ -->
             <a href="{% url 'biz_message_list' %}" class="nav-item">
-                <i class="fa-solid fa-comment-dots"></i> メチE��ージ
+                <i class="fa-solid fa-comment-dots"></i> 繝｡繝・そ繝ｼ繧ｸ
             </a>
 
-            <!-- チェチE��イン/アウト管琁E-->
+            <!-- 繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育ｮ｡逅・-->
             <a href="{% url 'biz_checkin_management' %}" class="nav-item">
-                <i class="fa-solid fa-qrcode"></i> チェチE��イン/アウト管琁E
+                <i class="fa-solid fa-qrcode"></i> 繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝育ｮ｡逅・
             </a>
 
-            <!-- 修正依頼 -->
+            <!-- 菫ｮ豁｣萓晞ｼ -->
             <a href="{% url 'biz_attendance_correction_list' store.id %}" class="nav-item">
-                <i class="fa-solid fa-circle-exclamation"></i> 修正依頼
+                <i class="fa-solid fa-circle-exclamation"></i> 菫ｮ豁｣萓晞ｼ
                 {% load business_tags %}
                 {% with count=store|get_pending_correction_count %}
                 {% if count > 0 %}
@@ -230,10 +230,10 @@
                 {% endwith %}
             </a>
 
-            <!-- ワーカー評価 -->
-            <!-- ワーカー評価 -->
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡ -->
+            <!-- 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡ -->
             <a href="{% url 'biz_worker_review_job_list' store.id %}" class="nav-item">
-                <i class="fa-solid fa-user-check"></i> ワーカー評価
+                <i class="fa-solid fa-user-check"></i> 繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡
                 {% with count=store|get_unreviewed_worker_count %}
                 {% if count > 0 %}
                 <span class="notification-badge">{{ count }}</span>
@@ -241,34 +241,34 @@
                 {% endwith %}
             </a>
 
-            <!-- 店�Eへのレビュー -->
+            <!-- 蠎苓・縺ｸ縺ｮ繝ｬ繝薙Η繝ｼ -->
             <a href="#" class="nav-item">
-                <i class="fa-solid fa-thumbs-up"></i> 店�Eへのレビュー
+                <i class="fa-solid fa-thumbs-up"></i> 蠎苓・縺ｸ縺ｮ繝ｬ繝薙Η繝ｼ
             </a>
 
-            <!-- 利用明細 -->
+            <!-- 蛻ｩ逕ｨ譏守ｴｰ -->
             <a href="#" class="nav-item">
-                <i class="fa-solid fa-receipt"></i> 利用明細
+                <i class="fa-solid fa-receipt"></i> 蛻ｩ逕ｨ譏守ｴｰ
             </a>
 
-            <!-- 店�E惁E�� -->
+            <!-- 蠎苓・諠・ｱ -->
             <a href="#" class="nav-item">
-                <i class="fa-solid fa-store"></i> 店�E惁E��
+                <i class="fa-solid fa-store"></i> 蠎苓・諠・ｱ
             </a>
 
-            <!-- 機�Eに対するご意見�Eご要望 -->
+            <!-- 讖溯・縺ｫ蟇ｾ縺吶ｋ縺疲э隕九・縺碑ｦ∵悍 -->
             <a href="#" class="nav-item">
-                <i class="fa-solid fa-comment-medical"></i> 機�Eに対するご意見�Eご要望
+                <i class="fa-solid fa-comment-medical"></i> 讖溯・縺ｫ蟇ｾ縺吶ｋ縺疲э隕九・縺碑ｦ∵悍
             </a>
 
-            <!-- ご質問�Eお問ぁE��わせ -->
+            <!-- 縺碑ｳｪ蝠上・縺雁撫縺・粋繧上○ -->
             <a href="#" class="nav-item">
-                <i class="fa-solid fa-question-circle"></i> ご質問�Eお問ぁE��わせ
+                <i class="fa-solid fa-question-circle"></i> 縺碑ｳｪ蝠上・縺雁撫縺・粋繧上○
             </a>
         </nav>
 
         <a href="{% url 'biz_portal' %}" class="back-to-portal">
-            <i class="fa-solid fa-chevron-left"></i> 企業 / 店�E一覧に戻めE
+            <i class="fa-solid fa-chevron-left"></i> 莨∵･ｭ / 蠎苓・荳隕ｧ縺ｫ謌ｻ繧・
         </a>
     </div>
 
@@ -276,8 +276,8 @@
         <div class="top-header">
             {% block header_actions %}
             <a href="{% url 'biz_checkin_management' %}" class="btn-header-white"><i class="fa-solid fa-qrcode"></i>
-                チェチE��イン/アウチE/a>
-            <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">ひな形から求人を募雁E/a>
+                繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・/a>
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">縺ｲ縺ｪ蠖｢縺九ｉ豎ゆｺｺ繧貞供髮・/a>
             {% endblock %}
         </div>
 

@@ -98,73 +98,73 @@
 </style>
 
 <div class="breadcrumb">
-    <a href="{% url 'biz_job_posting_list' store.id %}">求人一覧</a> &gt; <a
-        href="{% url 'biz_job_posting_detail' store.id posting.id %}">求人詳細</a> &gt; 公開設宁E
+    <a href="{% url 'biz_job_posting_list' store.id %}">豎ゆｺｺ荳隕ｧ</a> &gt; <a
+        href="{% url 'biz_job_posting_detail' store.id posting.id %}">豎ゆｺｺ隧ｳ邏ｰ</a> &gt; 蜈ｬ髢玖ｨｭ螳・
 </div>
 
 <div class="visibility-form-container">
-    <h2 class="form-title">公開設宁E/h2>
+    <h2 class="form-title">蜈ｬ髢玖ｨｭ螳・/h2>
 
     <form method="POST">
         {% csrf_token %}
 
-        <!-- 一般公閁E-->
+        <!-- 荳闊ｬ蜈ｬ髢・-->
         <label class="option-item">
             <input type="radio" name="visibility" value="public" class="option-radio" {% if posting.visibility=='public'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">一般公閁E/div>
+                <div class="option-label">荳闊ｬ蜈ｬ髢・/div>
             </div>
         </label>
 
-        <!-- バッジ限定�E閁E-->
+        <!-- 繝舌ャ繧ｸ髯仙ｮ壼・髢・-->
         <label class="option-item">
             <input type="radio" name="visibility" value="badge" class="option-radio" {% if posting.visibility=='badge'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">バッジ限定�E閁E<i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-label">繝舌ャ繧ｸ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question help-icon"></i></div>
                 <div class="option-description">
-                    経験豊富なワーカーに働いてほしい求人におすすめです、Ebr>
-                    設定可能な時給�E�E,300冁E��丁E
+                    邨碁ｨ楢ｱ雁ｯ後↑繝ｯ繝ｼ繧ｫ繝ｼ縺ｫ蜒阪＞縺ｦ縺ｻ縺励＞豎ゆｺｺ縺ｫ縺翫☆縺吶ａ縺ｧ縺吶・br>
+                    險ｭ螳壼庄閭ｽ縺ｪ譎らｵｦ・・,300蜀・ｻ･荳・
                 </div>
             </div>
         </label>
 
-        <!-- グループ限定�E閁E-->
+        <!-- 繧ｰ繝ｫ繝ｼ繝鈴剞螳壼・髢・-->
         <label class="option-item">
             <input type="radio" name="visibility" value="group" class="option-radio" {% if posting.visibility=='group'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">グループ限定�E開！E0個�Eグループあり！E/div>
-                <!-- Note: (20個�EグループあめE is static for now as mock data per instruction/image unless dynamic count is passed -->
+                <div class="option-label">繧ｰ繝ｫ繝ｼ繝鈴剞螳壼・髢具ｼ・0蛟九・繧ｰ繝ｫ繝ｼ繝励≠繧奇ｼ・/div>
+                <!-- Note: (20蛟九・繧ｰ繝ｫ繝ｼ繝励≠繧・ is static for now as mock data per instruction/image unless dynamic count is passed -->
             </div>
         </label>
 
-        <!-- 初回ワーカー限定�E閁E-->
+        <!-- 蛻晏屓繝ｯ繝ｼ繧ｫ繝ｼ髯仙ｮ壼・髢・-->
         <label class="option-item">
             <input type="radio" name="visibility" value="first_time" class="option-radio" {% if
                 posting.visibility=='first_time' %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">初回ワーカー限定�E閁E<i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-label">蛻晏屓繝ｯ繝ｼ繧ｫ繝ｼ髯仙ｮ壼・髢・<i class="fa-regular fa-circle-question help-icon"></i></div>
                 <div class="option-description">
-                    こ�E店�Eで直近�E2年間、一度も勤務経験がなぁE��ーカーだけに求人が表示されます、E
+                    縺薙・蠎苓・縺ｧ逶ｴ霑代・2蟷ｴ髢薙∽ｸ蠎ｦ繧ょ共蜍咏ｵ碁ｨ薙′縺ｪ縺・Ρ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・
                 </div>
             </div>
         </label>
 
-        <!-- URL限定�E閁E-->
+        <!-- URL髯仙ｮ壼・髢・-->
         <label class="option-item">
             <input type="radio" name="visibility" value="url" class="option-radio" {% if posting.visibility=='url'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">URL限定�E閁E/div>
+                <div class="option-label">URL髯仙ｮ壼・髢・/div>
                 <div class="option-description">
-                    求人詳細ペ�Eジの「�E有URL」を知ってぁE��ワーカーだけに求人が表示されます、E
+                    豎ゆｺｺ隧ｳ邏ｰ繝壹・繧ｸ縺ｮ縲悟・譛蔚RL縲阪ｒ遏･縺｣縺ｦ縺・ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺縺代↓豎ゆｺｺ縺瑚｡ｨ遉ｺ縺輔ｌ縺ｾ縺吶・
                 </div>
             </div>
         </label>
 
-        <button type="submit" class="btn-save">設定を保存すめE/button>
+        <button type="submit" class="btn-save">險ｭ螳壹ｒ菫晏ｭ倥☆繧・/button>
 
     </form>
 </div>

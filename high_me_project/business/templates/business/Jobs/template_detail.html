@@ -152,147 +152,147 @@
 
 <div class="detail-container">
     <div class="breadcrumb">
-        <a href="{% url 'biz_template_list' store.id %}">求人のひな形一覧</a>
+        <a href="{% url 'biz_template_list' store.id %}">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢荳隕ｧ</a>
         <span>&gt;</span>
-        <span style="color:#666;">求人のひな形詳細</span>
+        <span style="color:#666;">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢隧ｳ邏ｰ</span>
     </div>
 
     <div class="page-header">
-        <div class="page-title">求人のひな形詳細</div>
-        <div class="page-subtitle">求人のひな形を確認できまぁE/div>
+        <div class="page-title">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢隧ｳ邏ｰ</div>
+        <div class="page-subtitle">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢繧堤｢ｺ隱阪〒縺阪∪縺・/div>
     </div>
 
     <div class="detail-card">
         <div class="card-header-actions">
-            <div class="card-title">求人のひな形</div>
+            <div class="card-title">豎ゆｺｺ縺ｮ縺ｲ縺ｪ蠖｢</div>
             <div class="action-buttons">
                 <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action-outline">
-                    <i class="fa-regular fa-pen-to-square"></i> 編雁E��めE
+                    <i class="fa-regular fa-pen-to-square"></i> 邱ｨ髮・☆繧・
                 </a>
                 <a href="#" class="btn-action-outline">
-                    <i class="fa-regular fa-copy"></i> 褁E��する
+                    <i class="fa-regular fa-copy"></i> 隍・｣ｽ縺吶ｋ
                 </a>
                 <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action-outline">
-                    <i class="fa-regular fa-trash-can"></i> 削除する
+                    <i class="fa-regular fa-trash-can"></i> 蜑企勁縺吶ｋ
                 </a>
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">求人タイトル</div>
+            <div class="detail-label">豎ゆｺｺ繧ｿ繧､繝医Ν</div>
             <div class="detail-value"><strong>{{ template.title }}</strong></div>
         </div>
         <div class="detail-row">
-            <div class="detail-label">業種 / 職種</div>
+            <div class="detail-label">讌ｭ遞ｮ / 閨ｷ遞ｮ</div>
             <div class="detail-value">{{ template.industry }} / {{ template.occupation }}</div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">写真</div>
+            <div class="detail-label">蜀咏悄</div>
             <div class="detail-value">
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
                     {% for photo in template.photos.all %}
                     <img src="{{ photo.image.url }}"
                         style="width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px;">
                     {% empty %}
-                    <span style="color:#999;">写真なぁE/span>
+                    <span style="color:#999;">蜀咏悄縺ｪ縺・/span>
                     {% endfor %}
                 </div>
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">業務�E容</div>
+            <div class="detail-label">讌ｭ蜍吝・螳ｹ</div>
             <div class="detail-value">{{ template.work_content }}</div>
         </div>
         <div class="detail-row">
-            <div class="detail-label">注意事頁E/div>
-            <div class="detail-value">{{ template.precautions|default:"なぁE }}</div>
+            <div class="detail-label">豕ｨ諢丈ｺ矩・/div>
+            <div class="detail-value">{{ template.precautions|default:"縺ｪ縺・ }}</div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">征E��</div>
+            <div class="detail-label">蠕・∞</div>
             <div class="detail-value">
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">未経験老E��迁E/span>{% endif %}
-                    {% if template.has_bike_car_commute %}<span class="tag-blue">バイク/車通勤可</span>{% endif %}
-                    {% if template.has_clothing_free %}<span class="tag-blue">服裁E�E由</span>{% endif %}
-                    {% if template.has_coupon_get %}<span class="tag-blue">クーポンGET</span>{% endif %}
-                    {% if template.has_meal %}<span class="tag-blue">まかなぁE��めE/span>{% endif %}
-                    {% if template.has_hair_color_free %}<span class="tag-blue">髪垁Eカラー自由</span>{% endif %}
-                    {% if template.has_bike_bicycle_commute %}<span class="tag-blue">バイク/自転車通勤可</span>{% endif %}
-                    {% if template.has_bicycle_commute %}<span class="tag-blue">自転車通勤可</span>{% endif %}
-                    {% if template.has_transportation_allowance %}<span class="tag-blue">交通費支給</span>{% endif %}
+                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">譛ｪ邨碁ｨ楢・ｭ楢ｿ・/span>{% endif %}
+                    {% if template.has_bike_car_commute %}<span class="tag-blue">繝舌う繧ｯ/霆企壼共蜿ｯ</span>{% endif %}
+                    {% if template.has_clothing_free %}<span class="tag-blue">譛崎｣・・逕ｱ</span>{% endif %}
+                    {% if template.has_coupon_get %}<span class="tag-blue">繧ｯ繝ｼ繝昴ΦGET</span>{% endif %}
+                    {% if template.has_meal %}<span class="tag-blue">縺ｾ縺九↑縺・≠繧・/span>{% endif %}
+                    {% if template.has_hair_color_free %}<span class="tag-blue">鬮ｪ蝙・繧ｫ繝ｩ繝ｼ閾ｪ逕ｱ</span>{% endif %}
+                    {% if template.has_bike_bicycle_commute %}<span class="tag-blue">繝舌う繧ｯ/閾ｪ霆｢霆企壼共蜿ｯ</span>{% endif %}
+                    {% if template.has_bicycle_commute %}<span class="tag-blue">閾ｪ霆｢霆企壼共蜿ｯ</span>{% endif %}
+                    {% if template.has_transportation_allowance %}<span class="tag-blue">莠､騾夊ｲｻ謾ｯ邨ｦ</span>{% endif %}
                 </div>
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">持ち物</div>
-            <div class="detail-value">{{ template.belongings|default:"なぁE }}</div>
+            <div class="detail-label">謖√■迚ｩ</div>
+            <div class="detail-value">{{ template.belongings|default:"縺ｪ縺・ }}</div>
         </div>
         <div class="detail-row">
-            <div class="detail-label">条件</div>
-            <div class="detail-value">{{ template.requirements|default:"なぁE }}</div>
+            <div class="detail-label">譚｡莉ｶ</div>
+            <div class="detail-value">{{ template.requirements|default:"縺ｪ縺・ }}</div>
         </div>
         <div class="detail-row">
-            <div class="detail-label">就業場所</div>
+            <div class="detail-label">蟆ｱ讌ｭ蝣ｴ謇</div>
             <div class="detail-value">{{ template.address }}</div>
         </div>
         <div class="detail-row">
-            <div class="detail-label">アクセス</div>
-            <div class="detail-value">{{ template.access|default:"なぁE }}</div>
+            <div class="detail-label">繧｢繧ｯ繧ｻ繧ｹ</div>
+            <div class="detail-value">{{ template.access|default:"縺ｪ縺・ }}</div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">受動喫煙防止措置</div>
+            <div class="detail-label">蜿怜虚蝟ｫ辣咎亟豁｢謗ｪ鄂ｮ</div>
             <div class="detail-value">
                 {{ template.get_smoking_prevention_display }}
-                {% if template.has_smoking_area %}�E�喫煙可能エリアでの作業あり�E�{% endif %}
+                {% if template.has_smoking_area %}・亥稔辣吝庄閭ｽ繧ｨ繝ｪ繧｢縺ｧ縺ｮ菴懈･ｭ縺ゅｊ・閲% endif %}
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">賁E��設宁E/div>
+            <div class="detail-label">雉・ｼ險ｭ螳・/div>
             <div class="detail-value">
                 {% if template.requires_qualification %}
-                あり�E�E% if template.qualification %}{{ template.qualification.name }}{% else %}{{
-                template.get_qualification_type_display }}{% endif %}�E�E
+                縺ゅｊ・・% if template.qualification %}{{ template.qualification.name }}{% else %}{{
+                template.get_qualification_type_display }}{% endif %}・・
                 {% if template.qualification_notes %}
                 <div style="margin-top: 8px; color: #666; font-size: 14px;">
                     {{ template.qualification_notes|linebreaksbr }}
                 </div>
                 {% endif %}
                 {% else %}
-                なぁE
+                縺ｪ縺・
                 {% endif %}
             </div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">マニュアル (PDF)</div>
+            <div class="detail-label">繝槭ル繝･繧｢繝ｫ (PDF)</div>
             <div class="detail-value">
                 {% if template.manual_pdf %}
                 <a href="{{ template.manual_pdf.url }}" target="_blank" style="color:#007AFF; text-decoration:none;">
-                    <i class="far fa-file-pdf"></i> PDFを確認すめE
+                    <i class="far fa-file-pdf"></i> PDF繧堤｢ｺ隱阪☆繧・
                 </a>
                 {% else %}
-                なぁE
+                縺ｪ縺・
                 {% endif %}
             </div>
         </div>
 
         <div class="detail-row" style="border-bottom: none;">
-            <div class="detail-label">自動送信メチE��ージ</div>
+            <div class="detail-label">閾ｪ蜍暮∽ｿ｡繝｡繝・そ繝ｼ繧ｸ</div>
             <div class="detail-value">
-                {{ template.auto_message|default:"未設宁E }}
+                {{ template.auto_message|default:"譛ｪ險ｭ螳・ }}
             </div>
         </div>
     </div>
 
     <div style="margin-top: 40px; text-align: center;">
         <a href="{% url 'biz_job_create' template.pk %}" class="btn-primary">
-            こ�E冁E��で求人を募雁E��めE
+            縺薙・蜀・ｮｹ縺ｧ豎ゆｺｺ繧貞供髮・☆繧・
         </a>
     </div>
 </div>

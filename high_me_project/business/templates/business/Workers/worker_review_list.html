@@ -250,19 +250,19 @@
 </style>
 
 <div class="page-header">
-    <a href="{% url 'biz_worker_review_job_list' store.id %}" class="breadcrumb">ワーカー評価</a> &gt; <span
-        style="font-weight:bold;">未レビューのワーカー</span>
-    <h1 class="page-title">未レビューのワーカー</h1>
-    <p class="page-desc">それぞれのレビュー頁E��を�E力して、業務が終亁E��たワーカーのレビューを送信してください</p>
+    <a href="{% url 'biz_worker_review_job_list' store.id %}" class="breadcrumb">繝ｯ繝ｼ繧ｫ繝ｼ隧穂ｾ｡</a> &gt; <span
+        style="font-weight:bold;">譛ｪ繝ｬ繝薙Η繝ｼ縺ｮ繝ｯ繝ｼ繧ｫ繝ｼ</span>
+    <h1 class="page-title">譛ｪ繝ｬ繝薙Η繝ｼ縺ｮ繝ｯ繝ｼ繧ｫ繝ｼ</h1>
+    <p class="page-desc">縺昴ｌ縺槭ｌ縺ｮ繝ｬ繝薙Η繝ｼ鬆・岼繧貞・蜉帙＠縺ｦ縲∵･ｭ蜍吶′邨ゆｺ・＠縺溘Ρ繝ｼ繧ｫ繝ｼ縺ｮ繝ｬ繝薙Η繝ｼ繧帝∽ｿ｡縺励※縺上□縺輔＞</p>
 </div>
 
 <div class="job-title-header">
     <div class="job-title-text">{{ job.title }}</div>
     <div class="job-actions">
         <button
-            style="border:1px solid #ddd; background:white; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">まとめて入力すめE/button>
+            style="border:1px solid #ddd; background:white; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">縺ｾ縺ｨ繧√※蜈･蜉帙☆繧・/button>
         <button
-            style="background:#007AFF; color:white; border:none; padding:6px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">送信する</button>
+            style="background:#007AFF; color:white; border:none; padding:6px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">騾∽ｿ｡縺吶ｋ</button>
     </div>
 </div>
 
@@ -288,7 +288,7 @@
 
             <!-- Good/Bad -->
             <div class="form-section">
-                <div class="section-label">good/badを選抁E/div>
+                <div class="section-label">good/bad繧帝∈謚・/div>
                 <div class="gb-toggle">
                     <div class="gb-btn good" data-val="good" onclick="toggleGoodBad(this, 'good')"><i
                             class="fa-solid fa-thumbs-up"></i></div>
@@ -299,17 +299,17 @@
 
             <!-- Skills -->
             <div class="form-section">
-                <div class="section-label">良かったスキルを選抁E/div>
-                <button class="btn-select-skill" onclick="openSkillModal(this)">スキルを選抁E/button>
+                <div class="section-label">濶ｯ縺九▲縺溘せ繧ｭ繝ｫ繧帝∈謚・/div>
+                <button class="btn-select-skill" onclick="openSkillModal(this)">繧ｹ繧ｭ繝ｫ繧帝∈謚・/button>
                 <div class="selected-skills-display"></div>
             </div>
 
             <!-- Groups -->
             <div class="form-section">
-                <div class="section-label">所属するグループを変更</div>
+                <div class="section-label">謇螻槭☆繧九げ繝ｫ繝ｼ繝励ｒ螟画峩</div>
                 <div class="group-desc">
-                    グループ�E新規作�E・編雁E�E<a href="{% url 'biz_group_management' store.id %}"
-                        class="group-link">グループ管琁E�Eージ</a>をご利用ください、E
+                    繧ｰ繝ｫ繝ｼ繝励・譁ｰ隕丈ｽ懈・繝ｻ邱ｨ髮・・<a href="{% url 'biz_group_management' store.id %}"
+                        class="group-link">繧ｰ繝ｫ繝ｼ繝礼ｮ｡逅・・繝ｼ繧ｸ</a>繧偵＃蛻ｩ逕ｨ縺上□縺輔＞縲・
                 </div>
                 <div class="checkbox-list">
                     {% for group in group_definitions %}
@@ -327,14 +327,14 @@
                  I'll add a per-card send button for now to match functionality. -->
             <div style="text-align:right;">
                 <button onclick="submitReview(this)"
-                    style="background:#007AFF; color:white; border:none; padding:10px 30px; border-radius:4px; font-weight:bold; cursor:pointer;">送信</button>
+                    style="background:#007AFF; color:white; border:none; padding:10px 30px; border-radius:4px; font-weight:bold; cursor:pointer;">騾∽ｿ｡</button>
             </div>
 
         </div>
     </div>
     {% empty %}
     <div style="text-align:center; padding:50px; color:#999;">
-        未レビューのワーカーはぁE��せん
+        譛ｪ繝ｬ繝薙Η繝ｼ縺ｮ繝ｯ繝ｼ繧ｫ繝ｼ縺ｯ縺・∪縺帙ｓ
     </div>
     {% endfor %}
 </div>
@@ -342,20 +342,20 @@
 <!-- Skills Modal -->
 <div id="skillModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0;">スキルを選抁E/h3>
+        <h3 style="margin-top:0;">繧ｹ繧ｭ繝ｫ繧帝∈謚・/h3>
         <div class="badge-options">
-            <div class="badge-option" onclick="selectSkill(this, '梱匁E)">梱匁E/div>
-            <div class="badge-option" onclick="selectSkill(this, 'ピッキング')">ピッキング</div>
-            <div class="badge-option" onclick="selectSkill(this, '検品')">検品</div>
-            <div class="badge-option" onclick="selectSkill(this, '仕�EぁE)">仕�EぁE/div>
-            <div class="badge-option" onclick="selectSkill(this, '搬入出')">搬入出</div>
-            <div class="badge-option" onclick="selectSkill(this, 'ホ�Eル')">ホ�Eル</div>
-            <div class="badge-option" onclick="selectSkill(this, 'キチE��ン')">キチE��ン</div>
-            <div class="badge-option" onclick="selectSkill(this, '渁E��')">渁E��</div>
+            <div class="badge-option" onclick="selectSkill(this, '譴ｱ蛹・)">譴ｱ蛹・/div>
+            <div class="badge-option" onclick="selectSkill(this, '繝斐ャ繧ｭ繝ｳ繧ｰ')">繝斐ャ繧ｭ繝ｳ繧ｰ</div>
+            <div class="badge-option" onclick="selectSkill(this, '讀懷刀')">讀懷刀</div>
+            <div class="badge-option" onclick="selectSkill(this, '莉募・縺・)">莉募・縺・/div>
+            <div class="badge-option" onclick="selectSkill(this, '謳ｬ蜈･蜃ｺ')">謳ｬ蜈･蜃ｺ</div>
+            <div class="badge-option" onclick="selectSkill(this, '繝帙・繝ｫ')">繝帙・繝ｫ</div>
+            <div class="badge-option" onclick="selectSkill(this, '繧ｭ繝・メ繝ｳ')">繧ｭ繝・メ繝ｳ</div>
+            <div class="badge-option" onclick="selectSkill(this, '貂・祉')">貂・祉</div>
         </div>
         <div style="text-align:right;">
             <button onclick="closeSkillModal()"
-                style="background:#007AFF; color:white; border:none; padding:5px 15px; border-radius:4px;">決宁E/button>
+                style="background:#007AFF; color:white; border:none; padding:5px 15px; border-radius:4px;">豎ｺ螳・/button>
         </div>
     </div>
 </div>
@@ -410,7 +410,7 @@
         // Good/Bad
         const activeGb = card.querySelector('.gb-btn.active');
         if (!activeGb) {
-            alert('Goodまた�EBadを選択してください');
+            alert('Good縺ｾ縺溘・Bad繧帝∈謚槭＠縺ｦ縺上□縺輔＞');
             return;
         }
         const reviewType = activeGb.dataset.val;
@@ -445,18 +445,18 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('レビューを送信しました');
+                    alert('繝ｬ繝薙Η繝ｼ繧帝∽ｿ｡縺励∪縺励◆');
                     card.remove();
                     if (document.querySelectorAll('.review-card').length === 0) {
                         window.location.href = "{% url 'biz_worker_review_job_list' store.id %}";
                     }
                 } else {
-                    alert('エラーが発生しました: ' + data.message);
+                    alert('繧ｨ繝ｩ繝ｼ縺檎匱逕溘＠縺ｾ縺励◆: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('通信エラーが発生しました');
+                alert('騾壻ｿ｡繧ｨ繝ｩ繝ｼ縺檎匱逕溘＠縺ｾ縺励◆');
             });
     }
 </script>

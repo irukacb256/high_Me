@@ -4,7 +4,7 @@
 {% block content %}
 <div class="content-header"
     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h2 style="font-size: 20px; font-weight: bold;">勤怠修正依頼一覧</h2>
+    <h2 style="font-size: 20px; font-weight: bold;">蜍､諤菫ｮ豁｣萓晞ｼ荳隕ｧ</h2>
 </div>
 
 <div style="background: white; border-radius: 8px; border: 1px solid #ddd; overflow: hidden;">
@@ -12,11 +12,11 @@
     <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
         <thead style="background: #f9f9f9; border-bottom: 1px solid #ddd;">
             <tr>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">申請日晁E/th>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">ワーカー吁E/th>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">対象求人</th>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">琁E��</th>
-                <th style="padding: 12px 20px; text-align: center; font-weight: bold; color: #666;">スチE�Eタス</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">逕ｳ隲区律譎・/th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">繝ｯ繝ｼ繧ｫ繝ｼ蜷・/th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">蟇ｾ雎｡豎ゆｺｺ</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">逅・罰</th>
+                <th style="padding: 12px 20px; text-align: center; font-weight: bold; color: #666;">繧ｹ繝・・繧ｿ繧ｹ</th>
             </tr>
         </thead>
         <tbody>
@@ -34,25 +34,25 @@
                 <td style="padding: 15px 20px;">
                     {{ correction.application.job_posting.title }}<br>
                     <span style="font-size: 12px; color: #888;">{{
-                        correction.application.job_posting.work_date|date:"m/d" }} 勤勁E/span>
+                        correction.application.job_posting.work_date|date:"m/d" }} 蜍､蜍・/span>
                 </td>
                 <td style="padding: 15px 20px;">
                     {% if correction.lateness_reason %}
                     {{ correction.get_lateness_reason_display }}
                     {% else %}
-                    報酬変動など
+                    蝣ｱ驟ｬ螟牙虚縺ｪ縺ｩ
                     {% endif %}
                 </td>
                 <td style="padding: 15px 20px; text-align: center;">
                     {% if correction.status == 'pending' %}
                     <span
-                        style="background: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">申請中</span>
+                        style="background: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">逕ｳ隲倶ｸｭ</span>
                     {% elif correction.status == 'approved' %}
                     <span
-                        style="background: #e8f5e9; color: #388e3c; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">承認済み</span>
+                        style="background: #e8f5e9; color: #388e3c; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">謇ｿ隱肴ｸ医∩</span>
                     {% else %}
                     <span
-                        style="background: #ffebee; color: #d32f2f; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">却丁E/span>
+                        style="background: #ffebee; color: #d32f2f; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">蜊ｴ荳・/span>
                     {% endif %}
                 </td>
             </tr>
@@ -61,7 +61,7 @@
     </table>
     {% else %}
     <div style="padding: 40px; text-align: center; color: #666;">
-        <p>現在、勤怠修正依頼はありません、E/p>
+        <p>迴ｾ蝨ｨ縲∝共諤菫ｮ豁｣萓晞ｼ縺ｯ縺ゅｊ縺ｾ縺帙ｓ縲・/p>
     </div>
     {% endif %}
 </div>

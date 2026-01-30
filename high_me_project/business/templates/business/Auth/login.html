@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>ログイン | Timee事業老E��</title>
+    <title>繝ｭ繧ｰ繧､繝ｳ | Timee莠区･ｭ閠・畑</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -145,7 +145,7 @@
     <div class="login-card">
         <div class="logo">
             <div class="logo-text">
-                <span class="bear-icon">🐻</span> Timee
+                <span class="bear-icon">製</span> Timee
             </div>
         </div>
 
@@ -165,21 +165,21 @@
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
-                <label>メールアドレス</label>
+                <label>繝｡繝ｼ繝ｫ繧｢繝峨Ξ繧ｹ</label>
                 <input type="email" name="username" placeholder="" required>
             </div>
             <div class="form-group">
-                <label>パスワーチE/label>
+                <label>繝代せ繝ｯ繝ｼ繝・/label>
                 <input type="password" name="password" id="bizPassInput" required style="padding-right: 40px;">
                 <i class="fa-solid fa-eye password-toggle" id="toggleBizPass"></i>
             </div>
-            <button type="submit" class="btn-login">ログイン</button>
+            <button type="submit" class="btn-login">繝ｭ繧ｰ繧､繝ｳ</button>
         </form>
 
-        <a href="{% url 'biz_password_reset' %}" class="forgot-link">パスワードを忘れた方はこちめE/a>
+        <a href="{% url 'biz_password_reset' %}" class="forgot-link">繝代せ繝ｯ繝ｼ繝峨ｒ蠢倥ｌ縺滓婿縺ｯ縺薙■繧・/a>
     </div>
 
-    <a href="#" class="footer-link">ログインにつぁE��のヘルプ�EージはこちめE/a>
+    <a href="#" class="footer-link">繝ｭ繧ｰ繧､繝ｳ縺ｫ縺､縺・※縺ｮ繝倥Ν繝励・繝ｼ繧ｸ縺ｯ縺薙■繧・/a>
     <!-- Note: The footer link URL is a placeholder as no specific URL was provided, using # -->
 
     <script>

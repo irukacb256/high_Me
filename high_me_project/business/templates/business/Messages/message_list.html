@@ -120,7 +120,7 @@
         color: #ddd;
     }
 
-    /* 検索フォーム用CSS補宁E*/
+    /* 讀懃ｴ｢繝輔か繝ｼ繝逕ｨCSS陬懷ｮ・*/
     .form-control {
         width: 100%;
         padding: 0.375rem 0.75rem;
@@ -173,17 +173,17 @@
 </style>
 
 <div class="message-container">
-    <h2 class="page-title">メチE��ージ</h2>
-    <p class="text-muted mb-4">マッチングしてぁE��ワーカーと、メチE��ージで個別にめE��とりできます、E/p>
+    <h2 class="page-title">繝｡繝・そ繝ｼ繧ｸ</h2>
+    <p class="text-muted mb-4">繝槭ャ繝√Φ繧ｰ縺励※縺・ｋ繝ｯ繝ｼ繧ｫ繝ｼ縺ｨ縲√Γ繝・そ繝ｼ繧ｸ縺ｧ蛟句挨縺ｫ繧・ｊ縺ｨ繧翫〒縺阪∪縺吶・/p>
 
     <div class="message-card">
-        <!-- 検索フォーム -->
+        <!-- 讀懃ｴ｢繝輔か繝ｼ繝 -->
         <div class="p-4 border-bottom">
             <form method="get" class="d-flex gap-2">
-                <input type="text" name="q" class="form-control" placeholder="ワーカー名で検索"
+                <input type="text" name="q" class="form-control" placeholder="繝ｯ繝ｼ繧ｫ繝ｼ蜷阪〒讀懃ｴ｢"
                     value="{{ request.GET.q|default:'' }}" style="height: 44px;">
                 <button type="submit" class="btn btn-primary px-4 fw-bold"
-                    style="height: 44px; min-width: 80px;">検索</button>
+                    style="height: 44px; min-width: 80px;">讀懃ｴ｢</button>
             </form>
         </div>
 
@@ -192,26 +192,26 @@
             {% for room in rooms %}
             <a href="{% url 'biz_message_detail' room.id %}" class="message-item">
                 <div class="item-content">
-                    <!-- アイコン -->
+                    <!-- 繧｢繧､繧ｳ繝ｳ -->
                     <div class="worker-icon-wrapper">
                         {% if room.worker.workerprofile.face_photo %}
                         <img src="{{ room.worker.workerprofile.face_photo.url }}" alt="worker"
                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                         {% else %}
-                        <span class="worker-icon-text">🐻</span>
+                        <span class="worker-icon-text">製</span>
                         {% endif %}
                     </div>
 
-                    <!-- 名前 -->
+                    <!-- 蜷榊燕 -->
                     <div class="text-content">
                         <h5 class="worker-name">{{ room.worker.workerprofile.last_name_kanji }} {{
                             room.worker.workerprofile.first_name_kanji }}</h5>
                         <div class="text-muted" style="font-size: 12px; margin-top: 4px;">
-                            最終更新: {{ room.updated_at|date:"n朁E日 H:i" }}
+                            譛邨よ峩譁ｰ: {{ room.updated_at|date:"n譛・譌･ H:i" }}
                         </div>
                     </div>
 
-                    <!-- 矢印 -->
+                    <!-- 遏｢蜊ｰ -->
                     <div>
                         <i class="fa-solid fa-chevron-right arrow-icon"></i>
                     </div>
@@ -224,7 +224,7 @@
             <div class="empty-icon">
                 <i class="fa-regular fa-comments"></i>
             </div>
-            <p>マッチングしたワーカーはぁE��せん、E/p>
+            <p>繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ縺ｯ縺・∪縺帙ｓ縲・/p>
         </div>
         {% endif %}
     </div>

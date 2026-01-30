@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>アカウント開設 | Timee</title>
+    <title>繧｢繧ｫ繧ｦ繝ｳ繝磯幕險ｭ | Timee</title>
     <style>
         body {
             font-family: sans-serif;
@@ -69,14 +69,14 @@
 <body>
     <div class="container">
         <h1>Timee</h1>
-        <p>求人掲載用アカウント開設</p>
+        <p>豎ゆｺｺ謗ｲ霈臥畑繧｢繧ｫ繧ｦ繝ｳ繝磯幕險ｭ</p>
         <div class="main-flex">
             <div style="flex:1;">
-                <p style="color: #007bff; font-weight: bold;">\ 最短即日で求人掲輁E/</p>
+                <p style="color: #007bff; font-weight: bold;">\ 譛遏ｭ蜊ｳ譌･縺ｧ豎ゆｺｺ謗ｲ霈・/</p>
                 <div
                     style="background:#eee; height:200px; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                    画僁E/div>
-                <p style="font-size:12px; line-height:1.6;">タイミ�Eでは簡単な業務かめE..</p>
+                    逕ｻ蜒・/div>
+                <p style="font-size:12px; line-height:1.6;">繧ｿ繧､繝溘・縺ｧ縺ｯ邁｡蜊倥↑讌ｭ蜍吶°繧・..</p>
             </div>
             <div class="form-side">
                 <form method="POST">
@@ -97,33 +97,33 @@
                     </div>
                     {% endif %}
 
-                    <p><b>ご利用目皁E��選択してください</b></p>
+                    <p><b>縺泌茜逕ｨ逶ｮ逧・ｒ驕ｸ謚槭＠縺ｦ縺上□縺輔＞</b></p>
                     <label class="radio-item"><input type="radio" name="p" value="biz" {% if request.GET.p=='biz' or
-                            request.POST.p=='biz' %}checked{% endif %}> 求人を掲載したい�E�事業老E�E方�E�E/label>
+                            request.POST.p=='biz' %}checked{% endif %}> 豎ゆｺｺ繧呈軸霈峨＠縺溘＞・井ｺ区･ｭ閠・・譁ｹ・・/label>
                     <label class="radio-item"><input type="radio" name="p" value="worker" {% if request.GET.p=='worker'
-                            or request.POST.p=='worker' %}checked{% endif %}> 働く仕事を探したぁE��ワーカーの方�E�E/label>
+                            or request.POST.p=='worker' %}checked{% endif %}> 蜒阪￥莉穂ｺ九ｒ謗｢縺励◆縺・ｼ医Ρ繝ｼ繧ｫ繝ｼ縺ｮ譁ｹ・・/label>
 
                     <hr>
 
-                    <!-- 同意セクション & メールフォーム: JSで制御 -->
+                    <!-- 蜷梧э繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ & 繝｡繝ｼ繝ｫ繝輔か繝ｼ繝: JS縺ｧ蛻ｶ蠕｡ -->
                     <div id="business-form-area" style="display:none;">
                         <div id="consent-section">
-                            <p><b>申し込みの前に以下をご確認ください</b></p>
+                            <p><b>逕ｳ縺苓ｾｼ縺ｿ縺ｮ蜑阪↓莉･荳九ｒ縺皮｢ｺ隱阪￥縺縺輔＞</b></p>
                             <ul
                                 style="font-size:14px; text-align:left; color:#333; padding-left:20px; margin-bottom:15px;">
-                                <li>「利用規紁E��「�Eライバシーポリシー」をご確認ください、E/li>
-                                <li>サービス利用料�E日当と交通費の30%です、E/li>
+                                <li>縲悟茜逕ｨ隕冗ｴ・阪後・繝ｩ繧､繝舌す繝ｼ繝昴Μ繧ｷ繝ｼ縲阪ｒ縺皮｢ｺ隱阪￥縺縺輔＞縲・/li>
+                                <li>繧ｵ繝ｼ繝薙せ蛻ｩ逕ｨ譁吶・譌･蠖薙→莠､騾夊ｲｻ縺ｮ30%縺ｧ縺吶・/li>
                             </ul>
                             <label style="display:block; margin-bottom:15px; font-weight:bold; cursor:pointer;">
                                 <input type="checkbox" name="consent" value="true" {% if form.consent.value %}checked{%
-                                    endif %}> 上記�E吁E��頁E�E冁E��に同意する
+                                    endif %}> 荳願ｨ倥・蜷・ｺ矩・・蜀・ｮｹ縺ｫ蜷梧э縺吶ｋ
                             </label>
                         </div>
 
-                        <p><b>登録するメールアドレス</b></p>
+                        <p><b>逋ｻ骭ｲ縺吶ｋ繝｡繝ｼ繝ｫ繧｢繝峨Ξ繧ｹ</b></p>
                         <input type="email" name="email" class="email-input" placeholder="example@timee.co.jp"
                             value="{{ form.email.value|default:'' }}">
-                        <button type="submit" class="btn-submit">求人掲載用アカウントを開設</button>
+                        <button type="submit" class="btn-submit">豎ゆｺｺ謗ｲ霈臥畑繧｢繧ｫ繧ｦ繝ｳ繝医ｒ髢玖ｨｭ</button>
                     </div>
 
                     <script>

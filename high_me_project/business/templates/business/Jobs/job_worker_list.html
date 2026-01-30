@@ -153,7 +153,7 @@
         font-size: 14px;
     }
 
-    /* チェチE��ボックス */
+    /* 繝√ぉ繝・け繝懊ャ繧ｯ繧ｹ */
     input[type="checkbox"] {
         width: 16px;
         height: 16px;
@@ -162,28 +162,28 @@
 </style>
 
 <div class="header-row">
-    <h1 class="matching-title">マッチングしたワーカー ({{ matched_workers|length }}/{{ posting.count }}人)</h1>
+    <h1 class="matching-title">繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ ({{ matched_workers|length }}/{{ posting.count }}莠ｺ)</h1>
     <div style="display: flex; gap: 10px;">
-        <button class="btn-tool" onclick="location.reload()">更新</button>
-        <button class="btn-tool">CSVダウンローチE/button>
-        <button class="btn-tool btn-dark"><i class="fa-regular fa-envelope"></i> 一括でメチE��ージを送る</button>
+        <button class="btn-tool" onclick="location.reload()">譖ｴ譁ｰ</button>
+        <button class="btn-tool">CSV繝繧ｦ繝ｳ繝ｭ繝ｼ繝・/button>
+        <button class="btn-tool btn-dark"><i class="fa-regular fa-envelope"></i> 荳諡ｬ縺ｧ繝｡繝・そ繝ｼ繧ｸ繧帝√ｋ</button>
     </div>
 </div>
 
 <div class="info-banner">
-    <i class="fa-solid fa-bullhorn"></i> [そ�E他] ボタンからワーカーの欠勤を報告できるようになりました
+    <i class="fa-solid fa-bullhorn"></i> [縺昴・莉望 繝懊ち繝ｳ縺九ｉ繝ｯ繝ｼ繧ｫ繝ｼ縺ｮ谺蜍､繧貞ｱ蜻翫〒縺阪ｋ繧医≧縺ｫ縺ｪ繧翫∪縺励◆
 </div>
 
 <table class="worker-table">
     <thead>
         <tr>
             <th style="width: 40px; text-align: center;"><input type="checkbox"></th>
-            <th>ワーカー</th>
-            <th>状慁E/th>
-            <th>電話</th>
-            <th>チェチE��イン/アウチE/th>
-            <th>Good玁E�E稼働回数</th>
-            <th>操佁E/th>
+            <th>繝ｯ繝ｼ繧ｫ繝ｼ</th>
+            <th>迥ｶ諷・/th>
+            <th>髮ｻ隧ｱ</th>
+            <th>繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・/th>
+            <th>Good邇・・遞ｼ蜒榊屓謨ｰ</th>
+            <th>謫堺ｽ・/th>
         </tr>
     </thead>
     <tbody>
@@ -192,7 +192,7 @@
             <td style="text-align: center;"><input type="checkbox"></td>
             <td>
                 <div class="worker-info-cell">
-                    <!-- 顔�E真�E反映 -->
+                    <!-- 鬘泌・逵溘・蜿肴丐 -->
                     {% if match.safe_profile and match.safe_profile.face_photo %}
                     <img src="{{ match.safe_profile.face_photo.url }}" class="worker-img">
                     {% else %}
@@ -203,7 +203,7 @@
                     {% endif %}
 
                     <div class="worker-name-box">
-                        <!-- リンクを追加 -->
+                        <!-- 繝ｪ繝ｳ繧ｯ繧定ｿｽ蜉 -->
                         <a href="{% url 'biz_worker_detail' store.id match.worker.id %}"
                             style="text-decoration: none; color: inherit;">
                             {% if match.safe_profile %}
@@ -212,12 +212,12 @@
                             <span class="name-kana">{{ match.safe_profile.last_name_kana }} {{
                                 match.safe_profile.first_name_kana }}</span>
                             <div class="worker-meta">
-                                {{ match.worker_age }}歳
-                                {% if match.safe_profile.gender == '男性' %}男性{% elif match.safe_profile.gender == '女性'
-                                %}女性{% else %}{{ match.safe_profile.gender }}{% endif %}
+                                {{ match.worker_age }}豁ｳ
+                                {% if match.safe_profile.gender == '逕ｷ諤ｧ' %}逕ｷ諤ｧ{% elif match.safe_profile.gender == '螂ｳ諤ｧ'
+                                %}螂ｳ諤ｧ{% else %}{{ match.safe_profile.gender }}{% endif %}
                             </div>
                             {% else %}
-                            <span class="name-kanji">プロフィール未設宁E/span>
+                            <span class="name-kanji">繝励Ο繝輔ぅ繝ｼ繝ｫ譛ｪ險ｭ螳・/span>
                             <div class="worker-meta">
                                 {{ match.worker.username }}
                             </div>
@@ -225,31 +225,31 @@
                         </a>
                     </div>
                 </div>
-                <!-- スキルバッジ�E�固定サンプル�E�E-->
+                <!-- 繧ｹ繧ｭ繝ｫ繝舌ャ繧ｸ・亥崋螳壹し繝ｳ繝励Ν・・-->
                 <div class="tag-row">
-                    <span class="skill-tag tag-orange"><i class="fa-solid fa-magnifying-glass"></i> ホ�Eル</span>
-                    <span class="skill-tag tag-purple"><i class="fa-solid fa-utensils"></i> 洗い場</span>
+                    <span class="skill-tag tag-orange"><i class="fa-solid fa-magnifying-glass"></i> 繝帙・繝ｫ</span>
+                    <span class="skill-tag tag-purple"><i class="fa-solid fa-utensils"></i> 豢励＞蝣ｴ</span>
                 </div>
             </td>
-            <td><span class="status-badge">確定済み</span></td>
+            <td><span class="status-badge">遒ｺ螳壽ｸ医∩</span></td>
             <td style="color:#aaa;">...</td>
             <td style="font-size:12px; line-height:1.5;">
                 {% if match.attendance_at %}
-                <span style="color: #2b8a3e; font-weight: bold;">チェチE��イン渁E/span>
+                <span style="color: #2b8a3e; font-weight: bold;">繝√ぉ繝・け繧､繝ｳ貂・/span>
                 {% else %}
-                <span style="color: #888;">未チェチE��イン</span>
+                <span style="color: #888;">譛ｪ繝√ぉ繝・け繧､繝ｳ</span>
                 {% endif %}
                 <br>
                 {% if match.leaving_at %}
-                <span style="color: #2b8a3e; font-weight: bold;">チェチE��アウト渁E/span>
+                <span style="color: #2b8a3e; font-weight: bold;">繝√ぉ繝・け繧｢繧ｦ繝域ｸ・/span>
                 {% else %}
-                <span style="color: #888;">未チェチE��アウチE/span>
+                <span style="color: #888;">譛ｪ繝√ぉ繝・け繧｢繧ｦ繝・/span>
                 {% endif %}
             </td>
             <td>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span><i class="fa-regular fa-thumbs-up"></i> 100%</span>
-                    <span><i class="fa-solid fa-briefcase"></i> 1囁E/span>
+                    <span><i class="fa-solid fa-briefcase"></i> 1蝗・/span>
                 </div>
             </td>
             <td>
@@ -264,14 +264,14 @@
                         <i class="fa-regular fa-envelope"></i>
                     </button>
                     {% endif %}
-                    <button class="btn-tool">そ�E仁E<i class="fa-solid fa-chevron-down"></i></button>
+                    <button class="btn-tool">縺昴・莉・<i class="fa-solid fa-chevron-down"></i></button>
                 </div>
             </td>
         </tr>
         {% empty %}
         <tr>
             <td colspan="7" style="text-align: center; padding: 50px; color: #999;">
-                マッチングしたワーカーはまだぁE��せん
+                繝槭ャ繝√Φ繧ｰ縺励◆繝ｯ繝ｼ繧ｫ繝ｼ縺ｯ縺ｾ縺縺・∪縺帙ｓ
             </td>
         </tr>
         {% endfor %}
@@ -279,7 +279,7 @@
 </table>
 
 <a href="{% url 'biz_job_posting_detail' store.id posting.id %}" class="back-link">
-    <i class="fa-solid fa-chevron-left"></i> 求人詳細へ戻めE
+    <i class="fa-solid fa-chevron-left"></i> 豎ゆｺｺ隧ｳ邏ｰ縺ｸ謌ｻ繧・
 </a>
 
 {% endblock %}

@@ -23,16 +23,16 @@
             </a>
         </h2>
         <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
-            申請日�E�{{ correction.created_at|date:"Y年n朁E日 (D)" }}
+            逕ｳ隲区律・嘴{ correction.created_at|date:"Y蟷ｴn譛・譌･ (D)" }}
         </div>
         <div style="font-size: 13px; color: #007bff; text-decoration: underline;">
-            【Timee {{ store.store_name }}】{{ correction.application.job_posting.title }}
+            縲慎imee {{ store.store_name }}縲捜{ correction.application.job_posting.title }}
         </div>
     </div>
 
     <!-- Reason Card -->
     <div style="border: 1px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
-        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">修正依頼琁E��</div>
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">菫ｮ豁｣萓晞ｼ逅・罰</div>
         <div style="font-size: 14px;">
             {% if correction.lateness_reason %}
             {{ correction.get_lateness_reason_display }}
@@ -41,7 +41,7 @@
             <span style="font-size: 12px; color: #666;">{{ correction.lateness_reason_detail }}</span>
             {% endif %}
             {% else %}
-            報酬変動が発生したためE
+            蝣ｱ驟ｬ螟牙虚縺檎匱逕溘＠縺溘◆繧・
             {% endif %}
         </div>
     </div>
@@ -51,22 +51,22 @@
         <!-- Header -->
         <div
             style="display: flex; background: #eee; padding: 10px 20px; font-weight: bold; font-size: 13px; color: #333;">
-            <div style="flex: 1;">修正剁E/div>
-            <div style="width: 20px; text-align: center; color: #999;">▶</div>
-            <div style="flex: 1; text-align: right;">修正征E/div>
+            <div style="flex: 1;">菫ｮ豁｣蜑・/div>
+            <div style="width: 20px; text-align: center; color: #999;">笆ｶ</div>
+            <div style="flex: 1; text-align: right;">菫ｮ豁｣蠕・/div>
         </div>
 
         <!-- Row: Date/Time -->
         <div style="padding: 20px; border-bottom: 1px solid #eee; background: white;">
-            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">就業日晁E/div>
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">蟆ｱ讌ｭ譌･譎・/div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <div style="color: #666;">
-                    {{ correction.application.job_posting.work_date|date:"Y年n朁E日" }}<br>
+                    {{ correction.application.job_posting.work_date|date:"Y蟷ｴn譛・譌･" }}<br>
                     {{ correction.application.job_posting.start_time|date:"H:i" }} ~ {{
                     correction.application.job_posting.end_time|date:"H:i" }}
                 </div>
                 <div style="text-align: right;">
-                    <div style="color: #666;">{{ correction.application.job_posting.work_date|date:"Y年n朁E日" }}</div>
+                    <div style="color: #666;">{{ correction.application.job_posting.work_date|date:"Y蟷ｴn譛・譌･" }}</div>
                     <div style="font-weight: bold; font-size: 16px;">
                         {{ correction.correction_attendance_at|date:"H:i" }} ~ {{
                         correction.correction_leaving_at|date:"H:i" }}
@@ -77,32 +77,32 @@
 
         <!-- Row: Break -->
         <div style="padding: 20px; border-bottom: 1px solid #eee; background: white;">
-            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">休�E</div>
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">莨第・</div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <div style="color: #666;">
                     -
                 </div>
                 <div style="text-align: right;">
-                    {{ correction.correction_break_time }}刁E
+                    {{ correction.correction_break_time }}蛻・
                 </div>
             </div>
         </div>
 
         <!-- Row: Checkin/Checkout Log (Reference) -->
         <div style="padding: 20px; background: white;">
-            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">チェチE��イン/アウチE(打刻実績)</div>
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝・(謇灘綾螳溽ｸｾ)</div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <div style="color: #ff5252;">
                     {% if correction.application.attendance_at %}
                     {{ correction.application.attendance_at|date:"H:i" }}
                     {% else %}
-                    履歴なぁE
+                    螻･豁ｴ縺ｪ縺・
                     {% endif %}
                     /
                     {% if correction.application.leaving_at %}
                     {{ correction.application.leaving_at|date:"H:i" }}
                     {% else %}
-                    履歴なぁE
+                    螻･豁ｴ縺ｪ縺・
                     {% endif %}
                 </div>
                 <div style="text-align: right; font-weight: bold;">
@@ -121,19 +121,19 @@
             <input type="hidden" name="action" value="reject">
             <button type="button" onclick="confirmReject()"
                 style="width: 100%; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                拒否
+                諡貞凄
             </button>
             <button id="realRejectBtn" type="submit" style="display: none;"></button>
         </form>
         <button onclick="openApprovalModal()"
             style="flex: 1; background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-            承誁E
+            謇ｿ隱・
         </button>
     </div>
     {% else %}
     <div
         style="margin-top: 30px; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px; font-weight: bold; color: #666;">
-        こ�E依頼は既に {{ correction.get_status_display }} です、E
+        縺薙・萓晞ｼ縺ｯ譌｢縺ｫ {{ correction.get_status_display }} 縺ｧ縺吶・
     </div>
     {% endif %}
 
@@ -144,28 +144,28 @@
     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; justify-content: center;">
     <div
         style="background: white; width: 100%; max-width: 500px; border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 30px; box-sizing: border-box; animation: slideUp 0.3s ease-out;">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">最終確誁E/h3>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">譛邨ら｢ｺ隱・/h3>
 
         <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin-bottom: 30px;">
             <input type="checkbox" id="confirmCheck" style="margin-top: 4px; transform: scale(1.2);">
             <div style="font-size: 14px; line-height: 1.6;">
-                合計報酬額が変動してぁE��す、Ebr>
-                チェチE��イン/アウト�E履歴、申請された就業日時に問題がなぁE��とを確認しました、Ebr>
-                <span style="font-size: 12px; color: #999;">※入力された冁E��はタイミ�Eに送信され、その後ワーカーに送信されます、E/span>
+                蜷郁ｨ亥ｱ驟ｬ鬘阪′螟牙虚縺励※縺・∪縺吶・br>
+                繝√ぉ繝・け繧､繝ｳ/繧｢繧ｦ繝医・螻･豁ｴ縲∫筏隲九＆繧後◆蟆ｱ讌ｭ譌･譎ゅ↓蝠城｡後′縺ｪ縺・％縺ｨ繧堤｢ｺ隱阪＠縺ｾ縺励◆縲・br>
+                <span style="font-size: 12px; color: #999;">窶ｻ蜈･蜉帙＆繧後◆蜀・ｮｹ縺ｯ繧ｿ繧､繝溘・縺ｫ騾∽ｿ｡縺輔ｌ縲√◎縺ｮ蠕後Ρ繝ｼ繧ｫ繝ｼ縺ｫ騾∽ｿ｡縺輔ｌ縺ｾ縺吶・/span>
             </div>
         </label>
 
         <div style="display: flex; gap: 15px;">
             <button onclick="closeApprovalModal()"
                 style="flex: 1; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                戻めE
+                謌ｻ繧・
             </button>
             <form method="post" style="flex: 1;">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="approve">
                 <button type="submit" id="approveBtn" disabled
                     style="width: 100%; background: #ccc; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: not-allowed;">
-                    承認すめE
+                    謇ｿ隱阪☆繧・
                 </button>
             </form>
         </div>
@@ -214,7 +214,7 @@
     check.addEventListener('change', toggleApproveBtn);
 
     function confirmReject() {
-        if (confirm('本当にこ�E修正依頼を却下しますか�E�E)) {
+        if (confirm('譛ｬ蠖薙↓縺薙・菫ｮ豁｣萓晞ｼ繧貞唆荳九＠縺ｾ縺吶°・・)) {
             document.getElementById('realRejectBtn').click();
         }
     }
