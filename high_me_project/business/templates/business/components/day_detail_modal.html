@@ -1,0 +1,128 @@
+<!-- Day Detail Modal -->
+<div id="dayModal"
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+    <div
+        style="background:white; width:90%; max-width:500px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
+        <!-- Modal Header -->
+        <div
+            style="padding:15px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <div id="modalDate" style="font-size:18px; font-weight:bold;">2024年1月30日（火）</div>
+            <button onclick="closeDayModal()"
+                style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">&times;</button>
+        </div>
+
+        <!-- Modal Content (Scrollable) -->
+        <div id="modalContent" style="padding:20px; overflow-y:auto; flex:1;">
+            <!-- Job Items injected here -->
+        </div>
+
+        <div style="padding:15px; border-top:1px solid #eee; text-align:center;">
+            <button onclick="closeDayModal()"
+                style="padding:8px 30px; border:1px solid #ddd; border-radius:20px; background:white; font-size:14px; cursor:pointer;">閉じる</button>
+        </div>
+    </div>
+</div>
+
+<template id="jobItemTemplate">
+    <div style="margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #f0f0f0;">
+        <a href="#" class="job-link"
+            style="color:#007AFF; font-weight:bold; font-size:15px; text-decoration:underline; display:block; margin-bottom:10px;">TITLE_HERE</a>
+
+        <div
+            style="display:grid; grid-template-columns: 80px 1fr; gap:10px; font-size:13px; color:#666; margin-bottom:8px;">
+            <div>時間</div>
+            <div>
+                <i class="fa-regular fa-clock"></i> TIME_HERE
+            </div>
+
+            <div>求人の状態</div>
+            <div>
+                <span class="status-badge BADGE_CLASS">STATUS_HERE</span>
+            </div>
+
+            <div>公開設定</div>
+            <div>VISIBILITY_HERE</div>
+
+            <div>募集人数</div>
+            <div><i class="fa-solid fa-user"></i> PEOPLE_HERE</div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        border: 1px solid #ddd;
+    }
+
+    .badge-active {
+        background: #eef6ff;
+        color: #007AFF;
+        border-color: #007AFF;
+    }
+
+    .badge-done {
+        background: #e6f7ed;
+        color: #1f8b4d;
+        border-color: #1f8b4d;
+    }
+
+    .badge-ended {
+        background: #eee;
+        color: #999;
+        border-color: #ccc;
+    }
+</style>
+
+<script>
+    function openDayModal(dateYMD, dateFormatted, dayOfWeekIdx) {
+        const days = ['（日）', '（月）', '（火）', '（水）', '（木）', '（金）', '（土）'];
+        const dayStr = days[dayOfWeekIdx] || '';
+
+        const modalDateEl = document.getElementById('modalDate');
+        if (modalDateEl) modalDateEl.innerText = dateFormatted + ' ' + dayStr;
+
+        const dataContainer = document.getElementById('data-' + dateYMD);
+        const modalContent = document.getElementById('modalContent');
+        const templateEl = document.getElementById('jobItemTemplate');
+
+        if (!modalContent || !templateEl) return;
+        const template = templateEl.innerHTML;
+
+        modalContent.innerHTML = '';
+
+        if (dataContainer && dataContainer.children.length > 0) {
+            Array.from(dataContainer.children).forEach(item => {
+                let html = template
+                    .replace('TITLE_HERE', item.dataset.title)
+                    .replace('TIME_HERE', item.dataset.time)
+                    .replace('STATUS_HERE', item.dataset.status)
+                    .replace('BADGE_CLASS', item.dataset.statusClass)
+                    .replace('VISIBILITY_HERE', item.dataset.visibility)
+                    .replace('PEOPLE_HERE', item.dataset.people)
+                    .replace('href="#"', 'href="' + item.dataset.detailUrl + '"');
+                modalContent.innerHTML += html;
+            });
+        } else {
+            modalContent.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">予定はありません</div>';
+        }
+
+        const dayModal = document.getElementById('dayModal');
+        if (dayModal) dayModal.style.display = 'flex';
+    }
+
+    function closeDayModal() {
+        const dayModal = document.getElementById('dayModal');
+        if (dayModal) dayModal.style.display = 'none';
+    }
+
+    const dayModal = document.getElementById('dayModal');
+    if (dayModal) {
+        dayModal.addEventListener('click', function (e) {
+            if (e.target === this) closeDayModal();
+        });
+    }
+</script>

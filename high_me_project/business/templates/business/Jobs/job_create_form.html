@@ -309,7 +309,7 @@
 
             <!-- Admin Label Section (Below Card Content) -->
             <div style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
-                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">管理畑ラベル</div>
+                <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">管理用ラベル</div>
                 <div style="font-size:11px; color:#666;">※ワーカーには公開されません</div>
                 <div style="margin-top:5px; font-size:14px;">{{ template.title }}</div>
             </div>
@@ -326,18 +326,18 @@
             <div class="card-body">
                 <div class="form-grid">
                     <div class="form-group">
-                        <div class="<label-row"><span class="<label-text">求人日</span></div>
+                        <div class="label-row"><span class="label-text">求人日</span></div>
                         <input type="date" name="work_date" id="work_date" value="{{ tomorrow|date:'Y-m-d' }}" required>
                     </div>
                     <div class="form-group">
-                        <div class="<label-row"><span class="<label-text">開始〜終了</span></div>
+                        <div class="label-row"><span class="label-text">開始〜終了</span></div>
                         <div class="time-range">
-                            <div class="<input-with-icon">
+                            <div class="input-with-icon">
                                 <input type="time" name="start_time" id="start_time" required>
                                 <i class="fa-regular fa-clock"></i>
                             </div>
                             <span>〜</span>
-                            <div class="<input-with-icon">
+                            <div class="input-with-icon">
                                 <input type="time" name="end_time" id="end_time" required>
                                 <i class="fa-regular fa-clock"></i>
                             </div>
@@ -348,11 +348,11 @@
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <div class="<label-row"><span class="<label-text">莨第。の髢句ｧ。</span></div>
+                        <div class="label-row"><span class="label-text">休憩の開始</span></div>
                         <input type="time" name="break_start" id="break_start" placeholder="--:--">
                     </div>
                     <div class="form-group">
-                        <div class="<label-row"><span class="<label-text">莨第。譎る俣</span></div>
+                        <div class="label-row"><span class="label-text">休憩時間</span></div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="break_duration" id="break_duration" value="0"
                                 style="width: 80px;">
@@ -361,34 +361,34 @@
                     </div>
                 </div>
                 <p class="help-text">
-                    蜉ｴ蜒肴凾髢薙′〜譎る俣繧定ｶ。∴〜譎る俣莉･一九阪。蝣ｴ名医。〜5蛻【･一翫。莨第。繧定ｨｭ螳壹＠、ｦください〜br>
-                    蜉ｴ蜒肴凾髢薙′〜譎る俣繧定ｶ。∴繧九榊ｴ名医。〜0蛻【･一翫。莨第。繧定ｨｭ螳壹＠、ｦください〜
+                    労働時間が6時間を超え8時間以下の場合、45分以上の休憩を設定してください。<br>
+                    労働時間が8時間を超える場合、60分以上の休憩を設定してください。
                 </p>
 
                 <div class="form-group" id="break_warning"
                     style="display:none; color: #FF3B30; font-size: 12px; font-weight: bold; margin-bottom: 15px;">
-                    <i class="fa-solid fa-triangle-exclamation"></i> 莨第。譎る俣、御ｸ崎ｶｳしてう∪、吶。
+                    <i class="fa-solid fa-triangle-exclamation"></i> 休憩時間が不足しています
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
-                    <div class="<label-row"><span class="<label-text">求人の締切凾髢。</span></div>
+                    <div class="label-row"><span class="label-text">求人の締切時間</span></div>
                     <select name="deadline"
                         style="max-width: 300px; padding:10px; border-radius:8px; border:1px solid #ccc;">
                         <option value="start">【推奨】開始時刻と同時</option>
-                        <option value="1h">開始時刻の1時間剁E</option>
-                        <option value="2h">開始時刻の2時間剁E</option>
-                        <option value="3h">開始時刻の3時間剁E</option>
-                        <option value="5h">開始時刻の5時間剁E</option>
-                        <option value="8h">開始時刻の8時間剁E</option>
-                        <option value="12h">開始時刻の12時間剁E</option>
+                        <option value="1h">開始時刻の1時間前</option>
+                        <option value="2h">開始時刻の2時間前</option>
+                        <option value="3h">開始時刻の3時間前</option>
+                        <option value="5h">開始時刻の5時間前</option>
+                        <option value="8h">開始時刻の8時間前</option>
+                        <option value="12h">開始時刻の12時間前</option>
                         <option value="day_before">開始時刻の1日（24時間）前</option>
                         <option value="2days_before">開始時刻の2日（48時間）前</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <div class="<label-row">
-                        <span class="<label-text">募集人数</span>
+                    <div class="label-row">
+                        <span class="label-text">募集人数</span>
                         <span class="required-badge">必須</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -415,9 +415,10 @@
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="badge">
                     <div class="option-content">
-                        <div class="option-title">繝舌ャ繧ｸ髯仙ｮ壼。髢。<i class="fa-regular fa-circle-question"
+                        <div class="option-title">バッジ限定公開<i class="fa-regular fa-circle-question"
                                 style="color:#C7C7CC; cursor:pointer;"></i></div>
-                        <div class="option-desc">経験豊富なワーカーに働いてほしい求人におすすめです〜br>險ｭ螳壼庄閭ｽ、ｪ時給）,363蜀【･一。</div>
+                        <div class="option-desc">経験豊富なワーカーに働いてほしい求人におすすめです。<br>
+                            設定可能な時給 1,363円以上</div>
                     </div>
                 </label>
 
@@ -425,13 +426,13 @@
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="group">
                     <div class="option-content">
-                        <div class="option-title">繧ｰ繝ｫ繝ｼ繝鈴剞螳壼。髢。(59蛟九。繧ｰグループ≠を</div>
+                        <div class="option-title">グループ限定公開(59個のグループ)</div>
                         <div class="checkbox-item" style="margin-top: 8px;">
                             <input type="checkbox" name="auto_switch" checked>
-                            <span>自動で。御ｸ闊ｬ蜈ｬ髢九阪↓蛻。ｊ譖ｿえｋ。医。繝ｼ繧ｿ迚茨ｼ。</span>
+                            <span>自動で「一般公開」に切り替える（ベータ版）</span>
                         </div>
                         <div class="option-desc" style="margin-left: 20px;">
-                            。後や繝ｫ繝ｼ繝鈴剞螳壼。髢九阪〒蜍滄寔莠ｺ謨ｰ繧呈ｺた○なし。ｴ名医↓自動で。御ｸ闊ｬ蜈ｬ髢九阪↓蛻。ｊ譖ｿえ※。√。マッチングの讖滉ｼ壹ｒ蠅励ｄします。
+                            「グループ限定公開」で募集人数を満たさない場合に自動で「一般公開」に切り替えて、マッチングの機会を増やします。
                         </div>
                     </div>
                 </label>
@@ -440,9 +441,9 @@
                 <label class="radio-option">
                     <input type="radio" name="visibility" value="first_time">
                     <div class="option-content">
-                        <div class="option-title">初回ワーカー髯仙ｮ壼。髢。<i class="fa-regular fa-circle-question"
+                        <div class="option-title">初回ワーカー限定公開<i class="fa-regular fa-circle-question"
                                 style="color:#C7C7CC; cursor:pointer;"></i></div>
-                        <div class="option-desc">この店舗で逶ｴ霑代。2蟷ｴ髢薙∽ｸ店ｦ繧ょ共蜍咏ｵ碁ｨ薙′なし。Ρ繝ｼ繧ｫ繝ｼ、、代↓求人、瑚｡ｨ遉ｺ、輔ｌます吶。</div>
+                        <div class="option-desc">この店舗で直近の2年間に一度も勤務経験がないワーカーだけに求人が表示されます。</div>
                     </div>
                 </label>
 
@@ -450,8 +451,8 @@
                 <label class="radio-option" style="margin-bottom: 0;">
                     <input type="radio" name="visibility" value="url">
                     <div class="option-content">
-                        <div class="option-title">URL髯仙ｮ壼。髢。</div>
-                        <div class="option-desc">求人詳細繝壹。繧ｸの。悟。譛蔚RL。阪ｒ遏･、｣、ｦいるワーカー、、代↓求人、瑚｡ｨ遉ｺ、輔ｌます吶。</div>
+                        <div class="option-title">URL限定公開</div>
+                        <div class="option-desc">求人詳細ページの「共有URL」を知っているワーカーだけに求人が表示されます。</div>
                     </div>
                 </label>
             </div>
@@ -462,41 +463,41 @@
             <div class="card-body">
                 <div class="form-grid" style="align-items: flex-end;">
                     <div class="form-group">
-                        <div class="<label-row">
-                            <span class="<label-text">時給</span>
+                        <div class="label-row">
+                            <span class="label-text">時給</span>
                             <span class="required-badge">必須</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="wage" value="1300" style="width: 120px;" required>
-                            <span>冁E</span>
+                            <span>円</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="<label-row">
-                            <span class="<label-text">交通費</span>
+                        <div class="label-row">
+                            <span class="label-text">交通費</span>
                             <span class="required-badge">必須</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <input type="number" name="transport" value="700" style="width: 120px;" required>
-                            <span>冁E</span>
+                            <span>円</span>
                         </div>
                     </div>
                 </div>
                 <div class="option-desc" style="color: #666;">
-                    深夜手当！E2譎ゆｻ･髯阪。蜍､蜍呻ｼ峨∵ｮ区･ｭ所句ｽ難ｼ。譎る俣繧定ｶ。∴繧句共蜍呻ｼ峨。。∝。蜉帙＠、滓凾邨ｦに蠢懊§、ｦ閾ｪ蜍戊ｨ育ｮ励＆繧後∪、吶。br>
-                    驛ｽ驕灘ｺ懃恁、斐→の譛菴手ｳ。≡は<a href="#" style="color:#007AFF;">こちめE</a>をご確認ください〜br>
+                    深夜手当（22時以降の勤務）、残業手当（8時間を超える勤務）は、入力した時給に応じて自動計算されます。<br>
+                    都道府県ごとの最低賃金は<a href="#" style="color:#007AFF;">こちら</a>をご確認ください。<br>
                     <span
-                        style="color: #D67A00; font-weight: bold;">毎年10譛磯。↓都道府県の譛菴手ｳ。≡、悟､画峩、輔ｌ繧句庄閭ｽ諤ｧが、≠繧翫∪、吶よｱゆｺｺ譌･に驕ｩ逕ｨ、輔ｌ繧区怙菴手ｳ。≡の時給繧剃ｸ句屓繧峨↑うｈう↓豕ｨ諢上＠、ｦください〜</span>
+                        style="color: #D67A00; font-weight: bold;">毎年10月頃に都道府県の最低賃金が変更される可能性があります。求人日に適用される最低賃金の時給を下回らないようご注意ください。</span>
                 </div>
             </div>
         </div>
 
-        <!-- 閾ｪ蜍暮∽ｿ｡繝｡繝。そ繝ｼ繧ｸ -->
+        <!-- 閾ｪ蜍暮∽ｿ｡メッセージ -->
         <div class="card">
-            <div class="card-header">閾ｪ蜍暮∽ｿ｡繝｡繝。そ繝ｼ繧ｸ</div>
+            <div class="card-header">自動送信メッセージ</div>
             <div class="card-body">
                 <div class="form-group">
-                    <div class="<label-text" style="font-size: 13px; margin-bottom: 12px;">送信設定</div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">送信設定</div>
                     <div style="display:flex; gap:20px; font-size: 13px;">
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_send"
                                 value="true" checked> 送信する</label>
@@ -505,7 +506,7 @@
                     </div>
                 </div>
                 <div class="form-group" style="margin-top: 15px;">
-                    <div class="<label-text" style="font-size: 13px; margin-bottom: 12px;">送信対象</div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 12px;">送信対象</div>
                     <div style="display:flex; gap:20px; font-size: 13px;">
                         <label style="display:flex; align-items:center; gap:8px;"><input type="radio" name="msg_target"
                                 value="all"> 全員</label>
@@ -514,11 +515,11 @@
                     </div>
                 </div>
                 <div class="form-group" style="margin-top: 15px;">
-                    <div class="<label-text" style="font-size: 13px; margin-bottom: 10px;">繝｡繝。そ繝ｼ繧ｸ内ｮｹ</div>
+                    <div class="label-text" style="font-size: 13px; margin-bottom: 10px;">メッセージ内容</div>
                     <textarea name="auto_message" rows="4" style="resize: none;">
-申込みう◆、、阪≠繧翫′、ｨう＃、悶＞ます呻ｼ。
-蠖捺律蛻ｰ逹、励∪、励◆繧牙。蜿｣から蜈･、｣、ｦう◆、、阪√後ち繧､繝溘。から申込繧薙□〜。〒、吶阪→霑代￥の店怜藤に、贋ｼ昴∴ください〜
-一肴。轤ｹなしｩ、ゅｌ、ｰ繝｡繝。そ繝ｼ繧ｸ、狗ｷ頑･騾｣邨｡蜈医↓、秘｣邨｡ください〜</textarea>
+申し込みいただきありがとうございます。
+当日到着しましたら入口から入っていただき、「タイミーから申込んだ〇〇です」と近くの店員にお伝えください。
+不明点などあればメッセージか緊急連絡先へご連絡ください。</textarea>
                 </div>
             </div>
         </div>
@@ -551,21 +552,21 @@
             const hours = Math.floor(netWorkMin / 60);
             const mins = netWorkMin % 60;
 
-            document.getElementById('duration_display').textContent = `(${hours}時間${mins}分`;
+            document.getElementById('duration_display').textContent = `(${hours}時間${mins}分)`;
 
-            // 莨第。譎る俣の隴ｦ蜻翫Ο繧ｸ繝。け
+            // 休憩時間の隴ｦ蜻翫Ο繧ｸ繝。け
             const warningEl = document.getElementById('break_warning');
             if (diffMin > 480) { // 8時間趁E
                 if (breakDuration < 60) {
                     warningEl.style.display = 'block';
-                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が8譎る俣繧定ｶ。∴繧九◆繧√。0蛻【･一翫。莨第。、悟ｿ。ｦ√〒、吶。;
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が8時間を超えるため60分以上の休憩が必要です。';
                 } else {
                     warningEl.style.display = 'none';
                 }
-            } else if (diffMin > 360) { // 6時間趁E
+            } else if (diffMin > 360) { // 6時間超
                 if (breakDuration < 45) {
                     warningEl.style.display = 'block';
-                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が6譎る俣繧定ｶ。∴繧九◆繧√。5蛻【･一翫。莨第。、悟ｿ。ｦ√〒、吶。;
+                    warningEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 労働時間が6時間を超えるため45分以上の休憩が必要です。';
                 } else {
                     warningEl.style.display = 'none';
                 }

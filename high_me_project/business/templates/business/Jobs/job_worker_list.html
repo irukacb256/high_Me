@@ -165,13 +165,13 @@
     <h1 class="matching-title">マッチングしたワーカー ({{ matched_workers|length }}/{{ posting.count }}人)</h1>
     <div style="display: flex; gap: 10px;">
         <button class="btn-tool" onclick="location.reload()">更新</button>
-        <button class="btn-tool">CSVダウンロープ</button>
-        <button class="btn-tool btn-dark"><i class="fa-regular fa-envelope"></i> 一諡ｬで繝｡繝。そ繝ｼ繧ｸ繧帝√ｋ</button>
+        <button class="btn-tool">CSVダウンロード</button>
+        <button class="btn-tool btn-dark"><i class="fa-regular fa-envelope"></i> 一括でメッセージを送る</button>
     </div>
 </div>
 
 <div class="info-banner">
-    <i class="fa-solid fa-bullhorn"></i> [、昴。莉望 ボタンからワーカーの欠勤を報告できるようになりました
+    <i class="fa-solid fa-bullhorn"></i> [その他] ボタンからワーカーの欠勤を報告できるようになりました
 </div>
 
 <table class="worker-table">
@@ -182,7 +182,7 @@
             <th>状態</th>
             <th>電話</th>
             <th>チェックイン/アウト</th>
-            <th>Good邇）遞ｼ蜒榊屓謨ｰ</th>
+            <th>Good率 / 勤務回数</th>
             <th>操作</th>
         </tr>
     </thead>
@@ -192,7 +192,7 @@
             <td style="text-align: center;"><input type="checkbox"></td>
             <td>
                 <div class="worker-info-cell">
-                    <!-- 鬘泌。逵溘。蜿肴丐 -->
+                    <!-- 鬘泌。逵溘。反映 -->
                     {% if match.safe_profile and match.safe_profile.face_photo %}
                     <img src="{{ match.safe_profile.face_photo.url }}" class="worker-img">
                     {% else %}
@@ -227,7 +227,7 @@
                 </div>
                 <!-- 繧ｹ繧ｭ繝ｫ繝舌ャ繧ｸ。亥崋螳壹し繝ｳ繝励Ν）-->
                 <div class="tag-row">
-                    <span class="skill-tag tag-orange"><i class="fa-solid fa-magnifying-glass"></i> 繝帙。繝ｫ</span>
+                    <span class="skill-tag tag-orange"><i class="fa-solid fa-magnifying-glass"></i> ホール</span>
                     <span class="skill-tag tag-purple"><i class="fa-solid fa-utensils"></i> 洗い場</span>
                 </div>
             </td>
@@ -235,15 +235,15 @@
             <td style="color:#aaa;">...</td>
             <td style="font-size:12px; line-height:1.5;">
                 {% if match.attendance_at %}
-                <span style="color: #2b8a3e; font-weight: bold;">チェックイン貂。</span>
+                <span style="color: #2b8a3e; font-weight: bold;">チェックイン済</span>
                 {% else %}
-                <span style="color: #888;">譛ｪチェックイン</span>
+                <span style="color: #888;">未チェックイン</span>
                 {% endif %}
                 <br>
                 {% if match.leaving_at %}
-                <span style="color: #2b8a3e; font-weight: bold;">チェック繧｢繧ｦ繝域ｸ。</span>
+                <span style="color: #2b8a3e; font-weight: bold;">チェックアウト済</span>
                 {% else %}
-                <span style="color: #888;">譛ｪチェックアウト</span>
+                <span style="color: #888;">未チェックアウト</span>
                 {% endif %}
             </td>
             <td>
@@ -271,15 +271,15 @@
         {% empty %}
         <tr>
             <td colspan="7" style="text-align: center; padding: 50px; color: #999;">
-                繝槭ャ繝√Φ繧ｰ、励◆ワーカーはまだいません
+                マッチング、したワーカーはまだいません
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<a href="{% url 'biz_job_posting_detail' store.id posting.id %}" class="back-link">
-    <i class="fa-solid fa-chevron-left"></i> 求人詳細へ戻めE
+<a href="{% url 'biz_job_posting_detail' store.id posting_id %}" class="back-link">
+    <i class="fa-solid fa-chevron-left"></i> 求人詳細へ戻る
 </a>
 
 {% endblock %}

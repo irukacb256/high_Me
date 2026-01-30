@@ -253,14 +253,14 @@
     <a href="{% url 'biz_worker_review_job_list' store.id %}" class="breadcrumb">ワーカー評価</a> &gt; <span
         style="font-weight:bold;">未レビューのワーカー</span>
     <h1 class="page-title">未レビューのワーカー</h1>
-    <p class="page-desc">、昴ｌ、槭ｌの繝ｬ繝薙Η繝ｼ鬆。岼を入力して。∵･ｭ蜍吶′邨ゆ了＠たΡ繝ｼ繧ｫ繝ｼの繝ｬ繝薙Η繝ｼ繧帝∽ｿ｡してください</p>
+    <p class="page-desc">それぞれのレビュー項目を入力して、業務が終了したワーカーのレビューを送信してください</p>
 </div>
 
 <div class="job-title-header">
     <div class="job-title-text">{{ job.title }}</div>
     <div class="job-actions">
         <button
-            style="border:1px solid #ddd; background:white; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">まとめて入力すめE</button>
+            style="border:1px solid #ddd; background:white; padding:6px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">まとめて入力する</button>
         <button
             style="background:#007AFF; color:white; border:none; padding:6px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">送信する</button>
     </div>
@@ -288,28 +288,28 @@
 
             <!-- Good/Bad -->
             <div class="form-section">
-                <div class="section-label">good/badを選抁E</div>
+                <div class="section-label">good/badを選択</div>
                 <div class="gb-toggle">
-                    <div class="gb-btn good" data-val="good" onclick="toggleGoodBad(this, 'good')">i
+                    <div class="gb-btn good" data-val="good" onclick="toggleGoodBad(this, 'good')"><i
                             class="fa-solid fa-thumbs-up"></i></div>
-                    <div class="gb-btn bad" data-val="bad" onclick="toggleGoodBad(this, 'bad')">i
+                    <div class="gb-btn bad" data-val="bad" onclick="toggleGoodBad(this, 'bad')"><i
                             class="fa-solid fa-thumbs-down"></i></div>
                 </div>
             </div>
 
             <!-- Skills -->
             <div class="form-section">
-                <div class="section-label">良かったスキルを選抁E</div>
-                <button class="btn-select-skill" onclick="openSkillModal(this)">スキルを選抁E</button>
-                <div class="<selected-skills-display"></div>
+                <div class="section-label">良かったスキルを選択</div>
+                <button class="btn-select-skill" onclick="openSkillModal(this)">スキルを選択</button>
+                <div class="selected-skills-display"></div>
             </div>
 
             <!-- Groups -->
             <div class="form-section">
                 <div class="section-label">所属するグループを変更</div>
                 <div class="group-desc">
-                    繧ｰグループの譁ｰ隕丈ｽ懈。・編集。<a href="{% url 'biz_group_management' store.id %}"
-                        class="group-link">繧ｰ繝ｫ繝ｼ繝礼ｮ｡逅）繝ｼ繧ｸ</a>をご利用ください〜
+                    グループの新規作成・編集。<a href="{% url 'biz_group_management' store.id %}"
+                        class="group-link">グループ管理ページ</a>をご利用ください。
                 </div>
                 <div class="checkbox-list">
                     {% for group in group_definitions %}
@@ -323,7 +323,7 @@
             </div>
 
             <!-- Manually added Send Button inside card for individual sending as per previous logic, 
-                 though header has "Send All" button which is not implemented yet. 
+                 though header has "Send All" <button which is not implemented yet. 
                  I'll add a per-card send button for now to match functionality. -->
             <div style="text-align:right;">
                 <button onclick="submitReview(this)"
@@ -334,7 +334,7 @@
     </div>
     {% empty %}
     <div style="text-align:center; padding:50px; color:#999;">
-        譛ｪ繝ｬ繝薙Η繝ｼのワーカーはいません
+        未レビューのワーカーはいません
     </div>
     {% endfor %}
 </div>
@@ -342,20 +342,20 @@
 <!-- Skills Modal -->
 <div id="skillModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0;">スキルを選抁E</h3>
+        <h3 style="margin-top:0;">スキルを選択</h3>
         <div class="badge-options">
-            <div class="badge-option" onclick="<selectSkill(this, '梱匁E)">梱匁E</div>
-            <div class="badge-option" onclick="<selectSkill(this, 'ピッキング')">ピッキング</div>
-            <div class="badge-option" onclick="<selectSkill(this, '検品')">検品</div>
-            <div class="badge-option" onclick="<selectSkill(this, '莉募。う)">莉募。う</div>
-            <div class="badge-option" onclick="<selectSkill(this, '搬入出')">搬入出</div>
-            <div class="badge-option" onclick="<selectSkill(this, '繝帙。繝ｫ')">繝帙。繝ｫ</div>
-            <div class="badge-option" onclick="<selectSkill(this, '繧ｭ繝。メ繝ｳ')">繧ｭ繝。メ繝ｳ</div>
-            <div class="badge-option" onclick="<selectSkill(this, '貂。祉')">貂。祉</div>
+            <div class="badge-option" onclick="selectSkill(this, '梱包')">梱包</div>
+            <div class="badge-option" onclick="selectSkill(this, 'ピッキング')">ピッキング</div>
+            <div class="badge-option" onclick="selectSkill(this, '検品')">検品</div>
+            <div class="badge-option" onclick="selectSkill(this, '仕分け')">仕分け</div>
+            <div class="badge-option" onclick="selectSkill(this, '搬入出')">搬入出</div>
+            <div class="badge-option" onclick="selectSkill(this, 'ホール')">ホール</div>
+            <div class="badge-option" onclick="selectSkill(this, 'キッチン')">キッチン</div>
+            <div class="badge-option" onclick="selectSkill(this, '掃除')">掃除</div>
         </div>
         <div style="text-align:right;">
             <button onclick="closeSkillModal()"
-                style="background:#007AFF; color:white; border:none; padding:5px 15px; border-radius:4px;">決宁E</button>
+                style="background:#007AFF; color:white; border:none; padding:5px 15px; border-radius:4px;">決定</button>
         </div>
     </div>
 </div>
@@ -410,7 +410,7 @@
         // Good/Bad
         const activeGb = card.querySelector('.gb-btn.active');
         if (!activeGb) {
-            alert('Goodます溘。Badを選択してください');
+            alert('GoodまたはBadを選択してください');
             return;
         }
         const reviewType = activeGb.dataset.val;

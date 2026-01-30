@@ -162,18 +162,18 @@
 <div class="list-header">
     <div>
         <h1 class="list-title">求人のひな形一覧</h1>
-        <p class="list-sub">菴懈。、励◆求人の、ｲ、ｪ蠖｢一覧、瑚｡ｨ遉ｺ、輔ｌ、ｾう</p>
+        <p class="list-sub">作成した求人のひな形一覧が表示されます</p>
     </div>
-    <!-- ここは store.id 、悟ｿ。ｦ。(urls.py で store_id 繧呈ｱゅａ、ｦいるたａ) -->
+    <!-- ここは store.id が必要(urls.py で store_id を求めているため) -->
     <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">
-        <i class="fa-solid fa-plus"></i> 求人の、ｲ、ｪ蠖｢繧呈眠隕丈ｽ懈。
+        <i class="fa-solid fa-plus"></i> 求人のひな形を新規作成
     </a>
 </div>
 
 <div class="sort-section">
-    <span style="font-size: 12px; font-weight: bold;">並び替ぁE</span>
-    <button class="btn-sort active">菴懈。譌･、梧眠、励＞</button>
-    <button class="btn-sort">求人の菴懈。、梧眠、励＞</button>
+    <span style="font-size: 12px; font-weight: bold;">並び替え</span>
+    <button class="btn-sort active">作成日が新しい</button>
+    <button class="btn-sort">求人の作成が新しい</button>
 </div>
 
 <div class="template-list-container">
@@ -200,25 +200,25 @@
 
             <div class="card-footer">
                 <div class="action-btns">
-                    <!-- 【修正2】編雁ERLから store.id を削除 -->
-                    <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action">i
-                            class="fa-solid fa-pen"></i> 編雁E</a>
+                    <!-- 【修正2】編集RLから store.id を削除 -->
+                    <a href="{% url 'biz_template_edit' template.pk %}" class="btn-action"><i
+                            class="fa-solid fa-pen"></i> 編集</a>
                     <button class="btn-action"><i class="fa-solid fa-copy"></i> コピー</button>
-                    <!-- 霑ｽ蜉。壼炎髯､ボタンの繝ｪ繝ｳ繧ｯ蜈郁ｨｭ螳。-->
-                    <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action">i
+                    <!-- 追加・削除ボタンのリンク設定 -->
+                    <a href="{% url 'biz_template_delete' template.pk %}" class="btn-action"><i
                             class="fa-solid fa-trash"></i> 削除</a>
                 </div>
-                <!-- 【修正3。第ｱゆｺｺ菴懈。URLから store.id を削除 (urls.py で template_pk のみ繧呈欠螳壹＠、ｦいるたａ) -->
+                <!-- 【修正3】求人作成URLから store.id を削除 (urls.py で template_pk のみ指定しているため) -->
                 <a href="{% url 'biz_job_create' template.pk %}" class="btn-create-job-now">
-                    <i class="fa-solid fa-circle-plus"></i> この、ｲ、ｪ蠖｢繧貞。に求人を作成
+                    <i class="fa-solid fa-circle-plus"></i> このひな形を元に求人を作成
                 </a>
             </div>
         </div>
     </div>
     {% empty %}
     <div style="background: white; padding: 80px; text-align: center; border: 1px dashed #ccc; border-radius: 8px;">
-        <p style="color: #999; margin-bottom: 20px;">菴懈。貂医∩の、ｲ、ｪ蠖｢が、≠繧翫∪、帙ｓ</p>
-        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">譛蛻昴。、ｲ、ｪ蠖｢を作成する</a>
+        <p style="color: #999; margin-bottom: 20px;">作成貂医∩のひな形がありません</p>
+        <a href="{% url 'biz_template_create' store.id %}" class="btn-blue">最初のひな形を作成する</a>
     </div>
     {% endfor %}
 </div>

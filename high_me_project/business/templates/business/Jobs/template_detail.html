@@ -159,7 +159,7 @@
 
     <div class="page-header">
         <div class="page-title">求人のひな形詳細</div>
-        <div class="page-subtitle">求人のひな形を確認できまぁE</div>
+        <div class="page-subtitle">求人のひな形を確認できまえ</div>
     </div>
 
     <div class="detail-card">
@@ -180,7 +180,7 @@
 
         <div class="detail-row">
             <div class="detail-label">求人タイトル</div>
-            <div class="detail-value">strong>{{ template.title }}</strong></div>
+            <div class="detail-value"><strong>{{ template.title }}</strong></div>
         </div>
         <div class="detail-row">
             <div class="detail-label">業種 / 職種</div>
@@ -211,14 +211,14 @@
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">蠕。∞</div>
+            <div class="detail-label">待遇</div>
             <div class="detail-value">
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">譛ｪ邨碁ｨ楢。ｭ楢ｿ。</span>{% endif %}
+                    {% if template.has_unexperienced_welcome %}<span class="tag-blue">未経験者歓迎</span>{% endif %}
                     {% if template.has_bike_car_commute %}<span class="tag-blue">バイク/車通勤可</span>{% endif %}
-                    {% if template.has_clothing_free %}<span class="tag-blue">譛崎｣）逕ｱ</span>{% endif %}
+                    {% if template.has_clothing_free %}<span class="tag-blue">服装自由</span>{% endif %}
                     {% if template.has_coupon_get %}<span class="tag-blue">クーポンGET</span>{% endif %}
-                    {% if template.has_meal %}<span class="tag-blue">ます九↑う≠を</span>{% endif %}
+                    {% if template.has_meal %}<span class="tag-blue">まかないあり</span>{% endif %}
                     {% if template.has_hair_color_free %}<span class="tag-blue">髪垁Eカラー自由</span>{% endif %}
                     {% if template.has_bike_bicycle_commute %}<span class="tag-blue">バイク/自転車通勤可</span>{% endif %}
                     {% if template.has_bicycle_commute %}<span class="tag-blue">自転車通勤可</span>{% endif %}
@@ -253,7 +253,7 @@
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">雉。ｼ設定</div>
+            <div class="detail-label">資格設定</div>
             <div class="detail-value">
                 {% if template.requires_qualification %}
                 あり）% if template.qualification %}{{ template.qualification.name }}{% else %}{{
@@ -274,7 +274,7 @@
             <div class="detail-value">
                 {% if template.manual_pdf %}
                 <a href="{{ template.manual_pdf.url }}" target="_blank" style="color:#007AFF; text-decoration:none;">
-                    <i class="far fa-file-pdf"></i> PDFを確認すめE
+                    <i class="far fa-file-pdf"></i> PDFを確認する
                 </a>
                 {% else %}
                 なし
@@ -283,7 +283,7 @@
         </div>
 
         <div class="detail-row" style="border-bottom: none;">
-            <div class="detail-label">閾ｪ蜍暮∽ｿ｡繝｡繝。そ繝ｼ繧ｸ</div>
+            <div class="detail-label">閾ｪ蜍暮∽ｿ｡メッセージ</div>
             <div class="detail-value">
                 {{ template.auto_message|default:"未設定 " }}
             </div>

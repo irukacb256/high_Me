@@ -617,6 +617,7 @@ class JobWorkerListView(BusinessLoginRequiredMixin, ListView):
         
         context['store'] = self.store
         context['posting'] = self.posting
+        context['posting_id'] = self.posting.id
         return context
 
 class JobWorkerDetailView(BusinessLoginRequiredMixin, DetailView):
@@ -683,6 +684,7 @@ class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
     model = JobPosting
     form_class = JobPostingVisibilityForm
     template_name = 'business/Jobs/job_posting_visibility_edit.html'
+    context_object_name = 'posting'
 
     def get_queryset(self):
         # 自分の店舗の求人のみ編集可能にする

@@ -122,10 +122,10 @@
             <input type="radio" name="visibility" value="badge" class="option-radio" {% if posting.visibility=='badge'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">繝舌ャ繧ｸ髯仙ｮ壼。髢。<i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-label">バッジ限定公開<i class="fa-regular fa-circle-question help-icon"></i></div>
                 <div class="option-description">
-                    経験豊富なワーカーに働いてほしい求人におすすめです〜br>
-                    險ｭ螳壼庄閭ｽ、ｪ時給）,300蜀【･一。
+                    経験豊富なワーカーに働いてほしい求人におすすめです。<br>
+                    設定可能な時給 1,300円以上。
                 </div>
             </div>
         </label>
@@ -135,7 +135,7 @@
             <input type="radio" name="visibility" value="group" class="option-radio" {% if posting.visibility=='group'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">繧ｰ繝ｫ繝ｼ繝鈴剞螳壼。髢具ｼ。0蛟九。繧ｰグループ≠繧奇ｼ。</div>
+                <div class="option-label">グループ限定公開（0個のグループ）</div>
                 <!-- Note: (20蛟九。繧ｰグループ≠を is static for now as mock data per instruction/image unless dynamic count is passed -->
             </div>
         </label>
@@ -145,9 +145,9 @@
             <input type="radio" name="visibility" value="first_time" class="option-radio" {% if
                 posting.visibility=='first_time' %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">初回ワーカー髯仙ｮ壼。髢。<i class="fa-regular fa-circle-question help-icon"></i></div>
+                <div class="option-label">初回ワーカー限定公開<i class="fa-regular fa-circle-question help-icon"></i></div>
                 <div class="option-description">
-                    この店舗で逶ｴ霑代。2蟷ｴ髢薙∽ｸ店ｦ繧ょ共蜍咏ｵ碁ｨ薙′なし。Ρ繝ｼ繧ｫ繝ｼ、、代↓求人、瑚｡ｨ遉ｺ、輔ｌます吶。
+                    この店舗で直近の2年間に一度も勤務経験がないワーカーだけに求人が表示されます。
                 </div>
             </div>
         </label>
@@ -157,14 +157,14 @@
             <input type="radio" name="visibility" value="url" class="option-radio" {% if posting.visibility=='url'
                 %}checked{% endif %}>
             <div class="option-content">
-                <div class="option-label">URL髯仙ｮ壼。髢。</div>
+                <div class="option-label">URL限定公開</div>
                 <div class="option-description">
-                    求人詳細繝壹。繧ｸの。悟。譛蔚RL。阪ｒ遏･、｣、ｦいるワーカー、、代↓求人、瑚｡ｨ遉ｺ、輔ｌます吶。
+                    求人詳細ページの「共有URL」を知っているワーカーだけに求人が表示されます。
                 </div>
             </div>
         </label>
 
-        <button type="submit" class="btn-save">設定を保存すめE</button>
+        <button type="submit" class="btn-save">設定を保存する</button>
 
     </form>
 </div>

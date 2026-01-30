@@ -30,7 +30,7 @@
         margin-bottom: 20px;
     }
 
-    /* 基本情報繧ｨ繝ｪ繧｢ */
+    /* 基本情報エリア */
     .profile-header {
         display: flex;
         gap: 20px;
@@ -75,7 +75,7 @@
         height: 40px;
         border-radius: 50%;
         background: #FFD700;
-        /* 繝繝溘。 */
+        /* バッジ */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -121,7 +121,7 @@
         cursor: pointer;
     }
 
-    /* 繝）繧ｿ繝ｪ繧ｹ繝。*/
+    /* データリスト */
     .data-row {
         display: flex;
         justify-content: space-between;
@@ -173,7 +173,7 @@
         cursor: pointer;
     }
 
-    /* 緊急連絡允E*/
+    /* 緊急連絡先 */
     .emergency-box {
         background: white;
         border: 1px solid #eee;
@@ -273,10 +273,10 @@
 <div class="worker-detail-container">
     <div class="page-title">ワーカー詳細</div>
     <div class="page-desc">
-        ワーカー、輔ｓの詳細、碁夢覧できますゅ♀豌励↓蜈･繧翫。登録/隗｣髯､。√ヶ繝ｭ繝。けの霑ｽ蜉/解除を行うことができます〜
+        ワーカーの詳細が閲覧できます。お気に入りの登録/解除、ブロックの追加/解除を行うことができます。
     </div>
 
-    <!-- 基本情報繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
+    <!-- 基本情報セクション -->
     <div class="section-box">
         <div class="profile-header">
             {% if worker.workerprofile.face_photo %}
@@ -289,11 +289,11 @@
             {% endif %}
 
             <div class="profile-info">
-                <!-- 名榊燕は蛟倶ｺｺ情報菫晁ｭｷの隕ｳ轤ｹから繧､繝九す繝｣繝ｫ遲峨↓する蝣ｴ名医ｂあるが、∽ｻ墓ｧ倅ｸ翫。詳細なしｮで陦ｨ遉ｺ -->
+                <!-- 名前は個人情報保護の観点からイニシャル等にする場合もあるが、仕様上詳細なしで表示 -->
                 <!-- <div style="width:100px; height:20px; background:#eee;"></div> マスキング表現 -->
             </div>
 
-            <a href="#" class="block-btn">繝悶Ο繝。け設定</a>
+            <a href="#" class="block-btn">ブロック設定</a>
         </div>
 
         <div class="badge-brief">
@@ -301,10 +301,10 @@
             <i class="fa-regular fa-circle-question" style="color:#999;"></i>
 
             <div style="display:flex; gap:10px; margin-left:10px;">
-                <!-- 、薙％に迯ｲ蠕玲ｸ医∩繝舌ャ繧ｸの一ｻ隕√↑繧ゅ。繧定｡ｨ遉ｺ -->
-                <!-- 繝繝溘。 -->
+                <!-- ここには取得済みバッジの主要なものを表示 -->
+                <!-- バッジ -->
                 <div class="main-badge-icon"><i class="fa-solid fa-bell-concierge"></i></div>
-                <div style="font-size:12px; text-align:center;">繝帙。繝ｫ</div>
+                <div style="font-size:12px; text-align:center;">ホール</div>
             </div>
         </div>
 
@@ -317,14 +317,14 @@
                 <span style="font-size:12px; color:#999;">なし</span>
                 {% endfor %}
             </div>
-            <button class="btn-group-change">繧ｰグループの変更</button>
+            <button class="btn-group-change">グループの変更</button>
         </div>
     </div>
 
-    <!-- 繧ｹ繧ｿ繝。ヤ繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ -->
+    <!-- ステータスセクション -->
     <div class="section-box" style="padding:0;">
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">平均Good邇。ｼ育峩霑。0蝗槭。隧穂ｾ｡）</div>
+            <div class="data-label">平均Good率（直近30回の評価）</div>
             <div class="data-value">100%</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
@@ -332,7 +332,7 @@
             <div class="data-value">0%</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">この店舗で蜒阪＞、溷屓謨ｰ</div>
+            <div class="data-label">この店舗で働いた回数</div>
             <div class="data-value">1回</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
@@ -340,7 +340,7 @@
             <div class="data-value">2回</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
-            <div class="data-label">働いた合計時閁E</div>
+            <div class="data-label">働いた合計時間</div>
             <div class="data-value">4.0時間</div>
         </div>
         <div class="data-row" style="padding:15px 20px;">
@@ -350,8 +350,8 @@
 
         <div style="padding:15px 20px; border-top:1px solid #eee;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                <div class="data-label">管理畑繝｡繝｢</div>
-                <button class="btn-edit-memo">編雁E</button>
+                <div class="data-label">管理用メモ</div>
+                <button class="btn-edit-memo">編集</button>
             </div>
             <div class="memo-note">※ワーカーには公開されません</div>
             {% if memo %}
@@ -360,18 +360,18 @@
         </div>
     </div>
 
-    <!-- 緊急連絡允E-->
+    <!-- 緊急連絡先 -->
     <div class="section-box">
-        <div class="emergency-title">ワーカーの緊急連絡允E</div>
+        <div class="emergency-title">ワーカーの緊急連絡先</div>
         <div class="emergency-desc">
-            ワーカーさんの緊急連絡先を取得することができます〜br>
-            蛟倶ｺｺ情報で、吶。で。∵ｪ謌代ｄ莠区腐なしｩ邱頑･の蝣ｴ名医↓のみ、泌茜逕ｨください〜
+            ワーカーさんの緊急連絡先を取得することができます。<br>
+            個人情報ですので、怪我や事故などの緊急の場合にのみ、ご使用ください。
         </div>
         <button class="btn-show-contact">緊急連絡先を表示する</button>
         <div style="font-size:12px; color:#666; margin-top:10px;">
-            莉･一九。う★繧後°に隧ｲ蠖薙☆繧九◆繧√∫ｷ頑･騾｣邨｡蜈医ｒ陦ｨ遉ｺで、阪∪、帙ｓ〜br>
-            。 ワーカー、輔ｓ、檎ｷ頑･騾｣邨｡蜈医ｒ登録してう↑うbr>
-            。 ワーカーさんの緊急連絡先を取得できる期間に該当しなし
+            以下のいずれかに該当するため、緊急連絡先を表示できません。<br>
+            ・ワーカーさんが緊急連絡先を登録していない<br>
+            ・ワーカーさんの緊急連絡先を取得できる期間に該当しない
         </div>
     </div>
 
@@ -380,8 +380,8 @@
         <div class="badge-detail-title">バッジ詳細</div>
 
         <div style="font-size:12px; color:#666; margin-bottom:20px;">
-            隱榊ｮ壹＆繧後◆蝗樊焚。壹梧ｬ｡蝗槭ｂ鬆ｼみた＞業蜍吶阪→して驕ｸ謚槭＆繧後◆蝗樊焚<br>
-            隱榊ｮ壹＠、溷ｺ苓。謨ｰ。壹梧ｬ｡蝗槭ｂ鬆ｼみた＞業蜍吶阪→して驕ｸ謚槭＠、溷ｺ苓。の謨ｰ
+            認定された回数：次回も頼みたい業務として選択された回数<br>
+            認定した店舗数：次回も頼みたい業務として選択した店舗の数
         </div>
 
         {% for wb in worker_badges %}
@@ -399,7 +399,7 @@
             <div style="display:flex; align-items:center; gap:10px;">
                 <div class="badge-detail-counts">
                     認定された回数 <span class="count-highlight">{{ wb.certified_count }}</span>
-                    隱榊ｮ壹＠、溷ｺ苓。謨ｰ <span class="count-highlight">{{ wb.certified_store_count }}</span>
+                    認定した店舗数 <span class="count-highlight">{{ wb.certified_store_count }}</span>
                 </div>
                 <button class="btn-detail-toggle">詳細 <i class="fa-solid fa-chevron-down"></i></button>
             </div>

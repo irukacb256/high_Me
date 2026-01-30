@@ -210,7 +210,7 @@
         gap: 8px;
         transition: background-color 0.2s;
         flex-shrink: 0;
-        /* 邵ｮ、ｾなし。ｈう↓する */
+        /* 縮小なし。ｈう↓する */
         white-space: nowrap;
         /* 繝。く繧ｹト謚倥ｊ霑斐＠遖∵ｭ｢ */
         margin-bottom: 0;
@@ -236,10 +236,10 @@
     <!-- Header -->
     <div class="chat-header">
         <a href="{% url 'biz_message_list' %}" class="back-link">
-            <i class="fa-solid fa-chevron-left"></i> &nbsp;繝｡繝。そ繝ｼ繧ｸ一覧、ｸ謌ｻを
+            <i class="fa-solid fa-chevron-left"></i> &nbsp;メッセージ一覧へ戻る
         </a>
-        <h2 class="page-title">繝｡繝。そ繝ｼ繧ｸ詳細</h2>
-        <p class="page-description">繝槭ャ繝√Φ繧ｰしている求人に、､う※。√Γ繝。そ繝ｼ繧ｸでをｊ、ｨ繧翫〒きます。</p>
+        <h2 class="page-title">メッセージ詳細</h2>
+        <p class="page-description">マッチングしている求人について、メッセージでやり取りできます。</p>
     </div>
 
     <!-- Info Card -->
@@ -264,12 +264,12 @@
     <div class="chat-box" id="chatLog">
         {% if not messages %}
         <div style="text-align: center; color: #aaa; margin-top: 40px;">
-            <p>繝｡繝。そ繝ｼ繧ｸはまだありません〜</p>
+            <p>メッセージはまだありません〜</p>
         </div>
         {% endif %}
 
         {% for msg in messages %}
-        <!-- 譌･莉伜､画峩邱壹。陦ｨ遉ｺ -->
+        <!-- 日日付変更線陦ｨ遉ｺ -->
         {% ifchanged msg.created_at|date:"Y-m-d" %}
         <div class="text-center my-3">
             <span class="text-muted small fw-bold">{{ msg.created_at|date:"n月日 (D)" }}</span>
@@ -307,10 +307,10 @@
     <!-- Input Area -->
     <form method="POST" class="<input-area">
         {% csrf_token %}
-        <textarea name="content" class="chat-textarea" placeholder="、顔筏、苓ｾｼみう◆、、阪≠繧翫′、ｨう＃、悶＞ます吶。#13;&#10;当日はよろしくお願いします〜
+        <textarea name="content" class="chat-textarea" placeholder="お申し込みう◆、、阪≠繧翫′、ｨう＃、悶＞ます吶。#13;&#10;当日はよろしくお願いします〜
             required></textarea>
 
-        <button type="submit" class="send-btn">
+        <button type=" submit" class="send-btn">
             <i class="fa-solid fa-paper-plane"></i> 送信
         </button>
     </form>
