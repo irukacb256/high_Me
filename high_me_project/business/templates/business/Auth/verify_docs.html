@@ -55,7 +55,7 @@
         margin-bottom: 20px;
     }
 
-    /* 繧｢繝）繝ｭ繝ｼ繝峨お繝ｪ繧｢ */
+    /* アップロードエリア */
     .upload-zone {
         border: 2px dashed #ddd;
         border-radius: 10px;
@@ -78,7 +78,7 @@
         display: block;
     }
 
-    /* 繧ｹ繝槭。から繧｢繝）繝ｭート*/
+    /* スマホからアップロード */
     .mobile-link-box {
         background: #F0F7FF;
         border: 1px solid #B3D7F7;
@@ -101,7 +101,7 @@
         font-size: 12px;
     }
 
-    /* チェック繝ｪ繧ｹ繝。*/
+    /* チェックリスト */
     .checklist-container {
         margin-top: 40px;
         padding-top: 30px;
@@ -162,10 +162,10 @@
 
 <!-- ステッパー -->
 <div class="stepper">
-    <div class="step">メール登録</div>
-    <div class="step">アカウント登録</div>
-    <div class="step active no-check">3. 事業者登録</div>
-    <div class="step inactive no-check">4. 店舗登録</div>
+    <div class="step">1.メール登録</div>
+    <div class="step">2.アカウント登録</div>
+    <div class="step active no-check">3.事業者登録</div>
+    <div class="step inactive no-check">4.店舗登録</div>
 </div>
 
 <h1>事業者確認書類の送信</h1>
@@ -174,7 +174,7 @@
     {% csrf_token %}
 
     <div class="doc-select-section">
-        <label class="<label-title">1. 提出する書類を選択してください</label>
+        <label class="label-title">1. 提出する書類を選択してください</label>
         <select name="doc_type" id="doc_type">
             <option value="">選択してください</option>
             <option value="履歴事項全部証明書">履歴事項全部証明書（法人の場合）</option>
@@ -182,7 +182,7 @@
             <option value="運転免許証">代表者 運転免許証</option>
         </select>
 
-        <label class="<label-title">2. 書類をアップロードしてください</label>
+        <label class="label-title">2. 書類をアップロードしてください</label>
         <div class="upload-zone" onclick="document.getElementById('file-input').click()">
             <div id="upload-placeholder">
                 <span style="font-size: 40px;">📄</span>
@@ -203,7 +203,7 @@
     </div>
 
     <div class="checklist-container">
-        <label class="<label-title">3. 確認項目にチェックをつけてください</label>
+        <label class="label-title">3. 確認項目にチェックをつけてください</label>
 
         <div class="check-group">
             <div class="check-group-title">【共通の確認事項】</div>

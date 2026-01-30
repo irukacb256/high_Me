@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout # logoutを追加
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.utils import timezone
@@ -19,7 +20,8 @@ from .mixins import BusinessLoginRequiredMixin
 
 from .forms import (
     SignupForm, AccountRegisterForm, BusinessRegisterForm, StoreSetupForm,
-    JobTemplateForm, JobCreateFromTemplateForm, JobPostingVisibilityForm
+    JobTemplateForm, JobCreateFromTemplateForm, JobPostingVisibilityForm,
+    VerifyDocsForm
 )
 
 # --- Helper Logic ---
@@ -88,6 +90,12 @@ class SignupView(FormView):
     form_class = SignupForm
     success_url = reverse_lazy('biz_account_register')
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            # ログイン済みの場合はログアウトして新規登録フローを開始させる
+            logout(request)
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         # セッションにメールを保存して次へ
         email = form.cleaned_data['email']
@@ -105,7 +113,12 @@ class AccountRegisterView(FormView):
     form_class = AccountRegisterForm
     success_url = reverse_lazy('biz_business_register')
 
+    success_url = reverse_lazy('biz_business_register')
+
     def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('biz_portal')
+
         signup_data = request.session.get('biz_signup_data')
         if not signup_data:
             return redirect('biz_signup')
@@ -151,11 +164,26 @@ class BusinessRegisterView(FormView):
         self.request.session['biz_signup_data'] = signup_data
         return super().form_valid(form)
 
-class VerifyDocsView(TemplateView):
+class VerifyDocsView(FormView):
     template_name = 'business/Auth/verify_docs.html'
-    
-    def post(self, request, *args, **kwargs):
-        return redirect('biz_store_setup')
+    form_class = VerifyDocsForm
+    success_url = reverse_lazy('biz_store_setup')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'businessprofile'):
+                return redirect('biz_portal')
+            return super(FormView, self).dispatch(request, *args, **kwargs)
+        signup_data = request.session.get('biz_signup_data')
+        if not signup_data:
+             return redirect('biz_signup')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # 書類アップロード時の処理（実際には保存などするが、ここでは擬似的に通過させる）
+        # 必要であればセッションに記録
+        self.request.session['biz_signup_data']['docs_uploaded'] = True
+        return super().form_valid(form)
 
 class StoreSetupView(FormView):
     template_name = 'business/Store/store_setup.html'

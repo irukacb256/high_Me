@@ -136,128 +136,141 @@
         {% endif %}
 
         <div class="section-title">事業形態</div>
-            <div class="radio-list">
-                <label class="radio-label"><input type="radio" name="business_type" value="corp" {% if
-                        form.business_type.value=='corp' or not form.business_type.value %}checked{% endif %}>
-                    法人</label>
-                <label class="radio-label"><input type="radio" name="business_type" value="indiv" {% if
-                        form.business_type.value=='indiv' %}checked{% endif %}> 個人事業主</label>
-            </div>
+        <div class="radio-list">
+            <label class="radio-label"><input type="radio" name="business_type" value="corp" {% if
+                    form.business_type.value=='corp' or not form.business_type.value %}checked{% endif %}>
+                法人</label>
+            <label class="radio-label"><input type="radio" name="business_type" value="indiv" {% if
+                    form.business_type.value=='indiv' %}checked{% endif %}> 個人事業主</label>
+        </div>
 
-            <div class="section-title">事業者の業務内容</div>
-            <label class="industry-label">業種</label>
-            <span class="industry-note">）該当する業種がない場合は、〜類似する業種を選択してください〜</span>
+        <div class="section-title">事業者の業務内容</div>
+        <label class="industry-label">業種</label>
+        <span class="industry-note">※ 該当する業種がない場合は、類似する業種を選択してください</span>
 
-                <select name="industry" id="industrySelect" required onchange="this.classList.add('selected')">
-                    <option value="">選択してください</option>
-                    <option value="飲食。フード">飲食。フード</option>
-            <option value=" 販売。接客">販売。接客</option>
-                    <option value="物流。軽作業">物流。軽作業</option>
-                    <option value="オフィス">オフィス</option>
-                    <option value="その他">その他</option>
+        <select name="industry" id="industrySelect" required onchange="this.classList.add('selected')">
+            <option value="">選択してください</option>
+            <option value="飲食・フード">飲食・フード</option>
+            <option value="販売・接客">販売・接客</option>
+            <option value="物流・軽作業">物流・軽作業</option>
+            <option value="オフィス">オフィス</option>
+            <option value="その他">その他</option>
         </select>
 
-        <script">
+        <script>
             // Simple script to restore select values if present
             document.addEventListener('DOMContentLoaded', function () {
                 // Industry
-                var selectedIndustry = " {{ form.industry.value|default:'' }}"; if (selectedIndustry) { var
-                        sel=document.getElementById('industrySelect'); for (var i=0; i < sel.options.length; i++) { if
-                        (sel.options[i].value===selectedIndustry) { sel.options[i].selected=true;
-                        sel.classList.add('selected'); break; } } } // Prefecture var
-                        selectedPref="{{ form.prefecture.value|default:'' }}" ; if (selectedPref) { var
-                        prefSel=document.querySelector('select[name="prefecture" ]'); if (prefSel) { for (var i=0; i <
-                        prefSel.options.length; i++) { if (prefSel.options[i].value===selectedPref) {
-                        prefSel.options[i].selected=true; break; } } } } }); </script>
+                var selectedIndustry = "{{ form.industry.value|default:'' }}"; if (selectedIndustry) {
+                    var
+                        sel = document.getElementById('industrySelect'); for (var i = 0; i < sel.options.length; i++) {
+                            if
+                                (sel.options[i].value === selectedIndustry) {
+                                sel.options[i].selected = true; sel.classList.add('selected');
+                                break;
+                            }
+                        }
+                } // Prefecture var selectedPref="{{ form.prefecture.value|default:'' }}" ; if (selectedPref)
+                {
+                    var prefSel = document.querySelector('select[name="prefecture" ]'); if (prefSel) {
+                        for (var i = 0; i <
+                            prefSel.options.length; i++) {
+                            if (prefSel.options[i].value === selectedPref) {
+                                prefSel.options[i].selected = true; break;
+                            }
+                        }
+                    }
+                }
+            }); </script>
 
 
-                        <div class="section-title" style="margin-top: 40px;">事業者の所在地</div>
+        <div class="section-title" style="margin-top: 40px;">事業者の所在地</div>
 
-                        <div style="margin-bottom: 20px;">
-                            <label class="industry-label">郵便番号</label>
-                            <input type="text" name="post_code" class="p-postal-code" placeholder="例: 1234567"
-                                value="{{ form.post_code.value|default:'' }}"
-                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
-                        </div>
+        <div style="margin-bottom: 20px;">
+            <label class="industry-label">郵便番号</label>
+            <input type="text" name="post_code" class="p-postal-code" placeholder="例: 1234567"
+                value="{{ form.post_code.value|default:'' }}"
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
+        </div>
 
-                        <div style="margin-bottom: 20px;">
-                            <label class="industry-label">都道府県</label>
-                            <select name="prefecture" class="p-region"
-                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
-                                <option value="">選択してください</option>
-                                <option value="北海道">北海道</option>
+        <div style="margin-bottom: 20px;">
+            <label class="industry-label">都道府県</label>
+            <select name="prefecture" class="p-region"
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
+                <option value="">選択してください</option>
+                <option value="北海道">北海道</option>
                 <option value=" 青森県"> 青森県</option>
-                                <option value="岩手県">岩手県</option>
-                                <option value="宮城県">宮城県</option>
-                                <option value="秋田県">秋田県</option>
+                <option value="岩手県">岩手県</option>
+                <option value="宮城県">宮城県</option>
+                <option value="秋田県">秋田県</option>
                 <option value=" 山形県"> 山形県</option>
-                                <option value="福島県">福島県</option>
+                <option value="福島県">福島県</option>
                 <option value=" 茨城県">茨城県</option>
-                                <option value="栃木県">栃木県</option>
+                <option value="栃木県">栃木県</option>
                 <option value=" 群馬県"> 群馬県</option>
-                                <option value="埼玉県">埼玉県</option>
-                                <option value="千葉県">千葉県</option>
+                <option value="埼玉県">埼玉県</option>
+                <option value="千葉県">千葉県</option>
                 <option value=" 東京都" {% if form.prefecture.value=='東京都' %}selected{% endif %}>東京都</option>
-                                <option value="神奈川県" {% if form.prefecture.value=='神奈川県' %}selected{% endif %}>神奈川県
-                                </option>
-                                <option value="新潟県">新潟県</option>
-                                <option value="富山県">富山県</option>
+                <option value="神奈川県" {% if form.prefecture.value=='神奈川県' %}selected{% endif %}>神奈川県
+                </option>
+                <option value="新潟県">新潟県</option>
+                <option value="富山県">富山県</option>
                 <option value=" 石川県">石川県</option>
-                                <option value="福井県">福井県</option>
-                                <option value="山梨県">山梨県</option>
+                <option value="福井県">福井県</option>
+                <option value="山梨県">山梨県</option>
                 <option value=" 長野県">長野県</option>
-                                <option value="岐阜県">岐阜県</option>
+                <option value="岐阜県">岐阜県</option>
                 <option value=" 静岡県"> 静岡県</option>
-                                <option value="愛知県">愛知県</option>
+                <option value="愛知県">愛知県</option>
                 <option value=" 三重県"> 三重県</option>
-                                <option value="滋賀県">滋賀県</option>
+                <option value="滋賀県">滋賀県</option>
                 <option value=" 京都府"> 京都府</option>
-                                <option value="大阪府">大阪府</option>
+                <option value="大阪府">大阪府</option>
                 <option value=" 兵庫県"> 兵庫県</option>
-                                <option value="奈良県">奈良県</option>
+                <option value="奈良県">奈良県</option>
                 <option value=" 和歌山県"> 和歌山県</option>
-                                <option value="鳥取県">鳥取県</option>
-                                <option value="島根県">島根県</option>
+                <option value="鳥取県">鳥取県</option>
+                <option value="島根県">島根県</option>
                 <option value=" 岡山県"> 岡山県</option>
-                                <option value="広島県">広島県</option>
+                <option value="広島県">広島県</option>
                 <option value=" 山口県"> 山口県</option>
-                                <option value="徳島県">徳島県</option>
+                <option value="徳島県">徳島県</option>
                 <option value=" 香川県">香川県</option>
-                                <option value="愛媛県">愛媛県</option>
-                                <option value="高知県">高知県</option>
+                <option value="愛媛県">愛媛県</option>
+                <option value="高知県">高知県</option>
                 <option value=" 福岡県"> 福岡県</option>
-                                <option value="佐賀県">佐賀県</option>
+                <option value="佐賀県">佐賀県</option>
                 <option value=" 長崎県">長崎県</option>
-                                <option value="熊本県">熊本県</option>
+                <option value="熊本県">熊本県</option>
                 <option value=" 大分県">大分県</option>
-                                <option value="宮崎県">宮崎県</option>
-                                <option value="鹿児島県">鹿児島県</option>
+                <option value="宮崎県">宮崎県</option>
+                <option value="鹿児島県">鹿児島県</option>
                 <option value=" 沖縄県">沖縄県</option>
-                            </select>
-                        </div>
+            </select>
+        </div>
 
-                        <div style="margin-bottom: 20px;">
-                            <label class="industry-label">市区町村名</label>
-                            <input type="text" name="city" class="p-locality" placeholder="例: 渋谷区"
-                                value="{{ form.city.value|default:'' }}"
-                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
-                        </div>
+        <div style="margin-bottom: 20px;">
+            <label class="industry-label">市区町村名</label>
+            <input type="text" name="city" class="p-locality" placeholder="例: 渋谷区"
+                value="{{ form.city.value|default:'' }}"
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
+        </div>
 
-                        <div style="margin-bottom: 20px;">
-                            <label class="industry-label">町域。番地</label>
-                            <input type="text" name="address_line" class="p-street-address" placeholder="例: 道玄坂-1-1"
-                                value="{{ form.address_line.value|default:'' }}"
-                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
-                        </div>
+        <div style="margin-bottom: 20px;">
+            <label class="industry-label">町域・番地</label>
+            <input type="text" name="address_line" class="p-street-address" placeholder="例: 道玄坂1-1"
+                value="{{ form.address_line.value|default:'' }}"
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
+        </div>
 
-                        <div style="margin-bottom: 20px;">
-                            <label class="industry-label">建物名など</label>
-                            <input type="text" name="building" class="p-extended-address" placeholder="例: タイミービル 3F"
-                                value="{{ form.building.value|default:'' }}"
-                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
-                        </div>
+        <div style="margin-bottom: 20px;">
+            <label class="industry-label">建物名など</label>
+            <input type="text" name="building" class="p-extended-address" placeholder="例: タイミービル 3F"
+                value="{{ form.building.value|default:'' }}"
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px;">
+        </div>
 
-                        <button type="submit" class="btn-next">次へ</button>
+        <button type="submit" class="btn-next">次へ</button>
     </form>
 </div>
 {% endblock %}

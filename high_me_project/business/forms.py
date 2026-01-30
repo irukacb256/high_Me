@@ -100,3 +100,14 @@ class JobPostingVisibilityForm(forms.ModelForm):
     class Meta:
         model = JobPosting
         fields = ['visibility']
+
+class VerifyDocsForm(forms.Form):
+    doc_type = forms.ChoiceField(
+        label="書類タイプ",
+        choices=[
+            ('履歴事項全部証明書', '履歴事項全部証明書（法人の場合）'),
+            ('開業届', '開業届（個人事業主の場合）'),
+            ('運転免許証', '代表者 運転免許証'),
+        ]
+    )
+    document = forms.FileField(label="書類アップロード")

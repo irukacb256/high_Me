@@ -2,7 +2,7 @@
 
 {% block content %}
 <style>
-    /* 繝励Ο繧ｰ繝ｬ繧ｹ繝舌。 (繧ｹ繝。ャ繝。: 店舗登録が、い繧ｯ繝。ぅ繝。 */
+    /* プログレスバー (ステップ: 店舗登録がアクティブ) */
     .stepper {
         display: flex;
         margin: -40px -40px 40px -40px;
@@ -135,8 +135,8 @@
         </div>
         <div class="form-item">
             <label>店舗名</label>
-            <input type="text" name="store_name" placeholder="例: タイミー 汐留店
-                value=" {{ form.store_name.value|default:'' }}" required>
+            <input type="text" name="store_name" placeholder="例: タイミー 汐留店"
+                value="{{ form.store_name.value|default:'' }}" required>
         </div>
 
         <div class="section-header" style="margin-top: 40px;">
@@ -146,9 +146,9 @@
             <label>業種</label>
             <select name="industry" id="industrySelect" required>
                 <option value="">選択してください</option>
-                <option value="飲食。フード">飲食。フード</option>
-                <option value="販売。接客">販売。接客</option>
-                <option value="物流。軽作業">物流。軽作業</option>
+                <option value="飲食・フード">飲食・フード</option>
+                <option value="販売・接客">販売・接客</option>
+                <option value="物流・軽作業">物流・軽作業</option>
                 <option value="オフィス">オフィス</option>
                 <option value="その他">その他</option>
             </select>
@@ -226,15 +226,15 @@
         </div>
 
         <div class="form-item">
-            <label>町域。番地</label>
-            <input type="text" name="address_line" class="p-street-address" placeholder="例: 東池袁E-1-18-1"
+            <label>町域・番地</label>
+            <input type="text" name="address_line" class="p-street-address" placeholder="例: 東池袋1-18-1"
                 value="{{ form.address_line.value|default:'' }}">
         </div>
 
         <div class="form-item">
             <label>建物名など</label>
-            <input type="text" name="building" class="p-extended-address" placeholder="例: Hareza Tower 27隁E
-                value=" {{ form.building.value|default:'' }}">
+            <input type="text" name="building" class="p-extended-address" placeholder="例: Hareza Tower 27階"
+                value="{{ form.building.value|default:'' }}">
         </div>
 
         <button type="submit" class="btn-register">店舗を登録する</button>
@@ -243,8 +243,8 @@
 
 <script>
     document.querySelector('.reflect-btn').addEventListener('click', function () {
-        // 繧ｻ繝。す繝ｧ繝ｳから貂｡され、歟iz_dataをJSで菴ｿえｋ繧医≧にする。育ｰ｡譏鍋噪）
-        // テンプレ繝ｼ繝亥､画焚で逶ｴ謗･JS変数に埋め込む
+        // セッションから渡されたbiz_dataをJSで使えるようにする（簡易的）
+        // テンプレート変数で直接JS変数に埋め込む
         var bizPostCode = "{{ biz_data.biz_post_code|default:'' }}";
         var bizPrefecture = "{{ biz_data.biz_prefecture|default:'' }}";
         var bizCity = "{{ biz_data.biz_city|default:'' }}";

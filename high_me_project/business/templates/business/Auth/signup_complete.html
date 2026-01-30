@@ -1,7 +1,7 @@
 ﻿{% extends 'business/Common/base_signup.html' %}
 {% block content %}
 <style>
-    /* ステッパー: 蜈ｨ、ｦ螳御了憾諷九↓する */
+    /* ステッパー: 全て完了状態にする */
     .stepper {
         display: flex;
         margin: -40px -40px 40px -40px;
@@ -90,7 +90,7 @@
     }
 </style>
 
-<!-- 進行バー: 全て完亁E-->
+<!-- 進行バー: 全て完了 -->
 <div class="stepper">
     <div class="step">メール登録</div>
     <div class="step">アカウント登録</div>
@@ -99,20 +99,20 @@
 </div>
 
 <div class="complete-container">
-    <div class="complete-title">タイミー繧貞茜逕ｨする貅門ｙが完了＠ますした</div>
+    <div class="complete-title">High Meを利用する準備が完了しました</div>
 
     <div class="check-icon">✓</div>
 
     <div class="complete-msg">
-        タイミー、ｪをspan class="highlight-text">当日</span>でも働き手がすぐに見つかります！Ebr>
-        莉翫☆、舌Ο繧ｰインして求人繧呈軸霈峨＠ます励ｇうｼ。
+        High Meなら<span class="highlight-text">当日</span>でも働き手がすぐに見つかります！<br>
+        さっそくログインして求人掲載をはじめましょう。
     </div>
 
     <a href="{% url 'biz_login' %}" class="btn-login">ログイン画面へ</a>
 
     <div class="footer-notes">
-        ※ 求人謗ｲ霈峨∪での豬√ｌに、､う※は。後ぎ繧､繝峨ヶ繝。け。阪ｒ、泌盾辣ｧください〜br>
-        ※ 、昴。莉悶＃一肴。、ｪ轤ｹを＃諢剰ｦ九′ありますした繧峨∫ｮ｡逅。画面の蟾ｦ繝｡繝九Η繝ｼの一矩Κにある。後＃雉ｪ蝠上。、雁撫う粋繧上○。阪°繧峨♀蝠上＞名医ｏ、帙￥、、輔＞〜
+        ※ 求人掲載までの流れについては「ガイドブック」をご参照ください。<br>
+        ※ その他ご不明な点やご意見がありましたら、管理画面の左メニューの下部にある「ご質問・お問い合わせ」からお問い合わせください。
     </div>
 </div>
 {% endblock %}
