@@ -1,145 +1,43 @@
-{% extends 'base_auth.html' %}
+{% extends 'Auth/signup_base.html' %}
 
-{% block content %}
+{% block extra_head %}
+{{ block.super }}
 <style>
-    /* 画面全体 */
-    .identity-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background-color: #ffffff;
-        padding: 40px 25px 20px;
-        box-sizing: border-box;
-    }
-
-    /* ヘッダー */
-    .header-nav {
-        display: flex;
-        align-items: center;
-        margin-bottom: 30px;
-    }
-
-    .back-arrow {
-        text-decoration: none;
-        color: #333333;
-        font-size: 24px;
-        margin-right: 20px;
-        font-weight: 300;
-    }
-
-    .header-text {
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    /* タイトルと説明 */
-    .title-section {
-        margin-bottom: 20px;
-    }
-
-    .main-title {
-        font-size: 22px;
-        font-weight: bold;
-        line-height: 1.4;
-        margin: 0 0 15px 0;
-    }
-
-    .description {
-        font-size: 14px;
-        color: #666666;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    /* 南京錠アイコン（中央配置） */
+    /* 画面全体/Custom styles for identity page */
     .icon-section {
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 100px;
-    }
-
-    /* ヘルプリンク */
-    .help-section {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .help-link {
-        font-size: 13px;
-        color: #888888;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    /* ボタンエリア */
-    .btn-section {
-        width: 100%;
-    }
-
-    .next-button {
-        display: block;
-        width: 100%;
-        padding: 18px 0;
-        background-color: #007AFF;
-        /* タイミーブルー */
-        color: #ffffff;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: bold;
-        font-size: 16px;
-        border: none;
-        margin-bottom: 15px;
-    }
-
-    .btn-later {
-        width: 100%;
-        background: none;
-        border: none;
-        color: #888;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        text-align: center;
-        display: block;
-        text-decoration: none;
+        margin: 40px 0;
     }
 </style>
+{% endblock %}
 
-<div class="identity-container">
-    <!-- ヘッダー -->
-    <div class="header-nav">
-        <a href="{% url 'setup_workstyle' %}" class="back-arrow">＜</a>
-        <span class="header-text">本人確認</span>
-    </div>
+{% block back_button %}
+<a href="{% url 'setup_workstyle' %}" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+{% endblock %}
 
-    <!-- テキストエリア -->
-    <div class="title-section">
-        <h1 class="main-title">安心。安全な利用のため、<br>本人確認が必要です。</h1>
-        <p class="description">
-            本人確認を完了すると、全ての機能が利用できるようになります。
-        </p>
-    </div>
+{% block progress_bar %}{% endblock %}
 
-    <!-- アイコンエリア -->
-    <div class="icon-section">
-        <span>🔒</span>
-    </div>
+{% block title %}安心。安全な利用のため、<br>本人確認が必要です。{% endblock %}
 
-    <!-- ボタンエリア -->
-    <div class="btn-section">
-        <!-- 次へ（本人確認アップロードあるいは選択画面へ実装予定） -->
-        <!-- 今は暫定的に本人確認選択画面またはスキップと同じ先(仮)に向けますが、
-             ユーザー要望では「別ページとして作成」とのことなので、ここから書類アップロード等へ進むのが理想 -->
-        <a href="{% url 'verify_identity_select' %}" class="next-button">本人確認をする</a>
+{% block description %}
+<p class="signup-description">
+    本人確認を完了すると、全ての機能が利用できるようになります。
+</p>
+{% endblock %}
 
-        <!-- あとでボタン -->
-        <a href="{% url 'signup_verify_identity_skip' %}" class="btn-later">あとで</a>
-    </div>
+{% block form_content %}
+<div class="icon-section">
+    <span>🔒</span>
 </div>
+{% endblock %}
+
+{% block footer_class %}single-btn{% endblock %}
+
+{% block footer_buttons %}
+<a href="{% url 'signup_verify_identity_skip' %}" class="btn-later">あとで</a>
+<a href="{% url 'verify_identity_select' %}" class="btn-next"
+    style="text-decoration:none; display:flex; align-items:center; justify-content:center;">本人確認をする</a>
 {% endblock %}

@@ -288,7 +288,7 @@
         e.preventDefault();
         if (isVerified === 'true') {
             // 本人確認済み -> 口座登録画面へ
-            window.location.href = "{% url 'bank_account_edit' %}";
+            window.location.href = "{% url 'bank_account_create' %}";
         } else {
             // 未確認 -> モーダル表示
             modal.style.display = 'flex';

@@ -160,15 +160,18 @@
         flex-grow: 1;
         border: 1px solid #ddd;
         border-radius: 20px;
-        padding: 10px 15px;
-        font-size: 14px;
+        padding: 12px 15px;
+        /* Slightly adjusted padding */
+        font-size: 15px;
+        /* Slightly larger font */
         resize: none;
         outline: none;
         background: #fff;
         font-family: inherit;
-        min-height: 40px;
-        /* 1行分の高さ確保 */
-        max-height: 100px;
+        min-height: 50px;
+        /* Increased from 40px */
+        max-height: 120px;
+        line-height: 1.4;
     }
 
     .chat-textarea:focus {
@@ -180,9 +183,9 @@
         border: none;
         color: #007AFF;
         font-weight: bold;
-        font-size: 15px;
-        padding: 0 10px 10px 0;
-        /* Align with bottom of textarea */
+        font-size: 16px;
+        padding: 0 10px 12px 0;
+        /* Align with new height */
         cursor: pointer;
         white-space: nowrap;
     }
@@ -247,7 +250,7 @@
 
     <!-- 入力エリア -->
     <div class="chat-input-area">
-        <form method="post" class="<input-form">
+        <form method="post" class="input-form"> <!-- Fixed typo here -->
             {% csrf_token %}
             <textarea name="content" class="chat-textarea" rows="1" placeholder="メッセージを入力"></textarea>
             <button type="submit" class="send-btn">送信</button>

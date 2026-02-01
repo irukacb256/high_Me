@@ -12,6 +12,12 @@ class SignupForm(forms.Form):
             raise forms.ValidationError('この電話番号は既に登録されています。')
         return phone
 
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if len(password) < 8:
+            raise forms.ValidationError('パスワードは8文字以上で入力してください。')
+        return password
+
 class NameForm(forms.Form):
     last_name = forms.CharField(max_length=30, label='姓')
     first_name = forms.CharField(max_length=30, label='名')

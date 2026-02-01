@@ -1062,6 +1062,31 @@ def bank_account_edit(request):
     return render(request, 'MyPage/Wallet/bank_account_edit.html', {'account': account})
 
 @login_required
+def bank_account_create(request):
+    """画像: 振込口座を追加"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+
+    if request.method == 'POST':
+        # 新規作成
+        bank_name = request.POST.get('bank_name')
+        account_type = request.POST.get('account_type')
+        branch_name = request.POST.get('branch_name')
+        account_number = request.POST.get('account_number')
+        account_holder_name = request.POST.get('account_holder_name')
+
+        WorkerBankAccount.objects.create(
+            worker=profile,
+            bank_name=bank_name,
+            account_type=account_type,
+            branch_name=branch_name,
+            account_number=account_number,
+            account_holder_name=account_holder_name,
+        )
+        return redirect('reward_management')
+
+    return render(request, 'MyPage/Wallet/bank_account_create.html')
+
+@login_required
 def withdraw_application(request):
     """画像5: 振込申請"""
     profile = get_object_or_404(WorkerProfile, user=request.user)
@@ -1255,3 +1280,59 @@ def qualification_photo_confirm(request):
         'temp_image_url': f"{settings.MEDIA_URL}{temp_path}",
         'selected_item': selected_item
     })
+
+@login_required
+def other_profile_edit(request):
+    """画像6: その他のプロフィール編集（所属の変更）"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+
+    if request.method == 'POST':
+        occupation = request.POST.get('occupation')
+        # 入力が空でも更新できるようにする場合は check しないが、
+        # default:'' とあるので更新可能にする。
+        # ユーザーは「変更することができる」と言っているので空文字も許容するかは仕様次第だが
+        # input required 属性をつけてたのでPOSTには値が入るはず。
+        if occupation is not None:
+             profile.occupation = occupation
+             profile.save()
+             return redirect('account_settings')
+
+    return render(request, 'MyPage/Settings/other_profile.html', {'profile': profile})
+
+@login_required
+def emergency_contact_edit(request):
+    """画像7: 緊急連絡先設定"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+
+    if request.method == 'POST':
+        phone = request.POST.get('emergency_phone')
+        relation = request.POST.get('emergency_relation')
+        
+        if phone is not None:
+            profile.emergency_phone = phone
+        if relation is not None:
+            profile.emergency_relation = relation
+        
+        profile.save()
+        return redirect('account_settings')
+
+    return render(request, 'MyPage/Settings/emergency_contact.html', {'profile': profile})
+
+@login_required
+def workstyle_edit(request):
+    """働き方編集"""
+    profile = get_object_or_404(WorkerProfile, user=request.user)
+
+    if request.method == 'POST':
+        work_style = request.POST.get('work_style')
+        career_interest = request.POST.get('career_interest')
+        
+        if work_style:
+            profile.work_style = work_style
+        if career_interest:
+            profile.career_interest = career_interest
+            
+        profile.save()
+        return redirect('account_settings')
+
+    return render(request, 'MyPage/Settings/workstyle_edit.html', {'profile': profile})

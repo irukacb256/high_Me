@@ -26,9 +26,7 @@
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
-        /* Stack vertically */
         padding: 50px 20px 10px;
-        /* Adjust padding if needed */
         background: white;
         z-index: 10;
     }
@@ -38,91 +36,39 @@
         display: flex;
         justify-content: flex-start;
         margin-bottom: 15px;
-        /* Space between back button and progress bar */
         height: 24px;
-        /* Ensure height reserved even if empty? No, block is conditional. */
     }
 
     .back-btn {
-        font-size: 24px;
+        font-size: 20px;
         color: #333;
         text-decoration: none;
-        line-height: 1;
-        cursor: pointer;
         display: flex;
         align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
     }
 
     /* Progress Bar */
     .progress-bar-container {
         width: 100%;
-        /* Full width */
         display: flex;
-        gap: 4px;
-    }
-
-    /* ... existing progress styles ... */
-
-    /* ... skipped ... */
-
-    /* Footer / Buttons - Fixed at bottom */
-    .signup-footer {
-        flex-shrink: 0;
-        padding: 24px;
-        background: white;
-        display: flex;
-        gap: 15px;
-        /* Space between buttons */
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: max(24px, env(safe-area-inset-bottom));
-    }
-
-    .btn-later {
-        font-size: 16px;
-        font-weight: bold;
-        color: #333;
-        text-decoration: none;
-        padding: 14px 20px;
-        /* Match height of Next button */
-        background: transparent;
-        border: 1px solid #E0E0E0;
-        border-radius: 8px;
-        text-align: center;
-        flex: 1;
-        /* 50% width */
-        margin-right: 0;
-        /* Handled by gap property on container */
-        box-sizing: border-box;
-    }
-
-    .btn-next {
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        background-color: var(--ios-blue);
-        border: none;
-        border-radius: 8px;
-        padding: 14px 20px;
-        flex: 1;
-        /* 50% width */
-        cursor: pointer;
-        transition: opacity 0.3s;
-        text-align: center;
+        gap: 5px;
+        /* iOS style gap */
     }
 
     .progress-segment {
         flex: 1;
         height: 4px;
+        /* Thinner line */
         background-color: #E0E0E0;
         border-radius: 2px;
     }
 
     .progress-segment.active {
-        background-color: var(--ios-blue);
+        background-color: #007AFF;
+        /* iOS Blue */
     }
 
     /* Main Form Container - fills remaining space, holds content and footer */
@@ -336,7 +282,7 @@
     <div class="signup-header">
         <div class="header-top">
             {% block back_button %}
-            <a href="javascript:history.back()" class="back-btn">＜</a>
+            <a href="javascript:history.back()" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
             {% endblock %}
         </div>
 
@@ -347,7 +293,7 @@
     </div>
 
     <!-- Form wraps Content and Footer for submission -->
-    <form method="post" id="signup-form" class="signup-form-wrapper">
+    <form method="post" id="signup-form" class="signup-form-wrapper {% block form_class %}{% endblock %}">
         {% csrf_token %}
 
         <div class="signup-content">

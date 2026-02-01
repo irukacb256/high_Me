@@ -1,33 +1,45 @@
 {% extends 'base_auth.html' %}
 {% block content %}
 <style>
-    .keyword-tag { background: #f2f2f2; padding: 6px 12px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-    .keyword-tag span { color: #999; cursor: pointer; }
+    .keyword-tag {
+        background: #f2f2f2;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .keyword-tag span {
+        color: #999;
+        cursor: pointer;
+    }
 </style>
 
-<div class="header" style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee; background:white;">
+<div class="header"
+    style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee; background:white;">
     <a href="{% url 'refine_home' %}" style="text-decoration:none; color:#333; margin-right:20px;">＜</a>
     <div style="font-weight:bold;">除外キーワード</div>
 </div>
 
-<div style="padding:20px; background:white;">
-    <p style="font-size:11px; color:#666; line-height:1.5; margin-bottom:20px;">
-        設定したキーワードを含む募集タイトルの仕事が表示されなくなります。<br>
-        。15文字以内のキーワードを10個まで指定できます。
-    </p>
+<form method="post">
+    {% csrf_token %}
+    <div style="padding:20px; background:white;">
+        <p style="font-size:11px; color:#666; line-height:1.5; margin-bottom:20px;">
+            設定したキーワードを含む募集タイトルの仕事が表示されなくなります。<br>
+            複数のキーワードを指定する場合はスペースで区切ってください。
+        </p>
 
-    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
-        <div class="keyword-tag">塾 <span>×</span></div>
-        <div class="keyword-tag">ワカメ <span>×</span></div>
-        <div class="keyword-tag">味噌 <span>×</span></div>
-        <div class="keyword-tag">ネギ <span>×</span></div>
+        <!-- Current implementation: Simple text input. Tag UI requires JS implementation -->
+        <input type="text" name="keyword" value="{{ exclude_keyword }}" placeholder="キーワードを入力 (例: ホール キッチン)"
+            style="width:100%; padding:15px; border:1px solid #eee; border-radius:8px; background:#f9f9f9; box-sizing:border-box;">
+        <p style="font-size:12px; font-weight:bold; margin-top:15px;">を含めない</p>
     </div>
 
-    <input type="text" placeholder="キーワードを入力" style="width:100%; padding:15px; border:1px solid #eee; border-radius:8px; background:#f9f9f9; box-sizing:border-box;">
-    <p style="font-size:12px; font-weight:bold; margin-top:15px;">を含めない</p>
-</div>
-
-<div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
-    <button onclick="location.href='{% url 'refine_home' %}'" style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
-</div>
+    <div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
+        <button type="submit"
+            style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">設定する</button>
+    </div>
+</form>
 {% endblock %}

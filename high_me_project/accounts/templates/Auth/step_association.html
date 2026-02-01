@@ -17,25 +17,24 @@
 {% block title %}現在の職業を教えてください{% endblock %}
 
 {% block form_content %}
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学生" required
-        onclick="checkForm()"> 大学生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学院生" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学生"> 大学生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学院生">
     大学院生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="専門学生" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="専門学生">
     専門学生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="短大生" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="短大生">
     短大生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高校生" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高校生">
     高校生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高専生" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高専生">
     高専生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="フリーター" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="フリーター">
     フリーター</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="会社員" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="会社員">
     会社員</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="主婦。主夫" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="主婦。主夫">
     主婦。主夫</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="その他" onclick="checkForm()">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="その他">
     その他</label>
 {% endblock %}
 
@@ -43,5 +42,5 @@
 
 {% block footer_buttons %}
 <a href="{% url 'setup_workstyle' %}" class="btn-later">あとで</a>
-<button type="submit" class="btn-next" disabled>次へ</button>
+<button type="submit" class="btn-next">次へ</button>
 {% endblock %}

@@ -343,6 +343,42 @@
         transform: translateX(50%);
         pointer-events: none;
     }
+
+    /* Floating Actions */
+    .floating-actions {
+        position: absolute;
+        bottom: 47vh;
+        /* Locate above bottom sheet */
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+        z-index: 900;
+        width: max-content;
+    }
+
+    .btn-float {
+        background: white;
+        height: 44px;
+        padding: 0 20px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        color: #333;
+        font-size: 13px;
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+    }
+
+    .btn-float i {
+        color: #007AFF;
+        font-size: 16px;
+    }
 </style>
 
 <div class="screen-container">
@@ -362,8 +398,16 @@
             </label>
         </div>
 
-        <div class="btn-location" onclick="moveToCurrentLocation()">
-            <i class="fa-solid fa-location-crosshairs"></i>
+        <!-- Floating Actions (Filter & Location) -->
+        <div class="floating-actions">
+            <a href="{% url 'refine_home' %}" class="btn-float">
+                <i class="fa-solid fa-sliders"></i>
+                絞り込み
+            </a>
+            <div class="btn-float" onclick="moveToCurrentLocation()">
+                <i class="fa-solid fa-location-crosshairs"></i>
+                現在地
+            </div>
         </div>
     </div>
 
@@ -374,7 +418,7 @@
             <div class="date-scroll-inner">
                 {% for d in date_list %}
                 <div class="date-item {% if d|date:'Y-m-d' == today_str %}active{% endif %}"
-                    data-date="{{ d|date:'Y-m-d' }}" onclick="<selectDate(this)">
+                    data-date="{{ d|date:'Y-m-d' }}" onclick="selectDate(this)">
                     <div class="date-day">{{ d|date:"D" }}</div>
                     <div class="date-circle">{{ d.day }}</div>
                 </div>
@@ -382,15 +426,7 @@
             </div>
         </div>
 
-        <!-- フィルタチップ (ダミー) -->
-        <div class="filter-chips-container">
-            <div class="chip active"><i class="fa-solid fa-sliders"></i> 全て</div>
-            <div class="chip">軽作業</div>
-            <div class="chip">飲食</div>
-            <div class="chip">介護</div>
-            <div class="chip">配達。運転</div>
-            <div class="chip">販売</div>
-        </div>
+        <!-- 求人リスト (Filter chips removed) -->
 
         <!-- 求人リスト -->
         <div class="job-list-container" id="jobListContainer">

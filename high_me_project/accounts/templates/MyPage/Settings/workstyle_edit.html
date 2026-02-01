@@ -1,0 +1,221 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .settings-container {
+        padding: 20px 20px 100px 20px;
+        /* Bottom padding for footer */
+        background: white;
+        min-height: 100vh;
+        box-sizing: border-box;
+        color: #333;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        margin-right: 15px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: bold;
+        flex: 1;
+        text-align: center;
+        margin-right: 30px;
+        /* Balance link */
+    }
+
+    .section-title {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    /* Radio Group Style */
+    .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .radio-item {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .radio-item input[type="radio"] {
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        margin-right: 15px;
+        outline: none;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .radio-item input[type="radio"]:checked {
+        border-color: #007aff;
+    }
+
+    .radio-item input[type="radio"]:checked::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: #007aff;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Info Area */
+    .info-area {
+        display: flex;
+        align-items: center;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .info-icon {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .info-text {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    /* Footer / Button */
+    .footer-area {
+        position: absolute;
+        /* Absolute to phone wrapper */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #eee;
+        text-align: center;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    .btn-save {
+        background: #007aff;
+        color: white;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+</style>
+
+<div class="settings-container">
+    <div class="header">
+        <a href="{% url 'account_settings' %}" class="back-btn">＜</a>
+        <div class="title">働き方</div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Part-time Work Style -->
+        <div class="section-title">アルバイトの働き方について教えてください</div>
+        <div class="radio-group">
+            <label class="radio-item">
+                <input type="radio" name="work_style" value="スキマバイトにしか興味ない" {% if profile.work_style=="スキマバイトにしか興味ない"
+                    %}checked{% endif %}>
+                スキマバイトにしか興味ない
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="work_style" value="良い店舗に出会えれば長期バイトをしたい" {% if
+                    profile.work_style=="良い店舗に出会えれば長期バイトをしたい" %}checked{% endif %}>
+                良い店舗に出会えれば長期バイトをしたい
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="work_style" value="すぐにでも長期バイトを見つけたい" {% if
+                    profile.work_style=="すぐにでも長期バイトを見つけたい" %}checked{% endif %}>
+                すぐにでも長期バイトを見つけたい
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="work_style" value="いずれにも該当しない" {% if profile.work_style=="いずれにも該当しない"
+                    %}checked{% endif %}>
+                いずれにも該当しない
+            </label>
+        </div>
+
+        <!-- Full-time Interest -->
+        <div class="section-title">正社員として働くことに興味はありますか？</div>
+        <div class="radio-group">
+            <label class="radio-item">
+                <input type="radio" name="career_interest" value="すぐにでも転職/就職したい" {% if
+                    profile.career_interest=="すぐにでも転職/就職したい" %}checked{% endif %}>
+                すぐにでも転職/就職したい
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="career_interest" value="良い仕事があれば転職/就職したい" {% if
+                    profile.career_interest=="良い仕事があれば転職/就職したい" %}checked{% endif %}>
+                良い仕事があれば転職/就職したい
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="career_interest" value="今は情報収集したい" {% if profile.career_interest=="今は情報収集したい"
+                    %}checked{% endif %}>
+                今は情報収集したい
+            </label>
+            <label class="radio-item">
+                <input type="radio" name="career_interest" value="興味がない" {% if profile.career_interest=="興味がない"
+                    %}checked{% endif %}>
+                興味がない
+            </label>
+        </div>
+
+        <!-- Info Area -->
+        <div
+            style="background: #f5f5f5; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+            <div
+                style="width: 20px; height: 20px; border: 1.5px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; font-family: serif;">
+                i</div>
+            <span style="font-size: 13px; font-weight: bold;">状況に合わせて更新しましょう</span>
+        </div>
+
+        <div class="footer-area">
+            <button type="submit" class="btn-save">保存</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

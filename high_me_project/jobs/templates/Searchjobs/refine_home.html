@@ -1,50 +1,173 @@
 {% extends 'base_auth.html' %}
 {% block content %}
 <style>
-    .refine-container { background: white; min-height: 100vh; }
-    .header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid #eee; }
-    .header-title { font-weight: bold; font-size: 16px; }
-    .close-btn { font-size: 24px; text-decoration: none; color: #333; }
-    .reset-btn { color: #007AFF; font-size: 13px; font-weight: bold; border: none; background: none; text-decoration: none; }
+    .refine-container {
+        background: white;
+        min-height: 100vh;
+    }
 
-    .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; border-bottom: 1px solid #f5f5f5; text-decoration: none; color: #333; }
-    .menu-left { display: flex; align-items: center; gap: 15px; font-size: 15px; }
-    .menu-left i { color: #666; width: 20px; text-align: center; }
-    .menu-right { color: #999; font-size: 14px; }
+    /* Header layout adjusted to allow form for reset button */
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+    }
 
-    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; font-size: 14px; font-weight: bold; }
-    
-    .fixed-footer { position: fixed; bottom: 0; width: 100%; max-width: 430px; padding: 15px; background: white; border-top: 1px solid #eee; box-sizing: border-box; }
-    .btn-submit { width: 100%; padding: 16px; background: #007AFF; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+    .header-title {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .close-btn {
+        font-size: 24px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .reset-form {
+        margin: 0;
+        padding: 0;
+    }
+
+    .reset-btn {
+        color: #007AFF;
+        font-size: 13px;
+        font-weight: bold;
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .menu-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 15px;
+        border-bottom: 1px solid #f5f5f5;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .menu-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 15px;
+    }
+
+    .menu-left i {
+        color: #666;
+        width: 20px;
+        text-align: center;
+    }
+
+    .menu-right {
+        color: #999;
+        font-size: 14px;
+    }
+
+    .menu-right.active {
+        color: #007AFF;
+        font-weight: bold;
+    }
+
+    .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 15px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .fixed-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        max-width: 430px;
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+        box-sizing: border-box;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="refine-container">
     <div class="header">
         <a href="{% url 'index' %}" class="close-btn">×</a>
         <div class="header-title">絞り込み</div>
-        <a href="{% url 'refine_home' %}" class="reset-btn">すべて解除</a>
+        <form method="post" class="reset-form">
+            {% csrf_token %}
+            <button type="submit" name="reset" value="1" class="reset-btn">すべて解除</button>
+        </form>
     </div>
 
     <div class="modal-body">
         <a href="{% url 'occupation_select' %}" class="menu-item">
             <div class="menu-left"><i class="fa-solid fa-briefcase"></i> 職種</div>
-            <div class="menu-right">すべて ＞</div>
+            <div class="menu-right {% if current_occupations %}active{% endif %}">
+                {% if current_occupations %}
+                {{ current_occupations|length }}件選択中 ＞
+                {% else %}
+                すべて ＞
+                {% endif %}
+            </div>
         </a>
         <a href="{% url 'reward_select' %}" class="menu-item">
             <div class="menu-left"><i class="fa-solid fa-yen-sign"></i> 報酬</div>
-            <div class="menu-right">指定なし ＞</div>
+            <div class="menu-right {% if current_rewards %}active{% endif %}">
+                {% if current_rewards %}
+                {{ current_rewards|length }}件選択中 ＞
+                {% else %}
+                指定なし ＞
+                {% endif %}
+            </div>
         </a>
         <a href="{% url 'time_select' %}" class="menu-item">
             <div class="menu-left"><i class="fa-regular fa-clock"></i> 時間帯</div>
-            <div class="menu-right">指定なし ＞</div>
+            <div class="menu-right {% if current_time_ranges %}active{% endif %}">
+                {% if current_time_ranges %}
+                {{ current_time_ranges|length }}件選択中 ＞
+                {% else %}
+                指定なし ＞
+                {% endif %}
+            </div>
         </a>
         <a href="{% url 'treatment_select' %}" class="menu-item">
             <div class="menu-left"><i class="fa-solid fa-sparkles"></i> 待遇</div>
-            <div class="menu-right">指定なし ＞</div>
+            <div class="menu-right {% if current_treatments %}active{% endif %}">
+                {% if current_treatments %}
+                {{ current_treatments|length }}件選択中 ＞
+                {% else %}
+                指定なし ＞
+                {% endif %}
+            </div>
         </a>
         <a href="{% url 'keyword_exclude' %}" class="menu-item">
             <div class="menu-left">除外キーワード</div>
-            <div class="menu-right">指定なし ＞</div>
+            <div class="menu-right {% if current_exclude_keyword %}active{% endif %}">
+                {% if current_exclude_keyword %}
+                設定あり ＞
+                {% else %}
+                指定なし ＞
+                {% endif %}
+            </div>
         </a>
 
         <div class="toggle-row">

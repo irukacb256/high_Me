@@ -1,29 +1,99 @@
 {% extends 'Auth/signup_base.html' %}
 
-{% block back_button %}
-<a href="{% url 'setup_kana' %}" class="back-btn">＜</a>
+{% block extra_head %}
+{{ block.super }}
+<style>
+    /* 性別選択が必要な理由ボックス */
+    .info-box {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .info-title {
+        font-size: 13px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .info-text {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* 性別選択ボタン */
+    .gender-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .gender-label {
+        display: block;
+
+        padding: 18px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        background: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .gender-label:active {
+        background-color: #f0f0f0;
+    }
+
+    /* ラジオボタンは隠してラベルで操作 */
+    input[type="radio"] {
+        display: none;
+    }
+</style>
 {% endblock %}
 
 {% block progress_bar %}
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
-<div class="progress-segment "></div>
-<div class="progress-segment "></div>
-<div class="progress-segment "></div>
-<div class="progress-segment "></div>
+<div class="progress-segment"></div>
+<div class="progress-segment"></div>
+<div class="progress-segment"></div>
+<div class="progress-segment"></div>
 {% endblock %}
 
 {% block title %}戸籍上の性別を選択する{% endblock %}
 
 {% block form_content %}
-<label class="option-item"><input class="form-input" type="radio" name="gender" value="male" required
-        onclick="checkForm()"> 男性</label>
-<label class="option-item"><input class="form-input" type="radio" name="gender" value="female" onclick="checkForm()">
-    女性</label>
+<div class="info-box">
+    <div class="info-title">
+        <i class="fa-regular fa-circle-question"></i> 性別の選択が必要な理由
+    </div>
+    <div class="info-text">
+        業務上必要としている店舗があります。
+    </div>
+</div>
+
+<!-- ラジオボタン (formタグはbase側にある) -->
+<div class="gender-options">
+    <label class="gender-label">
+        <input type="radio" name="gender" value="male" onchange="this.form.submit()">
+        男性
+    </label>
+    <label class="gender-label">
+        <input type="radio" name="gender" value="female" onchange="this.form.submit()">
+        女性
+    </label>
+</div>
 {% endblock %}
-{% block footer_class %}single-btn{% endblock %}
 
 {% block footer_buttons %}
-<button type="submit" class="btn-next" disabled>次へ</button>
+<!-- フッターボタン非表示（選択で即遷移するため） -->
 {% endblock %}

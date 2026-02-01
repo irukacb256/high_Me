@@ -1,0 +1,148 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    .setup-container {
+        padding: 40px 25px;
+        background: white;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", sans-serif;
+    }
+
+    /* プログレスバー */
+    .progress-bar-segment {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 40px;
+    }
+
+    .segment {
+        height: 4px;
+        background-color: #e0e0e0;
+        flex: 1;
+        border-radius: 2px;
+    }
+
+    .segment.active {
+        background-color: #007AFF;
+        /* iOS Blue */
+    }
+
+    /* 戻るボタン */
+    .back-btn {
+        font-size: 24px;
+        color: #333;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 30px;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    /* 性別選択が必要な理由ボックス */
+    .info-box {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 100px;
+        /* 余白多め */
+    }
+
+    .info-title {
+        font-size: 13px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .info-text {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    /* 性別選択ボタン */
+    .gender-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .gender-label {
+        display: block;
+        width: 100%;
+        padding: 18px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        background: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .gender-label:active {
+        background-color: #f0f0f0;
+    }
+
+    /* ラジオボタンは隠してラベルで操作 */
+    input[type="radio"] {
+        display: none;
+    }
+</style>
+
+<div class="setup-container">
+    <!-- 戻るボタン -->
+    <a href="{% url 'setup_kana' %}" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <!-- プログレスバー (全6ステップ中3番目: Gender) -->
+    <!-- Name -> Kana -> Gender -> Photo -> Address -> Association/Workstyle -->
+    <!-- セグメント構成: 1:Name/Kana, 2:Gender, 3:Photo, 4:Address, 5:Assoc, 6:Confirm ? -->
+    <!-- 画像では6セグメント中3つ目がアクティブ -->
+    <div class="progress-bar-segment">
+        <div class="segment active"></div>
+        <div class="segment active"></div>
+        <div class="segment active"></div>
+        <div class="segment"></div>
+        <div class="segment"></div>
+        <div class="segment"></div>
+    </div>
+
+    <h1 class="title">戸籍上の性別を選択する</h1>
+
+    <div class="info-box">
+        <div class="info-title">
+            <i class="fa-regular fa-circle-question"></i> 性別の選択が必要な理由
+        </div>
+        <div class="info-text">
+            業務上必要としている店舗があります。
+        </div>
+    </div>
+
+    <form method="POST" id="genderForm">
+        {% csrf_token %}
+        <div class="gender-options">
+            <label class="gender-label">
+                <input type="radio" name="gender" value="male" onchange="this.form.submit()">
+                男性
+            </label>
+            <label class="gender-label">
+                <input type="radio" name="gender" value="female" onchange="this.form.submit()">
+                女性
+            </label>
+            <!-- 画像に準拠し「男性」「女性」のみ表示 -->
+        </div>
+    </form>
+</div>
+{% endblock %}

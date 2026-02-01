@@ -9,7 +9,8 @@
         height: 100%;
         background-color: #ffffff;
         box-sizing: border-box;
-        overflow: hidden; /* 横スクロールを強制防止 */
+        overflow: hidden;
+        /* 横スクロールを強制防止 */
     }
 
     /* ヘッダー */
@@ -21,6 +22,7 @@
         border-bottom: 1px solid #eee;
         flex-shrink: 0;
     }
+
     .back-btn {
         font-size: 24px;
         text-decoration: none;
@@ -29,12 +31,14 @@
         display: block;
         width: 30px;
     }
+
     .header-title {
         font-weight: bold;
         font-size: 16px;
         flex: 1;
         text-align: center;
-        margin-right: 50px; /* 戻るボタンとのバランス調整 */
+        margin-right: 50px;
+        /* 戻るボタンとのバランス調整 */
     }
 
     /* メインボディ：ここをFlexで広やてボタンを下に押し出す */
@@ -73,6 +77,7 @@
         background: transparent;
         border-radius: 0;
     }
+
     .input-box:focus {
         border-bottom-color: #007AFF;
     }
@@ -80,7 +85,7 @@
     /* 下部固定ボタンエリア：margin-top: auto で一番下へ */
     .footer-area {
         padding: 15px 20px 30px;
-        margin-top: auto; 
+        margin-top: auto;
         flex-shrink: 0;
     }
 
@@ -88,7 +93,8 @@
         display: block;
         width: 100%;
         padding: 18px 0;
-        background-color: #007AFF; /* タイミーブルー */
+        background-color: #007AFF;
+        /* タイミーブルー */
         color: white;
         text-align: center;
         text-decoration: none;
@@ -117,11 +123,10 @@
             </p>
 
             <div class="section-label">所属</div>
-            
+
             <!-- 所属の入力欄 -->
-            <input type="text" name="affiliation" class="<input-box" 
-                   value="{{ profile.affiliation|default:'' }}" 
-                   placeholder="例：専門学生" required>
+            <input type="text" name="occupation" class="input-box" value="{{ profile.occupation|default:'' }}"
+                placeholder="例：専門学生" required>
         </div>
 
         <!-- 保存ボタン -->

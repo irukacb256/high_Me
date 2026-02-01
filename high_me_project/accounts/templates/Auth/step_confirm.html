@@ -2,6 +2,9 @@
 
 
 
+
+{% block progress_bar %}{% endblock %}
+
 {% block title %}入力内容の確認{% endblock %}
 
 
@@ -34,9 +37,13 @@
 <div class="confirm-group">
     <label class="form-label">住所</label>
     <p class="confirm-text">
+        {% if profile.postal_code %}
         〒{{ profile.postal_code }}<br>
         {{ profile.prefecture }}{{ profile.city }}{{ profile.address_line }}<br>
         {{ profile.building }}
+        {% else %}
+        未入力
+        {% endif %}
     </p>
 </div>
 <div class="confirm-group">

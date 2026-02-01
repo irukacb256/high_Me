@@ -108,29 +108,34 @@
     <h1 class="title">SMS認証を行います。<br>電話番号を入力してください。</h1>
 
     <!-- サーバー側（Views.py）で発生したエラー（重複など）を表示 -->
-    {% if error %}
+    {% if form.errors %}
     <div class="error-banner">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <p><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</p>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <p><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</p>
+        {% endfor %}
     </div>
     {% endif %}
 
     <form method="POST" id="signupForm">
         {% csrf_token %}
-        
-        <div class="<input-group">
+
+        <div class="input-group">
             <label>電話番号</label>
-            <input type="tel" name="phone" id="phoneInput" 
-                   placeholder="09000000000" 
-                   value="{{ phone|default:'' }}" 
-                   maxlength="11" 
-                   required autocomplete="tel">
+            <input type="tel" name="phone" id="phoneInput" placeholder="09000000000"
+                value="{{ form.phone.value|default:'' }}" maxlength="11" required autocomplete="tel">
         </div>
 
-        <div class="<input-group">
+        <div class="input-group" style="position: relative;">
             <label>パスワード</label>
-            <input type="password" name="password" id="passInput" 
-                   placeholder="8文字以上の半角英数字" 
-                   required autocomplete="new-password">
+            <input type="password" name="password" id="passInput" placeholder="8文字以上の半角英数字" required
+                autocomplete="new-password">
+            <i class="fa-solid fa-eye-slash" id="togglePassword"
+                style="position: absolute; right: 10px; top: 43px; cursor: pointer; color: #aaa; font-size: 18px;"></i>
         </div>
 
         <p class="note">
@@ -143,6 +148,19 @@
 </div>
 
 <script>
+    // パスワード表示切り替え
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passInput');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        // アイコン切り替え
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
     // リアルタイム。バリデーション（ボタンの活性化制御）
     const phoneInput = document.getElementById('phoneInput');
     const passInput = document.getElementById('passInput');

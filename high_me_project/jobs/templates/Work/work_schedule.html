@@ -169,10 +169,22 @@
     </div>
     {% endfor %}
     {% else %}
-    <div class="empty-state">
-        <i class="fa-solid fa-calendar-xmark"></i>
-        <p>今後の予定はありません</p>
+    <div class="empty-state" style="text-align: left; padding: 20px;">
+        <p style="font-weight: bold; color: #333; margin-bottom: 10px;">今後の予定はありません</p>
+        <p style="font-size: 14px; margin-bottom: 20px;">次のお仕事を探してみましょう。</p>
+        <a href="{% url 'index' %}" class="btn-search">仕事をさがす</a>
     </div>
+    <style>
+        .btn-search {
+            display: inline-block;
+            background-color: #007AFF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
     {% endif %}
     {% else %}
     {% if completed_grouped %}

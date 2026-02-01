@@ -94,6 +94,7 @@ urlpatterns = [
     path('rewards/', account_views.reward_management, name='reward_management'),
     path('rewards/history/', account_views.wallet_history, name='wallet_history'),
     path('rewards/bank-account/', account_views.bank_account_edit, name='bank_account_edit'),
+    path('rewards/bank-account/create/', account_views.bank_account_create, name='bank_account_create'), # ★追加
     path('rewards/withdraw/', account_views.withdraw_application, name='withdraw_application'),
     
     # レビュー・ペナルティ
@@ -135,6 +136,7 @@ urlpatterns = [
     path('settings/', account_views.account_settings, name='account_settings'),
     path('settings/profile/', account_views.profile_edit, name='profile_edit'),
     path('settings/emergency/', account_views.emergency_contact_edit, name='emergency_contact'),
+    path('settings/workstyle/', account_views.workstyle_edit, name='workstyle_edit'), # ★働き方編集
     path('settings/phone/', account_views.phone_change_confirm, name='phone_change'),
 
     # 事業者登録フロー

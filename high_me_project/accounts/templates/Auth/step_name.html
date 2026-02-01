@@ -1,5 +1,7 @@
 {% extends 'Auth/signup_base.html' %}
 
+{% block back_button %}{% endblock %}
+
 {% block progress_bar %}
 <div class="progress-segment active"></div>
 <div class="progress-segment "></div>
@@ -14,10 +16,10 @@
 
 {% block form_content %}
 <div style="display: flex; gap: 15px;">
-    <div style="flex: 1;"><label class="form-label">姓</label><input class="form-input" type="text" name="last_name"
-            placeholder="山田" required></div>
-    <div style="flex: 1;"><label class="form-label">名</label><input class="form-input" type="text" name="first_name"
-            placeholder="太郎" required></div>
+        <div style="flex: 1;"><label class="form-label">姓</label><input class="form-input" type="text" name="last_name"
+                        placeholder="山田" required></div>
+        <div style="flex: 1;"><label class="form-label">名</label><input class="form-input" type="text" name="first_name"
+                        placeholder="太郎" required></div>
 </div>
 {% endblock %}
 {% block footer_class %}single-btn{% endblock %}

@@ -4,9 +4,11 @@ settings #}
 {% block content %}
 <style>
     .settings-container {
-        padding: 20px;
+        padding: 20px 20px 100px 20px;
+        /* Bottom padding for footer */
         background: #f9f9f9;
         min-height: 100vh;
+        box-sizing: border-box;
     }
 
     .header {
@@ -20,11 +22,16 @@ settings #}
         text-decoration: none;
         color: #333;
         font-weight: bold;
+        font-size: 20px;
     }
 
     .title {
         font-size: 18px;
         font-weight: bold;
+        flex: 1;
+        text-align: center;
+        margin-right: 30px;
+        /* Balance the back button */
     }
 
     .form-group {
@@ -33,26 +40,54 @@ settings #}
 
     .form-group label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        /* Slightly increased */
         font-weight: bold;
+        font-size: 14px;
+        color: #333;
     }
 
     .form-group input {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        /* Important for width:100% */
     }
 
-    .btn-submit {
-        background: var(--ios-blue, #007aff);
+    .footer-area {
+        position: absolute;
+        /* Changed from fixed to absolute to stay within phone-wrapper */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #eee;
+        text-align: center;
+        box-sizing: border-box;
+        /* Prevent padding from adding to width */
+        z-index: 10;
+    }
+
+    .btn-save {
+        background: #007aff;
         color: white;
         padding: 12px;
+        /* Reduced from 14px */
         width: 100%;
         border: none;
-        border-radius: 8px;
+        border-radius: 20px;
+        /* More rounded */
         font-weight: bold;
-        margin-top: 20px;
+        font-size: 15px;
+        /* Slightly smaller font */
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        box-sizing: border-box;
     }
 </style>
 
@@ -64,17 +99,21 @@ settings #}
 
     <form method="post">
         {% csrf_token %}
+        <!-- Stack vertically -->
         <div class="form-group">
-            <label>緊急連絡先電話番号</label>
+            <label>緊急連絡先</label>
             <input type="tel" name="emergency_phone" value="{{ profile.emergency_phone|default:'' }}"
                 placeholder="090-0000-0000">
         </div>
         <div class="form-group">
-            <label>続柄</label>
+            <label>あなたとの続柄</label>
             <input type="text" name="emergency_relation" value="{{ profile.emergency_relation|default:'' }}"
                 placeholder="父、母など">
         </div>
-        <button type="submit" class="btn-submit">保存する</button>
+
+        <div class="footer-area">
+            <button type="submit" class="btn-save">保存する</button>
+        </div>
     </form>
 </div>
 {% endblock %}

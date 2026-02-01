@@ -1,11 +1,44 @@
 {% extends 'base_auth.html' %}
 {% block content %}
 <style>
-    .header { height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #eee; background: white; }
-    .reward-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; }
-    .reward-circle { aspect-ratio: 1; border: 1px solid #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
-    .reward-circle input { display: none; }
-    .reward-circle:has(input:checked) { border-color: #007AFF; color: #007AFF; background: #eef6ff; }
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        background: white;
+    }
+
+    .reward-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .reward-circle {
+        aspect-ratio: 1;
+        border: 1px solid #eee;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .reward-circle input {
+        display: none;
+    }
+
+    .reward-circle:has(input:checked) {
+        border-color: #007AFF;
+        color: #007AFF;
+        background: #eef6ff;
+    }
 </style>
 
 <div class="header">
@@ -13,17 +46,22 @@
     <div style="font-weight:bold;">報酬</div>
 </div>
 
-<p style="padding:20px 15px 10px; font-size:12px; color:#666; font-weight:bold;">報酬の合計額（交通費を除く）</p>
-<div class="reward-grid">
-    {% for val in reward_list %}
-    <label class="reward-circle">
-        <input type="radio" name="reward" value="{{ val }}">
-        <span>¥{{ val|stringformat:"d" }}~</span>
-    </label>
-    {% endfor %}
-</div>
+<form method="post">
+    {% csrf_token %}
+    <p style="padding:20px 15px 10px; font-size:12px; color:#666; font-weight:bold;">報酬の合計額（交通費を除く）</p>
+    <div class="reward-grid">
+        {% for val in reward_list %}
+        <label class="reward-circle">
+            <input type="checkbox" name="reward" value="{{ val }}" {% if val|stringformat:"s" in selected_rewards
+                %}checked{% endif %}>
+            <span>¥{{ val|stringformat:"d" }}~</span>
+        </label>
+        {% endfor %}
+    </div>
 
-<div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
-    <button onclick="location.href='{% url 'refine_home' %}'" style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
-</div>
+    <div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
+        <button type="submit"
+            style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
+    </div>
+</form>
 {% endblock %}

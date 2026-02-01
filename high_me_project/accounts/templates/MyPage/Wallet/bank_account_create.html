@@ -1,0 +1,246 @@
+{% extends 'base_auth.html' %}
+{% block content %}
+<style>
+    .page-header {
+        position: relative;
+        padding: 15px 20px;
+        text-align: center;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .page-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .edit-list {
+        background: white;
+        margin-top: 20px;
+    }
+
+    .edit-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+    }
+
+    .edit-item:last-child {
+        border-bottom: none;
+    }
+
+    .edit-label {
+        font-size: 14px;
+        color: #333;
+        font-weight: bold;
+        flex-shrink: 0;
+        width: 100px;
+    }
+
+    .edit-value-container {
+        flex-grow: 1;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    /* Input styling to look like "Unentered" text */
+    .edit-input {
+        border: none;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
+        width: 100%;
+        outline: none;
+        background: transparent;
+    }
+
+    .edit-input::placeholder {
+        color: #999;
+        /* Not quite "Unentered >" but placeholder serves this purpose */
+    }
+
+    .edit-input-select {
+        border: none;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
+        outline: none;
+        background: transparent;
+        appearance: none;
+        direction: rtl;
+    }
+
+    /* Placeholder style specifically requested? User image has "未入力 >" 
+       We can simulate this by placing "未入力" in placeholder if value is empty, 
+       but standard placeholder works best for web forms. 
+    */
+
+    .arrow-icon {
+        color: #ccc;
+        font-size: 12px;
+    }
+
+    .help-link-area {
+        margin-top: 10px;
+        text-align: right;
+        padding-right: 20px;
+    }
+
+    .help-link {
+        font-size: 12px;
+        color: #888;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+
+    .footer-area {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        /* Padding for container */
+        background: white;
+        /* Or transparent/gray per design? The image shows sticky gray button area */
+        box-sizing: border-box;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-save {
+        background: #ccc;
+        /* Default gray as per image (inactive looking) */
+        color: #666;
+        /* Or white? Image looks like dark gray text on light gray button or white text on gray button. Let's go white on Main Color or Gray */
+        /* Image: Gray background, Black/Dark text "保存" */
+        background: #999;
+        color: white;
+
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 0;
+        /* Image has square/rectangular button at bottom? Or just full width bar. Let's stick to consistent rounded if possible, but user image shows flat gray bar across bottom? The image has a red box selection, hard to reflect exact shape. Let's match general style but maybe full width. */
+        /* Actually image 2 shows a bar at the very bottom. Let's make it full width block */
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* Make button blue if valid? For now static gray/blue logic isn't complex JS validation, just CSS */
+    .btn-save:not(:disabled) {
+        background: #999;
+        /* Stay gray unless we add JS to check inputs */
+    }
+
+    /* Let's style it to look like the image: Gray bar at bottom */
+    .save-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #007AFF;
+        /* Blue */
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .save-bar button {
+        background: transparent;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        color: white;
+        /* Or dark gray? */
+        width: 100%;
+    }
+</style>
+
+<div style="background: #f8f8f8; min-height: 100vh; padding-bottom: 80px;">
+    <div class="page-header">
+        <a href="{% url 'reward_management' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">振込口座を追加</div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="edit-list">
+            <!-- 銀行 -->
+            <div class="edit-item">
+                <div class="edit-label">銀行</div>
+                <div class="edit-value-container">
+                    <input type="text" name="bank_name" class="edit-input" placeholder="未入力" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 口座種別 -->
+            <div class="edit-item">
+                <div class="edit-label">口座種別</div>
+                <div class="edit-value-container">
+                    <select name="account_type" class="edit-input-select">
+                        <option value="" disabled selected>未入力</option>
+                        <option value="普通">普通</option>
+                        <option value="当座">当座</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 支店 -->
+            <div class="edit-item">
+                <div class="edit-label">支店</div>
+                <div class="edit-value-container">
+                    <input type="text" name="branch_name" class="edit-input" placeholder="未入力" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 口座番号 -->
+            <div class="edit-item">
+                <div class="edit-label">口座番号</div>
+                <div class="edit-value-container">
+                    <input type="text" name="account_number" class="edit-input" placeholder="未入力" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+
+            <!-- 口座名義 -->
+            <div class="edit-item">
+                <div class="edit-label">口座名義</div>
+                <div class="edit-value-container">
+                    <input type="text" name="account_holder_name" class="edit-input" placeholder="未入力" required>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-link-area">
+            <a href="#" class="help-link">口座情報について <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></a>
+        </div>
+
+        <div class="save-bar">
+            <!-- Styling to match gray bar in image -->
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

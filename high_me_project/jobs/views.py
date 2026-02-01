@@ -94,6 +94,68 @@ class IndexView(ListView):
         
         if self.selected_prefs:
             queryset = queryset.filter(template__store__prefecture__in=self.selected_prefs)
+
+        # セッションから絞り込み条件を取得して適用
+        session_filters = self.request.session.get('job_filters', {})
+        
+        # 職種
+        occupations = session_filters.get('occupations', [])
+        if occupations:
+            queryset = queryset.filter(template__occupation__in=occupations)
+
+        # 報酬
+        rewards = session_filters.get('rewards', [])
+        if rewards:
+            min_wage = 0
+            for r in rewards:
+                import re
+                match = re.search(r'(\d{1,3}(,\d{3})*)', r)
+                if match:
+                    val = int(match.group(1).replace(',', ''))
+                    if min_wage == 0 or val < min_wage:
+                        min_wage = val
+            if min_wage > 0:
+                queryset = queryset.filter(hourly_wage__gte=min_wage)
+
+        # 待遇
+        treatments = session_filters.get('treatments', [])
+        if treatments:
+            treatment_map = {
+                "未経験者歓迎": "has_unexperienced_welcome",
+                "バイク/車通勤可": "has_bike_car_commute",
+                "服装自由": "has_clothing_free",
+                "クーポンGET": "has_coupon_get",
+                "まかないあり": "has_meal",
+                "髪型/カラー自由": "has_hair_color_free",
+                "交通費支給": "has_transportation_allowance"
+            }
+            for t in treatments:
+                field_name = treatment_map.get(t)
+                if field_name:
+                    queryset = queryset.filter(**{f"template__{field_name}": True})
+
+        # 時間帯
+        time_ranges = session_filters.get('time_ranges', [])
+        if time_ranges:
+            time_q = Q()
+            for tr in time_ranges:
+                if tr == "朝 (4:00〜10:00)":
+                    time_q |= Q(start_time__gte="04:00", start_time__lt="10:00")
+                elif tr == "昼 (10:00〜16:00)":
+                    time_q |= Q(start_time__gte="10:00", start_time__lt="16:00")
+                elif tr == "夕方 (16:00〜22:00)":
+                    time_q |= Q(start_time__gte="16:00", start_time__lt="22:00")
+                elif tr == "深夜 (22:00〜4:00)":
+                    time_q |= Q(start_time__gte="22:00") | Q(start_time__lt="04:00")
+            queryset = queryset.filter(time_q)
+
+        # 除外キーワード
+        exclude_keyword = session_filters.get('exclude_keyword', '')
+        if exclude_keyword:
+            keywords = exclude_keyword.replace('　', ' ').split()
+            for k in keywords:
+                if k:
+                    queryset = queryset.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
             
         return queryset
 
@@ -194,6 +256,68 @@ class MapView(TemplateView):
             template__store__latitude__isnull=False,
             template__store__longitude__isnull=False
         ).select_related('template', 'template__store')
+
+        # セッションから絞り込み条件を取得して適用 (IndexViewと同様のロジック)
+        session_filters = self.request.session.get('job_filters', {})
+        
+        # 職種
+        occupations = session_filters.get('occupations', [])
+        if occupations:
+            qs = qs.filter(template__occupation__in=occupations)
+
+        # 報酬
+        rewards = session_filters.get('rewards', [])
+        if rewards:
+            min_wage = 0
+            for r in rewards:
+                import re
+                match = re.search(r'(\d{1,3}(,\d{3})*)', r)
+                if match:
+                    val = int(match.group(1).replace(',', ''))
+                    if min_wage == 0 or val < min_wage:
+                        min_wage = val
+            if min_wage > 0:
+                qs = qs.filter(hourly_wage__gte=min_wage)
+
+        # 待遇
+        treatments = session_filters.get('treatments', [])
+        if treatments:
+            treatment_map = {
+                "未経験者歓迎": "has_unexperienced_welcome",
+                "バイク/車通勤可": "has_bike_car_commute",
+                "服装自由": "has_clothing_free",
+                "クーポンGET": "has_coupon_get",
+                "まかないあり": "has_meal",
+                "髪型/カラー自由": "has_hair_color_free",
+                "交通費支給": "has_transportation_allowance"
+            }
+            for t in treatments:
+                field_name = treatment_map.get(t)
+                if field_name:
+                    qs = qs.filter(**{f"template__{field_name}": True})
+
+        # 時間帯
+        time_ranges = session_filters.get('time_ranges', [])
+        if time_ranges:
+            time_q = Q()
+            for tr in time_ranges:
+                if tr == "朝 (4:00〜10:00)":
+                    time_q |= Q(start_time__gte="04:00", start_time__lt="10:00")
+                elif tr == "昼 (10:00〜16:00)":
+                    time_q |= Q(start_time__gte="10:00", start_time__lt="16:00")
+                elif tr == "夕方 (16:00〜22:00)":
+                    time_q |= Q(start_time__gte="16:00", start_time__lt="22:00")
+                elif tr == "深夜 (22:00〜4:00)":
+                    time_q |= Q(start_time__gte="22:00") | Q(start_time__lt="04:00")
+            qs = qs.filter(time_q)
+
+        # 除外キーワード
+        exclude_keyword = session_filters.get('exclude_keyword', '')
+        if exclude_keyword:
+            keywords = exclude_keyword.replace('　', ' ').split()
+            for k in keywords:
+                if k:
+                    qs = qs.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
         
         jobs_data = []
         for job in qs:
@@ -223,8 +347,40 @@ class MapView(TemplateView):
 class RefineHomeView(TemplateView):
     template_name = 'Searchjobs/refine_home.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 現在のフィルタ状態を表示用に渡す
+        session_filters = self.request.session.get('job_filters', {})
+        context['current_occupations'] = session_filters.get('occupations', [])
+        context['current_rewards'] = session_filters.get('rewards', [])
+        context['current_time_ranges'] = session_filters.get('time_ranges', [])
+        context['current_treatments'] = session_filters.get('treatments', [])
+        context['current_exclude_keyword'] = session_filters.get('exclude_keyword', '')
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # "すべて解除" や 個別のリセット用
+        if 'reset' in request.POST:
+            if 'job_filters' in request.session:
+                del request.session['job_filters']
+        return redirect('refine_home')
+
 class TimeSelectView(TemplateView):
     template_name = 'Searchjobs/time_select.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filters = self.request.session.get('job_filters', {})
+        context['selected_time_ranges'] = filters.get('time_ranges', [])
+        context['time_list'] = ["朝 (4:00〜10:00)", "昼 (10:00〜16:00)", "夕方 (16:00〜22:00)", "深夜 (22:00〜4:00)"]
+        return context
+
+    def post(self, request, *args, **kwargs):
+        selected = request.POST.getlist('time_range')
+        filters = request.session.get('job_filters', {})
+        filters['time_ranges'] = selected
+        request.session['job_filters'] = filters
+        return redirect('refine_home')
 
 class TreatmentSelectView(TemplateView):
     template_name = 'Searchjobs/treatment_select.html'
@@ -232,10 +388,32 @@ class TreatmentSelectView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['treatment_list'] = ["未経験者歓迎", "バイク/車通勤可", "服装自由", "クーポンGET", "まかないあり", "髪型/カラー自由", "交通費支給"]
+        filters = self.request.session.get('job_filters', {})
+        context['selected_treatments'] = filters.get('treatments', [])
         return context
+
+    def post(self, request, *args, **kwargs):
+        selected = request.POST.getlist('treatment')
+        filters = request.session.get('job_filters', {})
+        filters['treatments'] = selected
+        request.session['job_filters'] = filters
+        return redirect('refine_home')
 
 class KeywordExcludeView(TemplateView):
     template_name = 'Searchjobs/keyword_exclude.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filters = self.request.session.get('job_filters', {})
+        context['exclude_keyword'] = filters.get('exclude_keyword', '')
+        return context
+
+    def post(self, request, *args, **kwargs):
+        keyword = request.POST.get('keyword', '')
+        filters = request.session.get('job_filters', {})
+        filters['exclude_keyword'] = keyword
+        request.session['job_filters'] = filters
+        return redirect('refine_home')
 
 class OccupationSelectView(TemplateView):
     template_name = 'Searchjobs/occupation_select.html'
@@ -243,7 +421,16 @@ class OccupationSelectView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['occupation_list'] = OCCUPATIONS
+        filters = self.request.session.get('job_filters', {})
+        context['selected_occupations'] = filters.get('occupations', [])
         return context
+
+    def post(self, request, *args, **kwargs):
+        selected = request.POST.getlist('occupation')
+        filters = request.session.get('job_filters', {})
+        filters['occupations'] = selected
+        request.session['job_filters'] = filters
+        return redirect('refine_home')
 
 class RewardSelectView(TemplateView):
     template_name = 'Searchjobs/reward_select.html'
@@ -251,7 +438,16 @@ class RewardSelectView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reward_list'] = REWARDS
+        filters = self.request.session.get('job_filters', {})
+        context['selected_rewards'] = filters.get('rewards', [])
         return context
+
+    def post(self, request, *args, **kwargs):
+        selected = request.POST.getlist('reward')
+        filters = request.session.get('job_filters', {})
+        filters['rewards'] = selected
+        request.session['job_filters'] = filters
+        return redirect('refine_home')
 
 
 class JobDetailView(DetailView):

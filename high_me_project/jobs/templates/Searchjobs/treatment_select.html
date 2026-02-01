@@ -1,20 +1,61 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 {% block content %}
-<div class="header" style="height:60px; display:flex; align-items:center; padding:0 15px; border-bottom:1px solid #eee; background:white;">
+<style>
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        background: white;
+    }
+
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 15px;
+        border-bottom: 1px solid #f5f5f5;
+        cursor: pointer;
+        background: white;
+    }
+
+    .list-item input {
+        width: 22px;
+        height: 22px;
+        accent-color: #007AFF;
+    }
+
+    .fixed-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        max-width: 430px;
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+        box-sizing: border-box;
+    }
+</style>
+
+<div class="header">
     <a href="{% url 'refine_home' %}" style="text-decoration:none; color:#333; margin-right:20px;">＜</a>
     <div style="font-weight:bold;">待遇を選択</div>
 </div>
 
-<div style="padding-bottom:80px;">
-    {% for t in treatment_list %}
-    <label style="display:flex; justify-content:space-between; padding:20px 15px; border-bottom:1px solid #f5f5f5; background:white;">
-        <span>{{ t }}</span>
-        <input type="checkbox" style="width:22px; height:22px; accent-color:#007AFF;">
-    </label>
-    {% endfor %}
-</div>
+<form method="post">
+    {% csrf_token %}
+    <div style="padding-bottom:80px;">
+        {% for t in treatment_list %}
+        <label class="list-item">
+            <span>{{ t }}</span>
+            <input type="checkbox" name="treatment" value="{{ t }}" {% if t in selected_treatments %}checked{% endif %}>
+        </label>
+        {% endfor %}
+    </div>
 
-<div style="position:fixed; bottom:0; width:100%; max-width:430px; padding:15px; box-sizing:border-box;">
-    <button onclick="location.href='{% url 'refine_home' %}'" style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
-</div>
+    <div class="fixed-footer">
+        <button type="submit"
+            style="width:100%; padding:16px; background:#007AFF; color:white; border:none; border-radius:8px; font-weight:bold;">OK</button>
+    </div>
+</form>
 {% endblock %}

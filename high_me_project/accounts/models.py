@@ -44,6 +44,10 @@ class WorkerProfile(models.Model):
     # 希望エリア（画像7: 都道府県選択をカンマ区切りで保存）
     target_prefectures = models.TextField("希望都道府県", null=True, blank=True)
 
+    # 緊急連絡先
+    emergency_phone = models.CharField("緊急連絡先電話番号", max_length=20, null=True, blank=True)
+    emergency_relation = models.CharField("緊急連絡先続柄", max_length=50, null=True, blank=True)
+
     # 状態管理
     is_setup_completed = models.BooleanField("セットアップ完了", default=False)
     is_identity_verified = models.BooleanField("本人確認済み", default=False)
