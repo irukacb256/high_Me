@@ -105,6 +105,24 @@ class WorkerReview(models.Model):
     def __str__(self):
         return f"{self.worker} - {self.review_type}"
 
+class StoreReview(models.Model):
+    """ワーカーから店舗へのレビュー"""
+    # 紐づく応募（1つの応募につき1回のレビュー）
+    job_application = models.OneToOneField('JobApplication', on_delete=models.CASCADE, related_name='store_review')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='received_reviews')
+    worker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_store_reviews')
+    
+    # 評価項目 (True=Good, False=Bad)
+    is_time_matched = models.BooleanField("働いた時間は求人内容どおりでしたか？", default=True)
+    is_content_matched = models.BooleanField("掲載されていた仕事内容通りでしたか？", default=True)
+    is_want_to_work_again = models.BooleanField("またここで働きたいですか？", default=True)
+    
+    comment = models.TextField("コメント", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review for {self.store} by {self.worker}"
+
 class StoreWorkerMemo(models.Model):
     """店舗がワーカーに付ける管理用メモ"""
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
@@ -155,6 +173,11 @@ class JobTemplate(models.Model):
     ]
     smoking_prevention = models.CharField("受動喫煙防止措置", max_length=50, choices=SMOKING_CHOICES, default='indoor_no_smoking')
     has_smoking_area = models.BooleanField("喫煙可能エリアでの作業あり", default=False)
+    
+    # 働く前の質問 (任意)
+    question1 = models.CharField("働く前の質問1", max_length=200, blank=True, null=True)
+    question2 = models.CharField("働く前の質問2", max_length=200, blank=True, null=True)
+    question3 = models.CharField("働く前の質問3", max_length=200, blank=True, null=True)
     
     # 資格設定
     requires_qualification = models.BooleanField("資格が必要ですか？", default=False)
@@ -289,6 +312,12 @@ class JobApplication(models.Model):
     applied_at = models.DateTimeField(auto_now_add=True)
     attendance_at = models.DateTimeField("出勤日時", null=True, blank=True) # チェックイン
     leaving_at = models.DateTimeField("退勤日時", null=True, blank=True)     # チェックアウト
+    
+    # 働き前アンケート回答
+    answer1 = models.TextField("回答1", blank=True, null=True)
+    answer2 = models.TextField("回答2", blank=True, null=True)
+    answer3 = models.TextField("回答3", blank=True, null=True)
+    answered_at = models.DateTimeField("回答日時", null=True, blank=True)
 
     class Meta:
         # 同じ人が同じ求人に二重に申し込めないように設定

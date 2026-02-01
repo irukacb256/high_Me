@@ -1,0 +1,88 @@
+{% extends 'Work/review_base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .review-step-container {
+        padding: 20px 15px 80px;
+        background: #f9f9f9;
+        min-height: 100vh;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .step-subtitle {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .comment-area {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea.form-control {
+        width: 100%;
+        border: none;
+        resize: none;
+        font-size: 16px;
+        outline: none;
+        min-height: 120px;
+    }
+
+    textarea::placeholder {
+        color: #ccc;
+    }
+
+    .submit-btn {
+        width: 100%;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        /* Footer配置用 */
+        width: 100%;
+        max-width: 570px;
+        box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block review_content %}
+
+<div class="review-step-container">
+    <h1 class="page-title">レビューを入力する</h1>
+
+    <form method="post" id="review-form">
+        {% csrf_token %}
+
+        <div class="question-title" style="margin-bottom: 10px; font-weight:bold;">コメント</div>
+        <div class="comment-area">
+            {{ form.comment }}
+        </div>
+
+        <p class="step-subtitle">
+            働いた感想や、職場の環境などについて入力してください。<br>
+            ・具体的なよかった点・改善点
+        </p>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block review_footer %}
+<button type="submit" form="review-form" class="submit-btn">投稿する（確認）</button>
+{% endblock %}

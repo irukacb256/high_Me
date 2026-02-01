@@ -1,0 +1,114 @@
+{% extends 'base_auth.html' %}
+
+{% block extra_head %}
+<style>
+    /* Review Base Styles (Copied/Adapted from Signup Base) */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #333;
+    }
+
+    .review-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        background: white;
+        overflow: hidden;
+    }
+
+    .review-header {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 50px 20px 10px;
+        background: white;
+        z-index: 10;
+    }
+
+    .header-top {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 15px;
+        height: 24px;
+    }
+
+    .back-btn {
+        font-size: 20px;
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        display: flex;
+        gap: 5px;
+    }
+
+    .progress-segment {
+        flex: 1;
+        height: 4px;
+        background-color: #E0E0E0;
+        border-radius: 2px;
+    }
+
+    .progress-segment.active {
+        background-color: #007AFF;
+    }
+
+    .review-content {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        /* content specific padding in children if needed */
+        position: relative;
+        /* for absolute positioning inside if needed */
+    }
+
+    .review-footer {
+        flex-shrink: 0;
+        padding: 20px 15px;
+        background: white;
+        border-top: 1px solid #eee;
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+{% block extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+    <div class="review-header">
+        <div class="header-top">
+            {% block back_button %}
+            <a href="javascript:history.back()" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            {% endblock %}
+        </div>
+
+        <div class="progress-bar-container">
+            <!-- 3 steps default -->
+            <div class="progress-segment {% if step >= 1 %}active{% endif %}"></div>
+            <div class="progress-segment {% if step >= 2 %}active{% endif %}"></div>
+            <div class="progress-segment {% if step >= 3 %}active{% endif %}"></div>
+        </div>
+    </div>
+
+    <div class="review-content">
+        {% block review_content %}{% endblock %}
+    </div>
+
+    <div class="review-footer">
+        {% block review_footer %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

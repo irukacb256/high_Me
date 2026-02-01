@@ -62,6 +62,7 @@ urlpatterns = [
     path('home/refine/time/', job_views.TimeSelectView.as_view(), name='time_select'),
     path('home/refine/treatment/', job_views.TreatmentSelectView.as_view(), name='treatment_select'),
     path('working/<int:pk>/', job_views.JobWorkingDetailView.as_view(), name='job_working_detail'),
+    path('working/<int:pk>/answer/', job_views.JobAnswerView.as_view(), name='job_answer'), # ★追加
     path('working/<int:pk>/qr/', job_views.QRScanView.as_view(), name='job_qr_scan'), # ★追加
     path('working/<int:pk>/reader/', job_views.JobQRReaderView.as_view(), name='job_qr_reader'),
     path('jobs/map/', job_views.MapSearchView.as_view(), name='map_search'),
@@ -74,11 +75,20 @@ urlpatterns = [
     path('attendance/<int:application_id>/step5/', job_views.AttendanceStep5LatenessView.as_view(), name='attendance_step5'),
     path('attendance/<int:application_id>/step6/', job_views.AttendanceStep6ConfirmView.as_view(), name='attendance_step6'),
     path('attendance/<int:application_id>/step7/', job_views.AttendanceStep7FinishView.as_view(), name='attendance_step7'),
+    path('attendance/<int:application_id>/reward/', job_views.RewardConfirmView.as_view(), name='reward_confirm'), # ★追加
+    path('attendance/<int:application_id>/finish/', job_views.RewardFinishView.as_view(), name='reward_finish'),   # ★追加
+    
+    # 店舗評価
+    path('work/application/<int:application_id>/review/step1/', job_views.StoreReviewStep1View.as_view(), name='store_review_step1'),
+    path('work/application/<int:application_id>/review/step2/', job_views.StoreReviewStep2View.as_view(), name='store_review_step2'),
+    path('work/application/<int:application_id>/review/complete/', job_views.StoreReviewCompleteView.as_view(), name='store_review_complete'),
+
     path('favorites/', job_views.FavoritesView.as_view(), name='favorites'),      # ★追加
     path('schedule/', job_views.WorkScheduleView.as_view(), name='work_schedule'), # ★追加
     path('messages/', job_views.MessagesView.as_view(), name='messages'),          # ★追加
     path('home/refine/keyword/', job_views.KeywordExcludeView.as_view(), name='keyword_exclude'), # ★追加（NoReverseMatch対応）
     path('badges/', job_views.BadgeListView.as_view(), name='badge_list'),        # ★バッジ一覧
+    path('badges/<int:pk>/', job_views.BadgeDetailView.as_view(), name='badge_detail'), # ★バッジ詳細
     
     # 店舗プロフィール & お気に入りAPI
     path('store/<int:store_id>/', job_views.StoreProfileView.as_view(), name='store_profile'),
@@ -100,6 +110,9 @@ urlpatterns = [
     # レビュー・ペナルティ
     path('rewards/reviews/', account_views.review_penalty, name='review_penalty'),
     path('rewards/penalty-detail/', account_views.penalty_detail, name='penalty_detail'),
+    path('taxes/annual/', account_views.AnnualTaxView.as_view(), name='annual_tax_list'), # ★追加
+    path('taxes/slips/', account_views.TaxSlipView.as_view(), name='tax_slip_list'),   # ★追加
+    path('rewards/earned/', account_views.EarnedRewardsView.as_view(), name='earned_rewards_list'), # ★追加
 
     # ワーカーメッセージ機能
     path('accounts/messages/', account_views.WorkerMessageListView.as_view(), name='worker_message_list'),
@@ -195,6 +208,14 @@ urlpatterns = [
     # 勤怠修正依頼 (店舗承認フロー)
     path('biz/store/<int:store_id>/corrections/', biz_views.AttendanceCorrectionListView.as_view(), name='biz_attendance_correction_list'),
     path('biz/store/<int:store_id>/corrections/<int:pk>/', biz_views.AttendanceCorrectionDetailView.as_view(), name='biz_attendance_correction_detail'),
+    
+    # 年間報酬による制限の解除
+    path('biz/limit/release/', biz_views.AnnualLimitReleaseView.as_view(), name='biz_limit_release'),
+    path('biz/limit/release/confirm/', biz_views.AnnualLimitReleaseConfirmView.as_view(), name='biz_limit_release_confirm'),
+    path('biz/limit/release/finish/', biz_views.AnnualLimitReleaseFinishView.as_view(), name='biz_limit_release_finish'),
+
+    # 店舗レビュー
+    path('biz/store/<int:store_id>/store-reviews/', biz_views.StoreReviewListView.as_view(), name='biz_store_reviews'),
     
     # 求人詳細画面
     # 求人詳細画面

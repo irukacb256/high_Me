@@ -159,7 +159,7 @@
 
     <div class="page-header">
         <div class="page-title">求人のひな形詳細</div>
-        <div class="page-subtitle">求人のひな形を確認できまえ</div>
+        <div class="page-subtitle">求人のひな形を確認できます</div>
     </div>
 
     <div class="detail-card">
@@ -248,7 +248,22 @@
             <div class="detail-label">受動喫煙防止措置</div>
             <div class="detail-value">
                 {{ template.get_smoking_prevention_display }}
-                {% if template.has_smoking_area %}。亥稔辣吝庄閭ｽ繧ｨ繝ｪ繧｢での菴懈･ｭあり。閲% endif %}
+                {% if template.has_smoking_area %}（喫煙可能エリアでの作業あり）{% endif %}
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">働く前の質問</div>
+            <div class="detail-value">
+                {% if template.question1 or template.question2 or template.question3 %}
+                <ul style="padding-left: 20px; margin: 0;">
+                    {% if template.question1 %}<li>{{ template.question1 }}</li>{% endif %}
+                    {% if template.question2 %}<li>{{ template.question2 }}</li>{% endif %}
+                    {% if template.question3 %}<li>{{ template.question3 }}</li>{% endif %}
+                </ul>
+                {% else %}
+                なし
+                {% endif %}
             </div>
         </div>
 
@@ -256,7 +271,7 @@
             <div class="detail-label">資格設定</div>
             <div class="detail-value">
                 {% if template.requires_qualification %}
-                あり）% if template.qualification %}{{ template.qualification.name }}{% else %}{{
+                あり（{% if template.qualification %}{{ template.qualification.name }}{% else %}{{
                 template.get_qualification_type_display }}{% endif %}）
                 {% if template.qualification_notes %}
                 <div style="margin-top: 8px; color: #666; font-size: 14px;">

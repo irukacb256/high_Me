@@ -1,0 +1,119 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .answer-container {
+        background: white;
+        min-height: 100vh;
+        padding-bottom: 80px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        border-bottom: 1px solid #f2f2f2;
+        background: white;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .back-btn {
+        font-size: 24px;
+        color: #333;
+        margin-right: 15px;
+        cursor: pointer;
+    }
+
+    .header-title {
+        font-weight: bold;
+        font-size: 17px;
+    }
+
+    .content-area {
+        padding: 20px;
+    }
+
+    .question-item {
+        margin-bottom: 25px;
+    }
+
+    .question-label {
+        display: block;
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .question-input {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="answer-container">
+    <div class="header">
+        <a href="{% url 'job_working_detail' app.job_posting.pk %}" class="back-btn">
+            <i class="fa-solid fa-times"></i>
+        </a>
+        <div class="header-title">働き先への回答</div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="content-area">
+            <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                当日の通勤方法やアレルギーなどについて教えてください。<br>
+                回答はタイミーにも共有されます。
+            </p>
+
+            {% if app.job_posting.template.question1 %}
+            <div class="question-item">
+                <label class="question-label">{{ app.job_posting.template.question1 }}</label>
+                <input type="text" name="answer1" class="question-input" required value="{{ app.answer1|default:'' }}"
+                    placeholder="回答を入力してください">
+            </div>
+            {% endif %}
+
+            {% if app.job_posting.template.question2 %}
+            <div class="question-item">
+                <label class="question-label">{{ app.job_posting.template.question2 }}</label>
+                <input type="text" name="answer2" class="question-input" value="{{ app.answer2|default:'' }}"
+                    placeholder="回答を入力してください">
+            </div>
+            {% endif %}
+
+            {% if app.job_posting.template.question3 %}
+            <div class="question-item">
+                <label class="question-label">{{ app.job_posting.template.question3 }}</label>
+                <input type="text" name="answer3" class="question-input" value="{{ app.answer3|default:'' }}"
+                    placeholder="回答を入力してください">
+            </div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">送信</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

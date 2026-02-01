@@ -225,8 +225,9 @@
             </a>
 
             <!-- 店舗へのレビュー -->
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-thumbs-up"></i> 店舗へのレビュー
+            <a href="{% url 'biz_store_reviews' store.id %}"
+                class="nav-item {% if 'store-reviews' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-star"></i> 店舗へのレビュー
             </a>
 
             <!-- 利用明細 -->

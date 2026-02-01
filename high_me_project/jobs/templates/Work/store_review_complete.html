@@ -1,0 +1,187 @@
+{% extends 'Work/review_base.html' %}
+{% load static %}
+
+{% block back_button %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .complete-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        /* header分考慮 */
+        padding: 20px;
+        text-align: center;
+        background: white;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .message {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .store-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .store-icon {
+        width: 80px;
+        height: 80px;
+        background: #eee;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+
+    .store-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .store-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .favorite-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        color: #333;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .favorite-btn.active {
+        border-color: #ff3b30;
+        color: #ff3b30;
+    }
+
+    .ok-btn {
+        width: 100%;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        /* Footer配置用 */
+        width: 100%;
+        max-width: 570px;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sub-message {
+        font-size: 12px;
+        color: #999;
+        margin-top: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block review_content %}
+
+<div class="complete-container">
+    <h1 class="page-title">レビューが完了しました</h1>
+
+    <p class="message">
+        投稿いただきありがとうございました。<br>
+        コメントは相互レビュー完了後、または14日後に<br>
+        表示されます。また、短いコメントは表示されない<br>
+        場合があります。
+    </p>
+
+    <div class="store-info">
+        <div class="store-icon">
+            {% if store.image %}
+            <img src="{{ store.image.url }}">
+            {% else %}
+            <div
+                style="width:100%; height:100%; background:#ccc; display:flex; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-store" style="color:white; font-size:30px;"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="store-name">{{ store.store_name }}</div>
+
+        <button type="button" class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
+            <i class="fa-regular fa-heart" id="favIcon"></i>
+            <span id="favText">この店舗をお気に入りにする</span>
+        </button>
+    </div>
+
+    <p class="sub-message">店舗の募集状況をいつでも確認できるようになります</p>
+</div>
+{% endblock %}
+
+{% block review_footer %}
+<a href="{% url 'work_schedule' %}" class="ok-btn">OK</a>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let isFavorite = false; // 初期値
+
+    async function toggleFavorite() {
+        const btn = document.getElementById('favoriteBtn');
+        const icon = document.getElementById('favIcon');
+        const text = document.getElementById('favText');
+
+        try {
+            const response = await fetch("{% url 'toggle_favorite_store' store.id %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.is_favorited) {
+                isFavorite = true;
+                btn.classList.add('active');
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                text.textContent = 'お気に入り登録済み';
+            } else {
+                isFavorite = false;
+                btn.classList.remove('active');
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                text.textContent = 'この店舗をお気に入りにする';
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
+{% endblock %}

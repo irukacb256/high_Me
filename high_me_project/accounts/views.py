@@ -1336,3 +1336,12 @@ def workstyle_edit(request):
         return redirect('account_settings')
 
     return render(request, 'MyPage/Settings/workstyle_edit.html', {'profile': profile})
+
+class AnnualTaxView(LoginRequiredMixin, TemplateView):
+    template_name = 'MyPage/Taxes/annual.html'
+
+class TaxSlipView(LoginRequiredMixin, TemplateView):
+    template_name = 'MyPage/Taxes/slips.html'
+
+class EarnedRewardsView(LoginRequiredMixin, TemplateView):
+    template_name = 'MyPage/Rewards/earned.html'

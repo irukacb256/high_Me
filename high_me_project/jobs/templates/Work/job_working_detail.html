@@ -281,6 +281,34 @@
         </div>
     </div>
 
+    <!-- 働き先からの質問 (チェックイン前 かつ 質問がある場合) -->
+    {% if questions_exist and not app.attendance_at %}
+    <div class="action-area" style="margin-bottom: 20px;">
+        <div
+            style="background: white; border: 1px solid #ddd; border-top: 3px solid {% if is_answered %}#ccc{% else %}#ff3b30{% endif %}; border-radius: 8px; padding: 15px; text-align: left;">
+            <div style="font-weight: bold; font-size: 15px; margin-bottom: 8px;">働き先からの質問が届いています</div>
+            <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 8px;">
+                今回の働き先から質問が届いています。回答期限までに回答してください。
+            </p>
+            <div style="font-weight: bold; color: #ff3b30; font-size: 13px; margin-bottom: 12px;">
+                回答期限 {{ app.job_posting.work_date|date:"n月j日(D)" }} {{ app.job_posting.start_time|date:"H:i" }}
+            </div>
+
+            {% if is_answered %}
+            <button type="button" disabled
+                style="background: #ccc; padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold;">
+                回答済み
+            </button>
+            {% else %}
+            <a href="{% url 'job_answer' app.job_posting.pk %}"
+                style="display: block; text-align: center; background: white; border: 2px solid #ff3b30; color: #1c1c1e; padding: 12px; border-radius: 8px; font-weight: bold; text-decoration: none;">
+                回答する
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     <div class="action-area">
         {% if not app.attendance_at or not app.leaving_at %}
         <p class="instruction">仕事をはじめる/おわるときに、タップしてください</p>
@@ -300,21 +328,162 @@
         {% endif %}
     </div>
 
+    <!-- iOS Style Popup -->
+    <div id="ios-popup-overlay" class="ios-popup-overlay">
+        <div class="ios-popup">
+            <div class="ios-popup-content">
+                <div class="ios-popup-title">確認</div>
+                <div id="ios-popup-message" class="ios-popup-message"></div>
+            </div>
+            <div class="ios-popup-actions">
+                <button type="button" class="ios-popup-btn" onclick="closeIosPopup()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ios-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .ios-popup {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            width: 270px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+            animation: popIn 0.2s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(1.1);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .ios-popup-content {
+            padding: 20px 16px;
+        }
+
+        .ios-popup-title {
+            font-weight: 600;
+            font-size: 17px;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .ios-popup-message {
+            font-size: 13px;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        .ios-popup-actions {
+            border-top: 1px solid rgba(0, 0, 0, 0.15);
+            display: flex;
+        }
+
+        .ios-popup-btn {
+            background: transparent;
+            border: none;
+            color: #007AFF;
+            font-size: 17px;
+            font-weight: 600;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+        }
+
+        .ios-popup-btn:active {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+
+    <script>
+        function showIosPopup(message) {
+            document.getElementById('ios-popup-message').textContent = message;
+            document.getElementById('ios-popup-overlay').style.display = 'flex';
+        }
+
+        function closeIosPopup() {
+            document.getElementById('ios-popup-overlay').style.display = 'none';
+        }
+
+        // Success Toast (using messages framework via Django)
+        {% if messages %}
+        document.addEventListener('DOMContentLoaded', function () {
+            {% for message in messages %}
+            showIosPopup("{{ message }}");
+            {% endfor %}
+        });
+        {% endif %}
+    </script>
+
     <!-- メニューリスト -->
     <div class="menu-list">
-        <a href="{% url 'job_detail' app.job_posting.pk %}" class="menu-item">
-            <i class="fa-solid fa-bars menu-icon"></i>
-            <span class="menu-text">募集詳細</span>
+        <!-- キャンセル -->
+        <a href="#" class="menu-item">
+            <i class="fa-regular fa-circle-xmark menu-icon"></i>
+            <span class="menu-text">このお仕事をキャンセル</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>
         </a>
+
+        <!-- 修正依頼 (既存) -->
+        <a href="{% url 'attendance_step2' app.id %}" class="menu-item">
+            <i class="fa-regular fa-envelope menu-icon"></i>
+            <span class="menu-text">修正依頼</span>
+            <i class="fa-solid fa-chevron-right menu-arrow"></i>
+        </a>
+
+        <!-- 募集内容 -->
+        <a href="{% url 'job_detail' app.job_posting.pk %}" class="menu-item">
+            <i class="fa-regular fa-file-lines menu-icon"></i>
+            <span class="menu-text">募集内容</span>
+            <i class="fa-solid fa-chevron-right menu-arrow"></i>
+        </a>
+
+        <!-- 書類 -->
         <a href="#" class="menu-item">
-            <i class="fa-solid fa-file-lines menu-icon"></i>
+            <i class="fa-regular fa-file-lines menu-icon"></i>
             <span class="menu-text">業務に関する書類</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>
         </a>
-        <a href="{% url 'attendance_step2' app.id %}" class="menu-item">
-            <i class="fa-solid fa-envelope menu-icon"></i>
-            <span class="menu-text">修正依頼</span>
+
+        <!-- お問い合わせ -->
+        <a href="{% if chat_room %}{% url 'worker_message_detail' chat_room.id %}{% else %}{% url 'worker_message_list' %}{% endif %}"
+            class="menu-item">
+            <i class="fa-regular fa-envelope menu-icon"></i>
+            <span class="menu-text">お問い合わせ</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>
         </a>
     </div>

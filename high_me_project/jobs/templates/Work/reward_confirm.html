@@ -1,0 +1,247 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .confirm-container {
+        background: #f9f9f9;
+        min-height: 100vh;
+        padding-bottom: 80px;
+    }
+
+    .header-area {
+        background: white;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .confirm-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .confirm-sub {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .amount-card {
+        background: white;
+        margin: 20px;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .amount-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .total-amount-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .submit-area {
+        padding: 20px;
+        position: absolute;
+        /* Changed from fixed */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-top: 1px solid #eee;
+        box-sizing: border-box;
+        z-index: 2000;
+        /* Ensure it's on top */
+    }
+
+    /* Hide global bottom nav on this page */
+    .bottom-nav {
+        display: none !important;
+    }
+
+    .btn-submit {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    /* iOS Popup Styles */
+    .ios-popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .ios-popup {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        width: 270px;
+        border-radius: 14px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+        animation: popIn 0.2s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes popIn {
+        from {
+            transform: scale(1.1);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .ios-popup-content {
+        padding: 20px 16px;
+    }
+
+    .ios-popup-title {
+        font-weight: 600;
+        font-size: 17px;
+        color: #000;
+        margin-bottom: 4px;
+    }
+
+    .ios-popup-message {
+        font-size: 13px;
+        color: #000;
+        line-height: 1.4;
+    }
+
+    .ios-popup-actions {
+        border-top: 1px solid rgba(0, 0, 0, 0.15);
+        display: flex;
+    }
+
+    .ios-popup-btn {
+        background: transparent;
+        border: none;
+        color: #007AFF;
+        font-size: 17px;
+        font-weight: 400;
+        /* Regular for Cancel */
+        padding: 12px;
+        width: 50%;
+        cursor: pointer;
+    }
+
+    .ios-popup-btn:active {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .ios-popup-btn.confirm {
+        font-weight: 600;
+        /* Bold for Confirm */
+        border-left: 1px solid rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<div class="confirm-container">
+    <div class="header-area">
+        <div class="confirm-title">報酬額の確認</div>
+        <div class="confirm-sub">以下の内容で報酬を確定します</div>
+    </div>
+
+    <div class="amount-card">
+        <div class="amount-row">
+            <span>基本報酬 ({{ work_hours }}h)</span>
+            <span>¥{{ base_reward }}</span>
+        </div>
+        <div class="amount-row">
+            <span>交通費</span>
+            <span>¥{{ transportation }}</span>
+        </div>
+        <div class="total-amount-row">
+            <span>合計支払額</span>
+            <span>¥{{ total_amount }}</span>
+        </div>
+    </div>
+
+    <div style="padding: 20px; font-size: 12px; color: #888;">
+        ※ 修正が必要な場合は「修正依頼」から申請してください。<br>
+        ※ 確定後の変更はできません。
+    </div>
+
+    <!-- Dummy div for spacer -->
+    <div style="height: 100px;"></div>
+
+    <div class="submit-area">
+        <button type="button" class="btn-submit" onclick="openPopup()">報酬を受け取る</button>
+    </div>
+</div>
+
+<!-- iOS Popup -->
+<div id="ios-popup-overlay" class="ios-popup-overlay">
+    <div class="ios-popup">
+        <div class="ios-popup-content">
+            <div class="ios-popup-title">この内容で報酬を確定します</div>
+            <div class="ios-popup-message">
+                残業などで業務時間の修正が必要な場合は、<br>修正依頼を提出してください。
+            </div>
+        </div>
+        <div class="ios-popup-actions">
+            <button type="button" class="ios-popup-btn" onclick="closePopup()">もどる</button>
+            <button type="button" class="ios-popup-btn confirm" onclick="submitForm()">確定する</button>
+        </div>
+    </div>
+</div>
+
+<form method="POST" id="confirmForm" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<script>
+    function openPopup() {
+        document.getElementById('ios-popup-overlay').style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('ios-popup-overlay').style.display = 'none';
+    }
+
+    function submitForm() {
+        document.getElementById('confirmForm').submit();
+    }
+</script>
+{% endblock %}

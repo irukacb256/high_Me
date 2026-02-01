@@ -1,0 +1,219 @@
+{% extends 'Work/review_base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .review-step-container {
+        padding: 20px 15px 80px;
+        background: #f9f9f9;
+        min-height: 100vh;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+    }
+
+    .job-info-header {
+        margin-bottom: 20px;
+    }
+
+    .job-info-title {
+        font-weight: bold;
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 5px;
+    }
+
+    .job-info-meta {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .question-item {
+        margin-bottom: 25px;
+    }
+
+    .question-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .radio-btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .radio-label {
+        flex: 1;
+        position: relative;
+        cursor: pointer;
+    }
+
+    /* ラジオボタンを隠す */
+    .radio-label input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .radio-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        transition: all 0.2s;
+        height: 80px;
+    }
+
+    /* 選択時のスタイル */
+    .radio-label input[type="radio"]:checked+.radio-box {
+        border-color: #007AFF;
+        background-color: #007AFF;
+        color: white;
+    }
+
+    /* チェック時のアイコンとテキストの色 */
+    .radio-label input[type="radio"]:checked+.radio-box .radio-icon,
+    .radio-label input[type="radio"]:checked+.radio-box .radio-text {
+        color: white;
+    }
+
+    .radio-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+        color: #333;
+        /* デフォルト色 */
+    }
+
+    .radio-text {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        /* デフォルト色 */
+    }
+
+    .submit-btn {
+        width: 100%;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        /* Footer配置用スタイル(absolute削除) */
+        width: 100%;
+        max-width: 570px;
+        box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block review_content %}
+
+<div class="review-step-container">
+    <div class="card job-info-header">
+        <div class="job-info-title">【{{ application.job_posting.template.store.store_name }}】{{
+            application.job_posting.title }}</div>
+        <div class="job-info-meta">
+            {{ application.job_posting.work_date|date:"Y年n月j日" }} / {{ application.job_posting.template.store.store_name
+            }}
+        </div>
+    </div>
+
+    <h1 class="page-title">評価を選択する</h1>
+
+    <!-- ID追加: review-form -->
+    <form method="post" id="review-form">
+        {% csrf_token %}
+
+        <!-- 時間通りか -->
+        <div class="question-item">
+            <div class="question-title">{{ form.is_time_matched.label }}</div>
+            <div class="radio-btn-group">
+                {% for radio in form.is_time_matched %}
+                <label class="radio-label">
+                    {{ radio.tag }}
+                    <div class="radio-box">
+                        {% if radio.choice_label == 'いいえ' %}
+                        <i class="fa-solid fa-xmark radio-icon"></i>
+                        {% else %}
+                        <div class="radio-icon"
+                            style="width: 24px; height: 24px; border: 2px solid currentColor; border-radius: 50%;">
+                        </div>
+                        {% endif %}
+                        <div class="radio-text">{{ radio.choice_label }}</div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 仕事内容通りか -->
+        <div class="question-item">
+            <div class="question-title">{{ form.is_content_matched.label }}</div>
+            <div class="radio-btn-group">
+                {% for radio in form.is_content_matched %}
+                <label class="radio-label">
+                    {{ radio.tag }}
+                    <div class="radio-box">
+                        {% if radio.choice_label == 'いいえ' %}
+                        <i class="fa-solid fa-xmark radio-icon"></i>
+                        {% else %}
+                        <div class="radio-icon"
+                            style="width: 24px; height: 24px; border: 2px solid currentColor; border-radius: 50%;">
+                        </div>
+                        {% endif %}
+                        <div class="radio-text">{{ radio.choice_label }}</div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- また働きたいか -->
+        <div class="question-item">
+            <div class="question-title">{{ form.is_want_to_work_again.label }}</div>
+            <div class="radio-btn-group">
+                {% for radio in form.is_want_to_work_again %}
+                <label class="radio-label">
+                    {{ radio.tag }}
+                    <div class="radio-box">
+                        {% if radio.choice_label == 'いいえ' %}
+                        <i class="fa-solid fa-xmark radio-icon"></i>
+                        {% else %}
+                        <div class="radio-icon"
+                            style="width: 24px; height: 24px; border: 2px solid currentColor; border-radius: 50%;">
+                        </div>
+                        {% endif %}
+                        <div class="radio-text">{{ radio.choice_label }}</div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block review_footer %}
+<!-- form属性で外部からsubmit -->
+<button type="submit" form="review-form" class="submit-btn">次へ</button>
+{% endblock %}

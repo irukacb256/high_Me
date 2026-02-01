@@ -165,7 +165,9 @@
     <div class="badge-grid">
         {% for badge in badges %}
         {% with my_badge=my_badges_dict|get_item:badge.id %}
-        <div class="badge-item {% if my_badge and my_badge.is_obtained %}obtained{% endif %}">
+        <a href="{% url 'badge_detail' badge.id %}"
+            class="badge-item {% if my_badge and my_badge.is_obtained %}obtained{% endif %}"
+            style="text-decoration:none; color:inherit;">
             <div class="badge-icon-wrapper">
                 {% if badge.icon %}
                 <img src="{{ badge.icon.url }}" alt="{{ badge.name }}"
@@ -179,7 +181,7 @@
                 認定された回数<br>
                 {{ my_badge.certified_count|default:0 }}
             </div>
-        </div>
+        </a>
         {% endwith %}
         {% endfor %}
     </div>

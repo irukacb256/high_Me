@@ -1,0 +1,66 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .finish-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .success-icon {
+        font-size: 60px;
+        color: #007AFF;
+        margin-bottom: 20px;
+    }
+
+    .message-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .message-body {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 40px;
+    }
+
+    .btn-ok {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        max-width: 300px;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="finish-container">
+    <div class="success-icon">
+        <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="message-title">報酬が確定しました</div>
+    <div class="message-body">
+        お疲れ様でした。<br>
+        今回の業務の報酬が確定しました。
+    </div>
+
+</div>
+
+<a href="{% url 'store_review_step1' application.id %}" class="btn-ok"
+    style="background: #fa5252; margin-bottom: 15px;">店舗を評価する</a>
+<a href="{% url 'job_working_detail' application.job_posting.pk %}" class="btn-ok"
+    style="background: white; color: #007AFF; border: 1px solid #007AFF;">詳細画面へ戻る</a>
+</div>
+{% endblock %}

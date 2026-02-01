@@ -13,7 +13,7 @@ from datetime import datetime, date, timedelta
 from .models import (
     BusinessProfile, Store, JobTemplate, JobPosting, JobApplication,
     JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo,
-    Message, ChatRoom, AttendanceCorrection
+    Message, ChatRoom, AttendanceCorrection, StoreReview, StoreGroupDefinition
 )
 from accounts.models import WorkerProfile, WorkerBadge # 必要に応じて
 from .mixins import BusinessLoginRequiredMixin
@@ -1167,3 +1167,104 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
 
         return redirect('biz_attendance_correction_list', store_id=store_id)
 
+
+class AnnualLimitReleaseView(BusinessLoginRequiredMixin, TemplateView):
+    """年間報酬による制限の解除 - 説明画面"""
+    template_name = 'business/Limit/annual_limit_release.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 店舗情報をコンテキストに追加 (ヘッダー等で必要な場合)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = Store.objects.filter(business=biz_profile).first()
+        context['store'] = store
+        return context
+
+class AnnualLimitReleaseConfirmView(BusinessLoginRequiredMixin, TemplateView):
+    """年間報酬による制限の解除 - 確認画面"""
+    template_name = 'business/Limit/annual_limit_release_confirm.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = Store.objects.filter(business=biz_profile).first()
+        context['store'] = store
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        # フォーム送信で来るが、ここでは単純に表示のみ
+        return self.get(request, *args, **kwargs)
+
+class AnnualLimitReleaseFinishView(BusinessLoginRequiredMixin, TemplateView):
+    """年間報酬による制限の解除 - 完了画面"""
+    template_name = 'business/Limit/annual_limit_release_finish.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = Store.objects.filter(business=biz_profile).first()
+        context['store'] = store
+        return context
+        
+    def post(self, request, *args, **kwargs):
+        # 確定処理があればここに記述
+        return self.get(request, *args, **kwargs)
+
+
+
+class StoreReviewListView(BusinessLoginRequiredMixin, ListView):
+    model = StoreReview
+    template_name = 'business/Store/store_reviews.html'
+    context_object_name = 'reviews'
+
+    def get_queryset(self):
+        # 店舗に紐づくレビューを取得 (新しい順)
+        store_id = self.kwargs.get('store_id')
+        get_object_or_404(Store, id=store_id, business__user=self.request.user)
+        return StoreReview.objects.filter(store_id=store_id).select_related('worker').order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        reviews = context['reviews']
+        store_id = self.kwargs.get('store_id')
+        context['store'] = Store.objects.get(id=store_id)
+        
+        # 統計データの計算
+        total_reviews = reviews.count()
+        if total_reviews > 0:
+            # 各項目のGood数
+            time_good = sum(1 for r in reviews if r.is_time_matched)
+            content_good = sum(1 for r in reviews if r.is_content_matched)
+            again_good = sum(1 for r in reviews if r.is_want_to_work_again)
+            
+            # 各項目の計算
+            context['time_stats'] = {
+                'good': time_good,
+                'bad': total_reviews - time_good,
+                'rate': int((time_good / total_reviews) * 100)
+            }
+            context['content_stats'] = {
+                'good': content_good,
+                'bad': total_reviews - content_good,
+                'rate': int((content_good / total_reviews) * 100)
+            }
+            context['again_stats'] = {
+                'good': again_good,
+                'bad': total_reviews - again_good,
+                'rate': int((again_good / total_reviews) * 100)
+            }
+            
+            # 総合Good率 (全項目のGood総数 / (レビュー数 * 3))
+            total_items = total_reviews * 3
+            total_good = time_good + content_good + again_good
+            context['overall_good_rate'] = int((total_good / total_items) * 100)
+            
+        else:
+            # レビューがない場合
+            empty_stats = {'good': 0, 'bad': 0, 'rate': 0}
+            context['time_stats'] = empty_stats
+            context['content_stats'] = empty_stats
+            context['again_stats'] = empty_stats
+            context['overall_good_rate'] = 0
+            
+        return context

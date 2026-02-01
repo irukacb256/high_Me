@@ -1,0 +1,126 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .badge-detail-container {
+        padding: 20px;
+        background: white;
+        min-height: 100vh;
+        text-align: center;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        width: 32px;
+        height: 32px;
+        background: #F2F2F7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        position: absolute;
+        left: 0;
+    }
+
+    .page-title {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .badge-icon-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 6px solid #F2F2F7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 50px;
+        color: #ccc;
+    }
+
+    .badge-icon-large.obtained {
+        border-color: #FFD700;
+        color: #333;
+    }
+
+    .badge-icon-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 50%;
+    }
+
+    .badge-name-large {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .badge-desc {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        padding: 0 20px;
+    }
+
+    .status-box {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .status-item {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="badge-detail-container">
+    <div class="header-bar">
+        <a href="{% url 'badge_list' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">バッジ詳細</div>
+    </div>
+
+    <div class="badge-icon-large {% if is_obtained %}obtained{% endif %}">
+        {% if badge.icon %}
+        <img src="{{ badge.icon.url }}" class="badge-icon-img" style="{% if not is_obtained %}opacity:0.5;{% endif %}">
+        {% else %}
+        <i class="fa-solid fa-medal"></i>
+        {% endif %}
+    </div>
+
+    <div class="badge-name-large">{{ badge.name }}</div>
+
+    <div class="badge-desc">
+        {{ badge.description|default:"説明がありません。"|linebreaksbr }}
+    </div>
+
+    <div class="status-box">
+        <div class="status-item">
+            <strong>獲得状況:</strong>
+            {% if is_obtained %}
+            <span style="color: #FFD700; font-weight: bold;">獲得済み</span>
+            {% else %}
+            <span style="color: #ccc;">未獲得</span>
+            {% endif %}
+        </div>
+        <div class="status-item">
+            <strong>認定回数:</strong> {{ worker_badge.certified_count|default:0 }} 回
+        </div>
+    </div>
+</div>
+{% endblock %}

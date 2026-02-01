@@ -274,8 +274,7 @@
 </style>
 
 <div class="form-container">
-    <h1 style="font-size: 24px; margin-bottom: 24px; color: #1c1c1e;">求人のひな形を{% if is_edit %}編集% else %}新規作成{% endif
-        %}
+    <h1 style="font-size: 24px; margin-bottom: 24px; color: #1c1c1e;">求人のひな形を{% if is_edit %}編集{% else %}新規作成{% endif %}
     </h1>
 
     <form method="POST" enctype="multipart/form-data" id="templateForm">
@@ -524,6 +523,30 @@
                         <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok'
                             %}selected{% endif %}>屋内喫煙可</option>
                     </select>
+                    <div style="margin-top: 8px;">
+                        <label class="checkbox-item" style="display:inline-flex; border:none; padding:0;">
+                            <input type="checkbox" name="has_smoking_area" {% if template.has_smoking_area %}checked{%
+                                endif %}> 喫煙可能エリアでの作業あり
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">働く前の質問</div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 12px;">
+                        申し込んでから働くまでの間に、ワーカーに確認したいことを設定できます。設定した質問はワーカーに自動的に届きます。
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="text" name="question1" value="{{ template.question1|default:'' }}"
+                            placeholder="制服のサイズを教えてください（S、M、L）">
+                        <input type="text" name="question2" value="{{ template.question2|default:'' }}"
+                            placeholder="靴のサイズを教えてください。">
+                        <input type="text" name="question3" value="{{ template.question3|default:'' }}"
+                            placeholder="食べ物にアレルギーなどありましたら教えてください。">
+                    </div>
+                    <p style="font-size: 12px; color: #888; margin-top: 8px;">
+                        設定した質問と回答は、今後のサービス改善やトラブル防止などのためにタイミーにも共有されます。
+                    </p>
                 </div>
             </div>
         </div>
@@ -571,7 +594,7 @@
 
         <div class="form-footer">
             <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">キャンセル</a>
-            <button type="submit" class="btn-submit">{% if is_edit %}変更を保存% else %}ひな形を作成{% endif %}</button>
+            <button type="submit" class="btn-submit">{% if is_edit %}変更を保存{% else %}ひな形を作成{% endif %}</button>
         </div>
     </form>
 </div>

@@ -1,0 +1,15 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<div style="padding: 20px; background: white; border-radius: 8px; text-align: center;">
+    <h2 style="color: #007AFF; margin-bottom: 20px;">年間報酬完了画面</h2>
+    <p>制限解除のリクエストが完了しました。</p>
+
+    <div style="margin-top: 30px;">
+        <a href="{% url 'biz_dashboard' %}"
+            style="display: inline-block; background: #eee; color: #333; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: bold;">
+            ホームへ戻る
+        </a>
+    </div>
+</div>
+{% endblock %}

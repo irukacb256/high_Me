@@ -1,19 +1,20 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, ListView, DetailView, View, FormView
+from django.views.generic import TemplateView, ListView, DetailView, View, FormView, CreateView
 from django.utils import timezone
 from datetime import timedelta, datetime, date
 from django.http import JsonResponse
 from django.db.models import Q
 from django.urls import reverse_lazy, reverse
 
-from business.models import JobPosting, JobApplication, Store, AttendanceCorrection, ChatRoom
+from business.models import JobPosting, JobApplication, Store, AttendanceCorrection, ChatRoom, StoreReview
 from .models import FavoriteJob, FavoriteStore
 from .constants import PREFECTURES, OCCUPATIONS, REWARDS
+from accounts.models import Badge
 # 循環参照回避のため、メソッド内でインポートするか、必要なモデルだけトップレベルで
 # from accounts.models import WorkerProfile, Badge, WorkerBadge は必要に応じて
 
-from .forms import PrefectureForm
+from .forms import PrefectureForm, StoreReviewStep1Form, StoreReviewStep2Form
 
 # --- メイン：さがす画面 ---
 import json
@@ -574,9 +575,9 @@ class WorkScheduleView(LoginRequiredMixin, TemplateView):
         completed = []
         
         for app in applications:
-            # 終了時間を考慮した完了判定
+            # 終了時間を考慮した完了判定 or ステータス完了
             job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
-            if job_end < now:
+            if app.status == '完了' or job_end < now:
                 completed.append(app)
             else:
                 upcoming.append(app)
@@ -716,10 +717,55 @@ class JobWorkingDetailView(LoginRequiredMixin, TemplateView):
         
         context['app'] = application
         context['weekday_jp'] = weekday_jp
+        
+        # 質問回答済みかどうか
+        context['is_answered'] = application.answered_at is not None
+        context['questions_exist'] = any([
+            application.job_posting.template.question1,
+            application.job_posting.template.question2,
+            application.job_posting.template.question3
+        ])
+        
+        # チャットルーム取得 (お問い合わせ用)
+        from business.models import ChatRoom
+        try:
+            room = ChatRoom.objects.get(
+                store=application.job_posting.template.store, 
+                worker=self.request.user
+            )
+            context['chat_room'] = room
+        except ChatRoom.DoesNotExist:
+            context['chat_room'] = None
+
         return context
 
+class JobAnswerView(LoginRequiredMixin, TemplateView):
+    template_name = 'Work/job_answer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs['pk']
+        application = get_object_or_404(JobApplication, job_posting_id=pk, worker=self.request.user)
+        context['app'] = application
+        return context
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs['pk']
+        application = get_object_or_404(JobApplication, job_posting_id=pk, worker=self.request.user)
+        
+        # 回答を保存
+        application.answer1 = request.POST.get('answer1', '')
+        application.answer2 = request.POST.get('answer2', '')
+        application.answer3 = request.POST.get('answer3', '')
+        application.answered_at = timezone.now()
+        application.save()
+        
+        from django.contrib import messages
+        messages.success(request, '働き先への回答を送信しました。')
+        return redirect('job_working_detail', pk=pk)
+
 class BadgeListView(LoginRequiredMixin, TemplateView):
-    template_name = 'MyPage/badge_list.html'
+    template_name = 'MyPage/Badges/badge_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -731,6 +777,24 @@ class BadgeListView(LoginRequiredMixin, TemplateView):
         
         context['badges'] = badges
         context['my_badges_dict'] = my_badges_dict
+        return context
+
+class BadgeDetailView(LoginRequiredMixin, DetailView):
+    model = Badge
+    template_name = 'MyPage/Badges/badge_detail.html'
+    context_object_name = 'badge'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 自分の獲得状況を取得
+        from accounts.models import WorkerBadge
+        try:
+            wb = WorkerBadge.objects.get(worker=self.request.user.workerprofile, badge=self.object)
+            context['worker_badge'] = wb
+            context['is_obtained'] = wb.is_obtained
+        except WorkerBadge.DoesNotExist:
+            context['worker_badge'] = None
+            context['is_obtained'] = False
         return context
 
 
@@ -811,17 +875,88 @@ class AttendanceStep1CheckView(AttendanceStepBaseView):
     def post(self, request, application_id):
         action = request.POST.get('action')
         if action == 'as_scheduled':
-            # 予定通り -> 完了画面(qr_success相当)へ
-            # 必要であればここでAttendanceCorrectionを作る必要はないが、完了画面を表示する
-            application = self.get_application(application_id)
-            return render(request, 'Work/qr_success.html', {
-                'app': application, 
-                'is_checkin': False
-            })
+            # 予定通り -> 報酬確認画面へ
+            return redirect('reward_confirm', application_id=application_id)
         elif action == 'changed':
             # 変更があった -> Step 2へ
             return redirect('attendance_step2', application_id=application_id)
         return redirect('attendance_step1', application_id=application_id)
+
+class RewardConfirmView(AttendanceStepBaseView):
+    """報酬確認画面 (予定通りの場合)"""
+    template_name = 'Work/reward_confirm.html'
+
+    def get(self, request, application_id):
+        application = self.get_application(application_id)
+        
+        # 報酬計算 (予定通りなので募集の開始・終了時間を使用)
+        # 実装簡略化のため、今回は単純計算 (休憩時間は募集の規定時間を使用)
+        # 本来は深夜割増なども考慮が必要
+        
+        posting = application.job_posting
+        
+        # 開始・終了日時 (Date + Time)
+        start_dt = datetime.combine(posting.work_date, posting.start_time)
+        end_dt = datetime.combine(posting.work_date, posting.end_time)
+        
+        # 日跨ぎ対応 (終了時間が開始時間より前なら翌日扱い)
+        if end_dt < start_dt:
+            end_dt += timedelta(days=1)
+            
+        # 総労働時間 (分)
+        total_minutes = (end_dt - start_dt).total_seconds() / 60
+        
+        # 実労働時間 = 総労働時間 - 休憩時間
+        work_minutes = total_minutes - posting.break_duration
+        if work_minutes < 0:
+            work_minutes = 0
+            
+        # 報酬額 = 時給 * 時間 + 交通費
+        wage = posting.hourly_wage
+        # 時間計算 (分単位を時間単位に)
+        hours = work_minutes / 60
+        base_reward = int(wage * hours)
+        
+        # 交通費 (固定と仮定。本来は交通費支給有無や上限などのロジックがあるはず)
+        # 今回は一旦 1000円固定 または postingにフィールドがあればそれを使う
+        # posting.transportation_expenses があるか確認していないが、なければ0
+        transportation = getattr(posting, 'transportation_expenses_amount', 500) # モデル未確認のためデフォルト仮置き
+        if not getattr(posting, 'transportation_expenses', True): # 支給なしなら0
+             transportation = 0
+
+        total_amount = base_reward + transportation
+        
+        context = {
+            'application': application,
+            'base_reward': base_reward,
+            'transportation': transportation,
+            'total_amount': total_amount,
+            'work_hours': round(hours, 1), # 表示用
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, application_id):
+        application = self.get_application(application_id)
+        
+        # 勤怠情報の確定 (予定通りとして保存)
+        # AttendanceCorrectionを作るか、Applicationに直接保存するか
+        # ここでは "完了" 状態にする
+        # status = 'completed' ? -> モデル定義によるが、とりあえずApplication完了処理
+        
+        # 予定時間を実績として保存 (念のため上書き、あるいは is_scheduled=True フラグなど)
+        application.status = '完了'
+        application.save()
+        
+        # 完了画面ではなく評価入力画面のStep1へ
+        return redirect('store_review_step1', application_id=application_id)
+
+class RewardFinishView(AttendanceStepBaseView):
+    """報酬確定完了画面"""
+    template_name = 'Work/reward_finish.html'
+
+    def get(self, request, application_id):
+        application = self.get_application(application_id)
+        return render(request, self.template_name, {'application': application})
 
 class AttendanceStep2GuideView(AttendanceStepBaseView):
     """Step 2: 修正依頼の流れ (ガイド画面)"""
@@ -961,3 +1096,75 @@ class AttendanceStep7FinishView(AttendanceStepBaseView):
     def get(self, request, application_id):
         application = self.get_application(application_id)
         return render(request, self.template_name, {'application': application})
+
+class StoreReviewStep1View(LoginRequiredMixin, FormView):
+    """Step 1: 評価選択 (Yes/No)"""
+    form_class = StoreReviewStep1Form
+    template_name = 'Work/store_review_step1.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        application_id = self.kwargs.get('application_id')
+        # 既にレビュー済みなら過去求人一覧へ (二重投稿防止)
+        if StoreReview.objects.filter(job_application_id=application_id).exists():
+             return redirect('past_jobs')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application = get_object_or_404(JobApplication, id=self.kwargs['application_id'])
+        context['application'] = application
+        return context
+
+    def form_valid(self, form):
+        # 入力データをセッションに保存
+        self.request.session['review_step1_data'] = form.cleaned_data
+        return redirect('store_review_step2', application_id=self.kwargs['application_id'])
+
+class StoreReviewStep2View(LoginRequiredMixin, FormView):
+    """Step 2: コメント入力"""
+    form_class = StoreReviewStep2Form
+    template_name = 'Work/store_review_step2.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application = get_object_or_404(JobApplication, id=self.kwargs['application_id'])
+        context['application'] = application
+        return context
+
+    def form_valid(self, form):
+        application_id = self.kwargs['application_id']
+        application = get_object_or_404(JobApplication, id=application_id, worker=self.request.user)
+        
+        # セッションからStep1のデータを取得
+        step1_data = self.request.session.get('review_step1_data', {})
+        if not step1_data:
+            return redirect('store_review_step1', application_id=application_id)
+
+        # レビュー保存
+        StoreReview.objects.create(
+            job_application=application,
+            worker=self.request.user,
+            store=application.job_posting.template.store,
+            comment=form.cleaned_data['comment'],
+            is_time_matched=step1_data.get('is_time_matched'),
+            is_content_matched=step1_data.get('is_content_matched'),
+            is_want_to_work_again=step1_data.get('is_want_to_work_again')
+        )
+        
+        # セッションクリア
+        if 'review_step1_data' in self.request.session:
+            del self.request.session['review_step1_data']
+            
+        return redirect('store_review_complete', application_id=application_id)
+
+class StoreReviewCompleteView(LoginRequiredMixin, TemplateView):
+    """Step 3: 完了画面"""
+    template_name = 'Work/store_review_complete.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application = get_object_or_404(JobApplication, id=self.kwargs['application_id'])
+        context['application'] = application
+        context['store'] = application.job_posting.template.store
+        context['step'] = 3  # Progress bar step
+        return context

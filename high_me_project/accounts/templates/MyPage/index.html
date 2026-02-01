@@ -283,20 +283,20 @@
             <div class="menu-label-wrapper"><i class="fa-solid fa-briefcase"></i> これまでの仕事</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
-            <div class="menu-label-wrapper"><i class="fa-regular fa-address-card"></i> 長期バイトの応募履歴</div><i
+        <a href="{% url 'badge_list' %}" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-medal"></i> バッジ詳細</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{% url 'earned_rewards_list' %}" class="menu-item">
             <div class="menu-label-wrapper"><i class="fa-solid fa-yen-sign"></i> 獲得した報酬</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
-            <div class="menu-label-wrapper"><i class="fa-solid fa-file-invoice-dollar"></i> 源泉徴収票の確認と印刷</div><i
+        <a href="{% url 'annual_tax_list' %}" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-file-lines"></i> 年ごとの源泉徴収</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
-            <div class="menu-label-wrapper"><i class="fa-solid fa-user-lock"></i> 年間報酬による制限の解除</div><i
+        <a href="{% url 'tax_slip_list' %}" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-file-invoice-dollar"></i> 源泉徴収票 of 確認と印刷</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
     </div>
