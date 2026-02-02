@@ -1,0 +1,60 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .cancel-container {
+        padding: 20px;
+        background: white;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cancel-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .input-area {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .cancel-btn {
+        background: #ff3b30;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        display: block;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-title">キャンセル入力</div>
+
+    <div class="input-area">
+        <textarea placeholder="詳細な理由を入力してください"></textarea>
+    </div>
+
+    <!-- 完了後はとりあえずホームへ戻るか、確認画面へ -->
+    <a href="{% url 'index' %}" class="cancel-btn">キャンセルを確定する</a>
+</div>
+{% endblock %}

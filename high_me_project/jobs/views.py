@@ -861,7 +861,7 @@ class AttendanceStepBaseView(LoginRequiredMixin, View):
 
 class AttendanceStep1CheckView(AttendanceStepBaseView):
     """Step 1: 就業時間は予定通りでしたか？"""
-    template_name = 'Work/attendance_step1.html'
+    template_name = 'Work/attendance/attendance_step1.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -884,7 +884,7 @@ class AttendanceStep1CheckView(AttendanceStepBaseView):
 
 class RewardConfirmView(AttendanceStepBaseView):
     """報酬確認画面 (予定通りの場合)"""
-    template_name = 'Work/reward_confirm.html'
+    template_name = 'Work/attendance/reward_confirm.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -952,7 +952,7 @@ class RewardConfirmView(AttendanceStepBaseView):
 
 class RewardFinishView(AttendanceStepBaseView):
     """報酬確定完了画面"""
-    template_name = 'Work/reward_finish.html'
+    template_name = 'Work/attendance/reward_finish.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -960,7 +960,7 @@ class RewardFinishView(AttendanceStepBaseView):
 
 class AttendanceStep2GuideView(AttendanceStepBaseView):
     """Step 2: 修正依頼の流れ (ガイド画面)"""
-    template_name = 'Work/attendance_step2.html'
+    template_name = 'Work/attendance/attendance_step2.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -971,7 +971,7 @@ class AttendanceStep2GuideView(AttendanceStepBaseView):
 
 class AttendanceStep3TimeView(AttendanceStepBaseView):
     """Step 3: 業務開始・終了日時の入力"""
-    template_name = 'Work/attendance_step3.html'
+    template_name = 'Work/attendance/attendance_step3.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -999,7 +999,7 @@ class AttendanceStep3TimeView(AttendanceStepBaseView):
 
 class AttendanceStep4BreakView(AttendanceStepBaseView):
     """Step 4: 休憩時間の入力"""
-    template_name = 'Work/attendance_step4.html'
+    template_name = 'Work/attendance/attendance_step4.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -1040,7 +1040,7 @@ class AttendanceStep4BreakView(AttendanceStepBaseView):
 
 class AttendanceStep5LatenessView(AttendanceStepBaseView):
     """Step 5: 遅刻理由の入力 (遅刻時のみ)"""
-    template_name = 'Work/attendance_step5.html'
+    template_name = 'Work/attendance/attendance_step5.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -1055,7 +1055,7 @@ class AttendanceStep5LatenessView(AttendanceStepBaseView):
 
 class AttendanceStep6ConfirmView(AttendanceStepBaseView):
     """Step 6: 最終確認"""
-    template_name = 'Work/attendance_step6.html'
+    template_name = 'Work/attendance/attendance_step6.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -1091,7 +1091,7 @@ class AttendanceStep6ConfirmView(AttendanceStepBaseView):
 
 class AttendanceStep7FinishView(AttendanceStepBaseView):
     """Step 7: 完了画面"""
-    template_name = 'Work/attendance_step7.html'
+    template_name = 'Work/attendance/attendance_step7.html'
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
@@ -1100,7 +1100,7 @@ class AttendanceStep7FinishView(AttendanceStepBaseView):
 class StoreReviewStep1View(LoginRequiredMixin, FormView):
     """Step 1: 評価選択 (Yes/No)"""
     form_class = StoreReviewStep1Form
-    template_name = 'Work/store_review_step1.html'
+    template_name = 'Work/store_review/store_review_step1.html'
 
     def dispatch(self, request, *args, **kwargs):
         application_id = self.kwargs.get('application_id')
@@ -1123,7 +1123,7 @@ class StoreReviewStep1View(LoginRequiredMixin, FormView):
 class StoreReviewStep2View(LoginRequiredMixin, FormView):
     """Step 2: コメント入力"""
     form_class = StoreReviewStep2Form
-    template_name = 'Work/store_review_step2.html'
+    template_name = 'Work/store_review/store_review_step2.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1159,7 +1159,7 @@ class StoreReviewStep2View(LoginRequiredMixin, FormView):
 
 class StoreReviewCompleteView(LoginRequiredMixin, TemplateView):
     """Step 3: 完了画面"""
-    template_name = 'Work/store_review_complete.html'
+    template_name = 'Work/store_review/store_review_complete.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1168,3 +1168,45 @@ class StoreReviewCompleteView(LoginRequiredMixin, TemplateView):
         context['store'] = application.job_posting.template.store
         context['step'] = 3  # Progress bar step
         return context
+
+# --- キャンセル機能 ---
+class JobCancelStep1PenaltyView(LoginRequiredMixin, TemplateView):
+    """Step 1: キャンセル時のペナルティ確認"""
+    template_name = 'Work/cancel/cancel_step1_penalty.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        context['application_id'] = application_id
+        return context
+
+class JobCancelStep2ReasonView(LoginRequiredMixin, TemplateView):
+    """Step 2: キャンセル理由選択"""
+    template_name = 'Work/cancel/cancel_step2_reason.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        context['application_id'] = application_id
+        return context
+
+class JobCancelStep3DetailView(LoginRequiredMixin, TemplateView):
+    """Step 3: キャンセル理由詳細"""
+    template_name = 'Work/cancel/cancel_step3_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        context['application_id'] = application_id
+        return context
+
+class JobCancelStep4InputView(LoginRequiredMixin, TemplateView):
+    """Step 4: キャンセル入力 (完了)"""
+    template_name = 'Work/cancel/cancel_step4_input.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        context['application_id'] = application_id
+        return context
+

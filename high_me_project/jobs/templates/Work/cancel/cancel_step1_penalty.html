@@ -1,0 +1,55 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .cancel-container {
+        padding: 20px;
+        background: white;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cancel-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .penalty-info {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        width: 100%;
+        margin-bottom: 30px;
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+    }
+
+    .next-btn {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-title">キャンセルした (ペナルティ画面)</div>
+
+    <div class="penalty-info">
+        <p>※ここはペナルティに関する説明画面です</p>
+        <p>キャンセルするとペナルティが発生する可能性があります。</p>
+    </div>
+
+    <a href="{% url 'job_cancel_step2' application_id %}" class="next-btn">次へ</a>
+</div>
+{% endblock %}

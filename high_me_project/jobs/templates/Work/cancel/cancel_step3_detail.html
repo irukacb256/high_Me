@@ -1,0 +1,41 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .cancel-container {
+        padding: 20px;
+        background: white;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cancel-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .next-btn {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+
+<div class="cancel-container">
+    <div class="cancel-title">キャンセル理由 (詳細)</div>
+
+    <p style="text-align:center; color:#666;">詳細理由の選択画面など</p>
+
+    <a href="{% url 'job_cancel_step4' application_id %}" class="next-btn">次へ</a>
+</div>
+{% endblock %}

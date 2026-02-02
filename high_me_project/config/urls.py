@@ -226,4 +226,10 @@ urlpatterns = [
     path('job/<int:pk>/apply/documents/', job_views.ApplyStep3DocumentsView.as_view(), name='apply_step_3_documents'),
     path('job/<int:pk>/apply/policy/', job_views.ApplyStep4PolicyView.as_view(), name='apply_step_4_policy'),
     path('job/<int:pk>/apply/review/', job_views.ApplyStep5ReviewView.as_view(), name='apply_step_5_review'),
+    
+    # キャンセル機能
+    path('working/<int:application_id>/cancel/step1/', job_views.JobCancelStep1PenaltyView.as_view(), name='job_cancel_step1'),
+    path('working/<int:application_id>/cancel/step2/', job_views.JobCancelStep2ReasonView.as_view(), name='job_cancel_step2'),
+    path('working/<int:application_id>/cancel/step3/', job_views.JobCancelStep3DetailView.as_view(), name='job_cancel_step3'),
+    path('working/<int:application_id>/cancel/step4/', job_views.JobCancelStep4InputView.as_view(), name='job_cancel_step4'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
