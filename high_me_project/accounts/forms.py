@@ -58,3 +58,11 @@ class VerifyDobForm(forms.Form):
 
 class PrefectureSelectForm(forms.Form):
     prefs = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[]) # Viewでchoicesをセットする想定
+
+from django.contrib.auth.forms import AuthenticationForm
+
+class LoginForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': "電話番号またはパスワードが間違っています",
+        'inactive': "このアカウントは無効です。",
+    }

@@ -15,6 +15,7 @@
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
 <div class="progress-segment "></div>
 <div class="progress-segment "></div>
 {% endblock %}
@@ -29,10 +30,10 @@
 
 <label class="form-label">郵便番号</label>
 <input class="form-input p-postal-code" type="tel" id="id_postal_code" name="postal_code" placeholder="1234567"
-    maxlength="7">
+    maxlength="7" required>
 
 <label class="form-label">都道府県</label>
-<select class="form-input p-region" id="id_prefecture" name="prefecture">
+<select class="form-input p-region" id="id_prefecture" name="prefecture" required>
     <option value="" disabled selected>未選択</option>
     <option value="東京都">東京都</option>
     <option value="神奈川県">神奈川県</option>
@@ -85,10 +86,10 @@
 </select>
 
 <label class="form-label">市区町村。町名</label>
-<input class="form-input p-locality p-street-address" type="text" id="id_city" name="city" placeholder="港区南新橋">
+<input class="form-input p-locality p-street-address" type="text" id="id_city" name="city" placeholder="港区南新橋" required>
 
 <label class="form-label">丁目。番地</label>
-<input class="form-input p-extended-address" type="text" name="address_line" placeholder="1丁目1-1">
+<input class="form-input p-extended-address" type="text" name="address_line" placeholder="1丁目1-1" required>
 
 <label class="form-label">建物名・部屋番号</label>
 <input class="form-input" type="text" name="building" placeholder="例：ハイミービル 101号室">

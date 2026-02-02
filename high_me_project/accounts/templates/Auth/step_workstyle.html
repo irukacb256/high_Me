@@ -11,21 +11,32 @@
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
-<div class="progress-segment "></div>
+<div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
 {% endblock %}
 
 {% block title %}働き方を登録{% endblock %}
 
 {% block form_content %}
 <p style="font-size:14px; font-weight:bold; margin-bottom:15px;">アルバイトの働き方について教えてください</p>
-<label class="option-item"><input class="form-input" type="radio" name="work_style" value="スキマバイトのみ">
+<label class="option-item"><input class="form-input" type="radio" name="work_style" value="スキマバイトのみ" required>
         スキマバイトにしか興味ない</label>
-<label class="option-item"><input class="form-input" type="radio" name="work_style" value="長期も検討">
-        良い店舗に出会えれば長期をしたい</label>
+<label class="option-item"><input class="form-input" type="radio" name="work_style" value="長期も検討" required>
+        良い店舗に出会えれば長期バイトをしたい</label>
+<label class="option-item"><input class="form-input" type="radio" name="work_style" value="すぐに長期" required>
+        すぐにでも長期バイトを見つけたい</label>
+<label class="option-item"><input class="form-input" type="radio" name="work_style" value="該当なし" required>
+        いずれにも該当しない</label>
+
 <p style="font-size:14px; font-weight:bold; margin-top:20px; margin-bottom:15px;">正社員として働くことに興味はありますか？</p>
-<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="すぐに転職したい">
+<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="すぐに転職したい" required>
         すぐにでも転職/就職したい</label>
-<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="興味なし"> 興味がない</label>
+<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="良い仕事があれば" required>
+        良い仕事があれば転職/就職したい</label>
+<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="情報収集" required>
+        今は情報収集したい</label>
+<label class="option-item"><input class="form-input" type="radio" name="career_interest" value="興味なし" required>
+        興味がない</label>
 {% endblock %}
 
 {% block footer_buttons %}

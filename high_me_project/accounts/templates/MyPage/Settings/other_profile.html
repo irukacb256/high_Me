@@ -76,10 +76,7 @@
         outline: none;
         background: transparent;
         border-radius: 0;
-    }
-
-    .input-box:focus {
-        border-bottom-color: #007AFF;
+        cursor: pointer;
     }
 
     /* 下部固定ボタンエリア：margin-top: auto で一番下へ */
@@ -124,9 +121,11 @@
 
             <div class="section-label">所属</div>
 
-            <!-- 所属の入力欄 -->
-            <input type="text" name="occupation" class="input-box" value="{{ profile.occupation|default:'' }}"
-                placeholder="例：専門学生" required>
+            <!-- 所属の入力欄 (クリックで画面遷移) -->
+            <a href="{% url 'association_select' %}" style="text-decoration:none;">
+                <input type="text" name="occupation" class="input-box" value="{{ profile.occupation|default:'' }}"
+                    placeholder="選択してください" readonly style="pointer-events: none;">
+            </a>
         </div>
 
         <!-- 保存ボタン -->

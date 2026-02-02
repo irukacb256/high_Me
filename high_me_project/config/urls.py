@@ -130,6 +130,7 @@ urlpatterns = [
     path('settings/profile/', account_views.profile_edit, name='profile_edit'), # ★プロフィール編集画面
     path('settings/profile/address/', account_views.profile_address_edit, name='profile_address_edit'), # ★住所変更専用画面
     path('settings/other/', account_views.other_profile_edit, name='other_profile_edit'),
+    path('settings/other/association/', account_views.association_select, name='association_select'), # ★所属選択画面
 
     # 修正：phone_change_home を phone_change に変更
     # 電話番号変更フロー

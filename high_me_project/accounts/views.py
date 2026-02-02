@@ -19,11 +19,13 @@ from django.views.generic import FormView, TemplateView, CreateView, DetailView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import (
-    SignupForm, NameForm, KanaForm, GenderForm, PhotoForm, AddressForm, WorkstyleForm, VerifyDobForm, PrefectureSelectForm, AssociationForm
+    SignupForm, NameForm, KanaForm, GenderForm, PhotoForm, AddressForm, WorkstyleForm, VerifyDobForm, PrefectureSelectForm, AssociationForm,
+    LoginForm
 )
 
 class CustomLoginView(LoginView):
     template_name = 'Auth/login.html'
+    authentication_form = LoginForm
 
     def form_valid(self, form):
         # ログイン処理は親クラスで行われる
@@ -1345,3 +1347,49 @@ class TaxSlipView(LoginRequiredMixin, TemplateView):
 
 class EarnedRewardsView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/Rewards/earned.html'
+
+# ---------------------------------------------------------
+# その他のプロフィール編集
+# ---------------------------------------------------------
+@login_required
+def other_profile_edit(request):
+    """その他のプロフィール編集"""
+    profile, created = WorkerProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        occupation = request.POST.get('occupation')
+        if occupation is not None:
+             profile.occupation = occupation
+             profile.save()
+             return redirect('account_settings')
+
+    return render(request, 'MyPage/Settings/other_profile.html', {
+        'profile': profile
+    })
+
+
+@login_required
+def association_select(request):
+    """所属選択画面 (スマホライクな別画面)"""
+    profile, created = WorkerProfile.objects.get_or_create(user=request.user)
+    
+    # 選択肢リスト
+    options = [
+        "高校生", "専門学生", "大学生・大学院生", "パート・アルバイト",
+        "会社員（正社員）", "会社員（契約社員/派遣社員）", 
+        "自営業・フリーランス", "専業主婦・主夫", "無職", "該当なし"
+    ]
+
+    if request.method == 'POST':
+        occupation = request.POST.get('occupation')
+        if occupation:
+            profile.occupation = occupation
+            profile.save()
+        # 完了したら元の画面(その他のプロフィール)に戻る
+        return redirect('other_profile_edit')
+
+    context = {
+        'options': options,
+        'current_value': profile.occupation
+    }
+    return render(request, 'MyPage/Settings/association_select.html', context)

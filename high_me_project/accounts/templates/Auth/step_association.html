@@ -11,30 +11,31 @@
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
 <div class="progress-segment active"></div>
+<div class="progress-segment active"></div>
 <div class="progress-segment "></div>
 {% endblock %}
 
 {% block title %}現在の職業を教えてください{% endblock %}
 
 {% block form_content %}
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学生"> 大学生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学院生">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学生" required> 大学生</label>
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="大学院生" required>
     大学院生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="専門学生">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="専門学生" required>
     専門学生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="短大生">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="短大生" required>
     短大生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高校生">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高校生" required>
     高校生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高専生">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="高専生" required>
     高専生</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="フリーター">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="フリーター" required>
     フリーター</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="会社員">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="会社員" required>
     会社員</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="主婦。主夫">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="主婦。主夫" required>
     主婦。主夫</label>
-<label class="option-item"><input class="form-input" type="radio" name="occupation" value="その他">
+<label class="option-item"><input class="form-input" type="radio" name="occupation" value="その他" required>
     その他</label>
 {% endblock %}
 
@@ -42,5 +43,5 @@
 
 {% block footer_buttons %}
 <a href="{% url 'setup_workstyle' %}" class="btn-later">あとで</a>
-<button type="submit" class="btn-next">次へ</button>
+<button type="submit" class="btn-next" disabled>次へ</button>
 {% endblock %}

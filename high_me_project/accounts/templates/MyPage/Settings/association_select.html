@@ -1,0 +1,156 @@
+{% extends 'base_auth.html' %}
+
+{% block content %}
+<style>
+    .association-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #ffffff;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    /* ヘッダー */
+    .header {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
+
+    .close-btn {
+        font-size: 24px;
+        text-decoration: none;
+        color: #333;
+        margin-right: 20px;
+        display: block;
+        width: 30px;
+    }
+
+    .header-title {
+        font-weight: bold;
+        font-size: 16px;
+        flex: 1;
+        text-align: center;
+        margin-right: 50px;
+        /* バランス調整 */
+    }
+
+    /* リストエリア */
+    .selection-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .selection-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .selection-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f5f5f5;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+    }
+
+    /* 選択状態 */
+    .selection-item.selected {
+        background-color: #f9f9f9;
+        font-weight: bold;
+    }
+
+    /* カスタムチェックボックス */
+    .custom-check {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .selection-item.selected .custom-check {
+        background-color: #007AFF;
+        border-color: #007AFF;
+    }
+
+    .selection-item.selected .custom-check::after {
+        content: '✔';
+    }
+
+    /* フッター */
+    .footer-area {
+        padding: 15px 20px 30px;
+        border-top: 1px solid #eee;
+        flex-shrink: 0;
+    }
+
+    .btn-save {
+        display: block;
+        width: 100%;
+        padding: 15px 0;
+        background-color: #007AFF;
+        color: white;
+        text-align: center;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-save:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="association-wrapper">
+    <div class="header">
+        <a href="{% url 'other_profile_edit' %}" class="close-btn">×</a>
+        <span class="header-title">所属を選択</span>
+    </div>
+
+    <form method="POST" id="associationForm" style="display: contents;">
+        {% csrf_token %}
+        <div class="selection-body">
+            <ul class="selection-list">
+                {% for item in options %}
+                <label class="selection-item {% if current_value == item %}selected{% endif %}">
+                    <input type="radio" name="occupation" value="{{ item }}" style="display:none;" {% if
+                        current_value==item %}checked{% endif %} onchange="updateSelection(this)">
+                    <div class="custom-check"></div>
+                    {{ item }}
+                </label>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="footer-area">
+            <button type="submit" class="btn-save" id="saveBtn">OK</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function updateSelection(radio) {
+        // 全ての行からselectedクラス削除
+        document.querySelectorAll('.selection-item').forEach(el => el.classList.remove('selected'));
+        // 選択された行にselected付与
+        radio.closest('.selection-item').classList.add('selected');
+    }
+</script>
+{% endblock %}

@@ -200,7 +200,7 @@ class LocationHomeView(TemplateView):
 class PrefSelectView(FormView):
     template_name = 'Searchjobs/pref_select.html'
     form_class = PrefectureForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('location_home')
 
     def get_initial(self):
         initial = super().get_initial()
