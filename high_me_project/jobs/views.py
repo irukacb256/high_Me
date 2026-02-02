@@ -158,6 +158,23 @@ class IndexView(ListView):
                 if k:
                     queryset = queryset.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
             
+        # ソート処理
+        sort_type = self.request.GET.get('sort', 'deadline') # デフォルトは「締切時刻が近い順」
+        
+        if sort_type == 'deadline':
+            # 締切時刻が近い順 (勤務日 -> 開始時間)
+            queryset = queryset.order_by('work_date', 'start_time')
+        elif sort_type == 'current_location':
+            # 現在地から近い順: 
+            # サーバーサイドで正確にやるにはユーザーの現在地(lat/lng)をクエリパラメータで受け取る必要がある
+            # ここでは簡易的に「保存されている緯度経度がある場合」の距離ソート、あるいはJS側での実装が必要だが
+            # データベース参照とのことなので、一旦何もしないか、あるいはユーザー登録住所からの距離など仮実装
+            # ※ユーザー要望では「データベースを参照して並び替え」
+            pass 
+        elif sort_type == 'specified_location':
+             # 指定した場所から近い順
+            pass
+            
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -174,6 +191,7 @@ class IndexView(ListView):
             'selected_prefs': self.selected_prefs,
             'today': self.today,
             'user_fav_job_ids': set(user_fav_job_ids),
+            'current_sort': self.request.GET.get('sort', 'deadline'), # 現在のソート順
         })
         return context
 
@@ -357,14 +375,21 @@ class RefineHomeView(TemplateView):
         context['current_time_ranges'] = session_filters.get('time_ranges', [])
         context['current_treatments'] = session_filters.get('treatments', [])
         context['current_exclude_keyword'] = session_filters.get('exclude_keyword', '')
+        
+        # 遷移元情報を取得 (デフォルトはindex)
+        context['from_view'] = self.request.GET.get('from', 'index')
         return context
 
     def post(self, request, *args, **kwargs):
+        # 遷移元情報を維持
+        from_view = request.POST.get('from', 'index')
+        
         # "すべて解除" や 個別のリセット用
         if 'reset' in request.POST:
             if 'job_filters' in request.session:
                 del request.session['job_filters']
-        return redirect('refine_home')
+        
+        return redirect(f"{reverse('refine_home')}?from={from_view}")
 
 class TimeSelectView(TemplateView):
     template_name = 'Searchjobs/time_select.html'
@@ -471,6 +496,9 @@ class JobDetailView(DetailView):
         context['is_applied'] = is_applied
         context['is_favorited'] = is_favorited
         context['is_closed'] = job.is_expired
+        
+        # 遷移元情報を取得
+        context['from_view'] = self.request.GET.get('from', 'index')
         return context
 
 

@@ -211,7 +211,7 @@
 
 <div id="jobs-container">
     {% for fav in favorite_jobs %}
-    <div class="fav-card" onclick="location.href='{% url 'job_detail' fav.job_posting.id %}'">
+    <div class="fav-card" onclick="location.href='{% url 'job_detail' fav.job_posting.id %}?from=favorites'">
         {% if fav.job_posting.template.photos.first %}
         <img src="{{ fav.job_posting.template.photos.first.image.url }}" class="fav-img">
         {% else %}

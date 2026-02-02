@@ -366,8 +366,19 @@
 
     <!-- 3. ソートバー -->
     <div class="sort-bar">
-        <button class="sort-btn">
-            <span><i class="fa-solid fa-arrow-down-short-wide"></i> 締切時刻が近い順</span>
+        <button class="sort-btn" onclick="openSortModal()">
+            <span>
+                <i class="fa-solid fa-arrow-down-short-wide"></i>
+                {% if current_sort == 'deadline' %}
+                締切時刻が近い順
+                {% elif current_sort == 'current_location' %}
+                現在地から近い順
+                {% elif current_sort == 'specified_location' %}
+                指定した場所から近い順
+                {% else %}
+                並び替え
+                {% endif %}
+            </span>
             <i class="fa-solid fa-chevron-down" style="font-size:10px; color:#999;"></i>
         </button>
     </div>
@@ -375,7 +386,8 @@
     <!-- 4. リストヘッダー -->
     <div class="list-header">
         <div class="list-date-title">{{ selected_date|date:"Y年n月j日" }}</div>
-        <div class="notification-toggle">
+        <div class="notification-toggle" onclick="toggleNotification('{{ selected_date|date:'Y年n月j日' }}')"
+            style="cursor: pointer;">
             <span>この日の新しい仕事を通知</span>
             <span class="toggle-switch-off">OFF</span>
         </div>
@@ -435,7 +447,7 @@
 </div>
 
 <!-- 絞り込みボタン (黄色) -->
-<a href="{% url 'refine_home' %}" class="floating-refine-btn">
+<a href="{% url 'refine_home' %}?from=index" class="floating-refine-btn">
     <i class="fa-solid fa-sliders"></i> 絞りこみ
 </a>
 
@@ -502,5 +514,246 @@
 
     setInterval(updateTimers, 1000);
     updateTimers();
+</script>
+
+<!-- ソートモーダル (iOS風: 全体結合版) -->
+<div id="sortModal" class="sort-modal-overlay">
+    <div class="sort-modal-content">
+        <div class="sort-group">
+            <div class="sort-title">並びかえ</div>
+
+            <a href="?sort=deadline&date={{ selected_date|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
+                class="sort-option {% if current_sort == 'deadline' %}active{% endif %}">
+                締切時刻が近い順
+            </a>
+            <a href="?sort=current_location&date={{ selected_date|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
+                class="sort-option {% if current_sort == 'current_location' %}active{% endif %}"
+                onclick="alert('現在地情報は現在実装中です'); return false;">
+                現在地から近い順
+            </a>
+            <a href="?sort=specified_location&date={{ selected_date|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
+                class="sort-option {% if current_sort == 'specified_location' %}active{% endif %}"
+                onclick="alert('指定場所情報は現在実装中です'); return false;">
+                指定した場所から近い順
+            </a>
+
+            <button class="sort-cancel-btn" onclick="closeSortModal()">キャンセル</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sort-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .sort-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .sort-modal-content {
+        width: 270px;
+        /* iOSのアラートに似せた幅 */
+        transition: transform 0.2s;
+    }
+
+    /* 全体を囲むグループ */
+    .sort-group {
+        background: rgba(245, 245, 245, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 14px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    /* タイトルエリア */
+    .sort-title {
+        padding: 15px 15px 10px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #888;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* 選択肢 */
+    .sort-option {
+        display: block;
+        padding: 15px 0;
+        text-decoration: none;
+        color: #007AFF;
+        font-size: 17px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background: transparent;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sort-option:active {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .sort-option.active {
+        font-weight: bold;
+    }
+
+    /* キャンセルボタン (リストの一番下) */
+    .sort-cancel-btn {
+        display: block;
+        width: 100%;
+        padding: 15px 0;
+        background: transparent;
+        color: #007AFF;
+        font-size: 17px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .sort-cancel-btn:active {
+        background: rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<!-- JS追記 -->
+</script>
+
+<!-- 通知設定完了ポップアップ -->
+<div id="notificationPopup" class="notification-popup">
+    <div class="popup-icon">
+        <i class="fa-solid fa-bell"></i>
+    </div>
+    <div class="popup-title">通知を設定しました</div>
+    <div class="popup-date" id="popupCurrentDate"></div>
+    <div class="popup-message">
+        <span id="popupTargetDate"></span>に新しい案件が投稿されたときに通知が届きます
+    </div>
+</div>
+
+<style>
+    /* 通知ポップアップスタイル */
+    .notification-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background: rgba(0, 0, 0, 0.85);
+        /* 濃い半透明黒 */
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        z-index: 3000;
+        text-align: center;
+        width: 280px;
+        opacity: 0;
+        pointer-events: none;
+        /* 非表示時はクリック不可 */
+        transition: all 0.3s ease;
+    }
+
+    .notification-popup.active {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .popup-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+        color: #FFD700;
+        /* アイコン黄色 */
+    }
+
+    .popup-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .popup-date {
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 15px;
+    }
+
+    .popup-message {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+</style>
+
+<!-- JS追記 -->
+<script>
+    function openSortModal() {
+        const modal = document.getElementById('sortModal');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function closeSortModal() {
+        const modal = document.getElementById('sortModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 200);
+    }
+
+    // 通知トグル処理
+    function toggleNotification(dateStr) {
+        const toggleBtn = document.querySelector('.toggle-switch-off'); // 簡易的にクラスで取得
+        const parent = document.querySelector('.notification-toggle');
+
+        // すでにONならOFFにする (今回は簡易実装)
+        if (toggleBtn.classList.contains('active')) {
+            toggleBtn.classList.remove('active');
+            toggleBtn.style.background = '#eee';
+            toggleBtn.style.color = '#999';
+            toggleBtn.innerText = 'OFF';
+            return;
+        }
+
+        // OFFならONにしてポップアップ表示
+        toggleBtn.classList.add('active');
+        toggleBtn.style.background = '#32CD32'; // 緑
+        toggleBtn.style.color = 'white';
+        toggleBtn.innerText = 'ON';
+
+        showNotificationPopup(dateStr);
+    }
+
+    function showNotificationPopup(targetDateStr) {
+        const popup = document.getElementById('notificationPopup');
+
+        // 現在時刻 (リアルタイム)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        document.getElementById('popupCurrentDate').innerText = `${year}/${month}/${day} ${hours}:${minutes}`;
+        document.getElementById('popupTargetDate').innerText = targetDateStr; // "2026年2月2日" などの文字列
+
+        popup.classList.add('active');
+
+        // 3秒後に消える
+        setTimeout(() => {
+            popup.classList.remove('active');
+        }, 3000);
+    }
 </script>
 {% endblock %}

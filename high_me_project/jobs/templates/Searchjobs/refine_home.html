@@ -110,10 +110,16 @@
 
 <div class="refine-container">
     <div class="header">
+        {% if from_view == 'map_view' %}
+        <a href="{% url 'map_view' %}" class="close-btn">×</a>
+        {% else %}
         <a href="{% url 'index' %}" class="close-btn">×</a>
+        {% endif %}
+
         <div class="header-title">絞り込み</div>
         <form method="post" class="reset-form">
             {% csrf_token %}
+            <input type="hidden" name="from" value="{{ from_view }}">
             <button type="submit" name="reset" value="1" class="reset-btn">すべて解除</button>
         </form>
     </div>
@@ -181,7 +187,11 @@
     </div>
 
     <div class="fixed-footer">
+        {% if from_view == 'map_view' %}
+        <button onclick="location.href='{% url 'map_view' %}'" class="btn-submit">絞り込み結果を表示</button>
+        {% else %}
         <button onclick="location.href='{% url 'index' %}'" class="btn-submit">絞り込み結果を表示</button>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
