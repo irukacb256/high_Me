@@ -222,16 +222,17 @@
         チェックイン / チェックアウト用QRコード
     </div>
 
-    <div class="company-name">(株)タイミー</div>
+    <div class="company-name">{{ store.business.company_name }}</div>
 
     <div class="qr-box">
-        <!-- QRコード画像(本譚･は蜍慕噪逕滓。) -->
-        <i class="fa-solid fa-qrcode fa-10x" style="font-size: 200px; color:#333;"></i>
+        <!-- QRコード画像 -->
+        <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TimeeCheckin_Initial"
+            style="width: 200px; height: 200px; opacity: 0.9;">
     </div>
 
     <div class="instruction-text">
         業務開始時 <span class="instruction-box">チェックイン</span> と 業務終了時 <span class="instruction-box">チェックアウト</span> に<br>
-        この <span style="text-decoration: underline;">QRコード</span> をアプリから読み込んでください）
+        この <span style="text-decoration: underline;">QRコード</span> をアプリから読み込んでください
     </div>
 
     <div class="panda-area">
@@ -255,11 +256,20 @@
         <div style="margin-left: 20px; color:#999;">ワーカーから修正依頼が届きます。</div>
     </div>
     <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn-action btn-blue">修正依頼を確認する</button>
-        <button class="btn-action btn-white">QRコードを印刷する</button>
+        <a href="{% url 'biz_attendance_correction_list' store.id %}" class="btn-action btn-blue">修正依頼を確認する</a>
+        <button class="btn-action btn-white" onclick="window.print()">QRコードを印刷する</button>
     </div>
 </div>
 <div style="text-align:right; padding: 10px 40px; background:white;">
-    <a href="#" style="font-size:12px;">チェックイン/アウト用QRコードを更新する</a>
+    <a href="javascript:void(0)" onclick="updateQRCode()" style="font-size:12px;">チェックイン/アウト用QRコードを更新する</a>
 </div>
+
+<script>
+    function updateQRCode() {
+        // ランダムな文字列を生成してQRコードを更新
+        const randomStr = Math.random().toString(36).substring(7);
+        const qrImage = document.getElementById('qr-image');
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TimeeCheckin_${randomStr}`;
+    }
+</script>
 {% endblock %}

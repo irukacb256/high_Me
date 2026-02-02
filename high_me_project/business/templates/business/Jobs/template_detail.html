@@ -219,7 +219,7 @@
                     {% if template.has_clothing_free %}<span class="tag-blue">服装自由</span>{% endif %}
                     {% if template.has_coupon_get %}<span class="tag-blue">クーポンGET</span>{% endif %}
                     {% if template.has_meal %}<span class="tag-blue">まかないあり</span>{% endif %}
-                    {% if template.has_hair_color_free %}<span class="tag-blue">髪垁Eカラー自由</span>{% endif %}
+                    {% if template.has_hair_color_free %}<span class="tag-blue">髪型・カラー自由</span>{% endif %}
                     {% if template.has_bike_bicycle_commute %}<span class="tag-blue">バイク/自転車通勤可</span>{% endif %}
                     {% if template.has_bicycle_commute %}<span class="tag-blue">自転車通勤可</span>{% endif %}
                     {% if template.has_transportation_allowance %}<span class="tag-blue">交通費支給</span>{% endif %}
@@ -298,7 +298,7 @@
         </div>
 
         <div class="detail-row" style="border-bottom: none;">
-            <div class="detail-label">閾ｪ蜍暮∽ｿ｡メッセージ</div>
+            <div class="detail-label">自動送信メッセージ</div>
             <div class="detail-value">
                 {{ template.auto_message|default:"未設定 " }}
             </div>
@@ -307,7 +307,7 @@
 
     <div style="margin-top: 40px; text-align: center;">
         <a href="{% url 'biz_job_create' template.pk %}" class="btn-primary">
-            この内ｮｹで求人繧貞供髮。☆を
+            この内容で求人を作成する
         </a>
     </div>
 </div>

@@ -132,10 +132,10 @@
     <div class="sidebar">
         <div class="sidebar-brand">Timee</div>
         <div class="sidebar-label">マイページ</div>
-        <a href="#" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
+        <a href="{% url 'biz_content' %}" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
         <a href="{% url 'biz_portal' %}" class="nav-item active"><i class="fa-solid fa-house"></i> 企業 / 店舗一覧</a>
         <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> アカウント情報</a>
-        <a href="#" class="nav-item"><i class="fa-regular fa-envelope"></i> メール受信設定</a>
+        <a href="{% url 'biz_mail_settings' %}" class="nav-item"><i class="fa-regular fa-envelope"></i> メール受信設定</a>
     </div>
 
     <div class="main-content">
@@ -169,7 +169,8 @@
         <div class="card">
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <span>店舗</span>
-                <a href="{% url 'biz_add_store' %}" style="font-size: 12px; color: #007AFF; text-decoration: none;">+
+                <a href="{% url 'biz_simple_create' %}"
+                    style="font-size: 12px; color: #007AFF; text-decoration: none;">+
                     店舗を追加する</a>
             </div>
             <table class="list-table">

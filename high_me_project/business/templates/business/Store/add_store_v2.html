@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>店舗を追加 | Timee</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
+
+        /* サイドメニュー (Common with Portal) */
+        .sidebar {
+            width: 220px;
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .sidebar-label {
+            padding: 10px 20px;
+            font-size: 11px;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .nav-item i {
+            width: 25px;
+            margin-right: 10px;
+            color: #666;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .nav-item.active {
+            background-color: #e6f7ff;
+            color: #007AFF;
+            font-weight: bold;
+        }
+
+        .nav-item.active i {
+            color: #007AFF;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+
+        .page-desc {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Form Card Styles */
+        .setup-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            /* margin: 0 auto; Left align might be better in portal context, but centering is safe */
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reflect-btn {
+            background: #f0f8ff;
+            color: #007AFF;
+            border: 1px solid #007AFF;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .reflect-btn:hover {
+            background: #e0efff;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #007AFF;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .btn-submit {
+            background: #007AFF;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 122, 255, 0.2);
+            transition: 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+
+        .back-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">Timee</div>
+        <div class="sidebar-label">マイページ</div>
+        <a href="{% url 'biz_content' %}" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
+        <!-- Ensure biz_portal is available -->
+        <a href="{% url 'biz_portal' %}" class="nav-item active"><i class="fa-solid fa-house"></i> 企業 / 店舗一覧</a>
+        <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> アカウント情報</a>
+        <a href="{% url 'biz_mail_settings' %}" class="nav-item"><i class="fa-regular fa-envelope"></i> メール受信設定</a>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">新・店舗を追加</h1>
+                <p class="page-desc">新しい店舗の情報を入力して登録してください。</p>
+            </div>
+            <a href="{% url 'biz_portal' %}" class="back-link">
+                <i class="fa-solid fa-arrow-left" style="margin-right:5px;"></i> 一覧に戻る
+            </a>
+        </div>
+
+        <div class="setup-card">
+            <form method="POST" class="h-adr">
+                <span class="p-country-name" style="display:none;">Japan</span>
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div
+                    style="background:#fff2f0; border:1px solid #ffccc7; color:#ff4d4f; padding:15px; border-radius:6px; margin-bottom:30px;">
+                    <div style="font-weight:bold; margin-bottom:5px;">入力エラーがあります</div>
+                    {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <div style="font-size:13px; margin-left:10px;">• {{ field }}: {{ error }}</div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="form-section">
+                    <div class="form-section-title">基本情報</div>
+                    <div class="form-group">
+                        <label>店舗名 <span style="color:#ff4d4f">*</span></label>
+                        <input type="text" name="store_name" class="form-control" placeholder="例: タイミー 汐留店"
+                            value="{{ form.store_name.value|default:'' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>業種 <span style="color:#ff4d4f">*</span></label>
+                        <select name="industry" id="industrySelect" class="form-control" required>
+                            <option value="">選択してください</option>
+                            <option value="飲食・フード">飲食・フード</option>
+                            <option value="販売・接客">販売・接客</option>
+                            <option value="物流・軽作業">物流・軽作業</option>
+                            <option value="オフィス">オフィス</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        店舗所在地
+                        <button type="button" class="reflect-btn">
+                            <i class="fa-solid fa-sync"></i> 事業者情報をコピー
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>郵便番号 <span style="color:#ff4d4f">*</span></label>
+                        <input type="text" name="post_code" class="p-postal-code form-control" placeholder="例: 1700013"
+                            value="{{ form.post_code.value|default:'' }}" required style="width: 200px;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>都道府県 <span style="color:#ff4d4f">*</span></label>
+                        <select name="prefecture" class="p-region form-control" style="width: 200px;">
+                            <option value="">選択してください</option>
+                            <option value="北海道">北海道</option>
+                            <option value="青森県">青森県</option>
+                            <option value="岩手県">岩手県</option>
+                            <option value="宮城県">宮城県</option>
+                            <option value="秋田県">秋田県</option>
+                            <option value="山形県">山形県</option>
+                            <option value="福島県">福島県</option>
+                            <option value="茨城県">茨城県</option>
+                            <option value="栃木県">栃木県</option>
+                            <option value="群馬県">群馬県</option>
+                            <option value="埼玉県">埼玉県</option>
+                            <option value="千葉県">千葉県</option>
+                            <option value="東京都">東京都</option>
+                            <option value="神奈川県">神奈川県</option>
+                            <option value="新潟県">新潟県</option>
+                            <option value="富山県">富山県</option>
+                            <option value="石川県">石川県</option>
+                            <option value="福井県">福井県</option>
+                            <option value="山梨県">山梨県</option>
+                            <option value="長野県">長野県</option>
+                            <option value="岐阜県">岐阜県</option>
+                            <option value="静岡県">静岡県</option>
+                            <option value="愛知県">愛知県</option>
+                            <option value="三重県">三重県</option>
+                            <option value="滋賀県">滋賀県</option>
+                            <option value="京都府">京都府</option>
+                            <option value="大阪府">大阪府</option>
+                            <option value="兵庫県">兵庫県</option>
+                            <option value="奈良県">奈良県</option>
+                            <option value="和歌山県">和歌山県</option>
+                            <option value="鳥取県">鳥取県</option>
+                            <option value="島根県">島根県</option>
+                            <option value="岡山県">岡山県</option>
+                            <option value="広島県">広島県</option>
+                            <option value="山口県">山口県</option>
+                            <option value="徳島県">徳島県</option>
+                            <option value="香川県">香川県</option>
+                            <option value="愛媛県">愛媛県</option>
+                            <option value="高知県">高知県</option>
+                            <option value="福岡県">福岡県</option>
+                            <option value="佐賀県">佐賀県</option>
+                            <option value="長崎県">長崎県</option>
+                            <option value="熊本県">熊本県</option>
+                            <option value="大分県">大分県</option>
+                            <option value="宮崎県">宮崎県</option>
+                            <option value="鹿児島県">鹿児島県</option>
+                            <option value="沖縄県">沖縄県</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>市区町村 <span style="color:#ff4d4f">*</span></label>
+                        <input type="text" name="city" class="p-locality form-control" placeholder="例: 豊島区"
+                            value="{{ form.city.value|default:'' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>町域・番地</label>
+                        <input type="text" name="address_line" class="p-street-address form-control"
+                            placeholder="例: 東池袋1-18-1" value="{{ form.address_line.value|default:'' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>建物名など</label>
+                        <input type="text" name="building" class="p-extended-address form-control"
+                            placeholder="例: Hareza Tower 27階" value="{{ form.building.value|default:'' }}">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">この内容で店舗を登録する</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+    <script>
+        document.querySelector('.reflect-btn').addEventListener('click', function () {
+            var bizPostCode = "{{ biz_data.biz_post_code|default:'' }}";
+            var bizPrefecture = "{{ biz_data.biz_prefecture|default:'' }}";
+            var bizCity = "{{ biz_data.biz_city|default:'' }}";
+            var bizAddressLine = "{{ biz_data.biz_address_line|default:'' }}";
+            var bizBuilding = "{{ biz_data.biz_building|default:'' }}";
+
+            if (bizPostCode) document.querySelector('input[name="post_code"]').value = bizPostCode;
+            if (bizPrefecture) document.querySelector('select[name="prefecture"]').value = bizPrefecture;
+            if (bizCity) document.querySelector('input[name="city"]').value = bizCity;
+            if (bizAddressLine) document.querySelector('input[name="address_line"]').value = bizAddressLine;
+            if (bizBuilding) document.querySelector('input[name="building"]').value = bizBuilding;
+
+            var btn = this;
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> 反映しました';
+            setTimeout(function () {
+                btn.innerHTML = originalText;
+            }, 2000);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var selectedIndustry = "{{ form.industry.value|default:'' }}";
+            if (selectedIndustry) {
+                var sel = document.getElementById('industrySelect');
+                if (sel) {
+                    for (var i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].value === selectedIndustry) {
+                            sel.options[i].selected = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            var selectedPref = "{{ form.prefecture.value|default:'' }}";
+            if (selectedPref) {
+                var prefSel = document.querySelector('select[name="prefecture"]');
+                if (prefSel) {
+                    for (var i = 0; i < prefSel.options.length; i++) {
+                        if (prefSel.options[i].value === selectedPref) {
+                            prefSel.options[i].selected = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

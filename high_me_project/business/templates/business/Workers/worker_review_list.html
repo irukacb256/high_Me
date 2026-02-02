@@ -306,19 +306,24 @@
 
             <!-- Groups -->
             <div class="form-section">
-                <div class="section-label">所属するグループを変更</div>
-                <div class="group-desc">
-                    グループの新規作成・編集。<a href="{% url 'biz_group_management' store.id %}"
-                        class="group-link">グループ管理ページ</a>をご利用ください。
-                </div>
-                <div class="checkbox-list">
-                    {% for group in group_definitions %}
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="group_{{ group.id }}" value="{{ group.id }}"
-                            class="group-checkbox">
-                        {{ group.name }}
+                <!-- Groups -->
+                <div class="review-section-title">グループに追加（任意）</div>
+                <div class="group-select-area">
+                    {% for g in group_definitions %}
+                    {% if not g.is_system %}
+                    <label class="group-checkbox-label">
+                        <input type="checkbox" class="group-checkbox" value="{{ g.id }}">
+                        {{ g.name }}
                     </label>
+                    {% endif %}
                     {% endfor %}
+                </div>
+
+                <!-- Message -->
+                <div class="review-section-title" style="margin-top: 20px;">メッセージ（任意）</div>
+                <div class="message-area">
+                    <textarea class="review-message" placeholder="ワーカーへの感謝やフィードバックを入力してください" rows="3"
+                        style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 8px; resize: vertical; box-sizing: border-box;"></textarea>
                 </div>
             </div>
 
@@ -423,6 +428,9 @@
         const checkedGroups = card.querySelectorAll('.group-checkbox:checked');
         const groupIds = Array.from(checkedGroups).map(el => el.value);
 
+        // Message
+        const messageVal = card.querySelector('.review-message').value;
+
         // CSRF
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
@@ -439,7 +447,7 @@
                 review_type: reviewType,
                 skills: skills,
                 group_ids: groupIds,
-                message: "" // No message field in new design? Image 2 doesn't show message box. I'll omit or add if needed.
+                message: messageVal
             })
         })
             .then(response => response.json())
@@ -448,7 +456,7 @@
                     alert('レビューを送信しました');
                     card.remove();
                     if (document.querySelectorAll('.review-card').length === 0) {
-                        window.location.href = "{% url 'biz_worker_review_job_list' store.id %}";
+                        window.location.href = "{% url 'biz_review_complete' store.id %}";
                     }
                 } else {
                     alert('エラーが発生しました: ' + data.message);

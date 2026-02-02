@@ -55,9 +55,6 @@ class JobTemplateForm(forms.ModelForm):
     # 既存のHTMLフォーム構造を変えない方針でいくなら、View処理が無難だが、
     # CBV移行なので、Formで吸収したい。
     
-    # 写真用のフィールド
-    photos = forms.ImageField(required=False, widget=forms.FileInput) # Temporary widget to avoid ClearableFileInput error if any
-
     class Meta:
         model = JobTemplate
         exclude = ['store', 'created_at', 'skills', 'other_conditions', 'qualification', 'qualification_type']
@@ -67,9 +64,6 @@ class JobTemplateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # 資格マスター取得
         self.qualifications = QualificationMaster.objects.all().order_by('category', 'name')
-        
-        # Photos widget override
-        self.fields['photos'].widget = MultipleFileInput(attrs={'multiple': True})
     
     def clean(self):
         cleaned_data = super().clean()

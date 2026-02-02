@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>店舗作成 | Timee</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            background: #f9f9f9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #0066cc;
+        }
+
+        .back-link {
+            display: block;
+            margin-bottom: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="{% url 'biz_portal' %}" class="back-link">&lt; 一覧に戻る</a>
+        <h1>新規店舗の作成</h1>
+
+        <form method="POST" class="h-adr">
+            <span class="p-country-name" style="display:none;">Japan</span>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>店舗名</label>
+                <input type="text" name="store_name" required placeholder="店舗名を入力">
+            </div>
+
+            <div class="form-group">
+                <label>業種</label>
+                <select name="industry" required>
+                    <option value="">選択してください</option>
+                    <option value="飲食・フード">飲食・フード</option>
+                    <option value="販売・接客">販売・接客</option>
+                    <option value="物流・軽作業">物流・軽作業</option>
+                    <option value="オフィス">オフィス</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <h3>所在地</h3>
+            <div class="form-group">
+                <label>郵便番号</label>
+                <input type="text" name="post_code" class="p-postal-code" required placeholder="例: 1000001">
+            </div>
+            <div class="form-group">
+                <label>都道府県</label>
+                <select name="prefecture" class="p-region" required>
+                    <option value="">都道府県を選択</option>
+                    <option value="東京都">東京都</option>
+                    <option value="大阪府">大阪府</option>
+                    <!-- 省略 -->
+                    <option value="北海道">北海道</option>
+                    <option value="千葉県">千葉県</option>
+                    <option value="埼玉県">埼玉県</option>
+                    <option value="神奈川県">神奈川県</option>
+                    <option value="愛知県">愛知県</option>
+                    <option value="福岡県">福岡県</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>市区町村</label>
+                <input type="text" name="city" class="p-locality" placeholder="市区町村">
+            </div>
+            <div class="form-group">
+                <label>番地</label>
+                <input type="text" name="address_line" class="p-street-address" placeholder="番地">
+            </div>
+            <div class="form-group">
+                <label>建物名</label>
+                <input type="text" name="building" class="p-extended-address" placeholder="建物名">
+            </div>
+
+            <button type="submit">登録する</button>
+        </form>
+    </div>
+    <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+</body>
+
+</html>

@@ -216,5 +216,14 @@
             document.getElementById('btn-list').classList.add('active');
         }
     }
+
+    // Check query param
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewParam = urlParams.get('view');
+        if (viewParam === 'list') {
+            switchView('list');
+        }
+    });
 </script>
 {% endblock %}

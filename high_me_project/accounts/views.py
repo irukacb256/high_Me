@@ -1123,7 +1123,13 @@ def withdraw_application(request):
 def review_penalty(request):
     """画像3: レビューとペナルティ画面"""
     profile = get_object_or_404(WorkerProfile, user=request.user)
-    reviews = profile.reviews.all().order_by('-created_at') # Reviewモデルのrelated_name='reviews'を想定
+    
+    # business.modelsからWorkerReviewをインポートして取得
+    # 循環参照防止のため関数内でインポートするか、上部でtry-except等でインポートする
+    # ここでは関数内でインポート
+    from business.models import WorkerReview
+    
+    reviews = WorkerReview.objects.filter(worker=request.user).select_related('store').order_by('-created_at')
 
     # キャンセル率計算 (簡易ロジック: cancellations / (completed + cancellations) などだが、
     # 今回はモデルに保存された値をそのまま表示する形にする)

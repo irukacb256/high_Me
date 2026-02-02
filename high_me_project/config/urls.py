@@ -155,6 +155,8 @@ urlpatterns = [
 
     # 事業者登録フロー
     path('biz/', biz_views.LandingView.as_view(), name='biz_landing'),
+    path('biz/content/', biz_views.BusinessContentView.as_view(), name='biz_content'),
+    path('biz/settings/mail/', biz_views.BizMailSettingsView.as_view(), name='biz_mail_settings'),
     path('biz/signup/', biz_views.SignupView.as_view(), name='biz_signup'),
     path('biz/account-register/', biz_views.AccountRegisterView.as_view(), name='biz_account_register'),
     path('biz/business-register/', biz_views.BusinessRegisterView.as_view(), name='biz_business_register'),
@@ -163,7 +165,8 @@ urlpatterns = [
     path('biz/complete/', biz_views.SignupCompleteView.as_view(), name='biz_signup_complete'),
     # --- 登録・ログイン ---
     path('biz/login/', biz_views.BizLoginView.as_view(), name='biz_login'),
-    path('biz/password-reset/', biz_views.BizPasswordResetView.as_view(), name='biz_password_reset'),
+    path('biz/password-reset/', biz_views.BizPasswordResetRequestView.as_view(), name='biz_password_reset_request'),
+    path('biz/password-reset/confirm/', biz_views.BizPasswordResetView.as_view(), name='biz_password_reset_confirm'),
     # --- 企業用マイページ ---
     path('biz/portal/', biz_views.BizPortalView.as_view(), name='biz_portal'),
 
@@ -173,7 +176,8 @@ urlpatterns = [
     path('biz/store/<int:store_id>/templates/create/', biz_views.TemplateCreateView.as_view(), name='biz_template_create'),
 
     # --- 店舗追加機能 ---
-    path('biz/portal/add-store/', biz_views.AddStoreView.as_view(), name='biz_add_store'),
+    path('biz/simple-create/', biz_views.SimpleStoreCreateView.as_view(), name='biz_simple_create'),
+    # path('biz/creation/new-store/', biz_views.AddStoreView.as_view(), name='biz_add_store'),
 
     # 詳細画面
     path('biz/templates/<int:pk>/', biz_views.TemplateDetailView.as_view(), name='biz_template_detail'),
@@ -197,7 +201,8 @@ urlpatterns = [
     path('biz/store/<int:store_id>/groups/', biz_views.BizGroupManagementView.as_view(), name='biz_group_management'),
     path('biz/store/<int:store_id>/reviews/', biz_views.BizWorkerReviewJobListView.as_view(), name='biz_worker_review_job_list'),
     path('biz/store/<int:store_id>/reviews/<int:job_id>/', biz_views.BizWorkerReviewListView.as_view(), name='biz_worker_review_list'),
-    path('biz/store/<int:store_id>/reviews/submit/', biz_views.BizWorkerReviewSubmitView.as_view(), name='biz_worker_review_submit'),
+    path('biz/workers/review/submit/<int:store_id>/', biz_views.BizWorkerReviewSubmitView.as_view(), name='biz_worker_review_submit'),
+    path('biz/workers/review/complete/<int:store_id>/', biz_views.BizReviewCompleteView.as_view(), name='biz_review_complete'),
 
     # メッセージ機能
     path('biz/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),

@@ -210,8 +210,8 @@
 
     <!-- 警告バナー (画像) -->
     <div class="warning-banner">
-        <strong>求人はまだ公開されていません〜</strong>
-        入力した求人内容を確認して。∝撫鬘後↑、代ｌ、ｰ［求人を公開］ボタン繧呈款してください〜
+        <strong>求人はまだ公開されていません</strong>
+        入力した求人内容を確認して、「求人を公開」ボタンを押してください。
     </div>
 
     <form method="POST">
@@ -264,73 +264,72 @@
                 </div>
             </div>
         </div>
-</div>
 
-<!-- 入力した求人内容 -->
-<div class="card">
-    <div class="card-header">入力した求人内容</div>
-    <div class="card-body">
-        <div class="readonly-grid">
-            <div class="readonly-label">勤務日時</div>
-            <div class="readonly-value bold">{{ data.work_date }} {{ data.start_time }} 〜{{ data.end_time }}
+        <!-- 入力した求人内容 -->
+        <div class="card">
+            <div class="card-header">入力した求人内容</div>
+            <div class="card-body">
+                <div class="readonly-grid">
+                    <div class="readonly-label">勤務日時</div>
+                    <div class="readonly-value bold">{{ data.work_date }} {{ data.start_time }} 〜{{ data.end_time }}
+                    </div>
+                </div>
+                <div class="readonly-grid">
+                    <div class="readonly-label">報酬</div>
+                    <div class="readonly-value bold">時給 ¥{{ data.wage|default:1300 }} / 交通費 ¥{{
+                        data.transport|default:700 }}</div>
+                </div>
+                <div class="readonly-grid">
+                    <div class="readonly-label">募集人数</div>
+                    <div class="readonly-value">{{ data.count|default:1 }} 人</div>
+                </div>
+                <div class="readonly-grid">
+                    <div class="readonly-label">公開範囲</div>
+                    <div class="readonly-value">
+                        {% if data.visibility == 'public' %}一般公開
+                        {% elif data.visibility == 'badge' %}バッジ限定
+                        {% elif data.visibility == 'group' %}グループ限定
+                        {% else %}一般公開{% endif %}
+                    </div>
+                </div>
+                <div class="readonly-grid">
+                    <div class="readonly-label">自動送信メッセージ</div>
+                    <div class="readonly-value">
+                        {% if data.msg_send %}
+                        <span style="color: #28a745;"><i class="fa-solid fa-check-circle"></i> 送信する</span><br>
+                        <span style="font-size: 13px; color: #666;">{{ data.auto_message|linebreaksbr }}</span>
+                        {% else %}
+                        <span style="color: #888;">送信しない</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="readonly-grid">
-            <div class="readonly-label">報酬</div>
-            <div class="readonly-value bold">時給 ¥{{ data.wage|default:1300 }} / 交通費 ¥{{
-                data.transport|default:700 }}</div>
+
+        <!-- 最終チェック -->
+        <label class="check-section">
+            <input type="checkbox" name="confirm_check" required>
+            <div class="check-content">
+                <div class="check-title">就業場所に関する事項を確認しました</div>
+                <div class="check-desc">
+                    法令に基づき、就業場所、業務内容、就業時間、賃金等の労働条件を確認の上、求人を公開します。
+                </div>
+            </div>
+        </label>
+
+        {% if error %}
+        <div
+            style="background: #fff2f2; color: #d32f2f; padding: 15px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; border: 1px solid #ffcdd2;">
+            <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
         </div>
-        <div class="readonly-grid">
-            <div class="readonly-label">募集人数</div>
-            <div class="readonly-value">{{ data.count|default:1 }} 人</div>
-        </div>
-        <div class="readonly-grid">
-            <div class="readonly-label">公開範囲</div>
-            <div class="readonly-value">
-                {% if data.visibility == 'public' %}一般公開
-                {% elif data.visibility == 'badge' %}バッジ限定
-                {% elif data.visibility == 'group' %}グループ限定
-                {% else %}一般公開{% endif %}
+        {% endif %}
+
+        <div class="footer-bar">
+            <div class="btn-row">
+                <a href="javascript:history.back()" class="btn-back">求人内容を変更</a>
+                <button type="submit" class="btn-submit">求人を公開する</button>
             </div>
         </div>
-        <div class="readonly-grid">
-            <div class="readonly-label">閾ｪ蜍輔メッセージ</div>
-            <div class="readonly-value">
-                {% if data.msg_send %}
-                <span style="color: #28a745;"><i class="fa-solid fa-check-circle"></i> 送信する</span><br>
-                <span style="font-size: 13px; color: #666;">{{ data.auto_message|linebreaksbr }}</span>
-                {% else %}
-                <span style="color: #888;">送信しない</span>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 最終チェック -->
-<label class="check-section">
-    <input type="checkbox" name="confirm_check" required>
-    <div class="check-content">
-        <div class="check-title">就業場所に関する事項を確認しました</div>
-        <div class="check-desc">
-            法令に基づき、就業場所、業務内容、就業時間、賃金等の労働条件を確認の上、求人を公開します。
-        </div>
-    </div>
-</label>
-
-{% if error %}
-<div
-    style="background: #fff2f2; color: #d32f2f; padding: 15px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; border: 1px solid #ffcdd2;">
-    <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
-</div>
-{% endif %}
-
-<div class="footer-bar">
-    <div class="btn-row">
-        <a href="javascript:history.back()" class="btn-back">求人内容繧貞､画峩</a>
-        <button type="submit" class="btn-submit">求人を元髢九☆を</button>
-    </div>
-</div>
-</form>
+    </form>
 </div>
 {% endblock %}

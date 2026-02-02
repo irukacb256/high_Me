@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Max
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout # logoutを追加
@@ -84,6 +85,12 @@ def get_biz_calendar(store, year, month):
 
 class LandingView(TemplateView):
     template_name = 'business/Common/landing.html'
+
+class BusinessContentView(TemplateView):
+    template_name = 'business/Common/business_content.html'
+
+class BizMailSettingsView(TemplateView):
+    template_name = 'business/Common/mail_settings_question.html'
 
 class SignupView(FormView):
     template_name = 'business/Auth/signup.html'
@@ -197,6 +204,11 @@ class StoreSetupView(FormView):
             return super(FormView, self).dispatch(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['biz_data'] = self.request.session.get('biz_signup_data')
+        return context
+
     def form_valid(self, form):
         signup_data = self.request.session.get('biz_signup_data')
         if not signup_data:
@@ -247,6 +259,88 @@ class StoreSetupView(FormView):
             form.add_error(None, f"登録処理中にエラーが発生しました: {e}")
             return self.form_invalid(form)
 
+class SimpleStoreCreateView(BusinessLoginRequiredMixin, FormView):
+    template_name = 'business/Store/simple_store_create.html'
+    form_class = StoreSetupForm
+    success_url = reverse_lazy('biz_portal')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            profile = BusinessProfile.objects.get(user=self.request.user)
+            context['biz_data'] = {
+                'biz_post_code': profile.post_code,
+                'biz_prefecture': profile.prefecture,
+                'biz_city': profile.city,
+                'biz_address_line': profile.address_line,
+                'biz_building': profile.building,
+            }
+        except BusinessProfile.DoesNotExist:
+            context['biz_data'] = {}
+        return context
+
+    def form_valid(self, form):
+        try:
+            profile = BusinessProfile.objects.get(user=self.request.user)
+            data = form.cleaned_data
+            Store.objects.create(
+                business=profile,
+                store_name=data['store_name'],
+                industry=data['industry'],
+                post_code=data['post_code'],
+                prefecture=data['prefecture'],
+                city=data['city'],
+                address_line=data['address_line'],
+                building=data['building'],
+            )
+            return redirect('biz_portal')
+        except Exception as e:
+             form.add_error(None, f"Error: {e}")
+             return self.form_invalid(form)
+
+class AddStoreView(BusinessLoginRequiredMixin, FormView):
+    template_name = 'business/Store/add_store_v2.html'
+    form_class = StoreSetupForm
+    success_url = reverse_lazy('biz_portal')
+
+    def dispatch(self, request, *args, **kwargs):
+        # Debug removed, returning to normal dispatch
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            profile = BusinessProfile.objects.get(user=self.request.user)
+            context['biz_data'] = {
+                'biz_post_code': profile.post_code,
+                'biz_prefecture': profile.prefecture,
+                'biz_city': profile.city,
+                'biz_address_line': profile.address_line,
+                'biz_building': profile.building,
+            }
+        except BusinessProfile.DoesNotExist:
+            context['biz_data'] = {}
+        return context
+
+    def form_valid(self, form):
+        try:
+            profile = BusinessProfile.objects.get(user=self.request.user)
+            data = form.cleaned_data
+            Store.objects.create(
+                business=profile,
+                store_name=data['store_name'],
+                industry=data['industry'],
+                post_code=data['post_code'],
+                prefecture=data['prefecture'],
+                city=data['city'],
+                address_line=data['address_line'],
+                building=data['building'],
+            )
+            return redirect('biz_portal')
+        except Exception as e:
+             form.add_error(None, f"エラーが発生しました: {e}")
+             return self.form_invalid(form)
+
 class SignupCompleteView(TemplateView):
     template_name = 'business/Auth/signup_complete.html'
 
@@ -261,9 +355,51 @@ class BizLoginView(LoginView):
     def get_success_url(self):
         return reverse('biz_portal')
 
+class BizPasswordResetRequestView(TemplateView):
+    template_name = 'business/Auth/password_reset_request.html'
+
+    def post(self, request):
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+        
+        if user:
+            # ユーザーが見つかった場合、セッションにIDを保存してパスワード設定画面へ
+            request.session['reset_user_id'] = user.id
+            return redirect('biz_password_reset_confirm')
+        else:
+            # 見つからない場合のエラー
+            return render(request, self.template_name, {
+                'error': 'メールアドレスが見つかりません。'
+            })
+
 class BizPasswordResetView(TemplateView):
     template_name = 'business/Auth/password_reset.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        # セッションにユーザーIDがない場合は最初に戻す
+        if not request.session.get('reset_user_id'):
+            return redirect('biz_password_reset_request')
+        return super().dispatch(request, *args, **kwargs)
+
     def post(self, request):
+        user_id = request.session.get('reset_user_id')
+        user = get_object_or_404(User, id=user_id)
+        
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+        
+        if password != password_confirm:
+             return render(request, self.template_name, {
+                'error': 'パスワードが一致しません。'
+            })
+            
+        # パスワード変更
+        user.set_password(password)
+        user.save()
+        
+        # セッションクリア
+        del request.session['reset_user_id']
+        
         return redirect('biz_login')
 
 # --- 業務画面 ---
@@ -302,6 +438,7 @@ class DashboardView(BusinessLoginRequiredMixin, TemplateView):
             'current_year': year,
             'current_month': month,
             'today': timezone.now().date(),
+            'postings': JobPosting.objects.filter(template__store=store).order_by('-work_date', '-start_time'), # Add postings for list view
         })
         return context
 
@@ -334,7 +471,20 @@ class TemplateListView(BusinessLoginRequiredMixin, ListView):
     def get_queryset(self):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
-        return JobTemplate.objects.filter(store=self.store).order_by('-created_at')
+        
+        queryset = JobTemplate.objects.filter(store=self.store)
+        
+        sort_order = self.request.GET.get('sort', 'template_newest')
+        if sort_order == 'job_newest':
+            # 求人作成日が新しい順（紐づく求人の最新日時でソート）
+            queryset = queryset.annotate(
+                latest_job_date=Max('jobposting__created_at')
+            ).order_by('-latest_job_date', '-created_at')
+        else:
+            # ひな形作成日が新しい順（デフォルト）
+            queryset = queryset.order_by('-created_at')
+            
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -365,21 +515,20 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
         template.skills = ",".join(self.request.POST.getlist('skills'))
         template.other_conditions = "\n".join([c for c in self.request.POST.getlist('other_conditions') if c.strip()])
         
-        # 待遇のチェックボックス処理 (FormでBooleanとして定義していない場合、またはModelFormで拾えていない場合)
-        # JobTemplateFormで fields exclude しているので、ModelFormが自動でやってくれない部分は手動
-        # しかし、has_xxx は exclude していないので ModelForm が処理してくれるはず。
-        # ただし、CheckboxInput はチェックされていないとPOSTされないので、Falseになる。
-        # ModelFormならそれでOK。
-        
-        # Checkboxes for attributes handled by ModelForm:
-        # has_unexperienced_welcome, etc. are NOT excluded, so they should be fine.
+        # 資格IDの処理
+        qual_id = self.request.POST.get('qualification_id')
+        if qual_id and qual_id != 'none':
+            template.qualification_id = qual_id
+        else:
+            template.qualification = None
 
         template.save()
 
         # Photos
-        photos = self.request.FILES.getlist('photos')
-        for i, photo in enumerate(photos):
-            JobTemplatePhoto.objects.create(template=template, image=photo, order=i)
+        if 'photos' in self.request.FILES:
+            photos = self.request.FILES.getlist('photos')
+            for i, photo in enumerate(photos):
+                JobTemplatePhoto.objects.create(template=template, image=photo, order=i)
 
         return redirect('biz_template_list', store_id=store.id)
 
@@ -390,7 +539,7 @@ class TemplateDetailView(BusinessLoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = Store.objects.filter(business=biz_profile).first() # 簡易的
+        # store = Store.objects.filter(business=biz_profile).first() # 簡易的
         # URLにstore_idがないので、contextから取るか、pkだけで引くかだが、
         # 安全のため user -> biz -> store -> template と辿りたいが
         # templates/<int:pk>/ なので store_id がURLにない。
@@ -422,6 +571,14 @@ class TemplateUpdateView(BusinessLoginRequiredMixin, UpdateView):
         # Manual fields
         template.skills = ",".join(self.request.POST.getlist('skills'))
         template.other_conditions = "\n".join([c for c in self.request.POST.getlist('other_conditions') if c.strip()])
+        
+        # 資格IDの処理
+        qual_id = self.request.POST.get('qualification_id')
+        if qual_id and qual_id != 'none':
+            template.qualification_id = qual_id
+        else:
+            template.qualification = None
+
         template.save()
 
         if 'photos' in self.request.FILES:
@@ -575,11 +732,15 @@ class JobPostingListView(BusinessLoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         year = int(self.request.GET.get('year', timezone.now().year))
         month = int(self.request.GET.get('month', timezone.now().month))
+        
         context['calendar_data'] = get_biz_calendar(self.store, year, month)
         context['store'] = self.store
         context['current_year'] = year
         context['current_month'] = month
         context['today'] = timezone.now().date()
+
+        # Add postings for list view
+        context['postings'] = JobPosting.objects.filter(template__store=self.store).order_by('-work_date', '-start_time')
         return context
 
 class JobPostingDetailView(BusinessLoginRequiredMixin, DetailView):
@@ -752,7 +913,14 @@ class BizWorkerManagementView(BusinessLoginRequiredMixin, ListView):
         all_worker_ids = set(list(past_worker_ids) + list(group_worker_ids))
         
         # Userクエリセット作成
-        queryset = User.objects.filter(id__in=all_worker_ids).select_related('workerprofile').order_by('id')
+        queryset = User.objects.filter(id__in=all_worker_ids).select_related('workerprofile')
+
+        # Sorting
+        sort_order = self.request.GET.get('sort', 'newest') # Default to newest
+        if sort_order == 'oldest':
+             queryset = queryset.order_by('id')
+        else:
+             queryset = queryset.order_by('-id')
 
         # 検索フィルタ (フリガナ or 名前)
         q = self.request.GET.get('q')
@@ -879,12 +1047,18 @@ class BizWorkerReviewJobListView(BusinessLoginRequiredMixin, ListView):
         
         now = timezone.now()
         
-        # 終了済みで、かつ未レビューの応募が少なくとも1つある求人
+        # 終了済み または チェックアウト済みの応募がある求人
+        # かつ未レビューのものが対象
         queryset = JobPosting.objects.filter(
-            template__store=self.store,
-            end_time__lt=now
-        ).annotate(
-            unreviewed_count=Count('applications', filter=Q(applications__worker_review__isnull=True))
+            template__store=self.store
+        ).filter(
+            Q(end_time__lt=now) | Q(applications__leaving_at__isnull=False)
+        ).distinct().annotate(
+            unreviewed_count=Count('applications', filter=Q(
+                applications__worker_review__isnull=True,
+                # レビュー対象: (時間が過ぎている OR チェックアウト済み)
+                # Countのfilter内でOR条件を書く
+            ) & (Q(applications__job_posting__end_time__lt=now) | Q(applications__leaving_at__isnull=False)))
         ).filter(unreviewed_count__gt=0).order_by('-end_time')
         
         return queryset
@@ -932,14 +1106,20 @@ class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
     context_object_name = 'applications'
 
     def get_queryset(self):
+        from django.db.models import Q # Import needed
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
         self.job = get_object_or_404(JobPosting, id=self.kwargs['job_id'], template__store=self.store)
         
+        now = timezone.now()
+
         # 指定求人の応募で、まだレビューがないもの
+        # かつ、(求人終了済み OR チェックアウト済み)
         queryset = JobApplication.objects.filter(
             job_posting=self.job,
             worker_review__isnull=True
+        ).filter(
+            Q(job_posting__end_time__lt=now) | Q(leaving_at__isnull=False)
         ).select_related('worker__workerprofile', 'job_posting')
         
         return queryset
@@ -956,6 +1136,8 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         from django.http import JsonResponse
         import json
+        from business.models import WorkerReview # Import added
+
         try:
             data = json.loads(request.body)
             app_id = data.get('app_id')
@@ -971,6 +1153,10 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
             if app.job_posting.template.store.id != store_id:
                 return JsonResponse({'status': 'error', 'message': 'Invalid store'}, status=403)
             
+            # Check for existing review (Idempotency)
+            if WorkerReview.objects.filter(job_application=app).exists():
+                return JsonResponse({'status': 'success', 'message': 'Already reviewed'})
+
             # Create Review
             WorkerReview.objects.create(
                 job_application=app,
@@ -1010,6 +1196,18 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
         except Exception as e:
             from django.http import JsonResponse
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+class BizReviewCompleteView(BusinessLoginRequiredMixin, TemplateView):
+    template_name = 'business/Workers/review_complete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # サイドバー表示用
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        context['store'] = store
+        return context
+
 
 class BizMessageListView(BusinessLoginRequiredMixin, ListView):
     """メッセージ一覧 (チャットルーム一覧)"""

@@ -142,9 +142,9 @@
         {% if reviews %}
         {% for review in reviews %}
         <div class="review-item">
-            <div class="review-store">{{ review.store_name }}</div>
+            <div class="review-store">{{ review.store.store_name }}</div>
             <div class="review-date">{{ review.created_at|date:"Y/m/d" }}</div>
-            <div class="review-content">{{ review.comment|linebreaksbr }}</div>
+            <div class="review-content">{{ review.message|linebreaksbr }}</div>
         </div>
         {% endfor %}
         {% else %}

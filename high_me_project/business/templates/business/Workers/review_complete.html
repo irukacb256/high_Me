@@ -1,0 +1,65 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .complete-container {
+        background: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+        margin: 40px auto;
+    }
+
+    .complete-icon {
+        font-size: 60px;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+
+    .complete-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .complete-message {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .btn-home {
+        display: inline-block;
+        background: #007AFF;
+        color: white;
+        text-decoration: none;
+        padding: 12px 30px;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: opacity 0.2s;
+    }
+
+    .btn-home:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div class="complete-container">
+    <div class="complete-icon">
+        <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="complete-title">レビューが完了しました</div>
+    <div class="complete-message">
+        ワーカーへの評価を送信しました。<br>
+        ご協力ありがとうございました。
+    </div>
+
+    <div>
+        <a href="{% url 'biz_dashboard' store.id %}" class="btn-home">ホーム画面へ戻る</a>
+    </div>
+</div>
+{% endblock %}

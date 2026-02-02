@@ -334,10 +334,12 @@
             </div>
 
             <div class="filter-group">
-                <label>並び替え：最終稼働日</label>
+                <label>並び替え：登録日</label>
                 <div class="sort-btn-group">
-                    <button type="button" class="sort-btn active">新しい順</button>
-                    <button type="button" class="sort-btn">古い順</button>
+                    <button type="submit" name="sort" value="newest"
+                        class="sort-btn {% if request.GET.sort != 'oldest' %}active{% endif %}">新しい順</button>
+                    <button type="submit" name="sort" value="oldest"
+                        class="sort-btn {% if request.GET.sort == 'oldest' %}active{% endif %}">古い順</button>
                 </div>
             </div>
         </div>
