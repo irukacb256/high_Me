@@ -58,6 +58,10 @@ class JobTemplateForm(forms.ModelForm):
     class Meta:
         model = JobTemplate
         exclude = ['store', 'created_at', 'skills', 'other_conditions', 'qualification', 'qualification_type']
+        widgets = {
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
+        }
         # skills, other_conditions, qualification関連はカスタム処理が必要
 
     def __init__(self, *args, **kwargs):

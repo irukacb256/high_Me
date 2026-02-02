@@ -32,24 +32,32 @@ class MapSearchView(TemplateView):
         if not target_prefs:
             target_prefs = ['東京都', '神奈川県', '千葉県']
         
-        # 有効な求人で、かつ緯度経度があるもの
+        # 有効な求人で、かつ緯度経度があるもの (テンプレートまたは店舗)
         jobs = JobPosting.objects.filter(
+            Q(template__latitude__isnull=False) | Q(template__store__latitude__isnull=False),
             template__store__prefecture__in=target_prefs,
-            template__store__latitude__isnull=False,
-            template__store__longitude__isnull=False,
-            visibility='public'  # 公開中のみ
+            visibility='public'
         ).select_related('template__store')
         
         # マップ表示用データ作成
         map_data = []
         for job in jobs:
             store = job.template.store
+            # 緯度経度: テンプレート優先、なければ店舗
+            lat = job.template.latitude if job.template.latitude else store.latitude
+            lng = job.template.longitude if job.template.longitude else store.longitude
+
+            # 座標がない場合はスキップ (フィルタで弾いているはずだが念のため)
+            if lat is None or lng is None:
+                continue
+
             map_data.append({
                 'id': job.id,
                 'title': job.title,
                 'store_name': store.store_name,
-                'lat': store.latitude,
-                'lng': store.longitude,
+                'lat': lat,
+                'lng': lng,
+                'url': reverse('job_detail', kwargs={'pk': job.id}),
                 'url': reverse('job_detail', kwargs={'pk': job.id}),
                 'salary': f"{job.get_reward_mode_display()}: {job.reward_amount}円",
                 'work_date': job.work_date.strftime('%m/%d') if job.work_date else '',
@@ -271,9 +279,9 @@ class MapView(TemplateView):
             is_published=True,
             work_date__gte=today, # 今日以降
             work_date__lte=today + timedelta(days=14),
-            template__store__prefecture__in=target_prefs,
-            template__store__latitude__isnull=False,
-            template__store__longitude__isnull=False
+            template__store__prefecture__in=target_prefs
+        ).filter(
+            Q(template__latitude__isnull=False) | Q(template__store__latitude__isnull=False)
         ).select_related('template', 'template__store')
 
         # セッションから絞り込み条件を取得して適用 (IndexViewと同様のロジック)
@@ -343,19 +351,24 @@ class MapView(TemplateView):
             start_dt = datetime.combine(job.work_date, job.start_time)
             is_expired = timezone.make_aware(start_dt) < timezone.now()
             
+            # 緯度経度: テンプレート優先
+            lat = float(job.template.latitude) if job.template.latitude else float(job.template.store.latitude)
+            lng = float(job.template.longitude) if job.template.longitude else float(job.template.store.longitude)
+
             jobs_data.append({
                 'id': job.id,
                 'title': job.title,
                 'work_date': job.work_date.strftime('%Y-%m-%d'),
                 'start_time': job.start_time.strftime('%H:%M'),
                 'end_time': job.end_time.strftime('%H:%M'),
-                'lat': float(job.template.store.latitude),
-                'lng': float(job.template.store.longitude),
+                'lat': lat,
+                'lng': lng,
                 'store_name': job.template.store.store_name,
                 'hourly_wage': int(job.hourly_wage),
                 'is_expired': bool(is_expired),
                 'recruitment_count': int(job.recruitment_count),
             })
+
             
         context['jobs_data'] = jobs_data
         context['date_list'] = date_list
@@ -857,6 +870,8 @@ class QRScanView(LoginRequiredMixin, View):
         elif not application.leaving_at:
             # チェックアウト
             application.leaving_at = now
+            # 実績休憩時間の初期値を予定時間で設定
+            application.actual_break_duration = application.job_posting.break_duration
             application.save()
             is_checkin = False
             # 勤怠修正フローへ
@@ -917,49 +932,25 @@ class RewardConfirmView(AttendanceStepBaseView):
     def get(self, request, application_id):
         application = self.get_application(application_id)
         
-        # 報酬計算 (予定通りなので募集の開始・終了時間を使用)
-        # 実装簡略化のため、今回は単純計算 (休憩時間は募集の規定時間を使用)
-        # 本来は深夜割増なども考慮が必要
-        
         posting = application.job_posting
         
-        # 開始・終了日時 (Date + Time)
-        start_dt = datetime.combine(posting.work_date, posting.start_time)
-        end_dt = datetime.combine(posting.work_date, posting.end_time)
+        # モデルに実装した報酬計算メソッドを使用
+        total_amount = application.get_calculated_reward()
         
-        # 日跨ぎ対応 (終了時間が開始時間より前なら翌日扱い)
-        if end_dt < start_dt:
-            end_dt += timedelta(days=1)
-            
-        # 総労働時間 (分)
-        total_minutes = (end_dt - start_dt).total_seconds() / 60
+        # 表示用に内訳を計算 (get_calculated_reward の中身と合わせる)
+        duration_seconds = (application.leaving_at - application.attendance_at).total_seconds()
+        break_minutes = application.actual_break_duration if application.actual_break_duration > 0 else posting.break_duration
+        work_minutes = max(0, (duration_seconds / 60) - break_minutes)
         
-        # 実労働時間 = 総労働時間 - 休憩時間
-        work_minutes = total_minutes - posting.break_duration
-        if work_minutes < 0:
-            work_minutes = 0
-            
-        # 報酬額 = 時給 * 時間 + 交通費
-        wage = posting.hourly_wage
-        # 時間計算 (分単位を時間単位に)
-        hours = work_minutes / 60
-        base_reward = int(wage * hours)
-        
-        # 交通費 (固定と仮定。本来は交通費支給有無や上限などのロジックがあるはず)
-        # 今回は一旦 1000円固定 または postingにフィールドがあればそれを使う
-        # posting.transportation_expenses があるか確認していないが、なければ0
-        transportation = getattr(posting, 'transportation_expenses_amount', 500) # モデル未確認のためデフォルト仮置き
-        if not getattr(posting, 'transportation_expenses', True): # 支給なしなら0
-             transportation = 0
-
-        total_amount = base_reward + transportation
+        base_reward = int((work_minutes / 60) * posting.hourly_wage)
+        transportation = posting.transportation_fee
         
         context = {
             'application': application,
             'base_reward': base_reward,
             'transportation': transportation,
             'total_amount': total_amount,
-            'work_hours': round(hours, 1), # 表示用
+            'work_hours': round(work_minutes / 60, 1), # 表示用
         }
         return render(request, self.template_name, context)
 

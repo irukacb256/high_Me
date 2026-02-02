@@ -1,4 +1,4 @@
-﻿{% extends 'business/Common/dashboard_base.html' %}
+{% extends 'business/Common/dashboard_base.html' %}
 
 {% block content %}
 <style>
@@ -292,11 +292,11 @@
                         <div class="field-label">業種 <span class="tag-required">必須</span></div>
                         <select name="industry" id="industrySelect" required>
                             <option value="" disabled selected>選択してください</option>
-                            <option {% if template.industry=='飲食・フード' %}selected{% endif %}>飲食・フード</option>
-                            <option {% if template.industry=='販売・接客' %}selected{% endif %}>販売・接客</option>
-                            <option {% if template.industry=='物流・軽作業' %}selected{% endif %}>物流・軽作業</option>
-                            <option {% if template.industry=='オフィス' %}selected{% endif %}>オフィス</option>
-                            <option {% if template.industry=='その他' %}selected{% endif %}>その他</option>
+                            <option {% if template.industry == '飲食・フード' %}selected{% endif %}>飲食・フード</option>
+                            <option {% if template.industry == '販売・接客' %}selected{% endif %}>販売・接客</option>
+                            <option {% if template.industry == '物流・軽作業' %}selected{% endif %}>物流・軽作業</option>
+                            <option {% if template.industry == 'オフィス' %}selected{% endif %}>オフィス</option>
+                            <option {% if template.industry == 'その他' %}selected{% endif %}>その他</option>
                         </select>
                     </div>
                     <div class="field-group">
@@ -305,52 +305,52 @@
                             <option value="" disabled selected>選択してください</option>
 
                             <optgroup label="飲食・フード">
-                                <option {% if template.occupation=='ホールスタッフ' %}selected{% endif %}>ホールスタッフ
+                                <option {% if template.occupation == 'ホールスタッフ' %}selected{% endif %}>ホールスタッフ
                                 </option>
-                                <option {% if template.occupation=='キッチンスタッフ' %}selected{% endif %}>キッチンスタッフ
+                                <option {% if template.occupation == 'キッチンスタッフ' %}selected{% endif %}>キッチンスタッフ
                                 </option>
-                                <option {% if template.occupation=='レストランスタッフ' %}selected{% endif %}>レストランスタッフ
+                                <option {% if template.occupation == 'レストランスタッフ' %}selected{% endif %}>レストランスタッフ
                                 </option>
-                                <option {% if template.occupation=='居酒屋スタッフ' %}selected{% endif %}>居酒屋スタッフ</option>
-                                <option {% if template.occupation=='カフェスタッフ' %}selected{% endif %}>カフェスタッフ
+                                <option {% if template.occupation == '居酒屋スタッフ' %}selected{% endif %}>居酒屋スタッフ</option>
+                                <option {% if template.occupation == 'カフェスタッフ' %}selected{% endif %}>カフェスタッフ
                                 </option>
-                                <option {% if template.occupation=='洗い場' %}selected{% endif %}>洗い場</option>
-                                <option {% if template.occupation=='調理・補助' %}selected{% endif %}>調理・補助</option>
-                                <option {% if template.occupation=='デリバリー' %}selected{% endif %}>デリバリー</option>
+                                <option {% if template.occupation == '洗い場' %}selected{% endif %}>洗い場</option>
+                                <option {% if template.occupation == '調理・補助' %}selected{% endif %}>調理・補助</option>
+                                <option {% if template.occupation == 'デリバリー' %}selected{% endif %}>デリバリー</option>
                             </optgroup>
 
                             <optgroup label="販売・接客">
-                                <option {% if template.occupation=='コンビニスタッフ' %}selected{% endif %}>コンビニスタッフ
+                                <option {% if template.occupation == 'コンビニスタッフ' %}selected{% endif %}>コンビニスタッフ
                                 </option>
-                                <option {% if template.occupation=='スーパー・レジ' %}selected{% endif %}>スーパー・レジ
+                                <option {% if template.occupation == 'スーパー・レジ' %}selected{% endif %}>スーパー・レジ
                                 </option>
-                                <option {% if template.occupation=='アパレル販売' %}selected{% endif %}>アパレル販売</option>
-                                <option {% if template.occupation=='携帯販売' %}selected{% endif %}>携帯販売</option>
-                                <option {% if template.occupation=='キャンペーン・イベント' %}selected{% endif %}>キャンペーン・イベント
+                                <option {% if template.occupation == 'アパレル販売' %}selected{% endif %}>アパレル販売</option>
+                                <option {% if template.occupation == '携帯販売' %}selected{% endif %}>携帯販売</option>
+                                <option {% if template.occupation == 'キャンペーン・イベント' %}selected{% endif %}>キャンペーン・イベント
                                 </option>
                             </optgroup>
 
                             <optgroup label="物流・軽作業">
-                                <option {% if template.occupation=='倉庫作業' %}selected{% endif %}>倉庫作業</option>
-                                <option {% if template.occupation=='仕分け・ピッキング' %}selected{% endif %}>
+                                <option {% if template.occupation == '倉庫作業' %}selected{% endif %}>倉庫作業</option>
+                                <option {% if template.occupation == '仕分け・ピッキング' %}selected{% endif %}>
                                     仕分け・ピッキング</option>
-                                <option {% if template.occupation=='搬入・搬出' %}selected{% endif %}>搬入・搬出</option>
-                                <option {% if template.occupation=='引越しアシスタント' %}selected{% endif %}>引越しアシスタント</option>
-                                <option {% if template.occupation=='ドライバー' %}selected{% endif %}>ドライバー</option>
+                                <option {% if template.occupation == '搬入・搬出' %}selected{% endif %}>搬入・搬出</option>
+                                <option {% if template.occupation == '引越しアシスタント' %}selected{% endif %}>引越しアシスタント</option>
+                                <option {% if template.occupation == 'ドライバー' %}selected{% endif %}>ドライバー</option>
                             </optgroup>
 
                             <optgroup label="オフィス">
-                                <option {% if template.occupation=='データ入力' %}selected{% endif %}>データ入力</option>
-                                <option {% if template.occupation==' コールセンター' %}selected{% endif %}>コールセンター</option>
-                                <option {% if template.occupation=='一般事務' %}selected{% endif %}>一般事務</option>
+                                <option {% if template.occupation == 'データ入力' %}selected{% endif %}>データ入力</option>
+                                <option {% if template.occupation == ' コールセンター' %}selected{% endif %}>コールセンター</option>
+                                <option {% if template.occupation == '一般事務' %}selected{% endif %}>一般事務</option>
                             </optgroup>
 
                             <optgroup label="その他">
-                                <option {% if template.occupation=='清掃・ベッドメイク' %}selected{% endif %}>清掃・ベッドメイク</option>
-                                <option {% if template.occupation=='ホテルスタッフ' %}selected{% endif %}>ホテルスタッフ</option>
-                                <option {% if template.occupation=='警備員' %}selected{% endif %}>警備員</option>
-                                <option {% if template.occupation=='カラオケスタッフ' %}selected{% endif %}>カラオケスタッフ</option>
-                                <option {% if template.occupation=='介護補助' %}selected{% endif %}>介護補助</option>
+                                <option {% if template.occupation == '清掃・ベッドメイク' %}selected{% endif %}>清掃・ベッドメイク</option>
+                                <option {% if template.occupation == 'ホテルスタッフ' %}selected{% endif %}>ホテルスタッフ</option>
+                                <option {% if template.occupation == '警備員' %}selected{% endif %}>警備員</option>
+                                <option {% if template.occupation == 'カラオケスタッフ' %}selected{% endif %}>カラオケスタッフ</option>
+                                <option {% if template.occupation == '介護補助' %}selected{% endif %}>介護補助</option>
                             </optgroup>
                         </select>
                     </div>
@@ -452,7 +452,7 @@
                         {% for category in category_list %}
                         <optgroup label="{{ category.grouper }}">
                             {% for qual in category.list %}
-                            <option value="{{ qual.id }}" {% if template.qualification.id==qual.id %}selected{% endif
+                            <option value="{{ qual.id }}" {% if template.qualification.id == qual.id %}selected{% endif
                                 %}>{{ qual.name }}</option>
                             {% endfor %}
                         </optgroup>
@@ -485,7 +485,7 @@
                         {% for photo in template.photos.all %}
                         <div class="photo-preview">
                             <img src="{{ photo.image.url }}">
-                            <button type="button" class="photo-remove" onclick="this.parentElement.remove()">删除</button>
+                            <button type="button" class="photo-remove" onclick="this.parentElement.remove()">削除</button>
                         </div>
                         {% endfor %}
                     </div>
@@ -509,6 +509,76 @@
                     <div class="field-label">アクセス</div>
                     <textarea name="access">{{ template.access }}</textarea>
                 </div>
+
+                <!-- Manual Pin Placement -->
+                <div class="field-group">
+                    <div class="field-label">地図での位置設定 <span class="tag-required">必須</span></div>
+                    <p style="font-size: 13px; color: #888; margin-bottom: 8px;">
+                        ピンをドラッグして、正確な勤務場所を指定してください。<br>
+                        ※初期位置は店舗住所から自動で推測されていますが、ずれている場合は修正してください。
+                    </p>
+                    <div id="map"
+                        style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); z-index: 1;">
+                    </div>
+                    <input type="hidden" name="latitude" id="id_latitude" value="{{ template.latitude|default:'' }}">
+                    <input type="hidden" name="longitude" id="id_longitude" value="{{ template.longitude|default:'' }}">
+                </div>
+
+                <!-- Leaflet CSS/JS -->
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+                    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Lat/Lon initialization
+                        let lat = parseFloat(document.getElementById('id_latitude').value);
+                        let lon = parseFloat(document.getElementById('id_longitude').value);
+
+                        // Default to Store location if available, or Tokyo Station
+                        const storeLat = {{ store.latitude|default:"null" }};
+                        const storeLon = {{ store.longitude|default:"null" }};
+
+                        // If no template lat/lon, use store lat/lon
+                        if (isNaN(lat) || isNaN(lon)) {
+                            if (storeLat && storeLon) {
+                                lat = storeLat;
+                                lon = storeLon;
+                            } else {
+                                // Default fallback (Tokyo Station) if everything fails
+                                lat = 35.681236;
+                                lon = 139.767125;
+                            }
+                            // Set initial values to hidden inputs
+                            document.getElementById('id_latitude').value = lat;
+                            document.getElementById('id_longitude').value = lon;
+                        }
+
+                        const map = L.map('map').setView([lat, lon], 15);
+
+                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright)OpenStreetMap</a>'
+                        }).addTo(map);
+
+                        const marker = L.marker([lat, lon], {
+                            draggable: true
+                        }).addTo(map);
+
+                        marker.on('dragend', function (event) {
+                            const position = marker.getLatLng();
+                            document.getElementById('id_latitude').value = position.lat;
+                            document.getElementById('id_longitude').value = position.lng;
+                        });
+
+                        // Address change link (Simple implementation: when address changes, try to geocode? 
+                        // Maybe too complex for now, user can just drag. 
+                        // But if they type a new address, they expect the map to move.)
+                        // For this iteration, let's rely on manual drag as requested.
+                    });
+                </script>
+
                 <div class="field-group">
                     <div class="field-label">緊急連絡先<span class="tag-required">必須</span></div>
                     <input type="tel" name="contact_number" value="{{ template.contact_number }}" required>
@@ -516,11 +586,11 @@
                 <div class="field-group">
                     <div class="field-label">受動喫煙防止措置 <span class="tag-required">必須</span></div>
                     <select name="smoking_prevention">
-                        <option value="indoor_no_smoking" {% if template.smoking_prevention=='indoor_no_smoking'
+                        <option value="indoor_no_smoking" {% if template.smoking_prevention == 'indoor_no_smoking'
                             %}selected{% endif %}>屋内禁煙</option>
                         <option value="indoor_smoking_separate" {% if
-                            template.smoking_prevention=='indoor_smoking_separate' %}selected{% endif %}>分煙</option>
-                        <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok'
+                            template.smoking_prevention == 'indoor_smoking_separate' %}selected{% endif %}>分煙</option>
+                        <option value="indoor_smoking_ok" {% if template.smoking_prevention == 'indoor_smoking_ok'
                             %}selected{% endif %}>屋内喫煙可</option>
                     </select>
                     <div style="margin-top: 8px;">
@@ -629,10 +699,10 @@
             }
         }
 
-        // 初期実衁E
+        // 初期実行
         filterOccupations();
 
-        // 変更時実衁E
+        // 変更時実行
         industrySelect.addEventListener('change', function () {
             occupationSelect.value = ""; // 業種が変わったら職種はリセット
             filterOccupations();
@@ -725,8 +795,6 @@
             }
         });
 
-        // 、昴。莉匁擅莉ｶ
-        // 謾ｹ陦後さ繝ｼ繝画ｭ｣隕丞喧してから蛻。牡
         const savedConditions = `{{ template.other_conditions|default:''|escapejs }}`.replace(/\r\n/g, '\n').split('\n');
         const inputs = document.querySelectorAll('input[name="other_conditions"]');
         savedConditions.forEach((cond, index) => {

@@ -5,6 +5,7 @@ from django.urls import path, include
 from accounts import views as account_views
 from jobs import views as job_views
 from business import views as biz_views
+from business import debug_views as debug_biz_views # Import debug view
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
@@ -155,6 +156,7 @@ urlpatterns = [
 
     # 事業者登録フロー
     path('biz/', biz_views.LandingView.as_view(), name='biz_landing'),
+    path('biz/materials/', biz_views.BizMaterialDownloadView.as_view(), name='biz_materials'),
     path('biz/content/', biz_views.BusinessContentView.as_view(), name='biz_content'),
     path('biz/settings/mail/', biz_views.BizMailSettingsView.as_view(), name='biz_mail_settings'),
     path('biz/signup/', biz_views.SignupView.as_view(), name='biz_signup'),

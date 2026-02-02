@@ -212,6 +212,11 @@ class JobTemplate(models.Model):
     other_conditions = models.TextField("その他の条件", blank=True, null=True) # 改行区切りなどで保存
 
     auto_message = models.TextField("自動送信メッセージ", blank=True, null=True)
+    
+    # 手動ピン設定用 (画像5の地図対応)
+    latitude = models.FloatField("緯度", null=True, blank=True)
+    longitude = models.FloatField("経度", null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -289,7 +294,23 @@ class JobPosting(models.Model):
 
     @property
     def total_payment(self):
-        return (self.hourly_wage * 5) + self.transportation_fee
+
+        # 開始時間と終了時間の差分から報酬を計算
+        from datetime import datetime, date, timedelta
+        d = date.today()
+        # TimeFieldはdatetime.combineでdatetimeに変換して計算
+        start_dt = datetime.combine(d, self.start_time)
+        end_dt = datetime.combine(d, self.end_time)
+        
+        if end_dt <= start_dt:
+            # 日をまたぐ場合
+            end_dt += timedelta(days=1)
+            
+        duration_hours = (end_dt - start_dt).total_seconds() / 3600
+        # 休憩時間を引く
+        work_hours = max(0, duration_hours - (self.break_duration / 60))
+        
+        return int(self.hourly_wage * work_hours) + self.transportation_fee
 
     def __str__(self):
         return self.title
@@ -318,6 +339,27 @@ class JobApplication(models.Model):
     answer2 = models.TextField("回答2", blank=True, null=True)
     answer3 = models.TextField("回答3", blank=True, null=True)
     answered_at = models.DateTimeField("回答日時", null=True, blank=True)
+    
+    # 報酬管理用
+    is_reward_paid = models.BooleanField("報酬支払い済み", default=False)
+    actual_break_duration = models.IntegerField("実績休憩時間(分)", default=0)
+
+    def get_calculated_reward(self):
+        """出退勤実績に基づいた報酬を計算する"""
+        if not self.attendance_at or not self.leaving_at:
+            # まだ実績がない場合は0
+            return 0
+            
+        duration_seconds = (self.leaving_at - self.attendance_at).total_seconds()
+        # 休憩時間（分）: 実績があればそれを使用、なければ求人のデフォルト
+        break_minutes = self.actual_break_duration if self.actual_break_duration > 0 else self.job_posting.break_duration
+        
+        # 実労働時間（分単位で計算）
+        work_minutes = max(0, (duration_seconds / 60) - break_minutes)
+        
+        # 報酬 = (労働分 / 60 * 時給) + 交通費 (1円未満切り捨て)
+        reward_amount = int((work_minutes / 60) * self.job_posting.hourly_wage) + self.job_posting.transportation_fee
+        return reward_amount
 
     class Meta:
         # 同じ人が同じ求人に二重に申し込めないように設定

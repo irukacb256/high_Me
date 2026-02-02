@@ -15,7 +15,19 @@
         overflow: hidden;
     }
 
-    /* カメラ映像の代わりとしての背景画像 (オプション) */
+    /* カメラ映像表示用ビデオ */
+    #camera-feed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        /* ミラーリングが必要な場合は scaleX(-1) */
+    }
+
+    /* カメラ映像の代わりとしての背景画像 (カメラ未起動時用) */
     .camera-bg {
         position: absolute;
         top: 0;
@@ -25,6 +37,7 @@
         background: #222;
         z-index: 0;
         opacity: 0.5;
+        display: none; /* デフォルトは非表示、JSで制御可能 */
     }
 
     /* スキャン枠 */
@@ -147,14 +160,33 @@
         border-radius: 50%;
         text-decoration: none;
     }
+    
+    /* エラーメッセージ用 */
+    .error-message {
+        position: absolute;
+        top: 100px;
+        width: 80%;
+        background: rgba(255, 0, 0, 0.6);
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        z-index: 15;
+        display: none;
+    }
 </style>
 
 <div class="camera-container">
     <a href="javascript:history.back()" class="btn-close">
         <i class="fa-solid fa-xmark"></i>
     </a>
+    
+    <!-- エラー表示エリア -->
+    <div id="camera-error" class="error-message"></div>
 
-    <div class="camera-bg"></div>
+    <!-- カメラ映像 -->
+    <video id="camera-feed" autoplay playsinline muted></video>
+    <div class="camera-bg" id="camera-fallback"></div>
 
     <div class="scan-area">
         <div class="scan-corner tl"></div>
@@ -176,4 +208,53 @@
         (QRコードをタップしてスキャン)
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const video = document.getElementById('camera-feed');
+    const errorDiv = document.getElementById('camera-error');
+    const fallback = document.getElementById('camera-fallback');
+
+    // カメラアクセスの設定
+    const constraints = {
+        video: {
+            facingMode: 'environment', // 背面カメラを優先
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        }
+    };
+
+    try {
+        // カメラストリームの取得
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        
+        // ビデオの再生準備ができたら再生開始
+        video.onloadedmetadata = () => {
+            video.play().catch(e => {
+                console.error("Video play failed", e);
+            });
+        };
+    } catch (err) {
+        console.error("Camera access denied or not supported:", err);
+        
+        // エラーハンドリング
+        let msg = "カメラを起動できませんでした。";
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            msg = "カメラのアクセスが拒否されました。<br>ブラウザの設定を確認してください。";
+        } else if (err.name === 'NotFoundError') {
+            msg = "カメラが見つかりませんでした。";
+        } else if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+             msg = "カメラ機能はHTTPS接続が必要です。";
+        }
+
+        errorDiv.innerHTML = msg;
+        errorDiv.style.display = 'block';
+        
+        // フォールバック背景を表示
+        video.style.display = 'none';
+        fallback.style.display = 'block';
+    }
+});
+</script>
 {% endblock %}

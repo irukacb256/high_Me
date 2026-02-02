@@ -16,7 +16,7 @@ from .models import (
     JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo,
     Message, ChatRoom, AttendanceCorrection, StoreReview, StoreGroupDefinition
 )
-from accounts.models import WorkerProfile, WorkerBadge # 必要に応じて
+from accounts.models import WorkerProfile, WorkerBadge, WalletTransaction # WalletTransactionを追加
 from .mixins import BusinessLoginRequiredMixin
 
 from .forms import (
@@ -80,6 +80,9 @@ def get_biz_calendar(store, year, month):
              pass
 
     return weeks
+
+class BizMaterialDownloadView(TemplateView):
+    template_name = 'business/Common/material_download.html'
 
 # --- 登録フロー ---
 
@@ -1128,8 +1131,101 @@ class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['store'] = self.store
         context['job'] = self.job
-        # グループ選択用
         context['group_definitions'] = StoreGroupDefinition.objects.filter(store=self.store)
+
+        # ---------------------------------------------------------
+        # データ自動修正 (ユーザー要望: カフェ -> 飲食・フード)
+        # ---------------------------------------------------------
+        if self.store.industry == 'カフェ':
+            self.store.industry = '飲食・フード'
+            self.store.save()
+            # 修正後の値を再取得（念のため）
+            store_industry = '飲食・フード'
+        else:
+            store_industry = self.store.industry
+
+        # 業種別バッジ定義
+        # 基本セット定義
+        BADGES_FOOD = [
+            {'name': 'ホール', 'icon': 'fa-utensils'},
+            {'name': '洗い場', 'icon': 'fa-soap'},
+            {'name': '調理', 'icon': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C13.1 2 14 2.9 14 4V8H10V4C10 2.9 10.9 2 12 2ZM18 10H6C4.9 10 4 10.9 4 12V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V12C20 10.9 19.1 10 18 10ZM8 19H6V12H8V19ZM13 19H11V12H13V19ZM18 19H16V12H18V19Z" fill="white"/></svg>', 'is_svg': True},
+            {'name': '清掃', 'icon': 'fa-broom'},
+            {'name': '接客', 'icon': 'fa-smile'},
+            {'name': '宴会スタッフ', 'icon': 'fa-wine-glass'},
+        ]
+        
+        BADGES_RETAIL = [
+            {'name': '品出し', 'icon': 'fa-tags'},
+            {'name': 'レジ', 'icon': 'fa-cash-register'},
+            {'name': '接客', 'icon': 'fa-smile'},
+            {'name': '清掃', 'icon': 'fa-broom'},
+            {'name': '搬入出', 'icon': 'fa-truck-loading'},
+            {'name': 'フロント', 'icon': 'fa-bell'},
+        ]
+        
+        BADGES_LOGISTICS = [
+             {'name': '梱包', 'icon': 'fa-box'},
+             {'name': 'ピッキング', 'icon': 'fa-dolly'},
+             {'name': '検品', 'icon': 'fa-clipboard-check'},
+             {'name': '仕分け', 'icon': 'fa-boxes-stacked'},
+             {'name': '搬入出', 'icon': 'fa-truck-loading'},
+             {'name': 'ラベル貼り', 'icon': 'fa-tags'},
+             {'name': '配達', 'icon': 'fa-truck'},
+        ]
+
+        INDUSTRY_BADGES = {
+            # 飲食系
+            '飲食・フード': BADGES_FOOD,
+            
+            # 小売・接客系
+            '販売・接客': BADGES_RETAIL,
+            
+            # 物流系
+            '物流・軽作業': BADGES_LOGISTICS,
+            '物流・倉庫': BADGES_LOGISTICS, # 念のため残すか迷うが、基本はStoreSetupForm準拠
+            
+            'オフィス': [
+                {'name': '事務', 'icon': 'fa-laptop'},
+                {'name': '電話対応', 'icon': 'fa-phone'},
+                {'name': 'データ入力', 'icon': 'fa-keyboard'},
+                {'name': '雑務', 'icon': 'fa-stapler'},
+            ],
+            # その他 or マッチしない場合
+            'default': [
+                 {'name': '元気', 'icon': 'fa-face-laugh-beam'},
+                 {'name': '体力', 'icon': 'fa-person-running'},
+                 {'name': '笑顔', 'icon': 'fa-face-smile'},
+                 {'name': 'テキパキ', 'icon': 'fa-bolt'},
+                 {'name': '丁寧', 'icon': 'fa-hand-sparkles'},
+            ]
+        }
+
+        # 店舗の業種
+        # store_industry = self.store.industry # 削除: 上で定義済み
+        
+        # マッチするバッジリストを取得
+        target_badges = []
+        if store_industry:
+            for key, badges in INDUSTRY_BADGES.items():
+                if key in store_industry: 
+                    target_badges.extend(badges)
+        
+        # 重複排除 (念のため)
+        # 辞書型リストの重複排除は少し面倒なので、簡易的に名前で判定
+        seen_names = set()
+        unique_badges = []
+        for b in target_badges:
+            if b['name'] not in seen_names:
+                unique_badges.append(b)
+                seen_names.add(b['name'])
+
+        if not unique_badges:
+             # マッチしない場合はデフォルトを表示
+             unique_badges = INDUSTRY_BADGES['default']
+
+        context['badge_options'] = unique_badges
+
         return context
 
 class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
@@ -1192,6 +1288,20 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
                 except StoreGroupDefinition.DoesNotExist:
                     continue
             
+            # 報酬支払い処理
+            if not app.is_reward_paid:
+                reward_amount = app.get_calculated_reward()
+                if reward_amount > 0:
+                    WalletTransaction.objects.create(
+                        worker=app.worker.workerprofile,
+                        amount=reward_amount,
+                        transaction_type='reward',
+                        description=f"{app.job_posting.template.store.store_name} 報酬"
+                    )
+                    app.is_reward_paid = True
+                    app.status = '完了'
+                    app.save()
+
             return JsonResponse({'status': 'success'})
         except Exception as e:
             from django.http import JsonResponse
@@ -1352,8 +1462,7 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
             application = self.object.application
             application.attendance_at = self.object.correction_attendance_at
             application.leaving_at = self.object.correction_leaving_at
-            # 休憩時間はJobApplicationにはないが、JobPostingのを参照しているので、本来は実績として持つべきかもしれない
-            # ここでは要件に従い、出勤・退勤日時を更新する
+            application.actual_break_duration = self.object.correction_break_time
             application.save()
             
             messages.success(request, '勤怠修正を承認しました。')
@@ -1466,3 +1575,102 @@ class StoreReviewListView(BusinessLoginRequiredMixin, ListView):
             context['overall_good_rate'] = 0
             
         return context
+
+class DebugSetupReviewView(View):
+    def get(self, request):
+        from django.http import HttpResponse
+        from business.models import Store, JobTemplate, JobPosting, JobApplication
+        from django.contrib.auth.models import User
+        import datetime
+        
+        # 1. Store: 海浜幕張カフェ
+        store_name = "海浜幕張カフェ"
+        store, created = Store.objects.get_or_create(
+            store_name=store_name,
+            defaults={
+                'industry': '飲食・フード',
+                'post_code': '261-0021',
+                'prefecture': '千葉県',
+                'city': '千葉市美浜区',
+                'address_line': 'ひび野2-110',
+                'building': 'ペリエ海浜幕張',
+            }
+        )
+        if store.industry != '飲食・フード':
+             store.industry = '飲食・フード'
+             store.save()
+
+        # 2. Worker
+        worker = User.objects.filter(is_superuser=False, is_staff=False).first()
+        if not worker:
+            worker = User.objects.create_user('debug_worker', 'debug@example.com', 'password123')
+            worker.last_name = "山田"
+            worker.first_name = "太郎"
+            worker.save()
+
+        # 3. JobTemplate
+        template, _ = JobTemplate.objects.get_or_create(
+            store=store,
+            title="デバッグ用ホールスタッフ募集",
+            defaults={
+                'hourly_wage': 1200,
+                'transportation_fee': 500,
+                'work_content': "ホール業務全般、接客、配膳など",
+                'min_age': 18,
+                'max_age': 60,
+            }
+        )
+
+        # 4. JobPosting
+        today = timezone.now().date()
+        posting, _ = JobPosting.objects.get_or_create(
+            template=template,
+            work_date=today,
+            defaults={ # When creating if not exists
+                'title': "【急募】ランチタイムホールスタッフ",
+                'start_time': datetime.time(10, 0),
+                'end_time': datetime.time(15, 0),
+                'hourly_wage': 1200,
+                'transportation_fee': 500,
+                'recruitment_count': 1,
+                'work_content': "ホール業務全般"
+            }
+        )
+        
+        # 既存の場合も日付等は更新しないが、Applicationの準備へ
+
+        # 5. JobApplication
+        app, _ = JobApplication.objects.get_or_create(
+            job_posting=posting,
+            worker=worker,
+            defaults={'status': '確定済み'}
+        )
+        
+        # Simulate Check-in/out if empty
+        if not app.attendance_at:
+            app.attendance_at = timezone.now() - datetime.timedelta(hours=5)
+        if not app.leaving_at:
+            app.leaving_at = timezone.now() - datetime.timedelta(minutes=10)
+        
+        app.status = '確定済み' # Ensure status
+        app.save()
+
+        # Review URL
+        review_url = reverse('biz_worker_review_list', kwargs={'store_id': store.id, 'job_id': posting.id})
+        
+        return HttpResponse(f"""
+            <html><body style="padding:40px; font-family:sans-serif;">
+            <h1 style="color:#007AFF;">デバッグデータ作成完了</h1>
+            <div style="background:#f0f0f0; padding:20px; border-radius:8px;">
+                <p><strong>店舗:</strong> {store.store_name} ({store.industry})</p>
+                <p><strong>ワーカー:</strong> {worker.last_name} {worker.first_name}</p>
+                <p><strong>求人:</strong> {posting.title}</p>
+                <p><strong>状態:</strong> 勤務終了（退勤記録あり）</p>
+            </div>
+            <p style="margin-top:20px;">
+                <a href="{review_url}" style="background:#007AFF; color:white; padding:15px 30px; text-decoration:none; border-radius:6px; font-weight:bold;">
+                    レビュー画面へ移動する
+                </a>
+            </p>
+            </body></html>
+        """)
