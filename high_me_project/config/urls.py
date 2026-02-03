@@ -48,8 +48,9 @@ urlpatterns = [
     path('login/', account_views.CustomLoginView.as_view(), name='login'),
     # path('home/', job_views.index, name='index'), # 登録完了後の「さがす」画面
 
-      # jobsアプリ関連
-    path('home/', job_views.IndexView.as_view(), name='index'),
+    # jobsアプリ関連
+    path('home/', job_views.IndexView.as_view(), name='index'), 
+
     # 場所フロー
     path('home/location/', job_views.LocationHomeView.as_view(), name='location_home'),
     path('home/location/prefs/', job_views.PrefSelectView.as_view(), name='pref_select'),
@@ -63,6 +64,7 @@ urlpatterns = [
     path('home/refine/time/', job_views.TimeSelectView.as_view(), name='time_select'),
     path('home/refine/treatment/', job_views.TreatmentSelectView.as_view(), name='treatment_select'),
     path('working/<int:pk>/', job_views.JobWorkingDetailView.as_view(), name='job_working_detail'),
+    path('working/completed/<int:pk>/', job_views.JobCompletedDetailView.as_view(), name='job_completed_detail'),
     path('working/<int:pk>/answer/', job_views.JobAnswerView.as_view(), name='job_answer'), # ★追加
     path('working/<int:pk>/qr/', job_views.QRScanView.as_view(), name='job_qr_scan'), # ★追加
     path('working/<int:pk>/reader/', job_views.JobQRReaderView.as_view(), name='job_qr_reader'),
@@ -101,6 +103,11 @@ urlpatterns = [
 
     # accountsアプリ関連
     path('mypage/', account_views.MypageView.as_view(), name='mypage'),            # ★追加
+    # お問い合わせ
+    path('support/inquiry/', account_views.InquiryView.as_view(), name='inquiry_form'),
+    path('support/inquiry/complete/', account_views.InquiryCompleteView.as_view(), name='inquiry_complete'),
+    path('support/faq/', account_views.FAQView.as_view(), name='faq'), # ★追加
+
     path('achievements/', account_views.AchievementsView.as_view(), name='achievements'), # ★実績画面追加
     path('past-jobs/', account_views.PastJobsView.as_view(), name='past_jobs'),   # ★これまでの仕事画面
     

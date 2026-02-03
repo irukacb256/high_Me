@@ -1457,3 +1457,20 @@ def association_select(request):
         'current_value': profile.occupation
     }
     return render(request, 'MyPage/Settings/association_select.html', context)
+
+class InquiryView(LoginRequiredMixin, TemplateView):
+    """お問い合わせフォーム"""
+    template_name = 'MyPage/Support/inquiry_form.html'
+
+    def post(self, request, *args, **kwargs):
+        # ここでメール送信処理などを行う（今回はモックなので何もしない）
+        # ユーザーに自動返信テンプレートを表示するために完了画面へ
+        return redirect('inquiry_complete')
+
+class InquiryCompleteView(LoginRequiredMixin, TemplateView):
+    """お問い合わせ完了（自動返信表示）"""
+    template_name = 'MyPage/Support/inquiry_complete.html'
+
+class FAQView(LoginRequiredMixin, TemplateView):
+    """よくある質問"""
+    template_name = 'MyPage/Support/faq.html'

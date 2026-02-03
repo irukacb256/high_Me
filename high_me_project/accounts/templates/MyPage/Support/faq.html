@@ -1,0 +1,170 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<div class="faq-container">
+    <div class="header-bar">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <h1 class="page-title">よくある質問</h1>
+    </div>
+
+    <!-- カテゴリ検索（モック） -->
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="キーワードで検索">
+    </div>
+
+    <div class="faq-list">
+        <div class="faq-category">このシステムについて</div>
+
+        <details class="faq-item">
+            <summary>High-Meとはどのようなサービスですか？</summary>
+            <div class="faq-answer">
+                High-Meは、アルバイト・パート求人情報サイトです。<br>お住まいの地域や興味のある職種から、自分にぴったりの仕事を探すことができます。
+                <br>自分自身を高めていきましょう！
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary>システムが完全に完成していませんよ！</summary>
+            <div class="faq-answer">
+                一部機能は時間がなかったからないんだよ<br>文句言わないでね
+            </div>
+        </details>
+
+        <div class="faq-category">応募・仕事</div>
+
+        <details class="faq-item">
+            <summary>応募後のキャンセルはできますか？</summary>
+            <div class="faq-answer">
+                はい、可能です。「はたらく」タブから対象の仕事を選び、詳細画面最下部の「キャンセルする」からお手続きください。<br>
+                ただし、直前キャンセルの場合はペナルティが発生する場合があります。
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary>ペナルティポイントとは何ですか？</summary>
+            <div class="faq-answer">
+                無断欠勤や直前キャンセルを行うと付与されるポイントです。<br>
+                一定ポイント以上たまると、一時的にサービスの利用が制限されます。
+            </div>
+        </details>
+
+        <div class="faq-category">報酬・支払い</div>
+
+        <details class="faq-item">
+            <summary>報酬はいつ振り込まれますか？</summary>
+            <div class="faq-answer">
+                仕事終了後、店舗側の承認が完了すると即時「ウォレット」に反映されます。<br>
+                ウォレットから振込申請を行うと、24時間365日いつでも即時振込が可能です。
+            </div>
+        </details>
+
+    </div>
+</div>
+
+<style>
+    .faq-container {
+        padding: 20px;
+        background: #F8F8F8;
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .search-box {
+        position: relative;
+        margin-bottom: 30px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 12px 12px 12px 40px;
+        border: none;
+        border-radius: 30px;
+        font-size: 14px;
+        background: #eee;
+        box-sizing: border-box;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+    }
+
+    .faq-category {
+        font-weight: bold;
+        font-size: 14px;
+        color: #888;
+        margin: 20px 0 10px;
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    summary {
+        padding: 15px;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    summary::after {
+        content: '+';
+        font-size: 18px;
+        color: #999;
+        font-weight: normal;
+    }
+
+    details[open] summary::after {
+        content: '-';
+    }
+
+    .faq-answer {
+        padding: 0 15px 15px;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        border-top: 1px solid #f9f9f9;
+        padding-top: 15px;
+    }
+</style>
+{% endblock %}

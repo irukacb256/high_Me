@@ -508,7 +508,8 @@
         {% if from_view == 'favorites' %}
         <a href="{% url 'favorites' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
         {% else %}
-        <a href="{% url 'index' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <a href="{% url 'index' %}{% if request.GET.date %}?date={{ request.GET.date }}{% endif %}" class="back-btn"><i
+                class="fa-solid fa-chevron-left"></i></a>
         {% endif %}
 
         <!-- Kebab Menu Button -->

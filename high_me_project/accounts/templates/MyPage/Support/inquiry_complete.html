@@ -1,0 +1,123 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<div class="complete-container">
+    <div class="complete-icon">
+        <i class="fa-regular fa-paper-plane"></i>
+    </div>
+    <h2>お問い合わせを受け付けました</h2>
+    <p class="complete-msg">
+        お問い合わせありがとうございます。<br>
+        内容を確認の上、担当者より順次ご連絡させていただきます。
+    </p>
+
+    <!-- 自動返信テンプレ -->
+    <div class="auto-reply-box">
+        <div class="reply-header">
+            <span class="badge-reply">自動返信</span>
+            <span class="reply-date">たった今</span>
+        </div>
+        <div class="reply-body">
+            <strong>運営事務局</strong><br><br>
+            この度はアプリをご利用いただきありがとうございます。<br>
+            お問い合わせ内容を承りました。<br>
+            <br>
+            ※このメッセージは自動送信されています。<br>
+            通常3営業日以内に回答いたしますので、今しばらくお待ちください。
+        </div>
+    </div>
+
+    <a href="{% url 'mypage' %}" class="back-home-btn">マイページへ戻る</a>
+</div>
+
+<style>
+    .complete-container {
+        padding: 40px 20px;
+        text-align: center;
+        background: #F8F8F8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .complete-icon {
+        width: 80px;
+        height: 80px;
+        background: #E8F5E9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .complete-msg {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .auto-reply-box {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        text-align: left;
+        margin-bottom: 40px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eee;
+    }
+
+    .reply-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .badge-reply {
+        background: #eee;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: #666;
+    }
+
+    .reply-date {
+        font-size: 11px;
+        color: #999;
+    }
+
+    .reply-body {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.8;
+    }
+
+    .back-home-btn {
+        display: block;
+        width: 200px;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 14px;
+        background: white;
+    }
+</style>
+{% endblock %}

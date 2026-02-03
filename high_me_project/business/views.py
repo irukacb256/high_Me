@@ -1479,7 +1479,20 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
             application.attendance_at = self.object.correction_attendance_at
             application.leaving_at = self.object.correction_leaving_at
             application.actual_break_duration = self.object.correction_break_time
-            application.save()
+            
+            # 報酬確定・ウォレット追加
+            application.status = '完了'
+            reward_amount = application.get_calculated_reward()
+            application.is_reward_paid = True
+            application.save() # status, times, is_reward_paid
+            
+            from accounts.models import WalletTransaction
+            WalletTransaction.objects.create(
+                worker=application.worker.workerprofile,
+                amount=reward_amount,
+                transaction_type='reward',
+                description=f"{application.job_posting.template.store.store_name} 報酬 (修正承認)"
+            )
             
             messages.success(request, '勤怠修正を承認しました。')
             

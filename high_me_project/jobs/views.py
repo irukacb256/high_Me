@@ -666,7 +666,14 @@ class WorkScheduleCompletedView(WorkScheduleBaseView):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
         # ユーザーの応募済み求人を全て取得（勤務日の昇順）
-        applications = JobApplication.objects.filter(worker=self.request.user).select_related('job_posting', 'job_posting__template__store').order_by('job_posting__work_date', 'job_posting__start_time')
+        applications = JobApplication.objects.filter(
+            worker=self.request.user
+        ).select_related(
+            'job_posting', 
+            'job_posting__template__store'
+        ).prefetch_related(
+            'job_posting__template__photos'
+        ).order_by('job_posting__work_date', 'job_posting__start_time')
         
         completed = []
         for app in applications:
@@ -831,6 +838,28 @@ class JobWorkingDetailView(LoginRequiredMixin, TemplateView):
             context['chat_room'] = room
         except ChatRoom.DoesNotExist:
             context['chat_room'] = None
+
+        return context
+
+class JobCompletedDetailView(LoginRequiredMixin, TemplateView):
+    """完了した仕事の詳細画面 (画像2のデザイン)"""
+    template_name = 'Work/job_completed_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs['pk']
+        # 完了した仕事
+        application = get_object_or_404(JobApplication, job_posting_id=pk, worker=self.request.user)
+        
+        weekday_map = {0: '月', 1: '火', 2: '水', 3: '木', 4: '金', 5: '土', 6: '日'}
+        weekday_jp = weekday_map[application.job_posting.work_date.weekday()]
+        
+        context['app'] = application
+        context['weekday_jp'] = weekday_jp
+        
+        # 休憩時間 (実績があれば実績、なければ予定)
+        break_minutes = application.actual_break_duration if application.actual_break_duration else application.job_posting.break_duration
+        context['break_minutes'] = break_minutes
 
         return context
 
@@ -1376,3 +1405,4 @@ class AttendanceCorrectionStatusView(LoginRequiredMixin, TemplateView):
         context['application'] = application
         context['correction'] = correction
         return context
+

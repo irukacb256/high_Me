@@ -1,0 +1,128 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<div class="inquiry-container">
+    <div class="header-bar">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <h1 class="page-title">お問い合わせ</h1>
+    </div>
+
+    <form method="post" class="inquiry-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="category">お問い合わせ種別</label>
+            <div class="select-wrapper">
+                <select name="category" id="category" required>
+                    <option value="">選択してください</option>
+                    <option value="app">アプリの不具合</option>
+                    <option value="reward">報酬について</option>
+                    <option value="account">アカウントについて</option>
+                    <option value="other">その他</option>
+                </select>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="message">お問い合わせ内容</label>
+            <textarea name="message" id="message" rows="8" placeholder="詳細をご記入ください" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">送信する</button>
+    </form>
+</div>
+
+<style>
+    .inquiry-container {
+        padding: 20px;
+        background: #F8F8F8;
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .inquiry-form {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+
+    select,
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        background: #fff;
+        box-sizing: border-box;
+    }
+
+    select {
+        appearance: none;
+    }
+
+    .select-wrapper i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        pointer-events: none;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: #FFD700;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'base_main.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="header-bar">
+        <a href="{% url 'work_completed' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">{{ app.job_posting.work_date|date:"Y年n月j日" }}</div>
+    </div>
+
+    <!-- ヒーロー画像エリア -->
+    <div class="hero-section">
+        {% if app.job_posting.template.photos.first %}
+        <img src="{{ app.job_posting.template.photos.first.image.url }}" class="hero-img">
+        {% else %}
+        <div class="hero-placeholder"></div>
+        {% endif %}
+
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="category-tag">イベント・キャンペーン / イベントスタッフ</div>
+            <div class="hero-title">
+                {% if app.job_posting.template.has_unexperienced_welcome %}🔰{% endif %}
+                {{ app.job_posting.title }}
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-body">
+        <!-- 店舗情報 -->
+        <div class="section-label">店舗情報</div>
+        <div class="store-info-card">
+            <div class="store-icon">
+                <i class="fa-solid fa-store"></i>
+            </div>
+            <div class="store-details">
+                <div class="store-name">{{ app.job_posting.template.store.store_name }}</div>
+                <a href="{% url 'store_profile' app.job_posting.template.store.id %}"
+                    class="store-status-btn">この店舗の募集状況</a>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 業務時間 -->
+        <div class="time-section">
+            <div class="time-col">
+                <div class="time-label">業務開始</div>
+                <div class="time-date">{{ app.job_posting.work_date|date:"n月j日(D)" }}</div>
+                <div class="time-value">{{ app.job_posting.start_time|date:"H:i" }}</div>
+            </div>
+            <div class="time-arrow">▶</div>
+            <div class="time-col">
+                <div class="time-label">業務終了</div>
+                <div class="time-date">{{ app.job_posting.work_date|date:"n月j日(D)" }}</div>
+                <div class="time-value">{{ app.job_posting.end_time|date:"H:i" }}</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 休憩時間 -->
+        <div class="section-label">休憩時間</div>
+        <div class="break-row">
+            <div class="break-value">{{ break_minutes }}分</div>
+            <div class="break-detail">
+                <!-- 正確な休憩開始終了はデータにない場合が多いので、モック的表現か、データがあれば表示 -->
+                {{ app.job_posting.work_date|date:"n月j日" }} 12:00 〜 {{ app.job_posting.work_date|date:"n月j日" }} 13:00
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- 給与明細 -->
+        <div class="section-label">給与明細</div>
+        <div class="salary-row">
+            <div class="salary-label">時給</div>
+            <div class="salary-value">¥{{ app.job_posting.hourly_wage|intcomma }} / 1時間</div>
+        </div>
+
+        <!-- 他の詳細（交通費など）があればここに追加 -->
+
+        <div class="total-salary-row">
+            <div class="total-label">確定給与</div>
+            <div class="total-amount">¥{{ app.get_calculated_reward|intcomma }}</div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        background: white;
+        min-height: 100vh;
+        padding-bottom: 50px;
+    }
+
+    .header-bar {
+        position: relative;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 15px;
+        color: #333;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    .page-title {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .hero-section {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .hero-img,
+    .hero-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-placeholder {
+        background: #ccc;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 20px;
+        left: 15px;
+        right: 15px;
+        color: white;
+    }
+
+    .category-tag {
+        font-size: 11px;
+        margin-bottom: 5px;
+        opacity: 0.9;
+    }
+
+    .hero-title {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    .detail-body {
+        padding: 20px 15px;
+    }
+
+    .section-label {
+        font-size: 13px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .store-info-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .store-icon {
+        width: 60px;
+        height: 60px;
+        background: #eee;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #999;
+    }
+
+    .store-details {
+        flex: 1;
+    }
+
+    .store-name {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .store-status-btn {
+        display: inline-block;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 6px 15px;
+        font-size: 12px;
+        color: #333;
+        text-decoration: none;
+        background: white;
+    }
+
+    .divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 20px 0;
+    }
+
+    .time-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+
+    .time-col {
+        text-align: left;
+    }
+
+    .time-col:last-child {
+        text-align: right;
+    }
+
+    .time-label {
+        font-size: 11px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .time-date {
+        font-size: 12px;
+        color: #333;
+        margin-bottom: 2px;
+    }
+
+    .time-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .time-arrow {
+        color: #ddd;
+        font-size: 20px;
+    }
+
+    .break-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .break-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .break-detail {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .salary-row,
+    .total-salary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .salary-label {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .salary-value {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .total-salary-row {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px solid #f8f8f8;
+    }
+
+    .total-label {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .total-amount {
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+{% endblock %}
