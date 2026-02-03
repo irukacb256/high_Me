@@ -1,55 +1,240 @@
 {% extends 'base_main.html' %}
-{% load static %}
 
 {% block content %}
 <style>
     .cancel-container {
         padding: 20px;
         background: white;
-        min-height: 80vh;
+        min-height: 100vh;
+    }
+    .header-bar {
         display: flex;
-        flex-direction: column;
         align-items: center;
+        margin-bottom: 30px;
+    }
+    .header-title {
+        font-size: 18px;
+        font-weight: bold;
+        flex: 1;
+        text-align: center;
     }
 
-    .cancel-title {
+    .section-title {
         font-size: 20px;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+    }
+
+    .desc-text {
+        font-size: 14px;
         color: #333;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .penalty-card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
     }
 
     .penalty-info {
-        background: #f9f9f9;
-        padding: 20px;
-        border-radius: 8px;
-        width: 100%;
-        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
         font-size: 14px;
-        color: #666;
-        text-align: center;
     }
 
-    .next-btn {
-        background: #007AFF;
+    .points-display {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .points-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #FF3B30;
+    }
+
+    .alert-box {
+        background: #D93F3F; /* More reddish */
         color: white;
-        width: 100%;
         padding: 15px;
         border-radius: 8px;
+        margin-top: 20px;
+    }
+    .alert-title {
+        font-weight: bold;
         text-align: center;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+    .alert-list {
+        font-size: 13px;
+        line-height: 1.5;
+        padding-left: 20px;
+    }
+
+    .help-link {
+        display: block;
+        text-align: right;
+        font-size: 14px;
+        color: #333;
         text-decoration: none;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    .fixed-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-proceed {
+        display: block;
+        width: 100%;
+        background: #FF3B30; /* Redirect red */
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Popup */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+    .popup {
+        background: white;
+        width: 300px;
+        border-radius: 14px;
+        text-align: center;
+        overflow: hidden;
+    }
+    .popup-content {
+        padding: 20px;
+    }
+    .popup-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+    .popup-text {
+        font-size: 14px;
+        line-height: 1.5;
+        color: #333;
+    }
+    .popup-buttons {
+        display: flex;
+        border-top: 1px solid #ccc;
+    }
+    .popup-btn {
+        flex: 1;
+        padding: 15px;
+        font-size: 16px;
+        color: #007AFF;
+        cursor: pointer;
+    }
+    .popup-btn:first-child {
+        border-right: 1px solid #ccc;
+    }
+    .popup-btn.ok {
         font-weight: bold;
     }
 </style>
 
 <div class="cancel-container">
-    <div class="cancel-title">キャンセルした (ペナルティ画面)</div>
-
-    <div class="penalty-info">
-        <p>※ここはペナルティに関する説明画面です</p>
-        <p>キャンセルするとペナルティが発生する可能性があります。</p>
+    <div class="header-bar">
+        <a href="{% url 'job_working_detail' application.job_posting.id %}" style="color:#333;"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="header-title"></div>
+        <div style="width:20px;"></div>
     </div>
 
-    <a href="{% url 'job_cancel_step2' application_id %}" class="next-btn">次へ</a>
+    <div class="section-title">キャンセルした場合のペナルティ</div>
+    <div class="desc-text">
+        仕事をキャンセルするとペナルティポイントが付与されることがあります。また、キャンセル後3時間は他の募集に申し込むことができなくなります。
+    </div>
+
+    <div class="penalty-card">
+        <div style="font-weight:bold; margin-bottom:15px;">付与されるペナルティポイント</div>
+        <div class="penalty-info">
+            <span>開始時刻まで1時間以内</span>
+            <span>+7ポイント</span>
+        </div>
+        
+        <div style="text-align:center; font-size:12px; color:#666; margin-top:10px;">付与後の合計</div>
+        <div class="points-display">
+            <!-- 仮のポイント表示。実際はDBから計算が必要ですが、デザインに合わせて固定またはコンテキストから取得 -->
+            <div class="points-value">8ポイント</div>
+        </div>
+
+        <div style="border-top: 2px dashed #FF3B30; margin:15px 0;"></div>
+
+        <div class="alert-box">
+            <div class="alert-title">一時的にサービスが利用できなくなります</div>
+            <ul class="alert-list">
+                <li>マッチング中の仕事はすべてキャンセル</li>
+                <li>一定期間、募集への申し込み不可</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="font-weight:bold; margin-bottom:10px;">ペナルティポイントとは？</div>
+    <div class="desc-text" style="font-size:13px; color:#666;">
+        仕事をキャンセル/遅刻すると、キャンセルポリシーに基づいて付与されます。ペナルティポイントに応じて申し込みに制限がかかり、8ポイント以上になった場合には一時的にサービスが利用できなくなります。
+    </div>
+
+    <a href="#" class="help-link"><i class="fa-regular fa-circle-question"></i> ペナルティポイントについて</a>
 </div>
+
+<div class="fixed-footer">
+    <button class="btn-proceed" onclick="openPopup()">キャンセルにすすむ</button>
+</div>
+
+<!-- Popup -->
+<div class="popup-overlay" id="popup-overlay">
+    <div class="popup">
+        <div class="popup-content">
+            <div class="popup-title">キャンセルに進みますか？</div>
+            <div class="popup-text">
+                キャンセルポリシーに基づき、ペナルティポイントが付与されタイミー上の評価・マッチングに反映されます
+            </div>
+        </div>
+        <div class="popup-buttons">
+            <div class="popup-btn" onclick="closePopup()">もどる</div>
+            <div class="popup-btn ok" onclick="location.href='{% url 'job_cancel_step2' application.id %}'">OK</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPopup() {
+        document.getElementById('popup-overlay').style.display = 'flex';
+    }
+    function closePopup() {
+        document.getElementById('popup-overlay').style.display = 'none';
+    }
+</script>
+
 {% endblock %}

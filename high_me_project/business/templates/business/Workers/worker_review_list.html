@@ -271,7 +271,8 @@
                 <!-- Simple grey circle as placeholder if no image -->
             </div>
             {% endif %}
-            <div class="worker-name">{{ app.worker.last_name }} {{ app.worker.first_name }}さん</div>
+            <div class="worker-name">{{ app.worker.workerprofile.last_name_kanji }} {{
+                app.worker.workerprofile.first_name_kanji }}さん</div>
         </div>
 
         <!-- Good/Bad -->

@@ -1,4 +1,4 @@
-﻿{% extends 'business/Common/dashboard_base.html' %}
+{% extends 'business/Common/dashboard_base.html' %}
 {% load static %}
 
 {% block content %}
@@ -23,7 +23,7 @@
             </a>
         </h2>
         <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
-            逕ｳ隲区律。嘴{ correction.created_at|date:"Y年n月日 (D)" }}
+            申請日時：{{ correction.created_at|date:"Y年n月j日 (D)" }}
         </div>
         <div style="font-size: 13px; color: #007bff; text-decoration: underline;">
             【Timee {{ store.store_name }}】{{ correction.application.job_posting.title }}
@@ -32,7 +32,7 @@
 
     <!-- Reason Card -->
     <div style="border: 1px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
-        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">菫ｮ豁｣萓晞ｼ逅。罰</div>
+        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">修正依頼理由</div>
         <div style="font-size: 14px;">
             {% if correction.lateness_reason %}
             {{ correction.get_lateness_reason_display }}
@@ -41,7 +41,7 @@
             <span style="font-size: 12px; color: #666;">{{ correction.lateness_reason_detail }}</span>
             {% endif %}
             {% else %}
-            報酬変動が発生したためE
+            報酬変動が発生したため
             {% endif %}
         </div>
     </div>
@@ -51,9 +51,9 @@
         <!-- Header -->
         <div
             style="display: flex; background: #eee; padding: 10px 20px; font-weight: bold; font-size: 13px; color: #333;">
-            <div style="flex: 1;">修正剁E</div>
+            <div style="flex: 1;">修正前</div>
             <div style="width: 20px; text-align: center; color: #999;">▶</div>
-            <div style="flex: 1; text-align: right;">修正征E</div>
+            <div style="flex: 1; text-align: right;">修正後</div>
         </div>
 
         <!-- Row: Date/Time -->
@@ -61,12 +61,12 @@
             <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px;">就業日時</div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <div style="color: #666;">
-                    {{ correction.application.job_posting.work_date|date:"Y年n月日" }}<br>
+                    {{ correction.application.job_posting.work_date|date:"Y年n月j日" }}<br>
                     {{ correction.application.job_posting.start_time|date:"H:i" }} ~ {{
                     correction.application.job_posting.end_time|date:"H:i" }}
                 </div>
                 <div style="text-align: right;">
-                    <div style="color: #666;">{{ correction.application.job_posting.work_date|date:"Y年n月日" }}</div>
+                    <div style="color: #666;">{{ correction.application.job_posting.work_date|date:"Y年n月j日" }}</div>
                     <div style="font-weight: bold; font-size: 16px;">
                         {{ correction.correction_attendance_at|date:"H:i" }} ~ {{
                         correction.correction_leaving_at|date:"H:i" }}
@@ -116,27 +116,61 @@
     <!-- Actions -->
     {% if correction.status == 'pending' %}
     <div style="display: flex; gap: 15px; margin-top: 30px;">
-        <form method="post" style="flex: 1;">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="reject">
-            <button type="button" onclick="confirmReject()"
-                style="width: 100%; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                拒否
-            </button>
-            <button id="realRejectBtn" type="submit" style="display: none;"></button>
-        </form>
+        <button onclick="openRejectionModal()"
+            style="width: 100%; max-width: 200px; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            拒否
+        </button>
         <button onclick="openApprovalModal()"
             style="flex: 1; background: #007bff; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-            承誁E
+            承認
         </button>
     </div>
     {% else %}
     <div
         style="margin-top: 30px; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px; font-weight: bold; color: #666;">
-        この萓晞ｼは譌｢に {{ correction.get_status_display }} です〜
+        この依頼は既に {{ correction.get_status_display }} です。
     </div>
     {% endif %}
 
+</div>
+
+<!-- Rejection Modal -->
+<div id="rejectionModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div
+        style="background: white; width: 100%; max-width: 500px; border-radius: 14px; padding: 25px; box-sizing: border-box; animation: fadeIn 0.2s ease-out; position: relative;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 18px; font-weight: bold; margin: 0;">修正依頼の拒否</h3>
+            <button onclick="closeRejectionModal()"
+                style="background: none; border: none; font-size: 24px; color: #999; cursor: pointer;">×</button>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="reject">
+
+            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">拒否の理由</div>
+            <textarea name="reject_reason" required
+                style="width: 100%; height: 150px; border: 2px solid #007bff; border-radius: 8px; padding: 10px; font-size: 16px; box-sizing: border-box; resize: none; margin-bottom: 10px;"
+                placeholder="就業時間が間違っているため、もう一度修正依頼してください。&#10;就業時間は18:00〜23:20、休憩時間は0分です。"></textarea>
+
+            <div style="font-size: 12px; color: #666; margin-bottom: 25px;">
+                ※入力された内容はタイミーに送信され、その後ワーカーに送信されます。
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                <button type="button" onclick="closeRejectionModal()"
+                    style="padding: 10px 20px; background: white; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                    戻る
+                </button>
+                <button type="submit"
+                    style="padding: 10px 20px; background: #007bff; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">
+                    拒否する
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Approval Modal -->
@@ -144,21 +178,21 @@
     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; justify-content: center;">
     <div
         style="background: white; width: 100%; max-width: 500px; border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 30px; box-sizing: border-box; animation: slideUp 0.3s ease-out;">
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">最終確誁E</h3>
+        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">最終確認</h3>
 
         <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin-bottom: 30px;">
             <input type="checkbox" id="confirmCheck" style="margin-top: 4px; transform: scale(1.2);">
             <div style="font-size: 14px; line-height: 1.6;">
-                名郁ｨ亥報驟ｬ鬘阪′螟牙虚してう∪、吶。br>
-                チェックイン/繧｢繧ｦト螻･豁ｴ。∫筏隲九＆繧後◆蟆ｱ業日譎ゅ↓蝠城｡後′なし。こと繧堤｢ｺ隱阪＠ますした〜br>
-                <span style="font-size: 12px; color: #999;">※蜈･蜉帙＆繧後◆内ｮｹはタイミーに騾∽ｿ｡され。√◎の蠕後ワーカーに騾∽ｿ｡されます吶。</span>
+                合計報酬額が変動しています。<br>
+                チェックイン/アウト履歴、申請された就業日時に問題がないことを確認しました。<br>
+                <span style="font-size: 12px; color: #999;">※入力された内容はタイミーに送信され、その後ワーカーに通知されます。</span>
             </div>
         </label>
 
         <div style="display: flex; gap: 15px;">
             <button onclick="closeApprovalModal()"
                 style="flex: 1; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                戻めE
+                戻る
             </button>
             <form method="post" style="flex: 1;">
                 {% csrf_token %}
@@ -188,6 +222,7 @@
     const modal = document.getElementById('approvalModal');
     const check = document.getElementById('confirmCheck');
     const approveBtn = document.getElementById('approveBtn');
+    const rejectionModal = document.getElementById('rejectionModal');
 
     function openApprovalModal() {
         modal.style.display = 'flex';
@@ -213,16 +248,21 @@
 
     check.addEventListener('change', toggleApproveBtn);
 
-    function confirmReject() {
-        if (confirm('本蠖薙↓この菫ｮ豁｣萓晞ｼ繧貞唆一九＠ます吶°）)) {
-            document.getElementById('realRejectBtn').click();
-        }
+    function openRejectionModal() {
+        rejectionModal.style.display = 'flex';
+    }
+
+    function closeRejectionModal() {
+        rejectionModal.style.display = 'none';
     }
 
     // Close modal on outside click
-    modal.addEventListener('click', function (e) {
+    window.addEventListener('click', function (e) {
         if (e.target === modal) {
             closeApprovalModal();
+        }
+        if (e.target === rejectionModal) {
+            closeRejectionModal();
         }
     });
 </script>

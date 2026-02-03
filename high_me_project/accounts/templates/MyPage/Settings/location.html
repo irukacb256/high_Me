@@ -1,0 +1,21 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<div style="background-color: #F8F8F8; min-height: 100vh;">
+    <!-- ヘッダー -->
+    <div style="background: white; padding: 20px; display: flex; align-items: center; border-bottom: 1px solid #eee;">
+        <a href="{% url 'mypage' %}" style="text-decoration: none; color: #333; margin-right: 20px;">
+            <i class="fa-solid fa-chevron-left" style="font-size: 20px;"></i>
+        </a>
+        <h1 style="font-size: 18px; margin: 0; font-weight: bold;">位置情報の設定</h1>
+    </div>
+
+    <!-- コンテンツ -->
+    <div style="padding: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 12px; margin-top: 20px;">
+            <div style="font-size: 30px; color: #666; margin-bottom: 8px;">あなたがいるところは</div>
+            <div style="font-size: 25px; font-weight: bold; color: #333;">埼玉県さいたま市大宮区</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

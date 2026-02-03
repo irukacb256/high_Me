@@ -1,41 +1,81 @@
 {% extends 'base_main.html' %}
-{% load static %}
 
 {% block content %}
 <style>
     .cancel-container {
         padding: 20px;
         background: white;
-        min-height: 80vh;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        align-items: center;
     }
 
-    .cancel-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 20px;
+    .header-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .message-box {
+        color: #999;
+        font-size: 16px;
+        line-height: 1.6;
+        flex: 1;
+    }
+
+    textarea {
+        width: 100%;
+        height: 200px;
+        border: none;
+        resize: none;
+        font-size: 16px;
+        outline: none;
         color: #333;
     }
 
-    .next-btn {
+    textarea::placeholder {
+        color: #ccc;
+    }
+
+    .fixed-footer {
+        padding: 20px;
+        background: white;
+    }
+
+    .btn-next {
+        display: block;
+        width: 100%;
         background: #007AFF;
         color: white;
-        width: 100%;
-        padding: 15px;
-        border-radius: 8px;
         text-align: center;
-        text-decoration: none;
+        padding: 15px;
+        border-radius: 30px;
         font-weight: bold;
+        text-decoration: none;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
     }
 </style>
 
 <div class="cancel-container">
-    <div class="cancel-title">キャンセル理由 (詳細)</div>
+    <div class="header-bar">
+        <a href="{% url 'job_cancel_step2' application.id %}" style="color:#333;"><i
+                class="fa-solid fa-chevron-left"></i></a>
+    </div>
 
-    <p style="text-align:center; color:#666;">詳細理由の選択画面など</p>
+    <form method="post" style="flex:1; display:flex; flex-direction:column;">
+        {% csrf_token %}
+        <div class="message-box">
+            <!-- デフォルト文言を表示するか、プレースホルダーにするか。画像4は文言が表示されている -->
+            <textarea name="reason_detail" placeholder="詳細な理由を入力してください">応募条件の確認をきちんと行わないまま応募をしていたため、キャンセルをいたしました。
+ご迷惑をお掛けして申し訳ございません。
+また機会がございましたら、よろしくお願い申し上げます。</textarea>
+        </div>
 
-    <a href="{% url 'job_cancel_step4' application_id %}" class="next-btn">次へ</a>
+        <div class="fixed-footer">
+            <button type="submit" class="btn-next">次へ</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

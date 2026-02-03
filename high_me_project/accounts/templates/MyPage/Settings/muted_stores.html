@@ -1,0 +1,208 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .mute-list-container {
+        background-color: #F8F8F8;
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        background: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .header-title {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+        flex: 1;
+        text-align: center;
+        padding-right: 20px;
+        /* Adjust for back button width */
+    }
+
+    .muted-list {
+        padding: 20px;
+    }
+
+    .muted-item {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .muted-store-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .btn-unmute {
+        background: white;
+        border: 1px solid #E5E5EA;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 13px;
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: #888;
+        padding: 40px 20px;
+        font-size: 14px;
+    }
+
+    /* Mute Popup */
+    .mute-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .mute-popup {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 14px;
+        width: 270px;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .mute-popup-content {
+        padding: 20px;
+    }
+
+    .mute-popup-title {
+        font-weight: bold;
+        font-size: 17px;
+        margin-bottom: 5px;
+        color: #000;
+    }
+
+    .mute-popup-text {
+        font-size: 13px;
+        color: #000;
+        line-height: 1.4;
+    }
+
+    .mute-popup-buttons {
+        display: flex;
+        border-top: 1px solid rgba(60, 60, 67, 0.36);
+    }
+
+    .mute-popup-btn {
+        flex: 1;
+        padding: 12px 0;
+        font-size: 17px;
+        color: #007AFF;
+        cursor: pointer;
+    }
+
+    .mute-popup-btn.mute-confirm {
+        font-weight: bold;
+    }
+</style>
+
+<div class="mute-list-container">
+    <div class="header-bar">
+        <a href="{% url 'mypage' %}" style="text-decoration: none; color: #333; width: 20px;">
+            <i class="fa-solid fa-chevron-left" style="font-size: 20px;"></i>
+        </a>
+        <h1 class="header-title">ミュートしている店舗</h1>
+    </div>
+
+    <div class="muted-list">
+        {% for mute in muted_stores %}
+        <div class="muted-item" id="mute-item-{{ mute.store.id }}">
+            <div class="muted-store-name">{{ mute.store.store_name }}</div>
+            <button class="btn-unmute"
+                onclick="confirmUnmute({{ mute.store.id }}, '{{ mute.store.store_name }}')">解除</button>
+        </div>
+        {% empty %}
+        <div class="empty-message">ミュートしている店舗はありません</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Unmute Popup -->
+<div class="mute-popup-overlay" id="unmute-popup-overlay">
+    <div class="mute-popup">
+        <div class="mute-popup-content">
+            <div class="mute-popup-title">ミュートを解除しますか？</div>
+            <div class="mute-popup-text" id="unmute-popup-text">
+                この店舗の通知を受け取るようになります。
+            </div>
+        </div>
+        <div class="mute-popup-buttons">
+            <div class="mute-popup-btn" onclick="closeUnmutePopup()">もどる</div>
+            <div class="mute-popup-btn mute-confirm"
+                style="color: #007AFF; border-left: 1px solid rgba(60, 60, 67, 0.36);" onclick="execUnmuteStore()">解除する
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let targetStoreId = null;
+
+    function confirmUnmute(storeId, storeName) {
+        targetStoreId = storeId;
+        document.getElementById('unmute-popup-text').innerText = storeName + 'の通知を受け取るようになります。';
+        document.getElementById('unmute-popup-overlay').style.display = 'flex';
+    }
+
+    function closeUnmutePopup() {
+        document.getElementById('unmute-popup-overlay').style.display = 'none';
+        targetStoreId = null;
+    }
+
+    function execUnmuteStore() {
+        if (!targetStoreId) return;
+
+        fetch("{% url 'api_unmute_store' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ store_id: targetStoreId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                closeUnmutePopup();
+                if (data.status === 'success') {
+                    const item = document.getElementById('mute-item-' + targetStoreId);
+                    if (item) item.remove();
+
+                    if (document.querySelectorAll('.muted-item').length === 0) {
+                        document.querySelector('.muted-list').innerHTML = '<div class="empty-message">ミュートしている店舗はありません</div>';
+                    }
+                } else {
+                    alert('エラーが発生しました');
+                }
+            })
+            .catch(error => {
+                closeUnmutePopup();
+                alert('通信エラーが発生しました');
+            });
+    }
+</script>
+{% endblock %}

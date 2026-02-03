@@ -1,0 +1,171 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .status-container {
+        background: white;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .status-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .status-item {
+        margin-bottom: 25px;
+    }
+
+    .status-title {
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+
+    .status-title::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background: #000;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .status-desc {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        padding-left: 16px;
+    }
+
+    .status-highlight {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .current-status-box {
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .current-status-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .current-status-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #007AFF;
+        margin-bottom: 10px;
+    }
+
+    .reject-reason-box {
+        background: #fff0f0;
+        border: 1px solid #ffcdcd;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .btn-action {
+        display: block;
+        padding: 15px;
+        background: #007AFF;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="status-container">
+    <div class="status-header">修正依頼ステータス</div>
+
+    <div class="status-item">
+        <div class="status-title">店舗承認待ち</div>
+        <div class="status-desc">
+            企業様が修正依頼を確認していない状態。<br>
+            修正依頼が承認されない場合は、「対応方法」をご確認ください。
+        </div>
+    </div>
+
+    <div class="status-item">
+        <div class="status-title">承認済み</div>
+        <div class="status-desc">
+            企業様が修正依頼を承認し、<span class="status-highlight">報酬が確定した状態。</span>
+        </div>
+    </div>
+
+    <div class="status-item">
+        <div class="status-title">承認拒否</div>
+        <div class="status-desc">
+            報酬額や労働時間が異なる等により、<span class="status-highlight">企業様に修正依頼を拒否された状態。</span><br>
+            企業様からの拒否理由をご確認いただき、再度修正依頼をしてください。
+        </div>
+    </div>
+
+    <!-- 自分のステータス表示エリア -->
+    <div class="current-status-box">
+        <div class="current-status-label">現在のステータス</div>
+        {% if correction %}
+        {% if correction.status == 'pending' %}
+        <div class="current-status-value">店舗承認待ち</div>
+        <p style="font-size:12px; color:#999;">店舗からの確認をお待ちください</p>
+        {% elif correction.status == 'approved' %}
+        <div class="current-status-value" style="color:#34C759;">承認済み</div>
+        <p style="font-size:12px; color:#999;">報酬が確定しました</p>
+        {% elif correction.status == 'rejected' %}
+        <div class="current-status-value" style="color:#FF3B30;">承認拒否</div>
+
+        {% if correction.reject_reason %}
+        <div class="reject-reason-box">
+            <div style="font-weight:bold; font-size:12px; margin-bottom:5px; color:#d32f2f;">拒否理由:</div>
+            <div style="font-size:13px;">{{ correction.reject_reason|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'attendance_step1' application.id %}" class="btn-action">
+            再度修正依頼をする
+        </a>
+        {% endif %}
+        {% else %}
+        <div class="current-status-value" style="color:#999;">未申請</div>
+        <p style="font-size:12px; color:#666;">まだ修正依頼を行っていません</p>
+
+        {% if application.leaving_at %}
+        <a href="{% url 'attendance_step1' application.id %}" class="btn-action">
+            修正依頼をする
+        </a>
+        {% else %}
+        <p style="font-size:12px; color:#ff3b30; margin-top:10px;">
+            ※チェックアウト完了後に修正依頼が可能になります
+        </p>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <div style="text-align:center; margin-top:30px;">
+        <a href="{% url 'job_working_detail' application.job_posting.id %}"
+            style="color:#666; font-size:13px; text-decoration: none;">
+            戻る
+        </a>
+    </div>
+
+</div>
+{% endblock %}

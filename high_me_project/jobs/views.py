@@ -505,6 +505,14 @@ class JobDetailView(DetailView):
         if self.request.user.is_authenticated:
             is_applied = JobApplication.objects.filter(job_posting=job, worker=self.request.user).exists()
             is_favorited = FavoriteJob.objects.filter(user=self.request.user, job_posting=job).exists()
+            
+            # Check if store is muted
+            from business.models import StoreMute
+            if hasattr(self.request.user, 'workerprofile'):
+                context['is_muted'] = StoreMute.objects.filter(
+                    worker=self.request.user.workerprofile,
+                    store=job.template.store
+                ).exists()
         
         context['is_applied'] = is_applied
         context['is_favorited'] = is_favorited
@@ -640,7 +648,7 @@ class WorkScheduleUpcomingView(WorkScheduleBaseView):
         upcoming = []
         for app in applications:
             job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
-            if not (app.status == '完了' or job_end < now):
+            if not (app.status == '完了' or job_end < now or app.leaving_at):
                 upcoming.append(app)
 
         context['upcoming_grouped'] = self.group_by_date(upcoming)
@@ -659,7 +667,7 @@ class WorkScheduleCompletedView(WorkScheduleBaseView):
         completed = []
         for app in applications:
             job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
-            if app.status == '完了' or job_end < now:
+            if app.status == '完了' or job_end < now or app.leaving_at:
                 completed.append(app)
 
         context['completed_grouped'] = self.group_by_date(completed)
@@ -1245,7 +1253,7 @@ class JobCancelStep1PenaltyView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         application_id = self.kwargs['application_id']
-        context['application_id'] = application_id
+        context['application'] = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
         return context
 
 class JobCancelStep2ReasonView(LoginRequiredMixin, TemplateView):
@@ -1255,26 +1263,78 @@ class JobCancelStep2ReasonView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         application_id = self.kwargs['application_id']
-        context['application_id'] = application_id
+        context['application'] = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
         return context
 
+    def post(self, request, *args, **kwargs):
+        application_id = self.kwargs['application_id']
+        reason = request.POST.get('reason')
+        # Save to session
+        request.session[f'cancel_reason_{application_id}'] = reason
+        return redirect('job_cancel_step3', application_id=application_id)
+
 class JobCancelStep3DetailView(LoginRequiredMixin, TemplateView):
-    """Step 3: キャンセル理由詳細"""
+    """Step 3: キャンセル理由詳細 (メッセージ入力)"""
     template_name = 'Work/cancel/cancel_step3_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         application_id = self.kwargs['application_id']
-        context['application_id'] = application_id
+        context['application'] = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
+        context['reason'] = self.request.session.get(f'cancel_reason_{application_id}', '')
         return context
+    
+    def post(self, request, *args, **kwargs):
+        application_id = self.kwargs['application_id']
+        reason_detail = request.POST.get('reason_detail')
+        request.session[f'cancel_message_{application_id}'] = reason_detail
+        return redirect('job_cancel_step4', application_id=application_id)
 
 class JobCancelStep4InputView(LoginRequiredMixin, TemplateView):
-    """Step 4: キャンセル入力 (完了)"""
+    """Step 4: キャンセル内容確認 & 実行"""
     template_name = 'Work/cancel/cancel_step4_input.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         application_id = self.kwargs['application_id']
-        context['application_id'] = application_id
+        context['application'] = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
+        context['reason'] = self.request.session.get(f'cancel_reason_{application_id}', '')
+        context['reason_detail'] = self.request.session.get(f'cancel_message_{application_id}', '')
         return context
 
+    def post(self, request, *args, **kwargs):
+        application_id = self.kwargs['application_id']
+        application = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
+        
+        # キャンセル処理実行
+        application.status = '辞退' # または 'cancelled'
+        application.cancel_reason = request.POST.get('reason', '') # Formから再送、あるいはセッションから
+        # モデルにフィールドがあれば保存
+        # application.cancel_message = ...
+        application.save()
+        
+        # セッションクリア
+        keys = [f'cancel_reason_{application_id}', f'cancel_message_{application_id}']
+        for k in keys:
+            if k in request.session:
+                del request.session[k]
+
+        return redirect('mypage') # 完了後はマイページへ
+
+
+from business.models import AttendanceCorrection
+
+class AttendanceCorrectionStatusView(LoginRequiredMixin, TemplateView):
+    template_name = 'Work/attendance_correction_status.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        application_id = self.kwargs['application_id']
+        application = get_object_or_404(JobApplication, pk=application_id, worker=self.request.user)
+        
+        # 最新の修正依頼を取得 (なければNone)
+        correction = AttendanceCorrection.objects.filter(application=application).order_by('-created_at').first()
+        
+        context['application'] = application
+        context['correction'] = correction
+        return context

@@ -78,6 +78,7 @@ urlpatterns = [
     path('attendance/<int:application_id>/step7/', job_views.AttendanceStep7FinishView.as_view(), name='attendance_step7'),
     path('attendance/<int:application_id>/reward/', job_views.RewardConfirmView.as_view(), name='reward_confirm'), # ★追加
     path('attendance/<int:application_id>/finish/', job_views.RewardFinishView.as_view(), name='reward_finish'),   # ★追加
+    path('attendance/<int:application_id>/status/', job_views.AttendanceCorrectionStatusView.as_view(), name='attendance_status'), # ★追加
     
     # 店舗評価
     path('work/application/<int:application_id>/review/step1/', job_views.StoreReviewStep1View.as_view(), name='store_review_step1'),
@@ -134,6 +135,10 @@ urlpatterns = [
     path('settings/profile/address/', account_views.profile_address_edit, name='profile_address_edit'), # ★住所変更専用画面
     path('settings/other/', account_views.other_profile_edit, name='other_profile_edit'),
     path('settings/other/association/', account_views.association_select, name='association_select'), # ★所属選択画面
+    path('settings/location/', account_views.LocationSettingsView.as_view(), name='location_settings'), # ★位置情報設定
+    path('api/mute_store/', account_views.MuteStoreView.as_view(), name='api_mute_store'), # ★店舗ミュートAPI
+    path('settings/muted_stores/', account_views.MutedStoresListView.as_view(), name='muted_stores_list'), # ★ミュート一覧
+    path('api/unmute_store/', account_views.UnmuteStoreView.as_view(), name='api_unmute_store'), # ★ミュート解除API
 
     # 修正：phone_change_home を phone_change に変更
     # 電話番号変更フロー

@@ -118,6 +118,7 @@ class StoreReview(models.Model):
     is_want_to_work_again = models.BooleanField("またここで働きたいですか？", default=True)
     
     comment = models.TextField("コメント", blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -423,7 +424,22 @@ class AttendanceCorrection(models.Model):
         ('rejected', '却下'),
     ]
     status = models.CharField("ステータス", max_length=20, default='pending', choices=STATUS_CHOICES)
+    # 拒否理由
+    reject_reason = models.TextField(blank=True, null=True, help_text="修正依頼の拒否理由")
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Correction for {self.application}"
+
+class StoreMute(models.Model):
+    """ワーカーによる店舗ミュート"""
+    worker = models.ForeignKey('accounts.WorkerProfile', on_delete=models.CASCADE, related_name='muted_stores')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='muted_by_workers')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('worker', 'store')
+
+    def __str__(self):
+        return f"{self.worker} muted {self.store}"

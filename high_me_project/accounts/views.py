@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.views import LoginView
 from django.views.generic import FormView, TemplateView, CreateView, DetailView, ListView
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import (
@@ -733,6 +734,52 @@ class AchievementsView(LoginRequiredMixin, TemplateView):
         context['progress_percent'] = progress_percent
         
         return context
+
+class LocationSettingsView(LoginRequiredMixin, TemplateView):
+    template_name = 'MyPage/Settings/location.html'
+
+from django.http import JsonResponse
+import json
+from business.models import Store, StoreMute
+
+class MuteStoreView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            store_id = data.get('store_id')
+            store = get_object_or_404(Store, id=store_id)
+            
+            # Create or get mute record
+            StoreMute.objects.get_or_create(
+                worker=request.user.workerprofile,
+                store=store
+            )
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+class MutedStoresListView(LoginRequiredMixin, ListView):
+    template_name = 'MyPage/Settings/muted_stores.html'
+    context_object_name = 'muted_stores'
+
+    def get_queryset(self):
+        return StoreMute.objects.filter(worker=self.request.user.workerprofile).select_related('store').order_by('-created_at')
+
+class UnmuteStoreView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            store_id = data.get('store_id')
+            store = get_object_or_404(Store, id=store_id)
+            
+            StoreMute.objects.filter(
+                worker=request.user.workerprofile,
+                store=store
+            ).delete()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
 
 class PastJobsView(LoginRequiredMixin, TemplateView):

@@ -13,10 +13,10 @@
         <thead style="background: #f9f9f9; border-bottom: 1px solid #ddd;">
             <tr>
                 <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">申請日時</th>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">ワーカー吁E</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">ワーカー名</th>
                 <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">対象求人</th>
-                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">逅。罰</th>
-                <th style="padding: 12px 20px; text-align: center; font-weight: bold; color: #666;">繧ｹ繝）繧ｿ繧ｹ</th>
+                <th style="padding: 12px 20px; text-align: left; font-weight: bold; color: #666;">理由</th>
+                <th style="padding: 12px 20px; text-align: center; font-weight: bold; color: #666;">ステータス</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +34,7 @@
                 <td style="padding: 15px 20px;">
                     {{ correction.application.job_posting.title }}<br>
                     <span style="font-size: 12px; color: #888;">{{
-                        correction.application.job_posting.work_date|date:"m/d" }} 勤勁E</span>
+                        correction.application.job_posting.work_date|date:"m/d" }} 勤務</span>
                 </td>
                 <td style="padding: 15px 20px;">
                     {% if correction.lateness_reason %}
@@ -52,7 +52,7 @@
                         style="background: #e8f5e9; color: #388e3c; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">承認済み</span>
                     {% else %}
                     <span
-                        style="background: #ffebee; color: #d32f2f; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">却丁E</span>
+                        style="background: #ffebee; color: #d32f2f; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;">却下</span>
                     {% endif %}
                 </td>
             </tr>

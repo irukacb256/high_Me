@@ -305,7 +305,7 @@
     <!-- 3. 通知とプライバシー -->
     <div class="menu-group">
         <div class="menu-title">通知とプライバシー</div>
-        <a href="#" class="menu-item">
+        <a href="{% url 'location_settings' %}" class="menu-item">
             <div class="menu-label-wrapper"><i class="fa-solid fa-location-arrow"></i> 位置情報の設定</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
@@ -313,7 +313,7 @@
             <div class="menu-label-wrapper"><i class="fa-regular fa-bell"></i> プッシュ通知設定</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{% url 'muted_stores_list' %}" class="menu-item">
             <div class="menu-label-wrapper"><i class="fa-solid fa-volume-xmark"></i> ミュートしている店舗</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>

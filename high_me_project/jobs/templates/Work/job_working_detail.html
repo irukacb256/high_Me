@@ -315,9 +315,7 @@
         <a href="{% url 'job_qr_reader' app.job_posting.pk %}" class="btn-qr" style="text-decoration:none;">
             <i class="fa-solid fa-qrcode"></i> QRを読み込む
         </a>
-        <div class="btn-cant-check">
-            チェックイン/アウトできなかった場合 <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
-        </div>
+
         {% else %}
         <div style="text-align:center; padding: 20px; background:#f9f9f9; border-radius:12px; margin-bottom:15px;">
             <div style="font-weight:bold; color:#007AFF; margin-bottom:10px;">業務完了</div>
@@ -453,7 +451,7 @@
     <div class="menu-list">
         <!-- キャンセル -->
         <!-- キャンセル (完了していない場合のみ表示) -->
-        {% if not app.attendance_at or not app.leaving_at %}
+        {% if not app.attendance_at %}
         <a href="{% url 'job_cancel_step1' app.id %}" class="menu-item">
             <i class="fa-regular fa-circle-xmark menu-icon"></i>
             <span class="menu-text">このお仕事をキャンセル</span>
@@ -461,8 +459,8 @@
         </a>
         {% endif %}
 
-        <!-- 修正依頼 (既存) -->
-        <a href="{% url 'attendance_step2' app.id %}" class="menu-item">
+        <!-- 修正依頼 (ステータス画面へ) -->
+        <a href="{% url 'attendance_status' app.id %}" class="menu-item">
             <i class="fa-regular fa-envelope menu-icon"></i>
             <span class="menu-text">修正依頼</span>
             <i class="fa-solid fa-chevron-right menu-arrow"></i>

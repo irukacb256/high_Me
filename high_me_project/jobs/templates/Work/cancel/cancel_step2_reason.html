@@ -1,55 +1,81 @@
 {% extends 'base_main.html' %}
-{% load static %}
 
 {% block content %}
 <style>
     .cancel-container {
         padding: 20px;
         background: white;
-        min-height: 80vh;
+        min-height: 100vh;
+    }
+
+    .header-bar {
         display: flex;
-        flex-direction: column;
         align-items: center;
-    }
-
-    .cancel-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .reason-list {
-        width: 100%;
         margin-bottom: 30px;
     }
 
-    .reason-item {
-        padding: 15px;
-        border-bottom: 1px solid #eee;
-        font-size: 16px;
+    .header-title {
+        font-size: 18px;
+        font-weight: bold;
+        flex: 1;
+        text-align: center;
     }
 
-    .next-btn {
-        background: #007AFF;
-        color: white;
-        width: 100%;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        text-decoration: none;
+    .title-large {
+        font-size: 24px;
         font-weight: bold;
+        margin-bottom: 40px;
+        line-height: 1.4;
+    }
+
+    .reason-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .reason-item {
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .reason-item:first-child {
+        border-top: 1px solid #eee;
     }
 </style>
 
 <div class="cancel-container">
-    <div class="cancel-title">キャンセル理由 (選択)</div>
-
-    <div class="reason-list">
-        <div class="reason-item">体調不良</div>
-        <div class="reason-item">用事が入った</div>
+    <div class="header-bar">
+        <a href="{% url 'job_cancel_step1' application.id %}" style="color:#333;"><i
+                class="fa-solid fa-chevron-left"></i></a>
     </div>
 
-    <a href="{% url 'job_cancel_step3' application_id %}" class="next-btn">次へ</a>
+    <div class="title-large">
+        キャンセルの理由を<br>選択をしてください
+    </div>
+
+    <!-- フォームとして実装し、クリックで送信 -->
+    <form id="reasonForm" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="reason" id="selectedReason">
+
+        <div class="reason-list">
+            <div class="reason-item" onclick="submitReason('その他')">その他</div>
+            <div class="reason-item" onclick="submitReason('体調不良のため')">体調不良のため</div>
+            <div class="reason-item" onclick="submitReason('私用のため')">私用のため</div>
+            <div class="reason-item" onclick="submitReason('交通機関の遅延')">交通機関の遅延</div>
+            <div class="reason-item" onclick="submitReason('勤務内容の齟齬')">勤務内容の齟齬</div>
+        </div>
+    </form>
 </div>
+
+<script>
+    function submitReason(reason) {
+        document.getElementById('selectedReason').value = reason;
+        document.getElementById('reasonForm').submit();
+    }
+</script>
 {% endblock %}

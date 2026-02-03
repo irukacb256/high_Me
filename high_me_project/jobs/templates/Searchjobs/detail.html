@@ -351,7 +351,8 @@
         position: absolute;
         top: 20px;
         right: 15px;
-        color: white;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
         width: 35px;
         height: 35px;
         border-radius: 50%;
@@ -361,7 +362,7 @@
         z-index: 100;
         cursor: pointer;
         font-size: 20px;
-        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     /* Bottom Sheet Overlay */
@@ -407,7 +408,6 @@
 
     .sheet-item {
         display: block;
-        width: 100%;
         padding: 16px;
         text-align: center;
         font-size: 16px;
@@ -432,11 +432,74 @@
         border-radius: 12px;
         padding: 16px;
         text-align: center;
-        width: 100%;
         font-weight: bold;
         color: #007AFF;
         font-size: 16px;
         cursor: pointer;
+    }
+
+    /* Mute Popup */
+    .mute-popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 3000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mute-popup {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        width: 85%;
+        max-width: 320px;
+        border-radius: 14px;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .mute-popup-content {
+        padding: 20px 16px;
+    }
+
+    .mute-popup-title {
+        font-weight: bold;
+        font-size: 17px;
+        margin-bottom: 8px;
+        color: #000;
+        line-height: 1.4;
+    }
+
+    .mute-popup-text {
+        font-size: 13px;
+        color: #000;
+        line-height: 1.4;
+    }
+
+    .mute-popup-buttons {
+        display: flex;
+        border-top: 1px solid rgba(60, 60, 67, 0.36);
+    }
+
+    .mute-popup-btn {
+        flex: 1;
+        padding: 12px 0;
+        font-size: 17px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-weight: normal;
+        color: #007AFF;
+    }
+
+    .mute-popup-btn.mute-confirm {
+        color: #FF3B30;
+        font-weight: bold;
+        border-left: 1px solid rgba(60, 60, 67, 0.36);
     }
 </style>
 
@@ -614,11 +677,47 @@
 <div class="sheet-overlay" id="sheet-overlay" onclick="closeBottomSheet()"></div>
 <div class="sheet-menu" id="sheet-menu">
     <div class="sheet-group">
-        <div class="sheet-item" onclick="alert('シェア機能は未実装です')">この募集をシェア</div>
-        <div class="sheet-item text-red" onclick="alert('通知ミュート機能は未実装です')">この店舗の通知をミュート</div>
+        <div class="sheet-item" onclick="shareJob()">この募集をシェア</div>
+        <div class="sheet-item text-red" id="mute-menu-item" onclick="checkMuteStatus()">
+            {% if is_muted %}この店舗のミュートを解除{% else %}この店舗の通知をミュート{% endif %}
+        </div>
         <div class="sheet-item text-red" onclick="alert('通報機能は未実装です')">募集内容を通報</div>
     </div>
     <div class="sheet-cancel" onclick="closeBottomSheet()">キャンセル</div>
+</div>
+
+<!-- Mute Popup -->
+<div class="mute-popup-overlay" id="mute-popup-overlay">
+    <div class="mute-popup">
+        <div class="mute-popup-content">
+            <div class="mute-popup-title">{{ job.template.store.store_name }}をミュートしますか？</div>
+            <div class="mute-popup-text">
+                ミュートした店舗からは通知が届かなくなり、募集をさがす時にも表示されなくなります。
+            </div>
+        </div>
+        <div class="mute-popup-buttons">
+            <div class="mute-popup-btn" onclick="closeMutePopup()">もどる</div>
+            <div class="mute-popup-btn mute-confirm" onclick="execMuteStore()">ミュート</div>
+        </div>
+    </div>
+</div>
+
+<!-- Unmute Popup -->
+<div class="mute-popup-overlay" id="unmute-popup-overlay">
+    <div class="mute-popup">
+        <div class="mute-popup-content">
+            <div class="mute-popup-title">ミュートを解除しますか？</div>
+            <div class="mute-popup-text">
+                {{ job.template.store.store_name }}の通知を受け取るようになります。
+            </div>
+        </div>
+        <div class="mute-popup-buttons">
+            <div class="mute-popup-btn" onclick="closeUnmutePopup()">もどる</div>
+            <div class="mute-popup-btn mute-confirm"
+                style="color: #007AFF; border-left: 1px solid rgba(60, 60, 67, 0.36);" onclick="execUnmuteStore()">解除する
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- 固定ボタン -->
@@ -655,6 +754,110 @@
         setTimeout(() => {
             document.getElementById('sheet-overlay').style.display = 'none';
         }, 300);
+    }
+
+    let isMuted = {% if is_muted %}true{% else %} false{% endif %};
+
+    function checkMuteStatus() {
+        if (isMuted) {
+            openUnmutePopup();
+        } else {
+            openMutePopup();
+        }
+    }
+
+    function openMutePopup() {
+        closeBottomSheet();
+        setTimeout(() => {
+            document.getElementById('mute-popup-overlay').style.display = 'flex';
+        }, 300);
+    }
+
+    function closeMutePopup() {
+        document.getElementById('mute-popup-overlay').style.display = 'none';
+    }
+
+    function openUnmutePopup() {
+        closeBottomSheet();
+        setTimeout(() => {
+            document.getElementById('unmute-popup-overlay').style.display = 'flex';
+        }, 300);
+    }
+
+    function closeUnmutePopup() {
+        document.getElementById('unmute-popup-overlay').style.display = 'none';
+    }
+
+    function execMuteStore() {
+        fetch("{% url 'api_mute_store' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ store_id: {{ job.template.store.id }} })
+        })
+        .then(response => response.json())
+        .then(data => {
+            closeMutePopup();
+            if (data.status === 'success') {
+                isMuted = true;
+                document.getElementById('mute-menu-item').innerText = 'この店舗のミュートを解除';
+            } else {
+                alert('エラーが発生しました: ' + (data.message || '不明なエラー'));
+            }
+        })
+        .catch(error => {
+            closeMutePopup();
+            console.error('Error:', error);
+            alert('通信エラーが発生しました');
+        });
+    }
+
+    function execUnmuteStore() {
+        fetch("{% url 'api_unmute_store' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ store_id: {{ job.template.store.id }} })
+        })
+        .then(response => response.json())
+        .then(data => {
+            closeUnmutePopup();
+            if (data.status === 'success') {
+                isMuted = false;
+                document.getElementById('mute-menu-item').innerText = 'この店舗の通知をミュート';
+            } else {
+                alert('エラーが発生しました: ' + (data.message || '不明なエラー'));
+            }
+        })
+        .catch(error => {
+            closeUnmutePopup();
+            console.error('Error:', error);
+            alert('通信エラーが発生しました');
+        });
+    }
+
+    function shareJob() {
+        closeBottomSheet();
+        if (navigator.share) {
+            navigator.share({
+                title: '{{ job.title }}',
+                text: '{{ job.template.store.store_name }}の求人です！',
+                url: window.location.href,
+            })
+                .then(() => console.log('Successful share'))
+                .catch((error) => console.log('Error sharing', error));
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            navigator.clipboard.writeText(window.location.href).then(function () {
+                alert('URLをコピーしました');
+            }, function (err) {
+                console.error('Async: Could not copy text: ', err);
+            });
+        }
     }
 
     function toggleAccordion(bodyId, iconId) {
