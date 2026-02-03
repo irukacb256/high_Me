@@ -289,8 +289,13 @@
             {% endif %}
 
             <div class="profile-info">
-                <!-- 名前は個人情報保護の観点からイニシャル等にする場合もあるが、仕様上詳細なしで表示 -->
-                <!-- <div style="width:100px; height:20px; background:#eee;"></div> マスキング表現 -->
+                <div style="font-size: 20px; font-weight: bold;">
+                    {% if profile %}
+                    {{ profile.last_name_kanji }} {{ profile.first_name_kanji }}
+                    {% else %}
+                    {{ worker.username }}
+                    {% endif %}
+                </div>
             </div>
 
             <a href="#" class="block-btn">ブロック設定</a>
@@ -300,11 +305,24 @@
             <span style="font-size:13px; color:#666;">バッジ</span>
             <i class="fa-regular fa-circle-question" style="color:#999;"></i>
 
-            <div style="display:flex; gap:10px; margin-left:10px;">
-                <!-- ここには取得済みバッジの主要なものを表示 -->
-                <!-- バッジ -->
-                <div class="main-badge-icon"><i class="fa-solid fa-bell-concierge"></i></div>
-                <div style="font-size:12px; text-align:center;">ホール</div>
+            <div style="display:flex; gap:15px; margin-left:10px; flex-wrap: wrap;">
+                {% for wb in worker_badges|slice:":5" %}
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div class="main-badge-icon" style="width: 36px; height: 36px; font-size: 16px;">
+                        {% if wb.badge.icon %}
+                        <img src="{{ wb.badge.icon.url }}" style="width:100%; height:100%; border-radius:50%;">
+                        {% else %}
+                        <i class="fa-solid fa-medal"></i>
+                        {% endif %}
+                    </div>
+                    <div style="font-size:11px; text-align:center; margin-top:2px;">{{ wb.badge.name }}</div>
+                    <div
+                        style="font-size:10px; color:#666; background:#eee; padding:0 4px; border-radius:4px; margin-top:1px;">
+                        {{ wb.certified_count }}回</div>
+                </div>
+                {% empty %}
+                <span style="font-size:12px; color:#999;">なし</span>
+                {% endfor %}
             </div>
         </div>
 

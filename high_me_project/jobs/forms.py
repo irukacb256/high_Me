@@ -30,7 +30,7 @@ class StoreReviewStep2Form(forms.ModelForm):
         model = StoreReview
         fields = ['comment']
         widgets = {
-            'comment': forms.Textarea(attrs={'rows': 6, 'placeholder': '皆さんとても親切でした！'}),
+            'comment': forms.Textarea(attrs={'rows': 6, 'placeholder': '皆さんとても親切でした！', 'class': 'form-control'}),
         }
         labels = {
             'comment': 'コメント',

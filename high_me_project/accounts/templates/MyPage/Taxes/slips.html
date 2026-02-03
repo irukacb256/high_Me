@@ -1,9 +1,79 @@
 {% extends 'base_main.html' %}
 
 {% block content %}
-<div style="padding: 20px;">
-    <h2>源泉徴収票（仮）</h2>
-    <p>この画面は準備中です。</p>
-    <a href="{% url 'mypage' %}" style="text-decoration: underline;">マイページに戻る</a>
+<style>
+    .slip-container {
+        padding: 20px;
+        background-color: white;
+        /* Image looks white */
+        min-height: 100vh;
+    }
+
+    .header-nav {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        background: #F8F8F8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+
+    .page-title {
+        font-weight: bold;
+        font-size: 14px;
+        flex-grow: 1;
+        text-align: center;
+        margin-right: 36px;
+    }
+
+    .main-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    .description {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+    }
+</style>
+
+<div class="slip-container">
+    <div class="header-nav">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="page-title">源泉徴収票を発行</div>
+    </div>
+
+    <div class="main-title">
+        確認したい源泉徴収票の年<br>を選択
+    </div>
+
+    <div class="description">
+        今までに直雇用契約で働いたお仕事の源泉徴収票を確認、印刷できます。報酬が未確定のお仕事は含まれません。
+    </div>
+
+    <!-- 年リスト (データがない場合は非表示) -->
+    <div style="margin-top: 30px;">
+        <!-- リストアイテム例 -->
+        <!--
+        <a href="#" style="display:block; padding: 15px 0; border-bottom: 1px solid #eee; color: #333; text-decoration: none; font-weight: bold;">
+            2025年
+            <i class="fa-solid fa-chevron-right" style="float: right; color: #ccc;"></i>
+        </a>
+        -->
+    </div>
 </div>
 {% endblock %}

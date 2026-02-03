@@ -128,17 +128,28 @@
         margin-bottom: 15px;
         opacity: 0.3;
     }
+
+    .btn-search {
+        display: inline-block;
+        background-color: #007AFF;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
 </style>
 
 <div class="work-container">
     <div class="work-header">はたらく</div>
 
     <div class="work-tabs">
-        <a href="?tab=upcoming" class="work-tab {% if tab == 'upcoming' %}active{% endif %}">今後の予定</a>
-        <a href="?tab=completed" class="work-tab {% if tab == 'completed' %}active{% endif %}">完了した仕事</a>
+        <a href="{% url 'work_schedule' %}" class="work-tab active">今後の予定</a>
+        <a href="{% url 'work_completed' %}" class="work-tab">完了した仕事</a>
     </div>
 
-    {% if tab == 'upcoming' %}
+
+
     {% if upcoming_grouped %}
     {% for date, weekday, apps in upcoming_grouped %}
     <div class="schedule-group">
@@ -174,40 +185,6 @@
         <p style="font-size: 14px; margin-bottom: 20px;">次のお仕事を探してみましょう。</p>
         <a href="{% url 'index' %}" class="btn-search">仕事をさがす</a>
     </div>
-    <style>
-        .btn-search {
-            display: inline-block;
-            background-color: #007AFF;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
-    {% endif %}
-    {% else %}
-    {% if completed_grouped %}
-    {% for date, weekday, apps in completed_grouped %}
-    <div class="schedule-group">
-        <div class="schedule-date-header">{{ date|date:"n月j日" }} ({{ weekday }})</div>
-        {% for app in apps %}
-        <a href="{% url 'job_working_detail' app.job_posting.pk %}" class="schedule-card">
-            <div class="schedule-body">
-                <div class="schedule-title">{{ app.job_posting.title }}</div>
-                <div class="schedule-time">{{ app.job_posting.work_date|date:"Y年n月j日" }} {{
-                    app.job_posting.start_time|date:"H:i" }}〜{{ app.job_posting.end_time|date:"H:i" }}</div>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-    {% endfor %}
-    {% else %}
-    <div class="empty-state">
-        <i class="fa-solid fa-check-double"></i>
-        <p>完了した仕事はありません</p>
-    </div>
-    {% endif %}
     {% endif %}
 
 </div>

@@ -345,6 +345,99 @@
         box-shadow: none;
         cursor: not-allowed;
     }
+
+    /* Kebab Menu Button */
+    .kebab-btn {
+        position: absolute;
+        top: 20px;
+        right: 15px;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        cursor: pointer;
+        font-size: 20px;
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Bottom Sheet Overlay */
+    .sheet-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+    }
+
+    /* Bottom Sheet Menu */
+    .sheet-menu {
+        position: fixed;
+        bottom: -100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 430px;
+        /* Limit width for desktop */
+        background: transparent;
+        /* Container is transparent */
+        z-index: 2001;
+        transition: bottom 0.3s ease-out;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .sheet-menu.active {
+        bottom: 0;
+    }
+
+    .sheet-group {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .sheet-item {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        text-align: center;
+        font-size: 16px;
+        color: #007AFF;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .sheet-item:last-child {
+        border-bottom: none;
+    }
+
+    .sheet-item.text-red {
+        color: #FF3B30;
+    }
+
+    .sheet-cancel {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        width: 100%;
+        font-weight: bold;
+        color: #007AFF;
+        font-size: 16px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="detail-container">
@@ -354,6 +447,12 @@
         {% else %}
         <a href="{% url 'index' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
         {% endif %}
+
+        <!-- Kebab Menu Button -->
+        <div class="kebab-btn" onclick="openBottomSheet()">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+
         {% for photo in job.template.photos.all %}
         <img src="{{ photo.image.url }}" alt="求人画像">
         {% empty %}
@@ -511,6 +610,17 @@
     </div>
 </div>
 
+<!-- Bottom Sheet & Overlay -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeBottomSheet()"></div>
+<div class="sheet-menu" id="sheet-menu">
+    <div class="sheet-group">
+        <div class="sheet-item" onclick="alert('シェア機能は未実装です')">この募集をシェア</div>
+        <div class="sheet-item text-red" onclick="alert('通知ミュート機能は未実装です')">この店舗の通知をミュート</div>
+        <div class="sheet-item text-red" onclick="alert('通報機能は未実装です')">募集内容を通報</div>
+    </div>
+    <div class="sheet-cancel" onclick="closeBottomSheet()">キャンセル</div>
+</div>
+
 <!-- 固定ボタン -->
 <div class="fixed-footer">
     <!-- ハートマーク -->
@@ -533,6 +643,20 @@
 </div>
 
 <script>
+    function openBottomSheet() {
+        document.getElementById('sheet-overlay').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('sheet-menu').classList.add('active');
+        }, 10);
+    }
+
+    function closeBottomSheet() {
+        document.getElementById('sheet-menu').classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('sheet-overlay').style.display = 'none';
+        }, 300);
+    }
+
     function toggleAccordion(bodyId, iconId) {
         const body = document.getElementById(bodyId);
         const icon = document.getElementById(iconId);

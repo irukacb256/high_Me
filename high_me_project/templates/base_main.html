@@ -94,11 +94,11 @@
                 <i class="fa-solid fa-magnifying-glass"></i>さがす
             </a>
             <a href="{% url 'favorites' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+                class="nav-item {% if request.resolver_match.url_name == 'favorites' or request.resolver_match.url_name == 'favorite_stores' %}active{% endif %}">
                 <i class="fa-regular fa-heart"></i>お気に入り
             </a>
             <a href="{% url 'work_schedule' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'work_schedule' %}active{% endif %}">
+                class="nav-item {% if request.resolver_match.url_name == 'work_schedule' or request.resolver_match.url_name == 'work_completed' %}active{% endif %}">
                 <i class="fa-solid fa-briefcase"></i>はたらく
             </a>
             <a href="{% url 'worker_message_list' %}"

@@ -1,9 +1,122 @@
 {% extends 'base_main.html' %}
 
 {% block content %}
-<div style="padding: 20px;">
-    <h2>年ごとの源泉徴収（仮）</h2>
-    <p>この画面は準備中です。</p>
-    <a href="{% url 'mypage' %}" style="text-decoration: underline;">マイページに戻る</a>
+<style>
+    .limit-container {
+        padding: 20px;
+        background-color: white;
+        min-height: 100vh;
+    }
+
+    .header-nav {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        background: #F8F8F8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+
+    .main-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    .description {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .notes {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .help-link {
+        font-size: 13px;
+        color: #333;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .mail-icon {
+        font-size: 80px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .empty-text {
+        font-size: 12px;
+        color: #888;
+        line-height: 1.5;
+    }
+</style>
+
+<div class="limit-container">
+    <div class="header-nav">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+    </div>
+
+    <div class="main-title">
+        年間報酬による申し込み制限<br>の解除
+    </div>
+
+    <div class="description">
+        企業からの制限解除リクエストに応じてマイナンバーを提供すると、企業内の店舗・事業所で年間28万円以上働けます。
+    </div>
+
+    <div class="notes">
+        ※マイナンバーは申し込み制限の解除に伴う税務・労務の手続きに利用されます。<br>
+        ※月間報酬による制限・年間報酬による制限のうち、この手続きで解除できるのは年間報酬による制限のみです。
+    </div>
+
+    <a href="#" class="help-link">
+        <i class="fa-regular fa-circle-question"></i> 年間報酬による申し込み制限の解除について
+    </a>
+
+    <div class="empty-state">
+        <div class="mail-icon">
+            <i class="fa-regular fa-envelope"></i>
+        </div>
+        <div class="empty-title">制限解除リクエストはありません</div>
+        <div class="empty-text">
+            毎年12月1日〜翌年11月30日に企業からリクエストが届くと、手続き可能になります。
+        </div>
+    </div>
 </div>
 {% endblock %}

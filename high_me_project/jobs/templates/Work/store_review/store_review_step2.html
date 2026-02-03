@@ -1,7 +1,8 @@
 {% extends 'Work/review_base.html' %}
 {% load static %}
 
-{% block extra_css %}
+{% block extra_head %}
+{{ block.super }}
 <style>
     .review-step-container {
         padding: 20px 15px 80px;
@@ -78,11 +79,15 @@
             働いた感想や、職場の環境などについて入力してください。<br>
             ・具体的なよかった点・改善点
         </p>
+
+        <!-- Hidden submit button -->
+        <button type="submit" id="hidden-submit-btn" style="display: none;"></button>
     </form>
 </div>
 
 {% endblock %}
 
 {% block review_footer %}
-<button type="submit" form="review-form" class="submit-btn">投稿する（確認）</button>
+<button type="button" class="submit-btn"
+    onclick="document.getElementById('hidden-submit-btn').click();">投稿する（確認）</button>
 {% endblock %}

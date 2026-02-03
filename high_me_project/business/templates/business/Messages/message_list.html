@@ -206,8 +206,11 @@
                     <div class="text-content">
                         <h5 class="worker-name">{{ room.worker.workerprofile.last_name_kanji }} {{
                             room.worker.workerprofile.first_name_kanji }}</h5>
+                        <div style="font-size: 13px; color: #666; margin-top: 2px;">
+                            <i class="fa-solid fa-store" style="font-size: 11px;"></i> {{ room.store.store_name }}
+                        </div>
                         <div class="text-muted" style="font-size: 12px; margin-top: 4px;">
-                            最終更新: {{ room.updated_at|date:"n月日 H:i" }}
+                            最終更新: {{ room.updated_at|date:"n月j日 H:i" }}
                         </div>
                     </div>
 

@@ -138,8 +138,7 @@
 
                 <!-- Display up to 3 jobs, then +X more -->
                 {% for job in day.postings|slice:":3" %}
-                <div
-                    class="cal-job-chip {% if job.is_ended or job.matched_count >= job.recruitment_count %}gray-out{% endif %}">
+                <div class="cal-job-chip {% if job.is_ended %}gray-out{% endif %}">
                     <span class="job-time">{{ job.start_time|time:"H:i" }}~{{ job.end_time|time:"H:i" }}</span>
 
                     <span class="job-icon" style="margin:0 4px;">

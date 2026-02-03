@@ -235,7 +235,7 @@
 
     <!-- Header -->
     <div class="chat-header">
-        <a href="{% url 'biz_message_list' %}" class="back-link">
+        <a href="{% url 'biz_message_list' store.id %}" class="back-link">
             <i class="fa-solid fa-chevron-left"></i> &nbsp;メッセージ一覧へ戻る
         </a>
         <h2 class="page-title">メッセージ詳細</h2>
@@ -305,12 +305,12 @@
     </div>
 
     <!-- Input Area -->
-    <form method="POST" class="<input-area">
+    <!-- Input Area -->
+    <form method="POST" class="input-area">
         {% csrf_token %}
-        <textarea name="content" class="chat-textarea" placeholder="お申し込みう◆、、阪≠繧翫′、ｨう＃、悶＞ます吶。#13;&#10;当日はよろしくお願いします〜
-            required></textarea>
+        <textarea name="content" class="chat-textarea" placeholder="メッセージを入力..." required></textarea>
 
-        <button type=" submit" class="send-btn">
+        <button type="submit" class="send-btn">
             <i class="fa-solid fa-paper-plane"></i> 送信
         </button>
     </form>

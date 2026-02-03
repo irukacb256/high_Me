@@ -388,11 +388,14 @@
                     <div class="worker-info">
                         <h3>
                             <!-- Name blurred in original, showing real name here -->
-                            {% if worker.workerprofile %}
-                            {{ worker.workerprofile.last_name_kanji }} {{ worker.workerprofile.first_name_kanji }}
-                            {% else %}
-                            {{ worker.username }}
-                            {% endif %}
+                            <a href="{% url 'biz_worker_detail' store.id worker.id %}"
+                                style="text-decoration: none; color: #007AFF; font-weight: bold;">
+                                {% if worker.workerprofile %}
+                                {{ worker.workerprofile.last_name_kanji }} {{ worker.workerprofile.first_name_kanji }}
+                                {% else %}
+                                {{ worker.username }}
+                                {% endif %}
+                            </a>
                         </h3>
                         <div class="worker-meta">
                             {{ worker.age }}歳

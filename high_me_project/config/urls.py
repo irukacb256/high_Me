@@ -84,8 +84,10 @@ urlpatterns = [
     path('work/application/<int:application_id>/review/step2/', job_views.StoreReviewStep2View.as_view(), name='store_review_step2'),
     path('work/application/<int:application_id>/review/complete/', job_views.StoreReviewCompleteView.as_view(), name='store_review_complete'),
 
-    path('favorites/', job_views.FavoritesView.as_view(), name='favorites'),      # ★追加
-    path('schedule/', job_views.WorkScheduleView.as_view(), name='work_schedule'), # ★追加
+    path('favorites/', job_views.FavoriteJobsView.as_view(), name='favorites'),      # ★変更
+    path('favorites/stores/', job_views.FavoriteStoresView.as_view(), name='favorite_stores'), # ★追加
+    path('schedule/', job_views.WorkScheduleUpcomingView.as_view(), name='work_schedule'), # ★変更
+    path('schedule/completed/', job_views.WorkScheduleCompletedView.as_view(), name='work_completed'), # ★追加
     path('messages/', job_views.MessagesView.as_view(), name='messages'),          # ★追加
     path('home/refine/keyword/', job_views.KeywordExcludeView.as_view(), name='keyword_exclude'), # ★追加（NoReverseMatch対応）
     path('badges/', job_views.BadgeListView.as_view(), name='badge_list'),        # ★バッジ一覧
@@ -207,7 +209,8 @@ urlpatterns = [
     path('biz/workers/review/complete/<int:store_id>/', biz_views.BizReviewCompleteView.as_view(), name='biz_review_complete'),
 
     # メッセージ機能
-    path('biz/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),
+    # メッセージ機能
+    path('biz/store/<int:store_id>/messages/', biz_views.BizMessageListView.as_view(), name='biz_message_list'),
     path('biz/messages/<int:room_id>/', biz_views.BizMessageDetailView.as_view(), name='biz_message_detail'),
     
     # チェックイン/アウト管理 (店舗QR表示)
@@ -240,4 +243,7 @@ urlpatterns = [
     path('working/<int:application_id>/cancel/step2/', job_views.JobCancelStep2ReasonView.as_view(), name='job_cancel_step2'),
     path('working/<int:application_id>/cancel/step3/', job_views.JobCancelStep3DetailView.as_view(), name='job_cancel_step3'),
     path('working/<int:application_id>/cancel/step4/', job_views.JobCancelStep4InputView.as_view(), name='job_cancel_step4'),
+    
+    # 長期バイト応募履歴
+    path('working/long-term/', job_views.LongTermJobHistoryView.as_view(), name='work_history_long_term'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

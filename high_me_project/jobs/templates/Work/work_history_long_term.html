@@ -1,0 +1,139 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .work-container {
+        background-color: #F8F8F8;
+        min-height: 100vh;
+        padding-bottom: 80px;
+    }
+
+    .work-header {
+        background: white;
+        padding: 15px 0;
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #000;
+        border-bottom: 1px solid #f2f2f2;
+        position: relative;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #333;
+        font-size: 18px;
+    }
+
+    .history-list {
+        padding: 20px;
+    }
+
+    .history-card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .job-title {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .store-name {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .status-applied {
+        background: #E3F2FD;
+        color: #1976D2;
+    }
+
+    .status-interview {
+        background: #FFF3E0;
+        color: #F57C00;
+    }
+
+    .status-adopted {
+        background: #E8F5E9;
+        color: #388E3C;
+    }
+
+    .status-rejected {
+        background: #FFEBEE;
+        color: #D32F2F;
+    }
+
+    .date-info {
+        font-size: 12px;
+        color: #999;
+        margin-top: 10px;
+        text-align: right;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+</style>
+
+<div class="work-container">
+    <div class="work-header">
+        <a href="{% url 'work_schedule' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        長期バイト応募履歴
+    </div>
+
+    <div class="history-list">
+        {% for app in applications %}
+        <a href="{% url 'job_working_detail' app.job_posting.pk %}" class="history-card">
+            <div class="job-title">{{ app.job_posting.title }}</div>
+            <div class="store-name">{{ app.job_posting.template.store.store_name }}</div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    {% if app.status == 'applied' %}
+                    <span class="status-badge status-applied">応募済み</span>
+                    {% elif app.status == 'interview' %}
+                    <span class="status-badge status-interview">面接予定</span>
+                    {% elif app.status == 'adopted' %}
+                    <span class="status-badge status-adopted">採用</span>
+                    {% elif app.status == 'rejected' %}
+                    <span class="status-badge status-rejected">不採用</span>
+                    {% else %}
+                    <span class="status-badge" style="background:#eee; color:#666;">{{ app.status }}</span>
+                    {% endif %}
+                </div>
+                <div class="date-info">応募日: {{ app.created_at|date:"Y/n/j" }}</div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa-regular fa-folder-open" style="font-size:40px; margin-bottom:10px;"></i>
+            <p>長期バイトの応募履歴はありません</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

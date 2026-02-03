@@ -515,19 +515,27 @@ class JobDetailView(DetailView):
         return context
 
 
-class FavoritesView(LoginRequiredMixin, TemplateView):
-    template_name = 'Favorites/favorites.html'
+
+class FavoriteJobsView(LoginRequiredMixin, TemplateView):
+    template_name = 'Favorites/favorite_jobs.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # お気に入り求人
         favorite_jobs = FavoriteJob.objects.filter(user=self.request.user).select_related('job_posting', 'job_posting__template__store').order_by('-created_at')
+        context['favorite_jobs'] = favorite_jobs
+        context['tab'] = 'jobs'
+        return context
+
+class FavoriteStoresView(LoginRequiredMixin, TemplateView):
+    template_name = 'Favorites/favorite_stores.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         # お気に入り店舗
         favorite_stores = FavoriteStore.objects.filter(user=self.request.user).select_related('store').order_by('-created_at')
-        
-        context['favorite_jobs'] = favorite_jobs
         context['favorite_stores'] = favorite_stores
-        context['tab'] = self.request.GET.get('tab', 'jobs')
+        context['tab'] = 'stores'
         return context
 
 
@@ -586,9 +594,23 @@ class ToggleFavoriteStoreView(LoginRequiredMixin, View):
         return JsonResponse({'status': 'success', 'is_favorited': is_favorited})
 
 
-class WorkScheduleView(LoginRequiredMixin, TemplateView):
-    template_name = 'Work/work_schedule.html'
+class LongTermJobHistoryView(LoginRequiredMixin, ListView):
+    model = JobApplication
+    template_name = 'Work/work_history_long_term.html'
+    context_object_name = 'applications'
 
+    def get_queryset(self):
+        # 長期バイト (is_long_term=True) の応募履歴
+        return JobApplication.objects.filter(
+            worker=self.request.user, 
+            job_posting__is_long_term=True
+        ).select_related('job_posting', 'job_posting__template__store').order_by('-applied_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class WorkScheduleBaseView(LoginRequiredMixin, TemplateView):
     def group_by_date(self, app_list):
         grouped = {}
         # 曜日変換マップ
@@ -606,6 +628,9 @@ class WorkScheduleView(LoginRequiredMixin, TemplateView):
             result.append((d, grouped[d][0], grouped[d][1]))
         return result
 
+class WorkScheduleUpcomingView(WorkScheduleBaseView):
+    template_name = 'Work/work_upcoming.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
@@ -613,19 +638,32 @@ class WorkScheduleView(LoginRequiredMixin, TemplateView):
         applications = JobApplication.objects.filter(worker=self.request.user).select_related('job_posting', 'job_posting__template__store').order_by('job_posting__work_date', 'job_posting__start_time')
         
         upcoming = []
-        completed = []
-        
         for app in applications:
-            # 終了時間を考慮した完了判定 or ステータス完了
             job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
-            if app.status == '完了' or job_end < now:
-                completed.append(app)
-            else:
+            if not (app.status == '完了' or job_end < now):
                 upcoming.append(app)
 
         context['upcoming_grouped'] = self.group_by_date(upcoming)
+        context['tab'] = 'upcoming'
+        return context
+
+class WorkScheduleCompletedView(WorkScheduleBaseView):
+    template_name = 'Work/work_completed.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now = timezone.now()
+        # ユーザーの応募済み求人を全て取得（勤務日の昇順）
+        applications = JobApplication.objects.filter(worker=self.request.user).select_related('job_posting', 'job_posting__template__store').order_by('job_posting__work_date', 'job_posting__start_time')
+        
+        completed = []
+        for app in applications:
+            job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
+            if app.status == '完了' or job_end < now:
+                completed.append(app)
+
         context['completed_grouped'] = self.group_by_date(completed)
-        context['tab'] = self.request.GET.get('tab', 'upcoming')
+        context['tab'] = 'completed'
         return context
 
 
@@ -957,14 +995,23 @@ class RewardConfirmView(AttendanceStepBaseView):
     def post(self, request, application_id):
         application = self.get_application(application_id)
         
-        # 勤怠情報の確定 (予定通りとして保存)
-        # AttendanceCorrectionを作るか、Applicationに直接保存するか
-        # ここでは "完了" 状態にする
-        # status = 'completed' ? -> モデル定義によるが、とりあえずApplication完了処理
+        # 報酬計算
+        reward_amount = application.get_calculated_reward()
         
-        # 予定時間を実績として保存 (念のため上書き、あるいは is_scheduled=True フラグなど)
+        # 勤怠情報の確定 (予定通りとして保存)
+        # 完了状態にする
         application.status = '完了'
+        application.is_reward_paid = True # 支払い済みフラグ
         application.save()
+
+        # ウォレットに追加
+        from accounts.models import WalletTransaction
+        WalletTransaction.objects.create(
+            worker=application.worker.workerprofile,
+            amount=reward_amount,
+            transaction_type='reward',
+            description=f"{application.job_posting.template.store.store_name} 報酬"
+        )
         
         # 完了画面ではなく評価入力画面のStep1へ
         return redirect('store_review_step1', application_id=application_id)
@@ -1132,6 +1179,7 @@ class StoreReviewStep1View(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         application = get_object_or_404(JobApplication, id=self.kwargs['application_id'])
         context['application'] = application
+        context['step'] = 1
         return context
 
     def form_valid(self, form):
@@ -1148,6 +1196,7 @@ class StoreReviewStep2View(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         application = get_object_or_404(JobApplication, id=self.kwargs['application_id'])
         context['application'] = application
+        context['step'] = 2
         return context
 
     def form_valid(self, form):

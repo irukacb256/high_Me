@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Max
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout # logoutを追加
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -347,8 +348,15 @@ class AddStoreView(BusinessLoginRequiredMixin, FormView):
 class SignupCompleteView(TemplateView):
     template_name = 'business/Auth/signup_complete.html'
 
+class BizLoginForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': 'メールアドレスまたはパスワードが間違っています',
+        'inactive': 'このアカウントは無効です',
+    }
+
 class BizLoginView(LoginView):
     template_name = 'business/Auth/login.html'
+    authentication_form = BizLoginForm
     
     def dispatch(self, request, *args, **kwargs):
         # ログイン済みでも強制リダイレクトせず、ログイン画面を表示して別アカウントへの切り替えを許可する
@@ -833,43 +841,24 @@ class JobWorkerDetailView(BusinessLoginRequiredMixin, DetailView):
         except WorkerProfile.DoesNotExist:
             context['profile'] = None
 
-        # バッジ取得 (直近の実装に合わせて調整)
         if context['profile']:
             from accounts.models import WorkerBadge
-            worker_badges = WorkerBadge.objects.filter(worker=profile).select_related('badge')
-            context['badges'] = [wb.badge for wb in worker_badges]
+            from .models import StoreWorkerMemo, StoreWorkerGroup
+
+            # バッジ (Template expects 'worker_badges' queryset)
+            context['worker_badges'] = WorkerBadge.objects.filter(worker=profile, certified_count__gt=0).select_related('badge')
+            
+            # グループ (Template expects 'groups' queryset)
+            context['groups'] = StoreWorkerGroup.objects.filter(store=self.store, worker=profile)
+            
+            # メモ (Template expects 'memo' object with .memo attribute)
+            context['memo'] = StoreWorkerMemo.objects.filter(store=self.store, worker=profile).first()
         else:
-            context['badges'] = []
+            context['worker_badges'] = []
+            context['groups'] = []
+            context['memo'] = None
             
         context['store'] = self.store
-        
-        # この店舗でのこのワーカーのメモを取得
-        from .models import StoreWorkerMemo, StoreWorkerGroup
-        try:
-             memo = StoreWorkerMemo.objects.get(store=self.store, worker=context['profile'])
-             context['memo'] = memo.memo
-        except (StoreWorkerMemo.DoesNotExist, AttributeError):
-             context['memo'] = ""
-
-        # グループ分け
-        try:
-            group = StoreWorkerGroup.objects.get(store=self.store, worker=context['profile'])
-            context['group_type'] = group.group_type
-        except (StoreWorkerGroup.DoesNotExist, AttributeError):
-            context['group_type'] = ""
-
-        return context
-        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
-        
-        worker_badges = WorkerBadge.objects.filter(worker=self.object.workerprofile).select_related('badge')
-        groups = StoreWorkerGroup.objects.filter(store=store, worker=self.object.workerprofile)
-        memo = StoreWorkerMemo.objects.filter(store=store, worker=self.object.workerprofile).first()
-
-        context['store'] = store
-        context['worker_badges'] = worker_badges
-        context['groups'] = groups
-        context['memo'] = memo
         return context
 
 class JobPostingVisibilityEditView(BusinessLoginRequiredMixin, UpdateView):
@@ -1254,7 +1243,7 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
                 return JsonResponse({'status': 'success', 'message': 'Already reviewed'})
 
             # Create Review
-            WorkerReview.objects.create(
+            review = WorkerReview.objects.create(
                 job_application=app,
                 store_id=store_id,
                 worker=app.worker,
@@ -1264,7 +1253,36 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
             )
             
             # Add to groups based on skills
+            from accounts.models import Badge, WorkerBadge
+
             for skill_name in skills:
+                # 1. Update Badge counts
+                badge = Badge.objects.filter(name=skill_name).first()
+                if badge:
+                    worker_profile = app.worker.workerprofile
+                    wb, _ = WorkerBadge.objects.get_or_create(worker=worker_profile, badge=badge)
+                    
+                    # Increment certified count (always)
+                    wb.certified_count += 1
+                    
+                    # Increment certified store count (if this store hasn't awarded this badge before)
+                    # Check past reviews from this store for this worker that included this skill
+                    # Note: skills is JSONField, filtered by containment or exact match depends on DB
+                    # Here we check Python side or simple query ideally. 
+                    # JSONField 'contains' lookup works for lists in some DBs, assuming filtering works:
+                    has_awarded_before = WorkerReview.objects.filter(
+                        worker=app.worker, 
+                        store_id=store_id, 
+                        skills__contains=skill_name
+                    ).exclude(id=review.id).exists()
+                    
+                    if not has_awarded_before:
+                         wb.certified_store_count += 1
+                    
+                    wb.is_obtained = True
+                    wb.save()
+
+                # 2. Add to StoreWorkerGroup (Existing logic)
                 group_def, _ = StoreGroupDefinition.objects.get_or_create(
                     store_id=store_id,
                     name=skill_name,
@@ -1327,9 +1345,10 @@ class BizMessageListView(BusinessLoginRequiredMixin, ListView):
 
     def get_queryset(self):
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        # 自分のビジネスに紐づく店舗のチャットルームを取得
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+
         queryset = ChatRoom.objects.filter(
-            store__business=biz_profile
+            store=self.store
         ).select_related('worker', 'store').prefetch_related('messages')
 
         q = self.request.GET.get('q')
@@ -1337,15 +1356,12 @@ class BizMessageListView(BusinessLoginRequiredMixin, ListView):
             from django.db.models import Q
             queryset = queryset.filter(Q(worker__last_name__icontains=q) | Q(worker__first_name__icontains=q))
         
-        # 最新メッセージ順などでソートしたい場合はここで処理
-        # 単純に更新順(updated_at)でソート
         queryset = queryset.order_by('-updated_at')
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        context['store'] = Store.objects.filter(business=biz_profile).first()
+        context['store'] = self.store
         return context
 
 class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):

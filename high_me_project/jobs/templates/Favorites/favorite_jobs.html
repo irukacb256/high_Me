@@ -156,35 +156,7 @@
         font-size: 18px;
         cursor: pointer;
     }
-
-    /* 店舗カード */
-    .store-card {
-        background: white;
-        margin: 10px;
-        border-radius: 12px;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        position: relative;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-    }
-
-    .store-logo {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        background: #eee;
-    }
-
-    .store-name {
-        font-weight: bold;
-        font-size: 14px;
-        margin-right: 30px;
-    }
-
+    
     .empty-state {
         text-align: center;
         padding: 40px 20px;
@@ -196,11 +168,10 @@
 <div class="page-header">お気に入り</div>
 
 <div class="header-tab">
-    <a href="?tab=jobs" class="tab-item {% if tab == 'jobs' %}active{% endif %}">募集</a>
-    <a href="?tab=stores" class="tab-item {% if tab == 'stores' %}active{% endif %}">店舗</a>
+    <a href="{% url 'favorites' %}" class="tab-item active">募集</a>
+    <a href="{% url 'favorite_stores' %}" class="tab-item">店舗</a>
 </div>
 
-{% if tab == 'jobs' %}
 <div class="filter-bar">
     <span>募集中のお仕事のみを表示</span>
     <label class="switch">
@@ -238,50 +209,11 @@
     {% endfor %}
 </div>
 
-{% else %}
-<!-- 店舗リスト -->
-<div id="stores-container" style="padding-top: 10px;">
-    {% for fav in favorite_stores %}
-    <div class="store-card" onclick="location.href='{% url 'store_profile' fav.store.id %}'">
-        {% if fav.store.image %}
-        <img src="{{ fav.store.image.url }}" class="store-logo">
-        {% else %}
-        <div class="store-logo" style="display:flex; align-items:center; justify-content:center;"><i
-                class="fa-solid fa-store" style="color:#aaa;"></i></div>
-        {% endif %}
-        <div style="flex:1;">
-            <div class="store-name">{{ fav.store.store_name }}</div>
-            <!-- 店舗の最新求人情報などを出してもよい -->
-        </div>
-        <i class="fa-solid fa-heart heart-icon"
-            onclick="event.stopPropagation(); removeStoreFav({{ fav.store.id }}, this.closest('.store-card'))"></i>
-    </div>
-    {% empty %}
-    <div class="empty-state">お気に入りに登録した店舗はありません</div>
-    {% endfor %}
-</div>
-{% endif %}
-
 <script>
     function removeJobFav(jobId, element) {
         if (!confirm('お気に入りから削除しますか？')) return;
 
         fetch(`/favorites/toggle/job/${jobId}/`, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success' && !data.is_favorited) {
-                    element.remove();
-                }
-            });
-    }
-
-    function removeStoreFav(storeId, element) {
-        if (!confirm('お気に入りから削除しますか？')) return;
-
-        fetch(`/favorites/toggle/store/${storeId}/`, {
             method: 'POST',
             headers: { 'X-CSRFToken': '{{ csrf_token }}' }
         })

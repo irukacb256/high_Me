@@ -354,8 +354,9 @@ class JobApplication(models.Model):
         # 休憩時間（分）: 実績があればそれを使用、なければ求人のデフォルト
         break_minutes = self.actual_break_duration if self.actual_break_duration > 0 else self.job_posting.break_duration
         
-        # 実労働時間（分単位で計算）
-        work_minutes = max(0, (duration_seconds / 60) - break_minutes)
+        # 実労働時間（分単位で計算・秒切り捨て）
+        total_minutes = int(duration_seconds // 60)
+        work_minutes = max(0, total_minutes - break_minutes)
         
         # 報酬 = (労働分 / 60 * 時給) + 交通費 (1円未満切り捨て)
         reward_amount = int((work_minutes / 60) * self.job_posting.hourly_wage) + self.job_posting.transportation_fee

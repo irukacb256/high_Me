@@ -1,7 +1,8 @@
 {% extends 'Work/review_base.html' %}
 {% load static %}
 
-{% block extra_css %}
+{% block extra_head %}
+{{ block.super }}
 <style>
     .review-step-container {
         padding: 20px 15px 80px;
@@ -208,12 +209,13 @@
                 {% endfor %}
             </div>
         </div>
+        <!-- Hidden submit button for footer trigger -->
+        <button type="submit" id="hidden-submit-btn" style="display: none;"></button>
     </form>
 </div>
 
 {% endblock %}
 
 {% block review_footer %}
-<!-- form属性で外部からsubmit -->
-<button type="submit" form="review-form" class="submit-btn">次へ</button>
+<button type="button" class="submit-btn" onclick="document.getElementById('hidden-submit-btn').click();">次へ</button>
 {% endblock %}

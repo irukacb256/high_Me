@@ -1,0 +1,140 @@
+{% extends 'base_main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .work-container {
+        background-color: #F8F8F8;
+        min-height: 100vh;
+        padding-bottom: 80px;
+    }
+
+    .work-header {
+        background: white;
+        padding: 15px 0;
+        text-align: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #000;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .work-tabs {
+        display: flex;
+        background: white;
+        padding: 0 15px;
+        border-bottom: 1px solid #f2f2f2;
+    }
+
+    .work-tab {
+        flex: 1;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 15px;
+        color: #8E8E93;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .work-tab.active {
+        color: #000;
+        font-weight: bold;
+    }
+
+    .work-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: #FFD700;
+    }
+
+    .schedule-group {
+        margin-bottom: 30px;
+    }
+
+    .schedule-date-header {
+        padding: 25px 20px 15px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .schedule-card {
+        background: white;
+        border-radius: 15px;
+        margin: 0 15px 20px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .schedule-body {
+        padding: 20px;
+    }
+
+    .schedule-title {
+        font-weight: bold;
+        font-size: 17px;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        color: #222;
+    }
+
+    .schedule-time {
+        color: #666;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 100px 20px;
+        color: #8E8E93;
+    }
+
+    .empty-state i {
+        font-size: 50px;
+        margin-bottom: 15px;
+        opacity: 0.3;
+    }
+</style>
+
+<div class="work-container">
+    <div class="work-header">はたらく</div>
+
+    <div class="work-tabs">
+        <a href="{% url 'work_schedule' %}" class="work-tab">今後の予定</a>
+        <a href="{% url 'work_completed' %}" class="work-tab active">完了した仕事</a>
+    </div>
+
+    {% if completed_grouped %}
+    {% for date, weekday, apps in completed_grouped %}
+    <div class="schedule-group">
+        <div class="schedule-date-header">{{ date|date:"n月j日" }} ({{ weekday }})</div>
+        {% for app in apps %}
+        <a href="{% url 'job_working_detail' app.job_posting.pk %}" class="schedule-card">
+            <div class="schedule-body">
+                <div class="schedule-title">{{ app.job_posting.title }}</div>
+                <div class="schedule-time">{{ app.job_posting.work_date|date:"Y年n月j日" }} {{
+                    app.job_posting.start_time|date:"H:i" }}〜{{ app.job_posting.end_time|date:"H:i" }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-check-double"></i>
+        <p>完了した仕事はありません</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
