@@ -1357,7 +1357,7 @@ class JobCancelStep4InputView(LoginRequiredMixin, TemplateView):
             if k in request.session:
                 del request.session[k]
 
-        return redirect('mypage') # 完了後はマイページへ
+        return redirect('work_schedule') # 完了後ははたらく画面へ
 
 
 from business.models import AttendanceCorrection
