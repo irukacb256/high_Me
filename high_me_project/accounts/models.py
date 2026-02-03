@@ -58,6 +58,25 @@ class WorkerProfile(models.Model):
     penalty_points = models.IntegerField("ペナルティポイント", default=0)
     cancellations = models.IntegerField("キャンセル数", default=0)
     lastminute_cancel = models.IntegerField("直前キャンセル数", default=0)
+    suspension_end_date = models.DateTimeField("利用停止終了日時", null=True, blank=True)
+
+    @property
+    def is_suspended(self):
+        from django.utils import timezone
+        is_points_over = self.penalty_points >= 8
+        is_date_over = self.suspension_end_date and self.suspension_end_date > timezone.now()
+        return is_points_over or is_date_over
+
+class PenaltyHistory(models.Model):
+    """ペナルティ付与履歴"""
+    worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='penalty_histories')
+    points = models.IntegerField("ポイント") # 今回付与されたポイント
+    total_points = models.IntegerField("合計ポイント") # その時点での合計
+    reason = models.CharField("理由", max_length=200) # キャンセルなど
+    occurred_at = models.DateTimeField("発生日時", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.worker.user.username} +{self.points}pt ({self.reason})"
 
     def __str__(self):
         return f"{self.user.username} のプロフィール"

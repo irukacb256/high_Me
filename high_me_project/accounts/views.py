@@ -36,7 +36,7 @@ class CustomLoginView(LoginView):
         return response
 
     def get_success_url(self):
-        return reverse_lazy('verify_dob')
+        return reverse_lazy('index')
 
 
 # --- オンボーディングの流れ ---
@@ -655,11 +655,22 @@ def login_view(request):
             return redirect('verify_dob')
         else:
             # 電話番号もしくはパスワードが正しくない場合
-            return render(request, 'Auth/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
+                return render(request, 'Auth/login.html', {'error': '電話番号もしくはパスワードが正しくありません'})
 
     return render(request, 'Auth/login.html')
 
 # accounts/views.py 内に追加
+class ReviewPenaltyView(LoginRequiredMixin, TemplateView):
+    template_name = 'MyPage/Review/penalty_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # ログインユーザーのワーカープロフィールを取得
+        if hasattr(self.request.user, 'workerprofile'):
+            context['profile'] = self.request.user.workerprofile
+            # 履歴も取得
+            context['penalty_histories'] = self.request.user.workerprofile.penalty_histories.all().order_by('-occurred_at')
+        return context
 class MypageView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/index.html'
 

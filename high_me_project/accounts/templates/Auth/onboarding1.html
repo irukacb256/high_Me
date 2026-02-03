@@ -16,25 +16,60 @@
         color: #333;
         position: relative;
     }
-    .ob-image { font-size: 100px; margin-bottom: 40px; }
-    .ob-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
-    .ob-text { font-size: 14px; color: #555; line-height: 1.6; }
-    
+
+    .ob-image {
+        font-size: 100px;
+        margin-bottom: 40px;
+    }
+
+    .ob-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .ob-text {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+    }
+
     /* 下部の進行ドット */
-    .dots { position: absolute; bottom: 60px; display: flex; gap: 8px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.1); }
-    .dot.active { background: rgba(0,0,0,0.4); }
+    .dots {
+        position: absolute;
+        bottom: 60px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .dot.active {
+        background: rgba(0, 0, 0, 0.4);
+    }
 </style>
 
-<a href="{% url 'onboarding2' %}" class="ob-wrapper">
+<div class="ob-wrapper" onclick="location.href='{% url 'onboarding2' %}'" style="cursor: pointer;">
+    <a href="{% url 'biz_login' %}"
+        style="position: absolute; top: 40px; right: 20px; font-size: 14px; font-weight: bold; color: #333; text-decoration: none; z-index: 100; border: 1px solid #333; padding: 8px 12px; border-radius: 20px; background: rgba(255,255,255,0.5);"
+        onclick="event.stopPropagation()">
+        事業者ログイン
+    </a>
+
     <div class="ob-image">📍</div>
     <div class="ob-title">すぐ働けて、<br>すぐお金がもらえる</div>
     <div class="ob-text">タイミーなら時間や場所、業種までさまざま。自分に合う仕事を選べます。</div>
-    
+
     <div class="dots">
         <div class="dot active"></div>
         <div class="dot"></div>
         <div class="dot"></div>
     </div>
-</a>
+</div>
 {% endblock %}

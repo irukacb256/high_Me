@@ -113,7 +113,7 @@ urlpatterns = [
     
     # レビュー・ペナルティ
     path('rewards/reviews/', account_views.review_penalty, name='review_penalty'),
-    path('rewards/penalty-detail/', account_views.penalty_detail, name='penalty_detail'),
+    path('rewards/penalty-detail/', account_views.ReviewPenaltyView.as_view(), name='penalty_detail'),
     path('taxes/annual/', account_views.AnnualTaxView.as_view(), name='annual_tax_list'), # ★追加
     path('taxes/slips/', account_views.TaxSlipView.as_view(), name='tax_slip_list'),   # ★追加
     path('rewards/earned/', account_views.EarnedRewardsView.as_view(), name='earned_rewards_list'), # ★追加

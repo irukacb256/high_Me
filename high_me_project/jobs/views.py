@@ -648,6 +648,10 @@ class WorkScheduleUpcomingView(WorkScheduleBaseView):
         upcoming = []
         for app in applications:
             job_end = timezone.make_aware(datetime.combine(app.job_posting.work_date, app.job_posting.end_time))
+            # キャンセルや辞退は表示しない
+            if app.status in ['辞退', 'キャンセル']:
+                continue
+            
             if not (app.status == '完了' or job_end < now or app.leaving_at):
                 upcoming.append(app)
 
@@ -714,6 +718,10 @@ class ApplyStep1BelongingsView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         job = get_object_or_404(JobPosting, pk=self.kwargs['pk'])
         profile = request.user.workerprofile
+
+        # ペナルティ（利用停止中）の場合
+        if profile.is_suspended:
+            return render(request, 'Searchjobs/detail.html', {'job': job})
 
         # 本人確認をしていない場合
         if not profile.is_identity_verified:
@@ -1312,6 +1320,36 @@ class JobCancelStep4InputView(LoginRequiredMixin, TemplateView):
         # モデルにフィールドがあれば保存
         # application.cancel_message = ...
         application.save()
+        
+        # ペナルティ付与 (8ポイント + 2週間停止)
+        worker_profile = application.worker.workerprofile
+        penalty_points = 8
+        worker_profile.penalty_points += penalty_points
+        from datetime import timedelta
+        worker_profile.suspension_end_date = timezone.now() + timedelta(weeks=2)
+        worker_profile.save()
+
+        # 履歴保存
+        from accounts.models import PenaltyHistory
+        PenaltyHistory.objects.create(
+            worker=worker_profile,
+            points=penalty_points,
+            total_points=worker_profile.penalty_points,
+            reason="仕事をキャンセルしたため"
+        )
+
+        # 8ポイント以上の場合、他の確定済み求人をすべてキャンセル
+        if worker_profile.penalty_points >= 8:
+            other_apps = JobApplication.objects.filter(
+                worker=application.worker,
+                status='確定済み'
+            ).exclude(pk=application.id)
+            
+            for app in other_apps:
+                app.status = 'キャンセル' # または '辞退'
+                app.cancel_reason = 'ペナルティによる自動キャンセル'
+                app.save()
+                # これらについてはペナルティを加算しない（多重ペナルティ防止）
         
         # セッションクリア
         keys = [f'cancel_reason_{application_id}', f'cancel_message_{application_id}']

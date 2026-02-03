@@ -1,4 +1,4 @@
-{% extends 'base_main.html' %}
+{% extends 'base_auth.html' %}
 
 {% block content %}
 <style>
@@ -6,6 +6,9 @@
         padding: 20px;
         background: white;
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 100px;
     }
 
     .header-bar {
@@ -17,40 +20,52 @@
     .title-large {
         font-size: 24px;
         font-weight: bold;
-        margin-bottom: 40px;
-    }
-
-    .confirm-section {
         margin-bottom: 30px;
+        line-height: 1.4;
     }
 
-    .confirm-label {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #333;
+    .info-card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
     }
 
-    .confirm-value {
+    .info-label {
+        font-size: 13px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .info-value {
         font-size: 16px;
-        line-height: 1.6;
-        color: #666;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .info-value:last-child {
+        margin-bottom: 0;
     }
 
     .fixed-footer {
         position: fixed;
         bottom: 0;
-        left: 0;
+        left: 50%;
+        transform: translateX(-50%);
         width: 100%;
+        max-width: 430px;
         background: white;
-        padding: 20px;
+        padding: 15px 20px;
         border-top: 1px solid #eee;
+        box-sizing: border-box;
+        z-index: 1000;
     }
 
-    .btn-submit {
+    .btn-cancel {
         display: block;
         width: 100%;
-        background: #007AFF;
+        background: #FF3B30;
         color: white;
         text-align: center;
         padding: 15px;
@@ -61,6 +76,13 @@
         border: none;
         cursor: pointer;
     }
+
+    .alert-text {
+        color: #FF3B30;
+        font-size: 13px;
+        margin-top: 20px;
+        line-height: 1.5;
+    }
 </style>
 
 <div class="cancel-container">
@@ -69,22 +91,35 @@
                 class="fa-solid fa-chevron-left"></i></a>
     </div>
 
-    <div class="title-large">キャンセル理由</div>
+    <div class="title-large">内容確認</div>
 
-    <div class="confirm-section">
-        <div class="confirm-label">{{ reason }}</div>
-        <div class="confirm-value">
-            {{ reason_detail|linebreaksbr }}
+    <div class="info-card">
+        <div class="info-label">求人タイトル</div>
+        <div class="info-value">{{ application.job_posting.title }}</div>
+
+        <div class="info-label">勤務日時</div>
+        <div class="info-value">
+            {{ application.job_posting.work_date|date:"Y年n月j日" }}
+            {{ application.job_posting.start_time|time:"H:i" }}〜{{ application.job_posting.end_time|time:"H:i" }}
         </div>
+
+        <div class="info-label">キャンセル理由</div>
+        <div class="info-value">{{ reason }}</div>
+
+        <div class="info-label">詳細理由</div>
+        <div class="info-value" style="font-weight:normal; white-space: pre-wrap;">{{ reason_detail }}</div>
+    </div>
+
+    <div class="alert-text">
+        ※キャンセルポリシーに基づきペナルティポイントが付与されます。<br>
+        ※一度キャンセルすると、この求人には再度応募できません。
     </div>
 
     <form method="post">
         {% csrf_token %}
-        <!-- データ再送信 -->
         <input type="hidden" name="reason" value="{{ reason }}">
-
         <div class="fixed-footer">
-            <button type="submit" class="btn-submit">次へ</button>
+            <button type="submit" class="btn-cancel">キャンセルを確定する</button>
         </div>
     </form>
 </div>

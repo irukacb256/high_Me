@@ -170,34 +170,19 @@
         <div class="history-title">ペナルティポイントの推移</div>
 
         <div class="history-list">
-            <!-- ダミーデータまたは将来的なペナルティ履歴モデルからの表示 -->
-            <!-- 今回は画像に合わせて静的にいくつか表示するか、ループ構造だけ作っておく -->
-
-            <!-- ここでは仮に履歴がない場合でも画像の雰囲気を出すためダミーを表示します -->
+            {% for history in penalty_histories %}
             <div class="history-item">
-                <div class="pt-badge pt-badge-0">0</div>
+                <div class="pt-badge pt-badge-3">+{{ history.points }}</div>
                 <div class="history-content">
-                    <div class="history-date">2023/03/18 (株)タイミーにて業務完了のため</div>
+                    <div class="history-date">{{ history.occurred_at|date:"Y/m/d" }} {{ history.reason }}</div>
                 </div>
-                <div class="history-points">-1</div>
+                <div class="history-points">計 {{ history.total_points }}pt</div>
             </div>
-
-            <div class="history-item">
-                <div class="pt-badge pt-badge-1" style="background: #FFECB3; color: white;">1</div>
-                <!-- 色は適当 -->
-                <div class="history-content">
-                    <div class="history-date">2023/02/20 (株)タイミーにて業務完了のため</div>
-                </div>
-                <div class="history-points">-1</div>
-            </div>
-
-            <!-- 実際は penalty_history などのモデルが必要そうですが、要件に含まれていないため、
-                 「詳細は後で実装します」とあるペナルティポイントの詳細部分については
-                 この画面枠と、現在のポイント表示のみを正とし、履歴はダミーまたは空にしておきます。
-            -->
+            {% empty %}
             <div style="text-align:center; padding: 20px; color:#888; font-size:12px;">
-                ※履歴データはまだありません（ダミー表示中）
+                まだ履歴はありません
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>

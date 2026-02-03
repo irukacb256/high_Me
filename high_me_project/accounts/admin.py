@@ -3,7 +3,7 @@ from .models import (
     Badge, WorkerProfile, WorkerBadge, WorkerBankAccount,
     WalletTransaction, Review, QualificationCategory,
     QualificationItem, WorkerQualification, WorkerMembership,
-    ExpHistory
+    ExpHistory, PenaltyHistory
 )
 
 @admin.register(Badge)
@@ -55,3 +55,7 @@ class WorkerMembershipAdmin(admin.ModelAdmin):
 @admin.register(ExpHistory)
 class ExpHistoryAdmin(admin.ModelAdmin):
     list_display = ('worker', 'amount', 'reason', 'created_at')
+
+@admin.register(PenaltyHistory)
+class PenaltyHistoryAdmin(admin.ModelAdmin):
+    list_display = ('worker', 'points', 'reason', 'occurred_at')

@@ -730,12 +730,14 @@
     <!-- 申し込みボタン -->
     {% if not user.is_authenticated %}
     <a href="{% url 'gate' %}" class="btn-apply">ログインして申し込む</a>
-    {% elif not user.workerprofile.is_identity_verified %}
-    <a href="{% url 'verify_identity_select' %}" class="btn-apply btn-verify">本人確認にすすむ</a>
     {% elif is_applied %}
     <div class="btn-apply btn-closed">申し込み済み</div>
     {% elif is_closed %}
     <div class="btn-apply btn-closed">募集を終了しました</div>
+    {% elif user.workerprofile.is_suspended %}
+    <div class="btn-apply" onclick="openSuspendedPopup()" style="cursor: pointer;">申し込みにすすむ</div>
+    {% elif not user.workerprofile.is_identity_verified %}
+    <a href="{% url 'verify_identity_select' %}" class="btn-apply btn-verify">本人確認にすすむ</a>
     {% else %}
     <a href="{% url 'apply_step_1' job.pk %}" class="btn-apply">申し込みにすすむ</a>
     {% endif %}
@@ -892,14 +894,39 @@
                         icon.classList.add('fa-solid');
                         icon.style.color = '#E0245E'; // ハートの色を赤くする
                     } else {
-                        btnElement.classList.remove('active');
-                        icon.classList.remove('fa-solid');
-                        icon.classList.add('fa-regular');
-                        icon.style.color = '#C7C7CC'; // 元の色に戻す
+                        icon.style.color = ''; // 色を戻す
                     }
                 }
             });
     }
+
+    function openSuspendedPopup() {
+        document.getElementById('suspended-popup-overlay').style.display = 'flex';
+    }
+
+    function closeSuspendedPopup() {
+        document.getElementById('suspended-popup-overlay').style.display = 'none';
+    }
 </script>
+
+<!-- Suspended Popup -->
+<div class="mute-popup-overlay" id="suspended-popup-overlay">
+    <div class="mute-popup">
+        <div class="mute-popup-content">
+            <div class="mute-popup-title" style="color: #FF3B30;"><i class="fa-solid fa-triangle-exclamation"></i> 利用停止中
+            </div>
+            <div class="mute-popup-text">
+                ペナルティにより現在利用停止中です。<br>
+                <br>
+                <strong>{{ user.workerprofile.suspension_end_date|date:'Y年n月j日' }}</strong> まで<br>
+                求人への応募はできません。
+            </div>
+        </div>
+        <div class="mute-popup-buttons">
+            <div class="mute-popup-btn mute-confirm" onclick="closeSuspendedPopup()" style="width:100%; color:#333;">閉じる
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

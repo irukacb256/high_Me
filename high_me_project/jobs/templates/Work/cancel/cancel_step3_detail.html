@@ -1,4 +1,4 @@
-{% extends 'base_main.html' %}
+{% extends 'base_auth.html' %}
 
 {% block content %}
 <style>
@@ -8,12 +8,22 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        padding-bottom: 100px;
+        /* footer alignment */
     }
 
     .header-bar {
         display: flex;
         align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .title-large {
+        font-size: 24px;
+        font-weight: bold;
         margin-bottom: 30px;
+        line-height: 1.4;
+        color: #000;
     }
 
     .message-box {
@@ -25,12 +35,13 @@
 
     textarea {
         width: 100%;
-        height: 200px;
+        height: 300px;
         border: none;
         resize: none;
         font-size: 16px;
         outline: none;
         color: #333;
+        font-family: inherit;
     }
 
     textarea::placeholder {
@@ -38,8 +49,17 @@
     }
 
     .fixed-footer {
-        padding: 20px;
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 430px;
         background: white;
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+        box-sizing: border-box;
+        z-index: 1000;
     }
 
     .btn-next {
@@ -64,17 +84,18 @@
                 class="fa-solid fa-chevron-left"></i></a>
     </div>
 
+    <div class="title-large">理由入力</div>
+
     <form method="post" style="flex:1; display:flex; flex-direction:column;">
         {% csrf_token %}
         <div class="message-box">
-            <!-- デフォルト文言を表示するか、プレースホルダーにするか。画像4は文言が表示されている -->
-            <textarea name="reason_detail" placeholder="詳細な理由を入力してください">応募条件の確認をきちんと行わないまま応募をしていたため、キャンセルをいたしました。
+            <textarea name="reason_detail" placeholder="詳細な理由を入力してください" autofocus>応募条件の確認をきちんと行わないまま応募をしていたため、キャンセルをいたしました。
 ご迷惑をお掛けして申し訳ございません。
 また機会がございましたら、よろしくお願い申し上げます。</textarea>
         </div>
 
         <div class="fixed-footer">
-            <button type="submit" class="btn-next">次へ</button>
+            <button type="submit" class="btn-next">送信</button>
         </div>
     </form>
 </div>
