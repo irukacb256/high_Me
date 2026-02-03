@@ -185,6 +185,8 @@ urlpatterns = [
     path('biz/password-reset/confirm/', biz_views.BizPasswordResetView.as_view(), name='biz_password_reset_confirm'),
     # --- 企業用マイページ ---
     path('biz/portal/', biz_views.BizPortalView.as_view(), name='biz_portal'),
+    path('biz/account-info/', biz_views.BizAccountInfoView.as_view(), name='biz_account_info'),
+    path('biz/account-info/basic/edit/', biz_views.BizBasicInfoEditView.as_view(), name='biz_basic_info_edit'),
 
     # 事業者ダッシュボード
     path('biz/store/<int:store_id>/home/', biz_views.DashboardView.as_view(), name='biz_dashboard'),
@@ -227,6 +229,10 @@ urlpatterns = [
     
     # チェックイン/アウト管理 (店舗QR表示)
     path('biz/checkin-management/', biz_views.BizCheckinManagementView.as_view(), name='biz_checkin_management'), 
+
+    # お問い合わせ
+    path('biz/support/inquiry/', biz_views.BizInquiryView.as_view(), name='biz_inquiry'),
+    path('biz/support/inquiry/complete/', biz_views.BizInquiryCompleteView.as_view(), name='biz_inquiry_complete'), 
 
     # 勤怠修正依頼 (店舗承認フロー)
     path('biz/store/<int:store_id>/corrections/', biz_views.AttendanceCorrectionListView.as_view(), name='biz_attendance_correction_list'),

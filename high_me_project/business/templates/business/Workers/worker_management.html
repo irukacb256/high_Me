@@ -158,7 +158,7 @@
     .list-header {
         display: flex;
         justify-content: flex-end;
-        gap: 40px;
+        gap: 20px;
         padding: 10px 20px;
         background: #fafafa;
         color: #888;
@@ -167,7 +167,7 @@
     }
 
     .header-item {
-        width: 80px;
+        width: 110px;
         text-align: right;
     }
 
@@ -222,12 +222,12 @@
 
     .worker-stats {
         display: flex;
-        gap: 40px;
+        gap: 20px;
         padding-top: 10px;
     }
 
     .stat-item {
-        width: 80px;
+        width: 110px;
         text-align: right;
         font-size: 14px;
         color: #333;
@@ -413,7 +413,7 @@
                     <div class="stat-item">{{ worker.stats_good_rate }}%</div>
                     <div class="stat-item">
                         {% if worker.stats_last_worked %}
-                        {{ worker.stats_last_worked|date:"Y年n月日" }}
+                        {{ worker.stats_last_worked|date:"Y年n月j日" }}
                         {% else %}
                         -
                         {% endif %}

@@ -109,3 +109,10 @@ class VerifyDocsForm(forms.Form):
         ]
     )
     document = forms.FileField(label="書類アップロード")
+
+class BizBasicInfoForm(forms.Form):
+    last_name = forms.CharField(label="姓", max_length=150)
+    first_name = forms.CharField(label="名", max_length=150)
+    phone_number = forms.CharField(label="電話番号", max_length=20, required=False)
+    email = forms.EmailField(label="メールアドレス")
+    password = forms.CharField(label="パスワード", widget=forms.PasswordInput, required=False, help_text="変更する場合のみ入力してください")

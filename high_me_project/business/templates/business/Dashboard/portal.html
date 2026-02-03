@@ -133,12 +133,17 @@
         <div class="sidebar-brand">Timee</div>
         <div class="sidebar-label">マイページ</div>
         <a href="{% url 'biz_content' %}" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
-        <a href="{% url 'biz_portal' %}" class="nav-item active"><i class="fa-solid fa-house"></i> 企業 / 店舗一覧</a>
-        <a href="#" class="nav-item"><i class="fa-regular fa-user"></i> アカウント情報</a>
+        <a href="{% url 'biz_portal' %}"
+            class="nav-item {% if request.resolver_match.url_name == 'biz_portal' %}active{% endif %}"><i
+                class="fa-solid fa-house"></i> 企業 / 店舗一覧</a>
+        <a href="{% url 'biz_account_info' %}"
+            class="nav-item {% if 'account-info' in request.path %}active{% endif %}"><i class="fa-regular fa-user"></i>
+            アカウント情報</a>
         <a href="{% url 'biz_mail_settings' %}" class="nav-item"><i class="fa-regular fa-envelope"></i> メール受信設定</a>
     </div>
 
     <div class="main-content">
+        {% block main_content %}
         <div class="page-header">
             <h1 class="page-title">企業 / 店舗一覧</h1>
             <p class="page-desc">企業管理画面や店舗管理画面にアクセスすることができます。</p>
@@ -200,6 +205,7 @@
                 </tbody>
             </table>
         </div>
+        {% endblock %}
     </div>
 
 </body>

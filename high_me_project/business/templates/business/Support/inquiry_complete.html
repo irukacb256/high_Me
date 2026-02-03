@@ -1,0 +1,24 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<div
+    style="max-width: 600px; margin: 40px auto; background: #fff; padding: 60px 40px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center;">
+    <div style="font-size: 48px; color: #4CAF50; margin-bottom: 20px;">
+        <i class="fa-solid fa-check-circle"></i>
+    </div>
+
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">お問い合わせを送信しました</h2>
+
+    <p style="margin-bottom: 30px; color: #666; line-height: 1.6;">
+        お問い合わせありがとうございます。<br>
+        内容を確認の上、担当者よりご連絡させていただきます。<br>
+        しばらくお待ちください。
+    </p>
+
+    <a href="{% url 'biz_dashboard' store.id %}"
+        style="display: inline-block; background: #007AFF; color: white; text-decoration: none; padding: 12px 40px; border-radius: 30px; font-weight: bold;">
+        ホームへ戻る
+    </a>
+</div>
+{% endblock %}

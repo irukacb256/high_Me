@@ -23,7 +23,7 @@ from .mixins import BusinessLoginRequiredMixin
 from .forms import (
     SignupForm, AccountRegisterForm, BusinessRegisterForm, StoreSetupForm,
     JobTemplateForm, JobCreateFromTemplateForm, JobPostingVisibilityForm,
-    VerifyDocsForm
+    VerifyDocsForm, BizBasicInfoForm
 )
 
 # --- Helper Logic ---
@@ -904,8 +904,8 @@ class BizWorkerManagementView(BusinessLoginRequiredMixin, ListView):
         # 合集合作成
         all_worker_ids = set(list(past_worker_ids) + list(group_worker_ids))
         
-        # Userクエリセット作成
-        queryset = User.objects.filter(id__in=all_worker_ids).select_related('workerprofile')
+        # Userクエリセット作成 (企業アカウントを除外)
+        queryset = User.objects.filter(id__in=all_worker_ids, businessprofile__isnull=True).select_related('workerprofile')
 
         # Sorting
         sort_order = self.request.GET.get('sort', 'newest') # Default to newest
@@ -1325,6 +1325,72 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
             from django.http import JsonResponse
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
+class BizInquiryCompleteView(BusinessLoginRequiredMixin, TemplateView):
+    template_name = 'business/Support/inquiry_complete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # どの画面からも store_id が取れるわけではないので、
+        # いったんログインユーザーの最初の店舗をコンテキストに入れる
+        biz_profile = BusinessProfile.objects.filter(user=self.request.user).first()
+        if biz_profile:
+            context['store'] = Store.objects.filter(business=biz_profile).first()
+        return context
+
+class BizAccountInfoView(BusinessLoginRequiredMixin, TemplateView):
+    template_name = 'business/Account/info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        context['biz_profile'] = biz_profile
+        return context
+
+class BizBasicInfoEditView(BusinessLoginRequiredMixin, FormView):
+    template_name = 'business/Account/basic_info_edit.html'
+    form_class = BizBasicInfoForm
+    success_url = reverse_lazy('biz_account_info')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        user = self.request.user
+        biz_profile = get_object_or_404(BusinessProfile, user=user)
+        initial['last_name'] = user.last_name
+        initial['first_name'] = user.first_name
+        initial['phone_number'] = biz_profile.phone_number
+        initial['email'] = user.email
+        return initial
+
+    def form_valid(self, form):
+        user = self.request.user
+        biz_profile = get_object_or_404(BusinessProfile, user=user)
+        
+        # User情報の更新
+        user.last_name = form.cleaned_data['last_name']
+        user.first_name = form.cleaned_data['first_name']
+        
+        email = form.cleaned_data['email']
+        user.email = email
+        user.username = email # usernameも合わせる
+        
+        password = form.cleaned_data.get('password')
+        if password:
+            user.set_password(password)
+        
+        user.save()
+        
+        # パスワード変更後にセッションが切れないようにする
+        if password:
+            from django.contrib.auth import update_session_auth_hash
+            update_session_auth_hash(self.request, user)
+        
+        # BusinessProfile情報の更新
+        biz_profile.phone_number = form.cleaned_data['phone_number']
+        biz_profile.save()
+        
+        messages.success(self.request, "アカウント情報の更新を行いました。")
+        return super().form_valid(form)
+
 class BizReviewCompleteView(BusinessLoginRequiredMixin, TemplateView):
     template_name = 'business/Workers/review_complete.html'
 
@@ -1704,3 +1770,26 @@ class DebugSetupReviewView(View):
             </p>
             </body></html>
         """)
+
+class BizInquiryView(BusinessLoginRequiredMixin, TemplateView):
+    """事業者用お問い合わせフォーム"""
+    template_name = 'business/Support/inquiry_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = get_biz_context(self.request.user)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # ここでメール送信処理などを行う（今回はモックなので何もしない）
+        # ユーザーに自動返信テンプレートを表示するために完了画面へ
+        return redirect('biz_inquiry_complete')
+
+class BizInquiryCompleteView(BusinessLoginRequiredMixin, TemplateView):
+    """事業者用お問い合わせ完了（自動返信表示）"""
+    template_name = 'business/Support/inquiry_complete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = get_biz_context(self.request.user)
+        return context

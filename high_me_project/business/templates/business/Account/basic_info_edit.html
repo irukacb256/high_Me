@@ -1,0 +1,220 @@
+{% extends "business/Dashboard/portal.html" %}
+{% load static %}
+
+{% block main_content %}
+<style>
+    .edit-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+        color: #007AFF;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        color: #666;
+        margin: 0 5px;
+    }
+
+    .edit-card {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .edit-section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .label-badge {
+        background: #ff4d4f;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .success-alert {
+        background: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #2e7d32;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .success-alert i {
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+    .alert-close {
+        color: #666;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-toggle-icon {
+        position: absolute;
+        right: 15px;
+        color: #999;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .password-toggle-icon:hover {
+        color: #333;
+    }
+</style>
+
+<div class="edit-container">
+    <div class="breadcrumb">
+        <a href="{% url 'biz_account_info' %}">アカウント情報</a>
+        <span>&gt;</span>
+        <span>基本情報・ログイン情報の変更</span>
+    </div>
+
+    <div class="page-header">
+        <h1 class="page-title">アカウント情報の変更</h1>
+        <p class="page-desc">アカウントの基本情報とログイン情報の変更が行えます。</p>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="success-alert">
+        <div>
+            <i class="fa-solid fa-circle-check"></i>
+            {{ message }}
+        </div>
+        <span class="alert-close" onclick="this.parentElement.style.display='none'">&times;</span>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <div class="edit-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <h2 class="edit-section-title">基本情報</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="id_last_name">姓<span class="label-badge">必須</span></label>
+                <input type="text" name="last_name" id="id_last_name" class="form-input"
+                    value="{{ form.last_name.value|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_first_name">名<span class="label-badge">必須</span></label>
+                <input type="text" name="first_name" id="id_first_name" class="form-input"
+                    value="{{ form.first_name.value|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_phone_number">電話番号</label>
+                <input type="text" name="phone_number" id="id_phone_number" class="form-input"
+                    value="{{ form.phone_number.value|default:'' }}">
+            </div>
+
+            <h2 class="edit-section-title" style="margin-top: 40px;">ログイン情報</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="id_email">メールアドレス<span class="label-badge">必須</span></label>
+                <input type="email" name="email" id="id_email" class="form-input"
+                    value="{{ form.email.value|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_password">新しいパスワード</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="id_password" class="form-input" placeholder="********">
+                    <i class="fa-solid fa-eye-slash password-toggle-icon" id="togglePassword"></i>
+                </div>
+                <p class="help-text">パスワードを変更する場合のみ入力してください。</p>
+            </div>
+
+            <button type="submit" class="btn-submit">アカウント情報を変更する</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#id_password');
+
+    togglePassword.addEventListener('click', function (e) {
+        // type属性の切り替え
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+
+        // アイコンの切り替え
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+{% endblock %}

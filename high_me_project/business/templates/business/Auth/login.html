@@ -179,8 +179,8 @@
         <a href="{% url 'biz_password_reset_request' %}" class="forgot-link">パスワードを忘れた際はこちら</a>
     </div>
 
-    <a href="#" class="footer-link">ログインについてのヘルプページはこちら</a>
-    <!-- Note: The footer link URL is a placeholder as no specific URL was provided, using # -->
+    <a href="{% url 'gate' %}" class="footer-link">ワーカーのログインはこちら</a>
+    <!-- Note: Link updated to point to Gate page -->
 
     <script>
         const bizPassInput = document.getElementById('bizPassInput');

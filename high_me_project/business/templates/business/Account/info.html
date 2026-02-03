@@ -1,0 +1,172 @@
+{% extends "business/Dashboard/portal.html" %}
+{% load static %}
+
+{% block main_content %}
+<style>
+    .account-info-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f9f9f9;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .btn-edit {
+        background: #007AFF;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .info-row {
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        width: 200px;
+        padding: 20px;
+        color: #666;
+        font-size: 14px;
+        background: #fafafa;
+    }
+
+    .info-value {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    .btn-edit-small {
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    /* Alert for Image 4 */
+    .success-alert {
+        background: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #2e7d32;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .success-alert i {
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+    .alert-close {
+        color: #666;
+        cursor: pointer;
+        font-size: 18px;
+    }
+</style>
+
+<div class="account-info-container">
+    <div class="page-header">
+        <h1 class="page-title">アカウント情報</h1>
+        <p class="page-desc">アカウントの情報を確認・編集できます。</p>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="success-alert">
+        <div>
+            <i class="fa-solid fa-circle-check"></i>
+            {{ message }}
+        </div>
+        <span class="alert-close" onclick="this.parentElement.style.display='none'">&times;</span>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- 基本情報 -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2 class="section-title">基本情報</h2>
+            <a href="{% url 'biz_basic_info_edit' %}" class="btn-edit">基本情報を編集</a>
+        </div>
+        <table class="info-table">
+            <tr class="info-row">
+                <td class="info-label">名前</td>
+                <td class="info-value">
+                    {% if user.get_full_name %}
+                    {{ user.last_name }} {{ user.first_name }}
+                    {% else %}
+                    未入力
+                    {% endif %}
+                </td>
+            </tr>
+            <tr class="info-row">
+                <td class="info-label">電話番号</td>
+                <td class="info-value">{{ biz_profile.phone_number|default:"未入力" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ログイン情報 -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2 class="section-title">ログイン情報</h2>
+        </div>
+        <table class="info-table">
+            <tr class="info-row">
+                <td class="info-label">メールアドレス</td>
+                <td class="info-value">
+                    {{ user.email }}
+                </td>
+            </tr>
+            <tr class="info-row">
+                <td class="info-label">パスワード</td>
+                <td class="info-value">
+                    ************
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

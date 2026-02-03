@@ -12,6 +12,7 @@ class BusinessProfile(models.Model):
     industry = models.CharField("業種", max_length=50, blank=True, null=True) # 画像1準拠で追加
     is_verified = models.BooleanField("本人確認済み", default=False)
     verification_document = models.FileField("確認書類", upload_to='docs/', null=True, blank=True)
+    phone_number = models.CharField("電話番号", max_length=20, blank=True, null=True)
     
     # 所在地 (画像2を基に追加)
     post_code = models.CharField("郵便番号", max_length=7, blank=True, null=True)

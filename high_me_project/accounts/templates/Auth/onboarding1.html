@@ -64,7 +64,10 @@
 
     <div class="ob-image">📍</div>
     <div class="ob-title">すぐ働けて、<br>すぐお金がもらえる</div>
-    <div class="ob-text">タイミーなら時間や場所、業種までさまざま。自分に合う仕事を選べます。</div>
+    <div class="ob-text">タイミーなら時間や場所、業種までさまざま。<br>自分に合う仕事を選べます。</div>
+
+    <div class="click-hint" style="margin-top: 20px; font-size: 20px; color: #333; font-weight: bold; opacity: 0;">
+        クリックすると進みます</div>
 
     <div class="dots">
         <div class="dot active"></div>
@@ -72,4 +75,21 @@
         <div class="dot"></div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const hint = document.querySelector('.click-hint');
+        if (hint) {
+            hint.animate([
+                { opacity: 0.3 },
+                { opacity: 1, offset: 0.5 },
+                { opacity: 0.3 }
+            ], {
+                duration: 2000,
+                iterations: Infinity,
+                easing: 'ease-in-out'
+            });
+        }
+    });
+</script>
 {% endblock %}

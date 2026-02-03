@@ -1,0 +1,43 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<div
+    style="max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; text-align: center;">お問い合わせ</h2>
+    <p style="margin-bottom: 30px; color: #666; text-align: center;">
+        ご不明な点やご要望がございましたら、下記フォームよりお問い合わせください。<br>
+        内容を確認の上、担当者よりご連絡いたします。
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 8px;">お問い合わせ種別</label>
+            <select name="category"
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;">
+                <option value="service">サービスについて</option>
+                <option value="account">アカウント・契約について</option>
+                <option value="billing">請求・支払いについて</option>
+                <option value="trouble">トラブル・不具合報告</option>
+                <option value="other">その他</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 8px;">詳細内容</label>
+            <textarea name="content" required rows="10"
+                style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;"
+                placeholder="お問い合わせ内容を具体的にお書きください"></textarea>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit"
+                style="background: #007AFF; color: white; border: none; padding: 15px 60px; font-size: 16px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: 0.2s;">
+                送信する
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

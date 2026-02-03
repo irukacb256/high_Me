@@ -124,7 +124,7 @@
                 <a href="{% url 'biz_worker_review_list' store.id job.id %}" class="job-title">{{ job.title }}</a>
             </div>
             <div class="col-time">
-                {{ job.work_date|date:"Y年n月日" }} ({{ job.work_date|date:"D" }})<br>
+                {{ job.work_date|date:"Y年n月j日" }} ({{ job.work_date|date:"D" }})<br>
                 {{ job.start_time|date:"H:i" }} 〜{{ job.end_time|date:"H:i" }}
             </div>
             <div class="col-count">
