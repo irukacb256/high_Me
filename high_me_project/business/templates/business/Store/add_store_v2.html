@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>店舗を追加 | Timee</title>
+    <title>店舗を追加 | High Me</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -202,7 +202,7 @@
 <body>
 
     <div class="sidebar">
-        <div class="sidebar-brand">Timee</div>
+        <div class="sidebar-brand">High Me</div>
         <div class="sidebar-label">マイページ</div>
         <a href="{% url 'biz_content' %}" class="nav-item"><i class="fa-regular fa-bell"></i> お知らせ</a>
         <!-- Ensure biz_portal is available -->
@@ -243,7 +243,7 @@
                     <div class="form-section-title">基本情報</div>
                     <div class="form-group">
                         <label>店舗名 <span style="color:#ff4d4f">*</span></label>
-                        <input type="text" name="store_name" class="form-control" placeholder="例: タイミー 汐留店"
+                        <input type="text" name="store_name" class="form-control" placeholder="例: High Me 汐留店"
                             value="{{ form.store_name.value|default:'' }}" required>
                     </div>
                     <div class="form-group">

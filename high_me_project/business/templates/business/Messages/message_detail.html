@@ -262,17 +262,17 @@
 
     <!-- Chat Box -->
     <div class="chat-box" id="chatLog">
-        {% if not messages %}
+        {% if not chat_messages %}
         <div style="text-align: center; color: #aaa; margin-top: 40px;">
-            <p>メッセージはまだありません〜</p>
+            <p>メッセージはまだありません</p>
         </div>
         {% endif %}
 
-        {% for msg in messages %}
+        {% for msg in chat_messages %}
         <!-- 日日付変更線陦ｨ遉ｺ -->
         {% ifchanged msg.created_at|date:"Y-m-d" %}
         <div class="text-center my-3">
-            <span class="text-muted small fw-bold">{{ msg.created_at|date:"n月日 (D)" }}</span>
+            <span class="text-muted small fw-bold">{{ msg.created_at|date:"n月j日 (D)" }}</span>
         </div>
         {% endifchanged %}
 

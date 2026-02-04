@@ -302,6 +302,14 @@ class VerifyIdentityUploadView(TemplateView):
 
         return self.render_to_response(self.get_context_data())
 
+class CreditView(LoginRequiredMixin, TemplateView):
+    """製作クレジット画面"""
+    template_name = 'MyPage/Credit/credit.html'
+
+class GraduationProjectQnAView(LoginRequiredMixin, TemplateView):
+    """次年度卒業制作質問コーナー"""
+    template_name = 'MyPage/Support/grad_qna.html'
+
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
     return redirect('signup_confirm')
@@ -926,7 +934,7 @@ class WorkerMessageDetailView(LoginRequiredMixin, TemplateView):
         )
         
         context['room'] = self.room
-        context['messages'] = self.room.messages.all().select_related('sender').order_by('created_at')
+        context['chat_messages'] = self.room.messages.all().select_related('sender').order_by('created_at')
         # 互換性のため
         context['application'] = None 
         return context

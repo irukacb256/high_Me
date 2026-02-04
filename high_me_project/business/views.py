@@ -1411,9 +1411,8 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
                     # JSONField 'contains' lookup works for lists in some DBs, assuming filtering works:
                     has_awarded_before = WorkerReview.objects.filter(
                         worker=app.worker, 
-                        store_id=store_id, 
-                        skills__contains=skill_name
-                    ).exclude(id=review.id).exists()
+                        store_id=store_id
+                    ).exclude(id=review.id).filter(skills__icontains=skill_name).exists()
                     
                     if not has_awarded_before:
                          wb.certified_store_count += 1
@@ -1585,7 +1584,7 @@ class BizMessageDetailView(BusinessLoginRequiredMixin, TemplateView):
         )
         
         context['room'] = self.room
-        context['messages'] = self.room.messages.all().select_related('sender')
+        context['chat_messages'] = self.room.messages.all().select_related('sender')
         context['store'] = self.room.store
         context['application'] = None # 互換性のためNoneまたは最新のApplicationを取得してもよい
         return context

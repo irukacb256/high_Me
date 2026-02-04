@@ -1,0 +1,174 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .credit-container {
+        background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+        min-height: 100%;
+        color: white;
+        padding: 40px 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .header-nav {
+        margin-bottom: 30px;
+    }
+
+    .back-btn {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+        color: white;
+    }
+
+    .credit-hero {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .credit-logo {
+        font-size: 40px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
+    }
+
+    .credit-version {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 2px;
+    }
+
+    .credit-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-title {
+        font-size: 15px;
+        color: #FFD700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .member-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .member-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .member-role {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .member-name {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tech-tag {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-msg {
+        text-align: center;
+        margin-top: 60px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 12px;
+    }
+
+    .footer-logo {
+        margin-bottom: 10px;
+        opacity: 0.6;
+    }
+</style>
+
+<div class="credit-container">
+    <div class="header-nav">
+        <a href="{% url 'mypage' %}" class="back-btn">
+            <i class="fa-solid fa-chevron-left"></i>
+            <span>マイページに戻る</span>
+        </a>
+    </div>
+
+    <div class="credit-hero">
+        <div class="credit-logo">High Me</div>
+        <div class="credit-version">VERSION 1.0.0 (BETA)</div>
+    </div>
+
+    <div class="credit-section">
+        <div class="section-title">High Me Project</div>
+        <div class="member-list">
+            <div class="member-item">
+                <span class="member-role">製作者</span>
+                <span class="member-name">相川蒼空<br>小川真之介<br>大谷悠人<br>高橋煌<br>平間虹河</span>
+            </div>
+            <div class="member-item">
+                <span class="member-role">使用したソフト</span>
+                <span class="member-name">Antigravity (Google)<br>Visual Studio Code</span>
+            </div>
+            <div class="member-item">
+                <span class="member-role">製作期間</span>
+                <span class="member-name">2025/9/2〜2026/2/13</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="credit-section">
+        <div class="section-title">使用言語</div>
+        <div class="tech-stack">
+            <span class="tech-tag">Python (Django)</span>
+            <span class="tech-tag">HTML</span>
+            <span class="tech-tag">CSS</span>
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">AI Gemini 3 Pro</span>
+        </div>
+    </div>
+
+    <div class="credit-section">
+        <div class="section-title">High Meの目的</div>
+        <p style="font-size: 14px; line-height: 1.6; color: rgba(255, 255, 255, 0.8);">
+            「High Me」は<br>ワーカーと店舗が理想的なマッチングを実現するための次世代プラットフォームです。<br>自身をME、高めるをHighとして掛け合わせています。
+        </p>
+    </div>
+
+    <div class="footer-msg">
+        <div class="footer-logo">🔬 High Me Lab Project</div>
+        &copy; 2026 High Me Project Team. All Rights Reserved.
+    </div>
+</div>
+{% endblock %}

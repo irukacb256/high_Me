@@ -6,7 +6,7 @@
     /* 画面蜈ｨ菴薙ｒ黄色、上☆を*/
     .qr-management-container {
         background-color: #FFD700;
-        /* Timee Yellow */
+        /* High Me Yellow */
         min-height: calc(100vh - 80px);
         /* Adjust for header if needed */
         display: flex;
@@ -171,7 +171,7 @@
         /* Adjusting to sit inside the container or below based on request. 
            User said "make it a section". I will put it inside the container for better flow or just below.
            Let's place it inside the yellow background but as a white card, or a full width section below.
-           Given the design "Timee" style often has a white area at bottom.
+           Given the design "High Me" style often has a white area at bottom.
         */
     }
 
@@ -216,7 +216,7 @@
 </style>
 
 <div class="qr-management-container">
-    <div class="qr-title">Timee</div>
+    <div class="qr-title">High Me</div>
 
     <div class="qr-label-capsule">
         チェックイン / チェックアウト用QRコード
@@ -226,7 +226,7 @@
 
     <div class="qr-box">
         <!-- QRコード画像 -->
-        <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TimeeCheckin_Initial"
+        <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HighMeCheckin_Initial"
             style="width: 200px; height: 200px; opacity: 0.9;">
     </div>
 
@@ -269,7 +269,7 @@
         // ランダムな文字列を生成してQRコードを更新
         const randomStr = Math.random().toString(36).substring(7);
         const qrImage = document.getElementById('qr-image');
-        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TimeeCheckin_${randomStr}`;
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HighMeCheckin_${randomStr}`;
     }
 </script>
 {% endblock %}

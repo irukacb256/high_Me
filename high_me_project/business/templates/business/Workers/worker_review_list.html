@@ -424,10 +424,9 @@
 
         Promise.all(promises).then(results => {
             // Check results
-            alert('レビューを送信しました');
             window.location.href = "{% url 'biz_review_complete' store.id %}";
         }).catch(err => {
-            alert('エラーが発生しました');
+            console.error('Submission error:', err);
         });
     }
 

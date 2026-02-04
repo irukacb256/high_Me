@@ -3,8 +3,8 @@
 {% block content %}
 <style>
     :root {
-        --timee-red: #ff3b30;
-        --timee-blue: #007AFF;
+        --highme-red: #ff3b30;
+        --highme-blue: #007AFF;
         --bg-gray: #f2f2f7;
         --border-color: #c6c6c8;
     }
@@ -52,7 +52,7 @@
     }
 
     .tag-required {
-        background: var(--timee-red);
+        background: var(--highme-red);
         color: white;
         font-size: 10px;
         padding: 2px 6px;
@@ -80,7 +80,7 @@
     input:focus,
     textarea:focus,
     select:focus {
-        border-color: var(--timee-blue);
+        border-color: var(--highme-blue);
     }
 
     textarea {
@@ -141,8 +141,8 @@
 
     .chip.selected {
         background-color: #e8f2ff;
-        border-color: var(--timee-blue);
-        color: var(--timee-blue);
+        border-color: var(--highme-blue);
+        color: var(--highme-blue);
         font-weight: 600;
     }
 
@@ -176,7 +176,7 @@
         border-radius: 8px;
         font-size: 14px;
         cursor: pointer;
-        color: var(--timee-blue);
+        color: var(--highme-blue);
         font-weight: 600;
     }
 
@@ -255,7 +255,7 @@
     }
 
     .btn-submit {
-        background: var(--timee-blue);
+        background: var(--highme-blue);
         color: white;
         border: none;
         padding: 14px 48px;
@@ -285,7 +285,7 @@
                 <div class="field-group">
                     <div class="field-label">求人タイトル <span class="tag-required">必須</span></div>
                     <input type="text" name="title" value="{{ template.title }}"
-                        placeholder="西新宿駅 A1出口徒歩5分。活気あふれるレストランでホールスタッフ。タイミー新宿店" required>
+                        placeholder="西新宿駅 A1出口徒歩5分。活気あふれるレストランでホールスタッフ。High Me新宿店" required>
                 </div>
                 <div style=" display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="field-group">
@@ -441,7 +441,7 @@
                         </label>
                     </div>
                     <p style="font-size: 12px; color: #b8860b; margin-top: 12px; line-height: 1.4;">
-                        ワーカーが登録する資格証明書の有効性や正確性は、タイミーが保証するものではありません。<br>
+                        ワーカーが登録する資格証明書の有効性や正確性は、High Meが保証するものではありません。<br>
                         必ず求人詳細画面にてマッチングしたワーカーの資格証明書を表示し、内容をご確認ください。
                     </p>
                 </div>
@@ -625,7 +625,7 @@
                             placeholder="食べ物にアレルギーなどありましたら教えてください。">
                     </div>
                     <p style=" font-size: 12px; color: #888; margin-top: 8px;">
-                        設定した質問と回答は、今後のサービス改善やトラブル防止などのためにタイミーにも共有されます。
+                        設定した質問と回答は、今後のサービス改善やトラブル防止などのためにHigh Meにも共有されます。
                     </p>
                 </div>
             </div>

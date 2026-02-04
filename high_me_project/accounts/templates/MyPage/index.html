@@ -194,7 +194,7 @@
     .lab-banner {
         margin: 10px 15px 40px;
         background: #FFD700;
-        /* タイミーラボ イエロー */
+        /* High Meラボ イエロー */
         border-radius: 12px;
         padding: 20px;
         display: flex;
@@ -242,7 +242,7 @@
                 </div>
             </a>
             <div class="rank-info">
-                <span class="rank-label">Timee Membership</span>
+                <span class="rank-label">High Me Membership</span>
                 <span class="rank-name">
                     {{ grade }}
                     <span style="font-size:14px; font-weight:normal; margin-left:8px; color: #333;">Lv {% if membership
@@ -382,8 +382,8 @@
             <div class="menu-label-wrapper"><i class="fa-solid fa-list-check"></i> 取扱職種の範囲</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
-        <a href="#" class="menu-item">
-            <div class="menu-label-wrapper"><i class="fa-solid fa-cat"></i> タイミーを一緒につくりませんか？</div><i
+        <a href="{% url 'grad_qna' %}" class="menu-item">
+            <div class="menu-label-wrapper"><i class="fa-solid fa-cat"></i> High Meを一緒につくりませんか？</div><i
                 class="fa-solid fa-chevron-right chevron"></i>
         </a>
         <a href="#" class="menu-item">
@@ -392,11 +392,11 @@
         </a>
     </div>
 
-    <!-- バナー：タイミーラボ -->
-    <a href="#" class="lab-banner">
+    <!-- バナー：High Meラボ -->
+    <a href="{% url 'credit' %}" class="lab-banner">
         <div class="lab-text">
             <span>「働く」ひとの情報サイト</span>
-            <b>タイミーラボ</b>
+            <b>High Meラボ</b>
         </div>
         <i class="fa-solid fa-arrow-up-right-from-square lab-icon"></i>
         <div style="font-size:30px;">🔬</div>

@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timee 事業者管理画面 | {{ store.store_name|default:"店舗管理" }}</title>
+    <title>High Me 事業者管理画面 | {{ store.store_name|default:"店舗管理" }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --timee-active-bg: #fff3c4;
-            --timee-hover-bg: #fff9e6;
+            --highme-active-bg: #fff3c4;
+            --highme-hover-bg: #fff9e6;
             --sidebar-width: 260px;
         }
 
@@ -85,11 +85,11 @@
         }
 
         .nav-item:hover {
-            background: var(--timee-hover-bg);
+            background: var(--highme-hover-bg);
         }
 
         .nav-item.active {
-            background: var(--timee-active-bg);
+            background: var(--highme-active-bg);
             font-weight: bold;
         }
 
@@ -163,7 +163,7 @@
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
-            <a href="{% url 'biz_dashboard' store.id %}" class="sidebar-brand">Timee</a>
+            <a href="{% url 'biz_dashboard' store.id %}" class="sidebar-brand">High Me</a>
             <div class="store-name">{{ store.store_name|default:"店舗名未設定" }}</div>
             <div class="store-id">店舗ID {{ store.id }}</div>
         </div>

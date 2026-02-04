@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Timee Clone</title>
+    <title>High Me</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --timee-yellow: #FFD700;
+            --highme-yellow: #FFD700;
             --ios-blue: #007AFF;
             --bg-gray: #F8F8F8;
             --border-color: #EEEEEE;
@@ -51,7 +51,7 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 70px;
+            height: 75px;
             background: white;
             border-top: 1px solid var(--border-color);
             display: flex;
@@ -62,14 +62,14 @@
 
         .nav-item {
             text-align: center;
-            font-size: 10px;
+            font-size: 11px;
             color: #999;
             text-decoration: none;
             flex: 1;
         }
 
         .nav-item i {
-            font-size: 20px;
+            font-size: 22px;
             display: block;
             margin-bottom: 4px;
         }
@@ -99,11 +99,11 @@
                 <i class="fa-solid fa-magnifying-glass"></i>さがす
             </a>
             <a href="{% url 'favorites' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+                class="nav-item {% if request.resolver_match.url_name == 'favorites' or request.resolver_match.url_name == 'favorite_stores' %}active{% endif %}">
                 <i class="fa-regular fa-heart"></i>お気に入り
             </a>
             <a href="{% url 'work_schedule' %}"
-                class="nav-item {% if request.resolver_match.url_name == 'work_schedule' %}active{% endif %}">
+                class="nav-item {% if request.resolver_match.url_name == 'work_schedule' or request.resolver_match.url_name == 'work_completed' %}active{% endif %}">
                 <i class="fa-solid fa-briefcase"></i>はたらく
             </a>
             <a href="{% url 'worker_message_list' %}"

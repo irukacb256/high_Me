@@ -214,13 +214,13 @@
 
     <!-- コンテンツ部分 -->
     <div class="chat-messages" id="chatMessages">
-        {% if not messages %}
+        {% if not chat_messages %}
         <div style="text-align:center; color:#999; margin-top:40px; font-size:13px;">
             まだメッセージはありません。<br>不明点があれば質問してみましょう。
         </div>
         {% endif %}
 
-        {% for msg in messages %}
+        {% for msg in chat_messages %}
         {% ifchanged msg.created_at|date:"Y-m-d" %}
         <div class="date-separator">
             <span>{{ msg.created_at|date:"n月j日 (D)" }}</span>
