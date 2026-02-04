@@ -85,6 +85,31 @@
             <div class="total-amount">¥{{ app.get_calculated_reward|intcomma }}</div>
         </div>
 
+        <!-- 勤怠修正依頼ボタンエリア -->
+        <div style="margin-top: 15px;">
+            {% if latest_correction %}
+            <a href="{% url 'attendance_status' app.id %}?from=completed_detail"
+                class="correction-btn status-{{ latest_correction.status }}">
+                <div>勤怠修正依頼</div>
+                <div class="correction-status">
+                    {% if latest_correction.status == 'approved' %}
+                    <i class="fa-solid fa-circle-check"></i> 承認済み
+                    {% elif latest_correction.status == 'rejected' %}
+                    <i class="fa-solid fa-circle-xmark"></i> 却下
+                    {% else %}
+                    <i class="fa-solid fa-circle-pause"></i> 申請中
+                    {% endif %}
+                </div>
+                <i class="fa-solid fa-chevron-right chevron" style="margin-left: auto;"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'attendance_step1' app.id %}" class="correction-btn btn-outline">
+                <div>勤怠修正依頼</div>
+                <i class="fa-solid fa-chevron-right chevron"></i>
+            </a>
+            {% endif %}
+        </div>
+
     </div>
 </div>
 
@@ -306,6 +331,70 @@
         font-size: 24px;
         font-weight: bold;
         color: #000;
+    }
+
+    /* 勤怠修正ボタン */
+    .correction-btn {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 15px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        box-sizing: border-box;
+    }
+
+    .correction-btn.btn-outline {
+        border: 1px solid #007AFF;
+        color: #007AFF;
+        justify-content: space-between;
+    }
+
+    .correction-status {
+        font-weight: normal;
+        font-size: 13px;
+        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* ステータス別色 */
+    .status-approved {
+        background-color: #f0fff4;
+        /* 薄い緑 */
+        border-color: #48bb78;
+    }
+
+    .status-approved .correction-status {
+        color: #2f855a;
+        font-weight: bold;
+    }
+
+    .status-rejected {
+        background-color: #fff5f5;
+        /* 薄い赤 */
+        border-color: #f56565;
+    }
+
+    .status-rejected .correction-status {
+        color: #c53030;
+        font-weight: bold;
+    }
+
+    .status-pending {
+        background-color: #fffaf0;
+        /* 薄いオレンジ */
+        border-color: #ed8936;
+    }
+
+    .status-pending .correction-status {
+        color: #c05621;
+        font-weight: bold;
     }
 </style>
 {% endblock %}

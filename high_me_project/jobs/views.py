@@ -860,6 +860,9 @@ class JobCompletedDetailView(LoginRequiredMixin, TemplateView):
         # 休憩時間 (実績があれば実績、なければ予定)
         break_minutes = application.actual_break_duration if application.actual_break_duration else application.job_posting.break_duration
         context['break_minutes'] = break_minutes
+        
+        # 最新の修正依頼を取得
+        context['latest_correction'] = application.corrections.order_by('-created_at').first()
 
         return context
 
@@ -953,8 +956,13 @@ class QRScanView(LoginRequiredMixin, View):
         elif not application.leaving_at:
             # チェックアウト
             application.leaving_at = now
-            # 実績休憩時間の初期値を予定時間で設定
-            application.actual_break_duration = application.job_posting.break_duration
+            # 実績休憩時間の初期値を設定 (勤務時間が休憩時間未満なら0、それ以外は予定時間)
+            duration = (application.leaving_at - application.attendance_at).total_seconds() / 60
+            default_break = application.job_posting.break_duration
+            if duration > default_break:
+                application.actual_break_duration = default_break
+            else:
+                application.actual_break_duration = 0
             application.save()
             is_checkin = False
             # 勤怠修正フローへ
@@ -1050,6 +1058,7 @@ class RewardConfirmView(AttendanceStepBaseView):
         application.save()
 
         # ウォレットに追加
+        # ウォレットに追加
         from accounts.models import WalletTransaction
         WalletTransaction.objects.create(
             worker=application.worker.workerprofile,
@@ -1057,6 +1066,25 @@ class RewardConfirmView(AttendanceStepBaseView):
             transaction_type='reward',
             description=f"{application.job_posting.template.store.store_name} 報酬"
         )
+        
+        # 実績(EXP)の加算
+        from accounts.services import AchievementService
+        # 労働時間を計算 (分)
+        if application.attendance_at and application.leaving_at:
+            duration_seconds = (application.leaving_at - application.attendance_at).total_seconds()
+            total_minutes = int(duration_seconds / 60)
+            
+            # 休憩時間は労働時間を超えないように制限 (テスト時などの短時間勤務対策)
+            break_minutes_raw = application.actual_break_duration if application.actual_break_duration > 0 else application.job_posting.break_duration
+            break_minutes = min(break_minutes_raw, total_minutes)
+            
+            work_minutes = max(0, total_minutes - break_minutes)
+        else:
+            work_minutes = 0
+
+        earned_exp = AchievementService.calculate_exp_from_minutes(work_minutes)
+        print(f"DEBUG: Adding EXP {earned_exp} to user {application.worker.username} (Work: {work_minutes}min)")
+        AchievementService.add_exp(application.worker.workerprofile, earned_exp, "業務完了")
         
         # 完了画面ではなく評価入力画面のStep1へ
         return redirect('store_review_step1', application_id=application_id)
@@ -1404,5 +1432,13 @@ class AttendanceCorrectionStatusView(LoginRequiredMixin, TemplateView):
         
         context['application'] = application
         context['correction'] = correction
+        
+        # 戻るボタンの遷移先制御
+        from_page = self.request.GET.get('from')
+        if from_page == 'completed_detail':
+            context['back_url'] = reverse('job_completed_detail', kwargs={'pk': application.job_posting.id})
+        else:
+            context['back_url'] = reverse('job_working_detail', kwargs={'pk': application.job_posting.id})
+            
         return context
 

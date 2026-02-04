@@ -348,13 +348,34 @@ class JobApplication(models.Model):
 
     def get_calculated_reward(self):
         """出退勤実績に基づいた報酬を計算する"""
-        if not self.attendance_at or not self.leaving_at:
+        
+        # 承認済みの勤怠修正があるか確認
+        approved_correction = self.corrections.filter(status='approved').last()
+        
+        if approved_correction:
+            start_time = approved_correction.correction_attendance_at
+            end_time = approved_correction.correction_leaving_at
+            break_minutes = approved_correction.correction_break_time
+        else:
+            correction = self.corrections.filter(status='pending').last()
+            # 申請中でも、修正後の金額を表示したいという要望がある場合はここを分岐
+            # 今回は「確定給与」なので承認済みのみを対象とすべきだが、
+            # もし「修正が反映されていない」という文脈が「申請内容で計算してほしい」ならpendingも含む？
+            # ユーザー要望は「修正依頼で変更された時間で計算されていない」
+            # 通常、修正が承認されるまでは「見込み」か「元データ」だが、
+            # 修正依頼を出している時点でそちらで見たい可能性はある。
+            # しかし確定給与なので approved を必須とするのが安全。
+            
+            start_time = self.attendance_at
+            end_time = self.leaving_at
+            # 休憩時間（分）: 実績があればそれを使用、なければ求人のデフォルト
+            break_minutes = self.actual_break_duration if self.actual_break_duration > 0 else self.job_posting.break_duration
+
+        if not start_time or not end_time:
             # まだ実績がない場合は0
             return 0
             
-        duration_seconds = (self.leaving_at - self.attendance_at).total_seconds()
-        # 休憩時間（分）: 実績があればそれを使用、なければ求人のデフォルト
-        break_minutes = self.actual_break_duration if self.actual_break_duration > 0 else self.job_posting.break_duration
+        duration_seconds = (end_time - start_time).total_seconds()
         
         # 実労働時間（分単位で計算・秒切り捨て）
         total_minutes = int(duration_seconds // 60)

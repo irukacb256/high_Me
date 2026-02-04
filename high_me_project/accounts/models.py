@@ -168,7 +168,8 @@ class WorkerMembership(models.Model):
     worker = models.OneToOneField(WorkerProfile, on_delete=models.CASCADE, related_name='membership')
     GRADE_CHOICES = (
         ('ROOKIE', 'ROOKIE'),
-        ('REGULAR', 'REGULAR'),
+        ('HOPE', 'HOPE'),
+        ('ACE', 'ACE'),
         ('MASTER', 'MASTER'),
     )
     grade = models.CharField("グレード", max_length=20, choices=GRADE_CHOICES, default='ROOKIE')

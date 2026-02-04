@@ -1,0 +1,86 @@
+{% extends 'base_main.html' %}
+{% block content %}
+<style>
+    /* 完了画面スタイル */
+    .success-container {
+        padding: 40px 20px;
+        text-align: left;
+    }
+
+    .header-nav {
+        margin-bottom: 20px;
+    }
+
+    .close-icon {
+        color: black;
+        font-size: 20px;
+    }
+
+    .success-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .success-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .success-icon-area {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .success-icon {
+        font-size: 80px;
+        color: #E6CD50;
+    }
+
+    .btn-ok {
+        background: #007AFF;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+</style>
+
+<div class="success-container">
+    <div class="header-nav" style="margin-bottom: 20px;">
+        <i class="fa-solid fa-xmark close-icon" onclick="location.href='{% url 'reward_management' %}'"
+            style="cursor:pointer;"></i>
+    </div>
+
+    <div class="success-title">振り込み申請が完了しました</div>
+
+    <div class="success-text">
+        振り込み先の銀行のメンテナンス等で、入金に時間がかかることがあります。<br><br>
+        24時間以上経っても入金がない場合、タイミーカスタマーサポートまでお問い合わせください。
+    </div>
+
+    <div class="success-icon-area">
+        <div style="position: relative; width: 100px; height: 100px;">
+            <i class="fa-solid fa-rotate" style="font-size: 100px; color: #FDD835;"></i>
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; font-weight: bold;">
+                ¥</div>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 20px; left: 20px; right: 20px;">
+        <a href="{% url 'reward_management' %}" class="btn-ok">OK</a>
+    </div>
+</div>
+{% endblock %}

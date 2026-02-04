@@ -117,6 +117,7 @@ urlpatterns = [
     path('rewards/bank-account/', account_views.bank_account_edit, name='bank_account_edit'),
     path('rewards/bank-account/create/', account_views.bank_account_create, name='bank_account_create'), # ★追加
     path('rewards/withdraw/', account_views.withdraw_application, name='withdraw_application'),
+    path('rewards/withdraw/complete/', account_views.withdraw_complete, name='withdraw_complete'),
     
     # レビュー・ペナルティ
     path('rewards/reviews/', account_views.review_penalty, name='review_penalty'),

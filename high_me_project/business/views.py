@@ -1699,6 +1699,25 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
                 description=f"{application.job_posting.template.store.store_name} 報酬 (修正承認)"
             )
             
+            # 実績(EXP)の加算
+            from accounts.services import AchievementService
+            
+            # 労働時間計算
+            if application.attendance_at and application.leaving_at:
+                 duration_seconds = (application.leaving_at - application.attendance_at).total_seconds()
+                 total_minutes = int(duration_seconds / 60)
+                 
+                 # 休憩時間は労働時間を超えないように制限
+                 break_minutes_raw = application.actual_break_duration 
+                 break_minutes = min(break_minutes_raw, total_minutes)
+                 
+                 work_minutes = max(0, total_minutes - break_minutes)
+            else:
+                 work_minutes = 0
+            
+            earned_exp = AchievementService.calculate_exp_from_minutes(work_minutes)
+            AchievementService.add_exp(application.worker.workerprofile, earned_exp, "業務完了(修正承認)")
+            
             messages.success(request, '勤怠修正を承認しました。')
             
         elif action == 'reject':

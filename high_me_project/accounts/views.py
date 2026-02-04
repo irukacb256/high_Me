@@ -680,9 +680,16 @@ class MypageView(LoginRequiredMixin, TemplateView):
         membership = None
         if self.request.user.is_authenticated:
             try:
+                from .services import AchievementService # Lazy import
                 profile = self.request.user.workerprofile
                 balance = sum(t.amount for t in profile.wallet_transactions.all())
                 membership, _ = WorkerMembership.objects.get_or_create(worker=profile)
+                
+                # Ensure latest grade
+                AchievementService.update_level(membership)
+                AchievementService.update_grade(profile)
+                
+                context['progress_percent'] = AchievementService.get_level_progress(membership)
             except:
                 pass
         context['balance'] = balance
@@ -693,55 +700,59 @@ class AchievementsView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/Achievements/achievements.html'
 
     def get_context_data(self, **kwargs):
+        from .services import AchievementService # Lazy import
+        
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(WorkerProfile, user=self.request.user)
-        membership, created = WorkerMembership.objects.get_or_create(worker=profile)
-
-        past_apps = JobApplication.objects.filter(
-            worker=self.request.user,
-            status='確定済み',
-            job_posting__work_date__lt=date.today()
-        )
         
-        work_count = past_apps.count()
-        
-        total_minutes = 0
-        for app in past_apps:
-            jp = app.job_posting
-            d = date.today()
-            start_dt = datetime.combine(d, jp.start_time)
-            end_dt = datetime.combine(d, jp.end_time)
-            duration = (end_dt - start_dt).total_seconds() / 60
-            duration -= jp.break_duration
-            if duration < 0: duration = 0
-            total_minutes += duration
+        if not hasattr(profile, 'membership'):
+            WorkerMembership.objects.create(worker=profile)
             
-        work_hours = int(total_minutes / 60)
+        # Ensure latest stats (Lazy update on view)
+        AchievementService.update_level(profile.membership)
+        AchievementService.update_grade(profile)
         
-        reviews = profile.reviews.all()
-        if reviews.exists():
-            good_count = reviews.filter(is_good=True).count()
-            good_rate = int((good_count / reviews.count()) * 100)
-        else:
-            good_rate = 0
-            
+        membership = profile.membership
+        stats = AchievementService.calculate_stats(profile)
+        
         context['profile'] = profile
         context['membership'] = membership
-        context['work_count'] = work_count
-        context['work_hours'] = work_hours
-        context['good_rate'] = good_rate
+        context['work_count'] = stats['work_count']
+        context['work_hours'] = stats['total_hours']
+        context['good_rate'] = stats['good_rate']
         context['exp_history'] = profile.exp_histories.all().order_by('-created_at')
         
-        next_level_threshold = (membership.level + 1) * 1000
-        needed_exp = next_level_threshold - membership.current_exp
-        if needed_exp < 0: needed_exp = 0
+        # Level Progress
+        needed = AchievementService.get_next_level_exp(membership)
         
-        prev_threshold = membership.level * 1000
-        level_range = next_level_threshold - prev_threshold
+        # Calculate progress percent for the bar
+        # Current EXP in this level / Total EXP needed for this level
+        # We need the "base" exp for the current level to know the range.
+        # This logic is a bit tied to the service's internals. 
+        # Ideally Service returns {current_level_base, next_level_threshold}
+        # Let's derive it simply:
+        # Total needed for next level = current_exp + needed
+        # But we want the range of the current level block.
+        # e.g. Lv 1 (0-1000). Current 500. Progress 50%.
+        # Lv 2 (1000-3000). Current 1500. In-level: 500. Range: 2000. Progress 25%.
+        
+        next_threshold = membership.current_exp + needed
+        # Previous threshold?
+        # Reverse engineer from lvl
+        lvl = membership.level
+        if lvl <= 1: prev_threshold = 0
+        elif lvl == 2: prev_threshold = 1000
+        elif lvl == 3: prev_threshold = 3000
+        elif lvl == 4: prev_threshold = 6000
+        else: prev_threshold = 6000 + (lvl - 4) * 3000
+        
+        level_range = next_threshold - prev_threshold
         current_in_level = membership.current_exp - prev_threshold
-        progress_percent = int((current_in_level / level_range) * 100) if level_range > 0 else 0
         
-        context['needed_exp'] = needed_exp
+        progress_percent = int((current_in_level / level_range) * 100) if level_range > 0 else 0
+        if progress_percent > 100: progress_percent = 100 # Safety
+        
+        context['needed_exp'] = needed
         context['progress_percent'] = progress_percent
         
         return context
@@ -1167,8 +1178,9 @@ def withdraw_application(request):
                 transaction_type='withdrawal',
                 description='振込申請'
             )
-            # 成功時はその場で完了画面を出すために success フラグを渡す
-            return render(request, 'MyPage/Wallet/withdraw_application.html', {'success': True})
+            # 完了画面へリダイレクト
+            return redirect('withdraw_complete')
+            
         # 残高0などでPOSTされた場合はリダイレクトまたはエラー表示（今回はリダイレクト）
         return redirect('reward_management')
         
@@ -1176,6 +1188,11 @@ def withdraw_application(request):
         'balance': balance,
         'bank_account': bank_account
     })
+
+@login_required
+def withdraw_complete(request):
+    """振込申請完了画面"""
+    return render(request, 'MyPage/Wallet/withdraw_complete.html')
 
 @login_required
 def review_penalty(request):

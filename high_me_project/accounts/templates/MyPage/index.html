@@ -51,12 +51,14 @@
         width: 75px;
         height: 75px;
         border-radius: 50%;
-        border: 3px solid #ff3b30;
-        padding: 3px;
-        background: white;
+        /* border: 3px solid #ff3b30; Removed static border */
+        padding: 4px;
+        background: conic-gradient(var(--grade-color, #ccc) 0% var(--progress-percent, 0%),
+                #eee var(--progress-percent, 0%) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
     }
 
     .avatar-inner {
@@ -98,7 +100,7 @@
 
     /* ウォレット赤カード */
     .wallet-card {
-        background: #FF3B30;
+        background: var(--grade-color, #FF3B30);
         color: white;
         padding: 20px;
         border-radius: 15px;
@@ -106,6 +108,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        transition: background 0.3s;
     }
 
     .wallet-balance {
@@ -115,7 +118,7 @@
 
     .btn-withdraw {
         background: white;
-        color: #FF3B30;
+        color: var(--grade-color, #FF3B30);
         padding: 8px 18px;
         border-radius: 25px;
         font-size: 12px;
@@ -148,6 +151,23 @@
 
     .menu-item:active {
         background: #f9f9f9;
+    }
+
+    /* Grade Colors */
+    .grade-color-ROOKIE {
+        --grade-color: #00D930;
+    }
+
+    .grade-color-HOPE {
+        --grade-color: #007AFF;
+    }
+
+    .grade-color-ACE {
+        --grade-color: #FF9500;
+    }
+
+    .grade-color-MASTER {
+        --grade-color: #FF3B30;
     }
 
     .menu-label-wrapper {
@@ -205,14 +225,16 @@
     }
 </style>
 
-<div class="mypage-container">
+{% with grade=membership.grade|default:'ROOKIE' %}
+<div class="mypage-container grade-color-{{ grade }}">
     <!-- ヘッダー -->
     <div class="mypage-header">
         <div class="header-top">
             <span class="page-title">マイページ</span>
             <i class="fa-regular fa-bell notif-bell"></i>
         </div>
-        <div class="profile-section">
+
+        <div class="profile-section" style="--progress-percent: {{ progress_percent|default:0 }}%;">
             <a href="{% url 'profile_edit' %}" class="avatar-circle">
                 <div class="avatar-inner">
                     {% if user.workerprofile.face_photo %}<img src="{{ user.workerprofile.face_photo.url }}">{%
@@ -222,8 +244,9 @@
             <div class="rank-info">
                 <span class="rank-label">Timee Membership</span>
                 <span class="rank-name">
-                    {% if membership %}{{ membership.grade }}{% else %}ROOKIE{% endif %}
-                    <span style="font-size:14px; font-weight:normal; margin-left:8px;">Lv {% if membership %}{{
+                    {{ grade }}
+                    <span style="font-size:14px; font-weight:normal; margin-left:8px; color: #333;">Lv {% if membership
+                        %}{{
                         membership.level }}{% else %}0{% endif %}</span>
                 </span>
                 <a href="{% url 'achievements' %}"
@@ -379,4 +402,5 @@
         <div style="font-size:30px;">🔬</div>
     </a>
 </div>
+{% endwith %}
 {% endblock %}
