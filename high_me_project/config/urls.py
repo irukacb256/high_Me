@@ -192,6 +192,8 @@ urlpatterns = [
     path('biz/store/<int:store_id>/home/', biz_views.DashboardView.as_view(), name='biz_dashboard'),
     path('biz/store/<int:store_id>/templates/', biz_views.TemplateListView.as_view(), name='biz_template_list'),
     path('biz/store/<int:store_id>/templates/create/', biz_views.TemplateCreateView.as_view(), name='biz_template_create'),
+    path('biz/store/<int:store_id>/templates/confirm/', biz_views.TemplateConfirmView.as_view(), name='biz_template_confirm'),
+    path('biz/store/<int:store_id>/templates/complete/', biz_views.TemplateCompleteView.as_view(), name='biz_template_complete'),
 
     # --- 店舗追加機能 ---
     path('biz/simple-create/', biz_views.SimpleStoreCreateView.as_view(), name='biz_simple_create'),

@@ -1,0 +1,63 @@
+{% extends 'business/Common/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .complete-container {
+        max-width: 600px;
+        margin: 80px auto;
+        text-align: center;
+        background: white;
+        padding: 60px 40px;
+        border-radius: 12px;
+        border: 1px solid #e5e5e5;
+    }
+
+    .success-icon {
+        font-size: 64px;
+        color: #34c759;
+        margin-bottom: 24px;
+    }
+
+    .complete-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #1c1c1e;
+    }
+
+    .complete-desc {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .btn-list {
+        background: #007AFF;
+        color: white;
+        padding: 14px 40px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        transition: 0.2s;
+    }
+
+    .btn-list:hover {
+        background: #0062cc;
+    }
+</style>
+
+<div class="complete-container">
+    <div class="success-icon">
+        <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <h1 class="complete-title">求人のひな形を作成しました</h1>
+    <p class="complete-desc">
+        新しい求人のひな形の登録が完了しました。<br>
+        このひな形を使って、すぐに募集を開始することができます。
+    </p>
+    <a href="{% url 'biz_template_list' store.id %}" class="btn-list">ひな形一覧に戻る</a>
+</div>
+{% endblock %}

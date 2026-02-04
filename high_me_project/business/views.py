@@ -507,6 +507,13 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
     form_class = JobTemplateForm
     template_name = 'business/Jobs/template_form.html'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        draft = self.request.session.get('template_draft')
+        if draft and draft.get('data'):
+            initial.update(draft['data'])
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
@@ -516,32 +523,164 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        # フォームデータをセッションに保存して確認画面へ
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
         store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
         
-        template = form.save(commit=False)
-        template.store = store
-        
-        # マニュアル処理 (skills, other_conditions)
-        template.skills = ",".join(self.request.POST.getlist('skills'))
-        template.other_conditions = "\n".join([c for c in self.request.POST.getlist('other_conditions') if c.strip()])
+        # シリアライズ可能な形式でデータを抽出
+        draft_data = {}
+        for field in form.fields:
+            if field in form.cleaned_data:
+                val = form.cleaned_data[field]
+                # 特殊な型の変換 (必要に応じて)
+                draft_data[field] = val
+
+        # 手動処理項目
+        draft_data['skills'] = self.request.POST.getlist('skills')
+        draft_data['other_conditions'] = [c for c in self.request.POST.getlist('other_conditions') if c.strip()]
         
         # 資格IDの処理
         qual_id = self.request.POST.get('qualification_id')
-        if qual_id and qual_id != 'none':
-            template.qualification_id = qual_id
-        else:
-            template.qualification = None
+        draft_data['qualification_id'] = qual_id if qual_id != 'none' else None
+
+        # ファイルの仮保存 (Sessionにはパスだけ入れる)
+        from django.core.files.storage import FileSystemStorage
+        import os
+        from django.conf import settings
+        
+        fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'tmp_templates'))
+        
+        # 既存のテンポラリファイルをクリア（簡易版）
+        temp_photos = []
+        if 'photos' in self.request.FILES:
+            for photo in self.request.FILES.getlist('photos'):
+                filename = fs.save(photo.name, photo)
+                temp_photos.append(filename)
+        
+        temp_pdf = None
+        if 'manual_pdf' in self.request.FILES:
+            pdf = self.request.FILES['manual_pdf']
+            temp_pdf = fs.save(pdf.name, pdf)
+
+        self.request.session['template_draft'] = {
+            'data': draft_data,
+            'temp_photos': temp_photos,
+            'temp_pdf': temp_pdf
+        }
+
+        return redirect('biz_template_confirm', store_id=store.id)
+
+class TemplateConfirmView(BusinessLoginRequiredMixin, TemplateView):
+    template_name = 'business/Jobs/template_confirm.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        context['store'] = store
+        
+        draft = self.request.session.get('template_draft')
+        if not draft:
+            return context # あるいはエラーリダイレクト
+            
+        context['draft_data'] = draft['data']
+        context['temp_photos'] = draft['temp_photos']
+        context['temp_pdf'] = draft['temp_pdf']
+        
+        # 資格名などの表示用
+        if draft['data'].get('qualification_id'):
+            context['qualification'] = QualificationMaster.objects.filter(id=draft['data']['qualification_id']).first()
+            
+        return context
+
+    def post(self, request, *args, **kwargs):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        draft = request.session.get('template_draft')
+        if not draft:
+            return redirect('biz_template_create', store_id=store.id)
+
+        data = draft['data']
+        
+        # JobTemplateの作成
+        template = JobTemplate(
+            store=store,
+            title=data.get('title'),
+            industry=data.get('industry'),
+            occupation=data.get('occupation'),
+            work_content=data.get('work_content'),
+            precautions=data.get('precautions'),
+            has_unexperienced_welcome=data.get('has_unexperienced_welcome', False),
+            has_bike_car_commute=data.get('has_bike_car_commute', False),
+            has_clothing_free=data.get('has_clothing_free', False),
+            has_coupon_get=data.get('has_coupon_get', False),
+            has_meal=data.get('has_meal', False),
+            has_hair_color_free=data.get('has_hair_color_free', False),
+            has_bike_bicycle_commute=data.get('has_bike_bicycle_commute', False),
+            has_bicycle_commute=data.get('has_bicycle_commute', False),
+            has_transportation_allowance=data.get('has_transportation_allowance', False),
+            belongings=data.get('belongings'),
+            requirements=data.get('requirements'),
+            address=data.get('address'),
+            access=data.get('access'),
+            contact_number=data.get('contact_number'),
+            smoking_prevention=data.get('smoking_prevention', 'indoor_no_smoking'),
+            has_smoking_area=data.get('has_smoking_area', False),
+            question1=data.get('question1'),
+            question2=data.get('question2'),
+            question3=data.get('question3'),
+            requires_qualification=data.get('requires_qualification', False),
+            qualification_notes=data.get('qualification_notes'),
+            skills=",".join(data.get('skills', [])),
+            other_conditions="\n".join(data.get('other_conditions', [])),
+            auto_message=data.get('auto_message'),
+            latitude=data.get('latitude'),
+            longitude=data.get('longitude'),
+        )
+        
+        if data.get('qualification_id'):
+            template.qualification_id = data['qualification_id']
+
+        # PDFがあれば戻す
+        from django.core.files import File
+        import os
+        from django.conf import settings
+        
+        temp_dir = os.path.join(settings.MEDIA_ROOT, 'tmp_templates')
+        
+        if draft['temp_pdf']:
+            pdf_path = os.path.join(temp_dir, draft['temp_pdf'])
+            if os.path.exists(pdf_path):
+                with open(pdf_path, 'rb') as f:
+                    template.manual_pdf.save(draft['temp_pdf'], File(f), save=False)
 
         template.save()
 
         # Photos
-        if 'photos' in self.request.FILES:
-            photos = self.request.FILES.getlist('photos')
-            for i, photo in enumerate(photos):
-                JobTemplatePhoto.objects.create(template=template, image=photo, order=i)
+        for photo_name in draft['temp_photos']:
+            photo_path = os.path.join(temp_dir, photo_name)
+            if os.path.exists(photo_path):
+                with open(photo_path, 'rb') as f:
+                    new_photo = JobTemplatePhoto(template=template, order=0)
+                    new_photo.image.save(photo_name, File(f), save=True)
 
-        return redirect('biz_template_list', store_id=store.id)
+        # セッションクリア
+        del request.session['template_draft']
+        
+        # 掃除（オプション）
+
+        return redirect('biz_template_complete', store_id=store.id)
+
+class TemplateCompleteView(BusinessLoginRequiredMixin, TemplateView):
+    template_name = 'business/Jobs/template_complete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        context['store'] = store
+        return context
 
 class TemplateDetailView(BusinessLoginRequiredMixin, DetailView):
     model = JobTemplate
