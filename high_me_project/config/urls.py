@@ -105,6 +105,10 @@ urlpatterns = [
     path('mypage/', account_views.MypageView.as_view(), name='mypage'),            # ★追加
     path('mypage/credit/', account_views.CreditView.as_view(), name='credit'),     # ★新規追加
     path('mypage/grad-qna/', account_views.GraduationProjectQnAView.as_view(), name='grad_qna'), # ★新規追加
+    # 退会フロー
+    path('mypage/withdraw/', account_views.AccountWithdrawalView.as_view(), name='account_withdrawal'),
+    path('mypage/withdraw/warning/', account_views.AccountWithdrawalWarningView.as_view(), name='account_withdrawal_warning'),
+    path('mypage/withdraw/complete/', account_views.AccountWithdrawalCompleteView.as_view(), name='account_withdrawal_complete'),
     # お問い合わせ
     path('support/inquiry/', account_views.InquiryView.as_view(), name='inquiry_form'),
     path('support/inquiry/complete/', account_views.InquiryCompleteView.as_view(), name='inquiry_complete'),

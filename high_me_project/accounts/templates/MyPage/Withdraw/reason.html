@@ -1,0 +1,173 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .withdraw-container {
+        background-color: white;
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .withdraw-header {
+        background: white;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .back-link {
+        color: #333;
+        text-decoration: none;
+        font-size: 20px;
+    }
+
+    .header-right {
+        color: #777;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+    }
+
+    .content-title {
+        font-size: 24px;
+        font-weight: bold;
+        padding: 30px 20px 20px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    .reason-list {
+        padding: 0 20px;
+    }
+
+    .reason-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .reason-text {
+        font-size: 16px;
+        color: #555;
+    }
+
+    .chevron-right {
+        color: #ccc;
+        font-size: 16px;
+    }
+
+    /* Selected state */
+    .reason-item.selected {
+        background-color: #f9f9f9;
+        margin: 0 -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .footer {
+        margin-top: auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .btn-next {
+        display: inline-block;
+        width: 100%;
+        max-width: 350px;
+        background: #007AFF;
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-next:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .btn-wrapper {
+        position: absolute;
+        bottom: 25px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        padding: 0 20px;
+    }
+</style>
+
+<div class="withdraw-container">
+    <div class="withdraw-header">
+        <div class="header-left">
+            <a href="{% url 'mypage' %}" class="back-link">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+        </div>
+        <a href="#" class="header-right">
+            <i class="fa-regular fa-circle-question"></i>
+            退会について
+        </a>
+    </div>
+
+    <div class="content-title">
+        退会前に確認してください
+    </div>
+
+    <form method="POST" id="reasonForm">
+        {% csrf_token %}
+        <input type="hidden" name="reason_type" id="selectedReason" value="">
+
+        <div class="reason-list">
+            <div class="reason-item" onclick="selectReason(this, 'area')">
+                <span class="reason-text">ご希望のエリアが対応外だった</span>
+                <i class="fa-solid fa-chevron-right chevron-right"></i>
+            </div>
+
+            <div class="reason-item" onclick="selectReason(this, 'other')">
+                <span class="reason-text">その他の理由で退会を希望する場合</span>
+                <i class="fa-solid fa-chevron-right chevron-right"></i>
+            </div>
+        </div>
+
+        <div class="btn-wrapper">
+            <button type="submit" class="btn-next" id="nextBtn" disabled>次へ</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function selectReason(element, value) {
+        // Clear previous selection
+        const items = document.querySelectorAll('.reason-item');
+        items.forEach(item => item.classList.remove('selected'));
+
+        // Mark current selection
+        element.classList.add('selected');
+        document.getElementById('selectedReason').value = value;
+
+        // Enable Next button
+        document.getElementById('nextBtn').disabled = false;
+    }
+</script>
+{% endblock %}

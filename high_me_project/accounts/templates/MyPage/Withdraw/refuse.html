@@ -1,0 +1,119 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .withdraw-container {
+        background-color: #F8F8F8;
+        min-height: 100%;
+        padding-bottom: 30px;
+    }
+
+    .withdraw-header {
+        background: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .back-link {
+        color: #333;
+        text-decoration: none;
+        font-size: 20px;
+    }
+
+    .header-title {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .status-card {
+        background: white;
+        margin: 20px;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .status-icon {
+        font-size: 60px;
+        color: #FF3B30;
+        margin-bottom: 20px;
+    }
+
+    .status-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .status-desc {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .reason-list {
+        background: #FFF5F5;
+        border: 1px solid #FFDCDC;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: left;
+        margin-bottom: 30px;
+    }
+
+    .reason-item {
+        font-size: 14px;
+        color: #FF3B30;
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .reason-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .btn-action {
+        background: #333;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+    }
+</style>
+
+<div class="withdraw-container">
+    <div class="withdraw-header">
+        <a href="{% url 'mypage' %}" class="back-link">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <div class="header-title">退会手続き</div>
+    </div>
+
+    <div class="status-card">
+        <div class="status-icon">
+            <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <div class="status-title">現在、退会手続きを<br>進めることができません</div>
+        <p class="status-desc">以下の項目が完了していないため、退会することができません。内容をご確認の上、手続きをお願いいたします。</p>
+
+        <div class="reason-list">
+            {% for reason in reasons %}
+            <div class="reason-item">
+                <i class="fa-solid fa-circle-info" style="margin-top: 3px;"></i>
+                <span>{{ reason }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'mypage' %}" class="btn-action">マイページに戻る</a>
+    </div>
+</div>
+{% endblock %}

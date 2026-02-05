@@ -1,0 +1,60 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .complete-container {
+        background: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .complete-icon {
+        font-size: 80px;
+        color: #FFA500;
+        margin-bottom: 30px;
+    }
+
+    .complete-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .complete-desc {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 40px;
+    }
+
+    .btn-top {
+        background: #333;
+        color: white;
+        padding: 18px 60px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="complete-container">
+    <div class="complete-icon">
+        <i class="fa-solid fa-face-smile-wink"></i>
+    </div>
+    <div class="complete-title">退会手続きが完了しました</div>
+    <p class="complete-desc">
+        High Meをご利用いただき、<br>ありがとうございました。<br><br>
+        あなたのこれからのご活躍を、<br>心より応援しております！
+    </p>
+
+    <a href="{% url 'login' %}" class="btn-top">ログイン画面へ</a>
+</div>
+{% endblock %}

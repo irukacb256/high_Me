@@ -6,7 +6,8 @@ from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, Qualifi
 from business.models import JobApplication, ChatRoom
 from django.utils import timezone
 from datetime import datetime, timedelta
-from django.db import IntegrityError
+from django.db import IntegrityError, models
+from django.db.models import Sum
 from django.contrib.auth import authenticate, login
 from datetime import date
 from jobs.views import PREFECTURES
@@ -309,6 +310,75 @@ class CreditView(LoginRequiredMixin, TemplateView):
 class GraduationProjectQnAView(LoginRequiredMixin, TemplateView):
     """次年度卒業制作質問コーナー"""
     template_name = 'MyPage/Support/grad_qna.html'
+
+class AccountWithdrawalView(LoginRequiredMixin, TemplateView):
+    """アカウント退会手続 - ステップ1: 理由選択"""
+    def get(self, request, *args, **kwargs):
+        reasons = self.get_rejection_reasons(request.user)
+        if reasons:
+            return render(request, 'MyPage/Withdraw/refuse.html', {'reasons': reasons})
+        return render(request, 'MyPage/Withdraw/reason.html')
+
+    def post(self, request, *args, **kwargs):
+        # 理由をセッションに一時保存するか、単に次の画面へ
+        return redirect('account_withdrawal_warning')
+
+    def get_rejection_reasons(self, user):
+        from business.models import JobApplication, AttendanceCorrection
+        from accounts.models import WalletTransaction
+        reasons = []
+        
+        # 1. 確定済みの予定がある
+        future_jobs = JobApplication.objects.filter(
+            worker=user,
+            status='確定済み',
+            job_posting__work_date__gte=timezone.now().date()
+        ).exists()
+        if future_jobs:
+            reasons.append("予定されているお仕事があります。キャンセルまたは勤務終了までお待ちください。")
+
+        # 2. 報酬残高がある
+        try:
+            worker_profile = user.workerprofile
+            balance = WalletTransaction.objects.filter(worker=worker_profile).aggregate(models.Sum('amount'))['amount__sum'] or 0
+            if balance > 0:
+                reasons.append(f"報酬残高が{balance}円残っています。振込申請を完了させてください。")
+        except:
+             pass
+
+        # 3. 勤怠修正依頼中のものがある
+        pending_corrections = AttendanceCorrection.objects.filter(
+            application__worker=user,
+            status='pending'
+        ).exists()
+        if pending_corrections:
+            reasons.append("勤怠修正依頼中の案件があります。店舗による承認をお待ちください。")
+
+        return reasons
+
+class AccountWithdrawalWarningView(LoginRequiredMixin, TemplateView):
+    """アカウント退会手続 - ステップ2: 注意事項と確定"""
+    template_name = 'MyPage/Withdraw/warning.html'
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        # 最終チェック（念のため）
+        from .views import AccountWithdrawalView
+        checker = AccountWithdrawalView()
+        reasons = checker.get_rejection_reasons(user)
+        if reasons:
+            return render(request, 'MyPage/Withdraw/refuse.html', {'reasons': reasons})
+        
+        # ユーザーオブジェクトを完全に削除（紐づくプロフィールや電話番号も削除される）
+        user.delete()
+        
+        from django.contrib.auth import logout
+        logout(request)
+        return redirect('account_withdrawal_complete')
+
+class AccountWithdrawalCompleteView(TemplateView):
+    """退会完了画面"""
+    template_name = 'MyPage/Withdraw/complete.html'
 
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
