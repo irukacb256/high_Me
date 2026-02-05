@@ -192,3 +192,17 @@ class ExpHistory(models.Model):
 
     def __str__(self):
         return f"{self.worker.user.username} +{self.amount}EXP ({self.reason})"
+
+class Notification(models.Model):
+    """ワーカー向けお知らせ"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    title = models.CharField("タイトル", max_length=200)
+    content = models.TextField("内容")
+    is_read = models.BooleanField("既読", default=False)
+    created_at = models.DateTimeField("送信日時", auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.user.username})"

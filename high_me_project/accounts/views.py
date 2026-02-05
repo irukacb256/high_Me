@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification, WorkerMembership, ExpHistory
+from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification, WorkerMembership, ExpHistory, Notification
 from business.models import JobApplication, ChatRoom
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -379,6 +379,20 @@ class AccountWithdrawalWarningView(LoginRequiredMixin, TemplateView):
 class AccountWithdrawalCompleteView(TemplateView):
     """退会完了画面"""
     template_name = 'MyPage/Withdraw/complete.html'
+
+class NotificationListView(LoginRequiredMixin, ListView):
+    """マイページのお知らせ一覧"""
+    model = Notification
+    template_name = 'MyPage/notification_list.html'
+    context_object_name = 'notifications'
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        # 既読にする (簡易的に一覧アクセスで全既読)
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return super().get(request, *args, **kwargs)
 
 def signup_verify_identity_skip(request):
     """本人確認スキップ -> 確認画面へ"""
@@ -772,6 +786,7 @@ class MypageView(LoginRequiredMixin, TemplateView):
                 pass
         context['balance'] = balance
         context['membership'] = membership
+        context['has_unread_notifications'] = Notification.objects.filter(user=self.request.user, is_read=False).exists()
         return context
 
 class AchievementsView(LoginRequiredMixin, TemplateView):

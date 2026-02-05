@@ -105,6 +105,7 @@ urlpatterns = [
     path('mypage/', account_views.MypageView.as_view(), name='mypage'),            # ★追加
     path('mypage/credit/', account_views.CreditView.as_view(), name='credit'),     # ★新規追加
     path('mypage/grad-qna/', account_views.GraduationProjectQnAView.as_view(), name='grad_qna'), # ★新規追加
+    path('mypage/notifications/', account_views.NotificationListView.as_view(), name='notification_list'),
     # 退会フロー
     path('mypage/withdraw/', account_views.AccountWithdrawalView.as_view(), name='account_withdrawal'),
     path('mypage/withdraw/warning/', account_views.AccountWithdrawalWarningView.as_view(), name='account_withdrawal_warning'),
@@ -190,6 +191,7 @@ urlpatterns = [
     path('biz/login/', biz_views.BizLoginView.as_view(), name='biz_login'),
     path('biz/password-reset/', biz_views.BizPasswordResetRequestView.as_view(), name='biz_password_reset_request'),
     path('biz/password-reset/confirm/', biz_views.BizPasswordResetView.as_view(), name='biz_password_reset_confirm'),
+    path('biz/logout/', biz_views.BizLogoutView.as_view(), name='biz_logout'),
     # --- 企業用マイページ ---
     path('biz/portal/', biz_views.BizPortalView.as_view(), name='biz_portal'),
     path('biz/account-info/', biz_views.BizAccountInfoView.as_view(), name='biz_account_info'),

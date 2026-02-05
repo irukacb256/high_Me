@@ -1,0 +1,123 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<style>
+    .notif-container {
+        background-color: #F8F8F8;
+        min-height: 100vh;
+    }
+
+    /* ヘッダー */
+    .notif-header {
+        background: white;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .back-link {
+        color: #333;
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 20px;
+    }
+
+    .header-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    /* リスト項目 */
+    .notif-list {
+        padding: 0;
+    }
+
+    .notif-item {
+        background: white;
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        display: block;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .notif-item:active {
+        background-color: #f9f9f9;
+    }
+
+    .notif-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .notif-date {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .notif-title {
+        font-size: 15px;
+        font-weight: bold;
+        line-height: 1.4;
+    }
+
+    .notif-content {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-top: 10px;
+        display: none;
+        /* 初期は非表示 */
+    }
+
+    .notif-item.expanded .notif-content {
+        display: block;
+    }
+
+    .empty-msg {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+        font-size: 14px;
+    }
+</style>
+
+<div class="notif-container">
+    <div class="notif-header">
+        <a href="{% url 'mypage' %}" class="back-link">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <span class="header-title">お知らせ</span>
+    </div>
+
+    <div class="notif-list">
+        {% for notif in notifications %}
+        <div class="notif-item" onclick="toggleNotif(this)">
+            <div class="notif-top">
+                <div class="notif-date">{{ notif.created_at|date:"Y/m/d H:i" }}</div>
+            </div>
+            <div class="notif-title">{{ notif.title }}</div>
+            <div class="notif-content">
+                {{ notif.content|linebreaksbr }}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-msg">
+            お知らせはありません
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleNotif(element) {
+        element.classList.toggle('expanded');
+    }
+</script>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.db.models import Max
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import logout # logoutを追加
+from django.contrib.auth import logout as auth_logout # logoutを名前を変えてインポート
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.utils import timezone
@@ -1950,3 +1950,14 @@ class BizInquiryCompleteView(BusinessLoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['store'] = get_biz_context(self.request.user)
         return context
+
+class BizLogoutView(BusinessLoginRequiredMixin, View):
+    """事業者用ログアウト確認 & 実行"""
+    template_name = 'business/Auth/logout_confirm.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        auth_logout(request)
+        return redirect('biz_login')

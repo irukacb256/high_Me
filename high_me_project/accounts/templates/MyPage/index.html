@@ -231,7 +231,13 @@
     <div class="mypage-header">
         <div class="header-top">
             <span class="page-title">マイページ</span>
-            <i class="fa-regular fa-bell notif-bell"></i>
+            <a href="{% url 'notification_list' %}" class="notif-bell" style="text-decoration: none;">
+                <i class="fa-regular fa-bell"></i>
+                {% if has_unread_notifications %}
+                <span
+                    style="position: absolute; top: 0; right: -2px; width: 8px; height: 8px; background: #FF3B30; border-radius: 50%; border: 1.5px solid white;"></span>
+                {% endif %}
+            </a>
         </div>
 
         <div class="profile-section" style="--progress-percent: {{ progress_percent|default:0 }}%;">
