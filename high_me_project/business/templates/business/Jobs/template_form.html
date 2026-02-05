@@ -284,20 +284,33 @@
             <div class="section-body">
                 <div class="field-group">
                     <div class="field-label">求人タイトル <span class="tag-required">必須</span></div>
-                    <input type="text" name="title" value="{{ template.title }}"
+                    <input type="text" name="title" value="{{ template.title|default:form.title.value|default:'' }}"
                         placeholder="西新宿駅 A1出口徒歩5分。活気あふれるレストランでホールスタッフ。High Me新宿店" required>
+                    {% if form.title.errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{ form.title.errors.0 }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div style=" display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="field-group">
                         <div class="field-label">業種 <span class="tag-required">必須</span></div>
                         <select name="industry" id="industrySelect" required>
                             <option value="" disabled selected>選択してください</option>
-                            <option {% if template.industry=='飲食・フード' %}selected{% endif %}>飲食・フード</option>
-                            <option {% if template.industry=='販売・接客' %}selected{% endif %}>販売・接客</option>
-                            <option {% if template.industry=='物流・軽作業' %}selected{% endif %}>物流・軽作業</option>
-                            <option {% if template.industry=='オフィス' %}selected{% endif %}>オフィス</option>
-                            <option {% if template.industry=='その他' %}selected{% endif %}>その他</option>
+                            <option {% if template.industry=='飲食・フード' or form.industry.value=='飲食・フード' %}selected{%
+                                endif %}>飲食・フード</option>
+                            <option {% if template.industry=='販売・接客' or form.industry.value=='販売・接客' %}selected{% endif
+                                %}>販売・接客</option>
+                            <option {% if template.industry=='物流・軽作業' or form.industry.value=='物流・軽作業' %}selected{%
+                                endif %}>物流・軽作業</option>
+                            <option {% if template.industry=='オフィス' or form.industry.value=='オフィス' %}selected{% endif
+                                %}>オフィス</option>
+                            <option {% if template.industry=='その他' or form.industry.value=='その他' %}selected{% endif %}>
+                                その他</option>
                         </select>
+                        {% if form.industry.errors %}
+                        <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{
+                            form.industry.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div class="field-group">
                         <div class="field-label">職種 <span class="tag-required">必須</span></div>
@@ -305,66 +318,102 @@
                             <option value="" disabled selected>選択してください</option>
 
                             <optgroup label="飲食・フード">
-                                <option {% if template.occupation=='ホールスタッフ' %}selected{% endif %}>ホールスタッフ
+                                <option {% if template.occupation=='ホールスタッフ' or form.occupation.value=='ホールスタッフ'
+                                    %}selected{% endif %}>ホールスタッフ
                                 </option>
-                                <option {% if template.occupation=='キッチンスタッフ' %}selected{% endif %}>キッチンスタッフ
+                                <option {% if template.occupation=='キッチンスタッフ' or form.occupation.value=='キッチンスタッフ'
+                                    %}selected{% endif %}>キッチンスタッフ
                                 </option>
-                                <option {% if template.occupation=='レストランスタッフ' %}selected{% endif %}>レストランスタッフ
+                                <option {% if template.occupation=='レストランスタッフ' or form.occupation.value=='レストランスタッフ'
+                                    %}selected{% endif %}>レストランスタッフ
                                 </option>
-                                <option {% if template.occupation=='居酒屋スタッフ' %}selected{% endif %}>居酒屋スタッフ</option>
-                                <option {% if template.occupation=='カフェスタッフ' %}selected{% endif %}>カフェスタッフ
+                                <option {% if template.occupation=='居酒屋スタッフ' or form.occupation.value=='居酒屋スタッフ'
+                                    %}selected{% endif %}>居酒屋スタッフ</option>
+                                <option {% if template.occupation=='カフェスタッフ' or form.occupation.value=='カフェスタッフ'
+                                    %}selected{% endif %}>カフェスタッフ
                                 </option>
-                                <option {% if template.occupation=='洗い場' %}selected{% endif %}>洗い場</option>
-                                <option {% if template.occupation=='調理・補助' %}selected{% endif %}>調理・補助</option>
-                                <option {% if template.occupation=='デリバリー' %}selected{% endif %}>デリバリー</option>
+                                <option {% if template.occupation=='洗い場' or form.occupation.value=='洗い場' %}selected{%
+                                    endif %}>洗い場</option>
+                                <option {% if template.occupation=='調理・補助' or form.occupation.value=='調理・補助'
+                                    %}selected{% endif %}>調理・補助</option>
+                                <option {% if template.occupation=='デリバリー' or form.occupation.value=='デリバリー'
+                                    %}selected{% endif %}>デリバリー</option>
                             </optgroup>
 
                             <optgroup label="販売・接客">
-                                <option {% if template.occupation=='コンビニスタッフ' %}selected{% endif %}>コンビニスタッフ
+                                <option {% if template.occupation=='コンビニスタッフ' or form.occupation.value=='コンビニスタッフ'
+                                    %}selected{% endif %}>コンビニスタッフ
                                 </option>
-                                <option {% if template.occupation=='スーパー・レジ' %}selected{% endif %}>スーパー・レジ
+                                <option {% if template.occupation=='スーパー・レジ' or form.occupation.value=='スーパー・レジ'
+                                    %}selected{% endif %}>スーパー・レジ
                                 </option>
-                                <option {% if template.occupation=='アパレル販売' %}selected{% endif %}>アパレル販売
+                                <option {% if template.occupation=='アパレル販売' or form.occupation.value=='アパレル販売'
+                                    %}selected{% endif %}>アパレル販売
                                 </option>
-                                <option {% if template.occupation=='携帯販売' %}selected{% endif %}>携帯販売</option>
-                                <option {% if template.occupation=='キャンペーン・イベント' %}selected{% endif %}>キャンペーン・イベント
+                                <option {% if template.occupation=='携帯販売' or form.occupation.value=='携帯販売' %}selected{%
+                                    endif %}>携帯販売</option>
+                                <option {% if template.occupation=='キャンペーン・イベント' or form.occupation.value=='キャンペーン・イベント'
+                                    %}selected{% endif %}>キャンペーン・イベント
                                 </option>
                             </optgroup>
 
                             <optgroup label="物流・軽作業">
-                                <option {% if template.occupation=='倉庫作業' %}selected{% endif %}>倉庫作業</option>
-                                <option {% if template.occupation=='仕分け・ピッキング' %}selected{% endif %}>
+                                <option {% if template.occupation=='倉庫作業' or form.occupation.value=='倉庫作業' %}selected{%
+                                    endif %}>倉庫作業</option>
+                                <option {% if template.occupation=='仕分け・ピッキング' or form.occupation.value=='仕分け・ピッキング'
+                                    %}selected{% endif %}>
                                     仕分け・ピッキング</option>
-                                <option {% if template.occupation=='搬入・搬出' %}selected{% endif %}>搬入・搬出
+                                <option {% if template.occupation=='搬入・搬出' or form.occupation.value=='搬入・搬出'
+                                    %}selected{% endif %}>搬入・搬出
                                 </option>
-                                <option {% if template.occupation=='引越しアシスタント' %}selected{% endif %}>引越しアシスタント</option>
-                                <option {% if template.occupation=='ドライバー' %}selected{% endif %}>ドライバー</option>
+                                <option {% if template.occupation=='引越しアシスタント' or form.occupation.value=='引越しアシスタント'
+                                    %}selected{% endif %}>引越しアシスタント</option>
+                                <option {% if template.occupation=='ドライバー' or form.occupation.value=='ドライバー'
+                                    %}selected{% endif %}>ドライバー</option>
                             </optgroup>
 
                             <optgroup label="オフィス">
-                                <option {% if template.occupation=='データ入力' %}selected{% endif %}>データ入力</option>
-                                <option {% if template.occupation=='コールセンター' %}selected{% endif %}>
+                                <option {% if template.occupation=='データ入力' or form.occupation.value=='データ入力'
+                                    %}selected{% endif %}>データ入力</option>
+                                <option {% if template.occupation=='コールセンター' or form.occupation.value=='コールセンター'
+                                    %}selected{% endif %}>
                                     コールセンター</option>
-                                <option {% if template.occupation=='一般事務' %}selected{% endif %}>一般事務</option>
+                                <option {% if template.occupation=='一般事務' or form.occupation.value=='一般事務' %}selected{%
+                                    endif %}>一般事務</option>
                             </optgroup>
 
                             <optgroup label="その他">
-                                <option {% if template.occupation=='清掃・ベッドメイク' %}selected{% endif %}>清掃・ベッドメイク</option>
-                                <option {% if template.occupation=='ホテルスタッフ' %}selected{% endif %}>ホテルスタッフ</option>
-                                <option {% if template.occupation=='警備員' %}selected{% endif %}>警備員</option>
-                                <option {% if template.occupation=='カラオケスタッフ' %}selected{% endif %}>カラオケスタッフ</option>
-                                <option {% if template.occupation=='介護補助' %}selected{% endif %}>介護補助</option>
+                                <option {% if template.occupation=='清掃・ベッドメイク' or form.occupation.value=='清掃・ベッドメイク'
+                                    %}selected{% endif %}>清掃・ベッドメイク</option>
+                                <option {% if template.occupation=='ホテルスタッフ' or form.occupation.value=='ホテルスタッフ'
+                                    %}selected{% endif %}>ホテルスタッフ</option>
+                                <option {% if template.occupation=='警備員' or form.occupation.value=='警備員' %}selected{%
+                                    endif %}>警備員</option>
+                                <option {% if template.occupation=='カラオケスタッフ' or form.occupation.value=='カラオケスタッフ'
+                                    %}selected{% endif %}>カラオケスタッフ</option>
+                                <option {% if template.occupation=='介護補助' or form.occupation.value=='介護補助' %}selected{%
+                                    endif %}>介護補助</option>
                             </optgroup>
                         </select>
+                        {% if form.occupation.errors %}
+                        <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{
+                            form.occupation.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class=" field-group">
                     <div class="field-label">業務内容 <span class="tag-required">必須</span></div>
-                    <textarea name="work_content" placeholder="業務内容を入力してください">{{ template.work_content }}</textarea>
+                    <textarea name="work_content"
+                        placeholder="業務内容を入力してください">{{ template.work_content|default:form.work_content.value|default:'' }}</textarea>
+                    {% if form.work_content.errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{
+                        form.work_content.errors.0 }}</div>
+                    {% endif %}
                 </div>
                 <div class="field-group">
                     <div class="field-label">注意事項</div>
-                    <textarea name="precautions" placeholder="注意事項を入力してください">{{ template.precautions }}</textarea>
+                    <textarea name="precautions"
+                        placeholder="注意事項を入力してください">{{ template.precautions|default:form.precautions.value|default:'' }}</textarea>
                 </div>
             </div>
         </div>
@@ -374,22 +423,28 @@
             <div class="section-body">
                 <div class="treatment-grid">
                     <label class="checkbox-item"><input type="checkbox" name="has_unexperienced_welcome" {% if
-                            template.has_unexperienced_welcome %}checked{% endif %}> 未経験者歓迎</label>
+                            template.has_unexperienced_welcome or form.has_unexperienced_welcome.value %}checked{% endif
+                            %}> 未経験者歓迎</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bike_car_commute" {% if
-                            template.has_bike_car_commute %}checked{% endif %}> バイク・車通勤可</label>
+                            template.has_bike_car_commute or form.has_bike_car_commute.value %}checked{% endif %}>
+                        バイク・車通勤可</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_clothing_free" {% if
-                            template.has_clothing_free %}checked{% endif %}> 服装自由</label>
+                            template.has_clothing_free or form.has_clothing_free.value %}checked{% endif %}>
+                        服装自由</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_coupon_get" {% if
-                            template.has_coupon_get %}checked{% endif %}> クーポンGET</label>
-                    <label class="checkbox-item"><input type="checkbox" name="has_meal" {% if template.has_meal
-                            %}checked{% endif %}> まかないあり</label>
+                            template.has_coupon_get or form.has_coupon_get.value %}checked{% endif %}> クーポンGET</label>
+                    <label class="checkbox-item"><input type="checkbox" name="has_meal" {% if template.has_meal or
+                            form.has_meal.value %}checked{% endif %}> まかないあり</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_hair_color_free" {% if
-                            template.has_hair_color_free %}checked{% endif %}> 髪型／カラー自由</label>
+                            template.has_hair_color_free or form.has_hair_color_free.value %}checked{% endif %}>
+                        髪型／カラー自由</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bike_bicycle_commute" {% if
-                            template.has_bike_bicycle_commute %}checked{% endif %}>
+                            template.has_bike_bicycle_commute or form.has_bike_bicycle_commute.value %}checked{% endif
+                            %}>
                         バイク・自転車通勤可</label>
                     <label class="checkbox-item"><input type="checkbox" name="has_bicycle_commute" {% if
-                            template.has_bicycle_commute %}checked{% endif %}> 自転車通勤可</label>
+                            template.has_bicycle_commute or form.has_bicycle_commute.value %}checked{% endif %}>
+                        自転車通勤可</label>
                 </div>
             </div>
         </div>
@@ -446,25 +501,31 @@
                     </p>
                 </div>
 
-                <div class="field-group" id="qualification-type-group"
-                    style="{% if not template.requires_qualification %}display: none;{% endif %}">
+                <div class="field-group" id="qualification-type-group" {% if not template.requires_qualification
+                    %}style="display: none;" {% endif %}>
                     <div class="field-label">資格種別 <span class="tag-required">必須</span></div>
                     <p style="font-size: 13px; color: #888; margin-bottom: 8px;">
                         求人の応募に必要な資格種別を選択してください。</p>
                     <select name="qualification_id">
-                        <option value="none" {% if not template.qualification %}selected{% endif %}>
+                        <option value="none" {% if not template.qualification and not form.qualification_id.value or
+                            form.qualification_id.value=='none' %}selected{% endif %}>
                             選択してください
                         </option>
                         {% regroup qualifications by category as category_list %}
                         {% for category in category_list %}
                         <optgroup label="{{ category.grouper }}">
                             {% for qual in category.list %}
-                            <option value="{{ qual.id }}" {% if template.qualification.id==qual.id %}selected{% endif
-                                %}>{{ qual.name }}</option>
+                            <option value="{{ qual.id }}" {% if template.qualification.id==qual.id or
+                                form.qualification_id.value|stringformat:"s"==qual.id|stringformat:"s" %}selected{%
+                                endif %}>{{ qual.name }}</option>
                             {% endfor %}
                         </optgroup>
                         {% endfor %}
                     </select>
+                    {% if form.qualification_id.errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{
+                        form.qualification_id.errors.0 }}</div>
+                    {% endif %}
                     <p style="font-size: 12px; color: #888; margin-top: 8px;">
                         ※選択したいずれかの資格の登録が完了しているユーザーは、求人に申し込むことが可能になります。</p>
 
@@ -496,6 +557,11 @@
                         </div>
                         {% endfor %}
                     </div>
+                    {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{ error }}</div>
+                    {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="field-group">
                     <div class="field-label">業務に関する書類(PDF)</div>
@@ -509,12 +575,16 @@
             <div class="section-body">
                 <div class="field-group">
                     <div class="field-label">就業場所の住所 <span class="tag-required">必須</span></div>
-                    <input type="text" name="address" value="{{ template.address|default:store.full_address }}"
-                        required>
+                    <input type="text" name="address"
+                        value="{{ template.address|default:form.address.value|default:store.full_address }}" required>
+                    {% if form.address.errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{ form.address.errors.0 }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="field-group">
                     <div class="field-label">アクセス</div>
-                    <textarea name="access">{{ template.access }}</textarea>
+                    <textarea name="access">{{ template.access|default:form.access.value|default:'' }}</textarea>
                 </div>
 
                 <!-- Manual Pin Placement -->
@@ -544,8 +614,9 @@
                         let lon = parseFloat(document.getElementById('id_longitude').value);
 
                         // Default to Store location if available, or Tokyo Station
-                        const storeLat = {{ store.latitude|default:"null" }};
-                        const storeLon = {{ store.longitude|default:"null" }};
+                        const storeLat = {{ store.latitude| default_if_none: "35.681236"
+                    }};
+                    const storeLon = {{ store.longitude| default_if_none: "139.767125" }};
 
                     // If no template lat/lon, use store lat/lon
                     if (isNaN(lat) || isNaN(lon)) {
@@ -588,25 +659,31 @@
 
                 <div class="field-group">
                     <div class="field-label">緊急連絡先 <span class="tag-required">必須</span></div>
-                    <input type="tel" name="contact_number" value="{{ template.contact_number }}" required>
+                    <input type="tel" name="contact_number"
+                        value="{{ template.contact_number|default:form.contact_number.value|default:'' }}" required>
+                    {% if form.contact_number.errors %}
+                    <div style="color: var(--highme-red); font-size: 13px; margin-top: 4px;">{{
+                        form.contact_number.errors.0 }}</div>
+                    {% endif %}
                 </div>
                 <div class="field-group">
                     <div class="field-label">受動喫煙防止措置 <span class="tag-required">必須</span></div>
                     <select name="smoking_prevention">
-                        <option value="indoor_no_smoking" {% if template.smoking_prevention=='indoor_no_smoking'
-                            %}selected{% endif %}>屋内禁煙
+                        <option value="indoor_no_smoking" {% if template.smoking_prevention=='indoor_no_smoking' or
+                            form.smoking_prevention.value=='indoor_no_smoking' %}selected{% endif %}>屋内禁煙
                         </option>
                         <option value="indoor_smoking_separate" {% if
-                            template.smoking_prevention=='indoor_smoking_separate' %}selected{% endif %}>分煙
+                            template.smoking_prevention=='indoor_smoking_separate' or
+                            form.smoking_prevention.value=='indoor_smoking_separate' %}selected{% endif %}>分煙
                         </option>
-                        <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok'
-                            %}selected{% endif %}>屋内喫煙可
+                        <option value="indoor_smoking_ok" {% if template.smoking_prevention=='indoor_smoking_ok' or
+                            form.smoking_prevention.value=='indoor_smoking_ok' %}selected{% endif %}>屋内喫煙可
                         </option>
                     </select>
                     <div style="margin-top: 8px;">
                         <label class="checkbox-item" style="display:inline-flex; border:none; padding:0;">
-                            <input type="checkbox" name="has_smoking_area" {% if template.has_smoking_area %}checked{%
-                                endif %}> 喫煙可能エリアでの作業あり
+                            <input type="checkbox" name="has_smoking_area" {% if template.has_smoking_area or
+                                form.has_smoking_area.value %}checked{% endif %}> 喫煙可能エリアでの作業あり
                         </label>
                     </div>
                 </div>
@@ -617,11 +694,14 @@
                         申し込みから働くまでの間に、ワーカーに確認したいことを設定できます。設定した質問はワーカーに自動的に届きます。
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <input type="text" name="question1" value="{{ template.question1|default:'' }}"
+                        <input type="text" name="question1"
+                            value="{{ template.question1|default:form.question1.value|default:'' }}"
                             placeholder="制服のサイズを教えてください（S、M、L）">
-                        <input type="text" name="question2" value="{{ template.question2|default:'' }}"
+                        <input type="text" name="question2"
+                            value="{{ template.question2|default:form.question2.value|default:'' }}"
                             placeholder="靴のサイズを教えてください。">
-                        <input type="text" name="question3" value="{{ template.question3|default:'' }}"
+                        <input type="text" name="question3"
+                            value="{{ template.question3|default:form.question3.value|default:'' }}"
                             placeholder="食べ物にアレルギーなどありましたら教えてください。">
                     </div>
                     <p style=" font-size: 12px; color: #888; margin-top: 8px;">

@@ -55,6 +55,8 @@ class JobTemplateForm(forms.ModelForm):
     # 既存のHTMLフォーム構造を変えない方針でいくなら、View処理が無難だが、
     # CBV移行なので、Formで吸収したい。
     
+    qualification_id = forms.CharField(required=False)
+
     class Meta:
         model = JobTemplate
         exclude = ['store', 'created_at', 'skills', 'other_conditions', 'qualification', 'qualification_type']
@@ -62,17 +64,40 @@ class JobTemplateForm(forms.ModelForm):
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput(),
         }
-        # skills, other_conditions, qualification関連はカスタム処理が必要
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # 資格マスター取得
         self.qualifications = QualificationMaster.objects.all().order_by('category', 'name')
     
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        if not title:
+            raise forms.ValidationError("求人タイトルを入力してください。")
+        return title
+
+    def clean_work_content(self):
+        content = self.cleaned_data.get('work_content')
+        if not content:
+            raise forms.ValidationError("業務内容を入力してください。")
+        return content
+
     def clean(self):
         cleaned_data = super().clean()
-        # スキルやその他条件の処理はViewの `request.POST` から取得して `instance` にセットする形になることが多い
-        # ModelFormのsave前に commit=False で止めて処理する
+        requires_qualification = cleaned_data.get('requires_qualification')
+        qualification_id = cleaned_data.get('qualification_id')
+
+        if requires_qualification and (not qualification_id or qualification_id == 'none'):
+            self.add_error('qualification_id', "資格が必要な場合は、資格種別を選択してください。")
+
+        # 写真のバリデーション (新規作成時または編集時)
+        # Note: request.FILES は view から form = Form(..., files=request.FILES) で渡される想定
+        photos = self.files.getlist('photos')
+        if not photos and not self.instance.pk:
+            # 既存の写真があるかチェック（編集時）
+            if not self.instance.photos.exists():
+                self.add_error(None, "写真を少なくとも1枚アップロードしてください。")
+
         return cleaned_data
 
 class JobCreateFromTemplateForm(forms.Form):

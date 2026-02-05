@@ -517,7 +517,8 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        store_id = self.kwargs.get('store_id')
+        self.store = get_object_or_404(Store, id=store_id, business=biz_profile)
         context['store'] = self.store
         context['qualifications'] = QualificationMaster.objects.all().order_by('category', 'name')
         return context
