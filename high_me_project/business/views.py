@@ -530,10 +530,11 @@ class TemplateCreateView(BusinessLoginRequiredMixin, CreateView):
         
         # シリアライズ可能な形式でデータを抽出
         draft_data = {}
-        for field in form.fields:
-            if field in form.cleaned_data:
-                val = form.cleaned_data[field]
-                # 特殊な型の変換 (必要に応じて)
+        for field, val in form.cleaned_data.items():
+            # ファイルオブジェクトや特殊なオブジェクトを除外し、基本型のみをコピー
+            if isinstance(val, (str, int, float, bool)) or val is None:
+                draft_data[field] = val
+            elif isinstance(val, list):
                 draft_data[field] = val
 
         # 手動処理項目

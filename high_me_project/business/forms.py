@@ -90,12 +90,14 @@ class JobTemplateForm(forms.ModelForm):
         if requires_qualification and (not qualification_id or qualification_id == 'none'):
             self.add_error('qualification_id', "資格が必要な場合は、資格種別を選択してください。")
 
-        # 写真のバリデーション (新規作成時または編集時)
-        # Note: request.FILES は view から form = Form(..., files=request.FILES) で渡される想定
+        # 写真のバリデーション
         photos = self.files.getlist('photos')
-        if not photos and not self.instance.pk:
-            # 既存の写真があるかチェック（編集時）
-            if not self.instance.photos.exists():
+        if not photos:
+            # 新規作成時はアップロード必須
+            if not self.instance.pk:
+                self.add_error(None, "写真を少なくとも1枚アップロードしてください。")
+            # 編集時は既存の写真があるかチェック
+            elif not self.instance.photos.exists():
                 self.add_error(None, "写真を少なくとも1枚アップロードしてください。")
 
         return cleaned_data
