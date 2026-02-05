@@ -399,7 +399,13 @@ class MapView(TemplateView):
                     base_qs = base_qs.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
 
         # 募集中の仕事のみ (デフォルトTrue)
-        only_recruiting = session_filters.get('job_filters', {}).get('only_recruiting', True)
+        # GETパラメータがあれば優先、なければセッション、それでもなければTrue
+        only_recruiting_param = self.request.GET.get('only_recruiting')
+        if only_recruiting_param is not None:
+            only_recruiting = only_recruiting_param == '1'
+        else:
+            only_recruiting = session_filters.get('job_filters', {}).get('only_recruiting', True)
+
         if only_recruiting:
             from django.db.models import Count, F
             base_qs = base_qs.annotate(

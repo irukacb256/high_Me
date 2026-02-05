@@ -1522,6 +1522,71 @@ class TaxSlipView(LoginRequiredMixin, TemplateView):
 class EarnedRewardsView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/Rewards/earned.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.request.user.workerprofile
+        
+        # 累計獲得報酬 (rewardタイプのみ。残高ではなく獲得合計)
+        total_earned = profile.wallet_transactions.filter(
+            transaction_type='reward'
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
+        
+        # 今月の獲得報酬
+        today = timezone.now()
+        start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        monthly_earned = profile.wallet_transactions.filter(
+            transaction_type='reward',
+            created_at__gte=start_of_month
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
+        
+        # グラフ用（過去6ヶ月分）
+        month_data = []
+        for i in range(5, -1, -1):
+            m = today.month - i
+            y = today.year
+            while m <= 0:
+                m += 12
+                y -= 1
+            
+            start_date = today.replace(year=y, month=m, day=1, hour=0, minute=0, second=0, microsecond=0)
+            if m == 12:
+                next_m = 1
+                next_y = y + 1
+            else:
+                next_m = m + 1
+                next_y = y
+            end_date = today.replace(year=next_y, month=next_m, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+            amount = profile.wallet_transactions.filter(
+                transaction_type='reward',
+                created_at__gte=start_date,
+                created_at__lt=end_date
+            ).aggregate(Sum('amount'))['amount__sum'] or 0
+
+            month_data.append({
+                'label': f"{m}月",
+                'amount': amount,
+                'is_active': i == 0
+            })
+            
+        # グラフのスケーリング用（最大値を1,000単位とかで丸めると綺麗だが、ひとまず最大値+余裕）
+        max_amount_in_range = max([m['amount'] for m in month_data] + [1000])
+        graph_max = ((max_amount_in_range // 500) + 1) * 500
+        
+        for m in month_data:
+            m['height_percent'] = int((m['amount'] / graph_max) * 100)
+
+        context.update({
+            'total_earned': total_earned,
+            'monthly_earned': monthly_earned,
+            'current_month': today.month,
+            'current_year': today.year,
+            'month_data': month_data,
+            'graph_max': graph_max,
+            'graph_mid': graph_max // 2
+        })
+        return context
+
 # ---------------------------------------------------------
 # その他のプロフィール編集
 # ---------------------------------------------------------

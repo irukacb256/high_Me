@@ -482,6 +482,7 @@
         url.searchParams.set('north', bounds.getNorth());
         url.searchParams.set('west', bounds.getWest());
         url.searchParams.set('east', bounds.getEast());
+        url.searchParams.set('only_recruiting', isRecruitOnly ? '1' : '0');
 
         try {
             const response = await fetch(url);
@@ -573,7 +574,12 @@
 
     document.getElementById('recruitOnlyToggle').addEventListener('change', (e) => {
         isRecruitOnly = e.target.checked;
-        render();
+        if (!isRecruitOnly) {
+            // オフにしたときはサーバーから締切済みも含めて再取得
+            fetchJobs();
+        } else {
+            render();
+        }
     });
 
     map.on('moveend', () => {
