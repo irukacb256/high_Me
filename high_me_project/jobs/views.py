@@ -284,12 +284,28 @@ from django.core.serializers.json import DjangoJSONEncoder
 class MapView(TemplateView):
     template_name = 'Searchjobs/map_view.html'
 
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        if request.GET.get('ajax') == '1':
+            return JsonResponse({
+                'jobs_data': context['jobs_data'],
+                'date_list': [d.strftime('%Y-%m-%d') for d in context['date_list']],
+                'today_str': context['today_str']
+            }, encoder=DjangoJSONEncoder)
+        return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         today = timezone.localdate()
         date_list = [today + timedelta(days=i) for i in range(14)]
         
+        # 範囲フィルタ用のパラメータ取得
+        south = self.request.GET.get('south')
+        north = self.request.GET.get('north')
+        west = self.request.GET.get('west')
+        east = self.request.GET.get('east')
+
         # 対象都道府県 (GETパラメータがあればそれを使用、なければユーザーの登録設定)
         target_prefs = self.request.GET.getlist('pref')
         if not target_prefs and self.request.user.is_authenticated and hasattr(self.request.user, 'workerprofile'):
@@ -297,17 +313,28 @@ class MapView(TemplateView):
                 target_prefs = [p for p in self.request.user.workerprofile.target_prefectures.split(',') if p]
         
         if not target_prefs:
-            target_prefs = ['東京都', '神奈川県', '千葉県']
+            target_prefs = ['東京都', '神奈川県', '千葉県', '埼玉県', '群馬県', '栃木県', '茨城県', '長野県', '山梨県', '静岡県', 'Tokyo', 'Kanagawa', 'Chiba', 'Saitama']
 
-        qs = JobPosting.objects.filter(
+        base_qs = JobPosting.objects.filter(
             visibility='public',
-            is_published=True,
-            work_date__gte=today, # 今日以降
-            work_date__lte=today + timedelta(days=14),
-            template__store__prefecture__in=target_prefs
-        ).filter(
-            Q(template__latitude__isnull=False) | Q(template__store__latitude__isnull=False)
+            is_published=True
         ).select_related('template', 'template__store')
+
+        # 範囲指定があれば優先、なければ都道府県
+        if south and north and west and east:
+            try:
+                base_qs = base_qs.filter(
+                    Q(template__latitude__gte=south, template__latitude__lte=north, template__longitude__gte=west, template__longitude__lte=east) |
+                    Q(template__store__latitude__gte=south, template__store__latitude__lte=north, template__store__longitude__gte=west, template__store__longitude__lte=east)
+                )
+            except (ValueError, TypeError):
+                base_qs = base_qs.filter(template__store__prefecture__in=target_prefs)
+        else:
+            base_qs = base_qs.filter(template__store__prefecture__in=target_prefs)
+
+        base_qs = base_qs.filter(
+            Q(template__latitude__isnull=False) | Q(template__store__latitude__isnull=False)
+        )
 
         # セッションから絞り込み条件を取得して適用 (IndexViewと同様のロジック)
         session_filters = self.request.session.get('job_filters', {})
@@ -315,7 +342,7 @@ class MapView(TemplateView):
         # 職種
         occupations = session_filters.get('occupations', [])
         if occupations:
-            qs = qs.filter(template__occupation__in=occupations)
+            base_qs = base_qs.filter(template__occupation__in=occupations)
 
         # 報酬
         rewards = session_filters.get('rewards', [])
@@ -329,7 +356,7 @@ class MapView(TemplateView):
                     if min_wage == 0 or val < min_wage:
                         min_wage = val
             if min_wage > 0:
-                qs = qs.filter(hourly_wage__gte=min_wage)
+                base_qs = base_qs.filter(hourly_wage__gte=min_wage)
 
         # 待遇
         treatments = session_filters.get('treatments', [])
@@ -346,7 +373,7 @@ class MapView(TemplateView):
             for t in treatments:
                 field_name = treatment_map.get(t)
                 if field_name:
-                    qs = qs.filter(**{f"template__{field_name}": True})
+                    base_qs = base_qs.filter(**{f"template__{field_name}": True})
 
         # 時間帯
         time_ranges = session_filters.get('time_ranges', [])
@@ -361,7 +388,7 @@ class MapView(TemplateView):
                     time_q |= Q(start_time__gte="16:00", start_time__lt="22:00")
                 elif tr == "深夜 (22:00〜4:00)":
                     time_q |= Q(start_time__gte="22:00") | Q(start_time__lt="04:00")
-            qs = qs.filter(time_q)
+            base_qs = base_qs.filter(time_q)
 
         # 除外キーワード
         exclude_keyword = session_filters.get('exclude_keyword', '')
@@ -369,51 +396,59 @@ class MapView(TemplateView):
             keywords = exclude_keyword.replace('　', ' ').split()
             for k in keywords:
                 if k:
-                    qs = qs.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
+                    base_qs = base_qs.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
 
         # 募集中の仕事のみ (デフォルトTrue)
-        only_recruiting = session_filters.get('only_recruiting', True)
+        only_recruiting = session_filters.get('job_filters', {}).get('only_recruiting', True)
         if only_recruiting:
-            # 1. 開始時間を過ぎていないもの (is_expired == False 相当)
-            # MapViewのqsには既に work_date__gte=today が入っている
-            now = timezone.localtime(timezone.now())
-            # work_date が今日の場合のみ、開始時間での比較が必要
-            qs = qs.exclude(work_date=now.date(), start_time__lte=now.time())
-            
-            # 2. 募集人数に達していないもの
             from django.db.models import Count, F
-            qs = qs.annotate(
+            base_qs = base_qs.annotate(
                 confirmed_count=Count('applications', filter=Q(applications__status='確定済み'))
             ).filter(confirmed_count__lt=F('recruitment_count'))
 
         # 登録した資格が必要な仕事のみ
         qualification_only = session_filters.get('qualification_only', False)
         if qualification_only:
-            qs = qs.filter(template__requires_qualification=True)
+            base_qs = base_qs.filter(template__requires_qualification=True)
         
+        # 日付ごとに最大50件ずつ取得してマージする
         jobs_data = []
-        for job in qs:
-            start_dt = datetime.combine(job.work_date, job.start_time)
-            is_expired = timezone.make_aware(start_dt) < timezone.now()
+        now = timezone.localtime(timezone.now())
+        for d in date_list:
+            day_qs = base_qs.filter(work_date=d)
+            if only_recruiting:
+                if d == now.date():
+                    day_qs = day_qs.exclude(start_time__lte=now.time())
             
-            # 緯度経度: テンプレート優先
-            lat = float(job.template.latitude) if job.template.latitude else float(job.template.store.latitude)
-            lng = float(job.template.longitude) if job.template.longitude else float(job.template.store.longitude)
+            day_qs = day_qs.order_by('?')[:50]
+            
+            for job in day_qs:
+                start_dt = datetime.combine(job.work_date, job.start_time)
+                is_expired = timezone.make_aware(start_dt) < timezone.now()
+                
+                # 緯度経度: テンプレート優先
+                lat = float(job.template.latitude) if job.template.latitude else float(job.template.store.latitude)
+                lng = float(job.template.longitude) if job.template.longitude else float(job.template.store.longitude)
 
-            jobs_data.append({
-                'id': job.id,
-                'title': job.title,
-                'work_date': job.work_date.strftime('%Y-%m-%d'),
-                'start_time': job.start_time.strftime('%H:%M'),
-                'end_time': job.end_time.strftime('%H:%M'),
-                'lat': lat,
-                'lng': lng,
-                'store_name': job.template.store.store_name,
-                'hourly_wage': int(job.hourly_wage),
-                'is_expired': bool(is_expired),
-                'recruitment_count': int(job.recruitment_count),
-            })
+                # ピンの重なり防止
+                import random
+                random.seed(job.id)
+                lat += random.uniform(-0.0012, 0.0012)
+                lng += random.uniform(-0.0012, 0.0012)
 
+                jobs_data.append({
+                    'id': job.id,
+                    'title': job.title,
+                    'work_date': job.work_date.strftime('%Y-%m-%d'),
+                    'start_time': job.start_time.strftime('%H:%M'),
+                    'end_time': job.end_time.strftime('%H:%M'),
+                    'lat': lat,
+                    'lng': lng,
+                    'store_name': job.template.store.store_name,
+                    'hourly_wage': int(job.hourly_wage),
+                    'is_expired': bool(is_expired),
+                    'recruitment_count': int(job.recruitment_count),
+                })
             
         context['jobs_data'] = jobs_data
         context['date_list'] = date_list

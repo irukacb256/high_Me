@@ -438,20 +438,21 @@
 
 {{ jobs_data|json_script:"jobs-data" }}
 <script>
-    const allJobs = JSON.parse(document.getElementById('jobs-data').textContent);
+    let allJobs = JSON.parse(document.getElementById('jobs-data').textContent);
     let currentDate = "{{ today_str }}";
     let isRecruitOnly = true;
+    let markers = [];
+    let isInitialLoad = true;
 
-    // 初期表示設定 (求人がある場合は最初の求人の場所に、なければデフォルトで東京付近)
-    const initialLat = allJobs.length > 0 ? allJobs[0].lat : 35.6812;
-    const initialLng = allJobs.length > 0 ? allJobs[0].lng : 139.7671;
-    const map = L.map('map', { zoomControl: false }).setView([initialLat, initialLng], 12);
+    // 初期表示設定
+    const map = L.map('map', { zoomControl: false });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    let markers = [];
+    // マーカーアイコン管理用のレイヤーグループ
+    const markerLayer = L.layerGroup().addTo(map);
 
     // --- アイコン生成 ---
     function createIcon(job, isActive) {
@@ -472,13 +473,35 @@
         return L.divIcon({ className: 'custom-marker', html: html, iconSize: [40, 50], iconAnchor: [20, 50] });
     }
 
+    // --- データ取得 (AJAX) ---
+    async function fetchJobs() {
+        const bounds = map.getBounds();
+        const url = new URL(window.location.href);
+        url.searchParams.set('ajax', '1');
+        url.searchParams.set('south', bounds.getSouth());
+        url.searchParams.set('north', bounds.getNorth());
+        url.searchParams.set('west', bounds.getWest());
+        url.searchParams.set('east', bounds.getEast());
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            allJobs = data.jobs_data;
+            render();
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+        }
+    }
+
+    // デバウンス用のタイマー
+    let moveEndTimer;
+
     // --- メイン描画処理 ---
     function render() {
         // 1. マーカークリア
-        markers.forEach(m => map.removeLayer(m));
-        markers = [];
+        markerLayer.clearLayers();
 
-        // 2. フィルタリング
+        // 2. フィルタリング (日付と募集枠のみ)
         const filteredJobs = allJobs.filter(job => {
             if (job.work_date !== currentDate) return false;
             if (isRecruitOnly && job.is_expired) return false;
@@ -490,7 +513,7 @@
         listContainer.innerHTML = '';
 
         if (filteredJobs.length === 0) {
-            listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">この日の求人はありません</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">表示範囲に求人はありません</div>';
             return;
         }
 
@@ -498,13 +521,10 @@
             // マーカー追加
             const marker = L.marker([job.lat, job.lng], {
                 icon: createIcon(job, !job.is_expired),
-                zIndexOffset: job.is_expired ? 0 : 1000 // 募集中を手前に
-            }).addTo(map);
-
-            marker.on('click', () => {
-                highlightJob(job.id);
+                zIndexOffset: job.is_expired ? 0 : 1000
             });
-            markers.push(marker);
+            marker.on('click', () => highlightJob(job.id));
+            markerLayer.addLayer(marker);
 
             // リストアイテム追加
             const item = document.createElement('a');
@@ -512,7 +532,6 @@
             item.id = `job-card-${job.id}`;
             item.href = `/job/${job.id}/`;
 
-            const wage = (job.hourly_wage * 5).toLocaleString(); // 簡易計算
             const expiredBadge = job.is_expired ? '<span class="expired-badge">締切</span>' : '';
 
             item.innerHTML = `
@@ -525,7 +544,7 @@
                     <div class="job-title">${expiredBadge}${job.title}</div>
                     <div class="job-meta">
                         <span>${job.start_time}〜${job.end_time}</span>
-                        <span class="job-wage">¥${wage}</span>
+                        <span class="job-wage">¥${job.hourly_wage.toLocaleString()}</span>
                     </div>
                     <div style="font-size:10px; color:#999; margin-top:4px;"><i class="fa-solid fa-location-dot"></i> ${job.store_name}</div>
                 </div>
@@ -536,10 +555,7 @@
 
     // --- ピン選択時の処理 ---
     function highlightJob(jobId) {
-        // リスト内の全ハイライト解除
         document.querySelectorAll('.job-card-item').forEach(el => el.classList.remove('highlight'));
-
-        // 対象を検索
         const target = document.getElementById(`job-card-${jobId}`);
         if (target) {
             target.classList.add('highlight');
@@ -560,6 +576,11 @@
         render();
     });
 
+    map.on('moveend', () => {
+        clearTimeout(moveEndTimer);
+        moveEndTimer = setTimeout(fetchJobs, 500);
+    });
+
     window.moveToCurrentLocation = function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
@@ -568,7 +589,15 @@
         }
     };
 
-    // 初期実行
+    // 初期配置
+    if (allJobs.length > 0) {
+        const bounds = L.latLngBounds(allJobs.map(j => [j.lat, j.lng]));
+        map.fitBounds(bounds, { padding: [50, 50] });
+    } else {
+        map.setView([35.6812, 139.7671], 12);
+    }
+
+    // 最初の表示
     render();
 </script>
 {% endblock %}
