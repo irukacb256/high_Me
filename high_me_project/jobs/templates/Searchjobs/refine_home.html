@@ -124,74 +124,75 @@
         </form>
     </div>
 
-    <div class="modal-body">
-        <a href="{% url 'occupation_select' %}" class="menu-item">
-            <div class="menu-left"><i class="fa-solid fa-briefcase"></i> 職種</div>
-            <div class="menu-right {% if current_occupations %}active{% endif %}">
-                {% if current_occupations %}
-                {{ current_occupations|length }}件選択中 ＞
-                {% else %}
-                すべて ＞
-                {% endif %}
-            </div>
-        </a>
-        <a href="{% url 'reward_select' %}" class="menu-item">
-            <div class="menu-left"><i class="fa-solid fa-yen-sign"></i> 報酬</div>
-            <div class="menu-right {% if current_rewards %}active{% endif %}">
-                {% if current_rewards %}
-                {{ current_rewards|length }}件選択中 ＞
-                {% else %}
-                指定なし ＞
-                {% endif %}
-            </div>
-        </a>
-        <a href="{% url 'time_select' %}" class="menu-item">
-            <div class="menu-left"><i class="fa-regular fa-clock"></i> 時間帯</div>
-            <div class="menu-right {% if current_time_ranges %}active{% endif %}">
-                {% if current_time_ranges %}
-                {{ current_time_ranges|length }}件選択中 ＞
-                {% else %}
-                指定なし ＞
-                {% endif %}
-            </div>
-        </a>
-        <a href="{% url 'treatment_select' %}" class="menu-item">
-            <div class="menu-left"><i class="fa-solid fa-sparkles"></i> 待遇</div>
-            <div class="menu-right {% if current_treatments %}active{% endif %}">
-                {% if current_treatments %}
-                {{ current_treatments|length }}件選択中 ＞
-                {% else %}
-                指定なし ＞
-                {% endif %}
-            </div>
-        </a>
-        <a href="{% url 'keyword_exclude' %}" class="menu-item">
-            <div class="menu-left">除外キーワード</div>
-            <div class="menu-right {% if current_exclude_keyword %}active{% endif %}">
-                {% if current_exclude_keyword %}
-                設定あり ＞
-                {% else %}
-                指定なし ＞
-                {% endif %}
-            </div>
-        </a>
+    <form method="post" id="refine-form">
+        {% csrf_token %}
+        <input type="hidden" name="from" value="{{ from_view }}">
+        
+        <div class="modal-body">
+            <a href="{% url 'occupation_select' %}" class="menu-item">
+                <div class="menu-left"><i class="fa-solid fa-briefcase"></i> 職種</div>
+                <div class="menu-right {% if current_occupations %}active{% endif %}">
+                    {% if current_occupations %}
+                    {{ current_occupations|length }}件選択中 ＞
+                    {% else %}
+                    すべて ＞
+                    {% endif %}
+                </div>
+            </a>
+            <a href="{% url 'reward_select' %}" class="menu-item">
+                <div class="menu-left"><i class="fa-solid fa-yen-sign"></i> 報酬</div>
+                <div class="menu-right {% if current_rewards %}active{% endif %}">
+                    {% if current_rewards %}
+                    {{ current_rewards|length }}件選択中 ＞
+                    {% else %}
+                    指定なし ＞
+                    {% endif %}
+                </div>
+            </a>
+            <a href="{% url 'time_select' %}" class="menu-item">
+                <div class="menu-left"><i class="fa-regular fa-clock"></i> 時間帯</div>
+                <div class="menu-right {% if current_time_ranges %}active{% endif %}">
+                    {% if current_time_ranges %}
+                    {{ current_time_ranges|length }}件選択中 ＞
+                    {% else %}
+                    指定なし ＞
+                    {% endif %}
+                </div>
+            </a>
+            <a href="{% url 'treatment_select' %}" class="menu-item">
+                <div class="menu-left"><i class="fa-solid fa-sparkles"></i> 待遇</div>
+                <div class="menu-right {% if current_treatments %}active{% endif %}">
+                    {% if current_treatments %}
+                    {{ current_treatments|length }}件選択中 ＞
+                    {% else %}
+                    指定なし ＞
+                    {% endif %}
+                </div>
+            </a>
+            <a href="{% url 'keyword_exclude' %}" class="menu-item">
+                <div class="menu-left">除外キーワード</div>
+                <div class="menu-right {% if current_exclude_keyword %}active{% endif %}">
+                    {% if current_exclude_keyword %}
+                    設定あり ＞
+                    {% else %}
+                    指定なし ＞
+                    {% endif %}
+                </div>
+            </a>
 
-        <div class="toggle-row">
-            <span>募集中の仕事のみ</span>
-            <input type="checkbox" checked style="width:20px; height:20px; accent-color:#4cd964;">
+            <div class="toggle-row">
+                <span>募集中の仕事のみ</span>
+                <input type="checkbox" name="only_recruiting" {% if only_recruiting %}checked{% endif %} style="width:20px; height:20px; accent-color:#4cd964;">
+            </div>
+            <div class="toggle-row">
+                <span>登録した資格が必要な仕事のみ</span>
+                <input type="checkbox" name="qualification_only" {% if qualification_only %}checked{% endif %} style="width:20px; height:20px; accent-color:#4cd964;">
+            </div>
         </div>
-        <div class="toggle-row">
-            <span>登録した資格が必要な仕事のみ</span>
-            <input type="checkbox" style="width:20px; height:20px; accent-color:#4cd964;">
-        </div>
-    </div>
 
-    <div class="fixed-footer">
-        {% if from_view == 'map_view' %}
-        <button onclick="location.href='{% url 'map_view' %}'" class="btn-submit">絞り込み結果を表示</button>
-        {% else %}
-        <button onclick="location.href='{% url 'index' %}'" class="btn-submit">絞り込み結果を表示</button>
-        {% endif %}
-    </div>
+        <div class="fixed-footer">
+            <button type="submit" class="btn-submit">絞り込み結果を表示</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

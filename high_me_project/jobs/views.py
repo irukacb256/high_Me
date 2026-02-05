@@ -165,6 +165,31 @@ class IndexView(ListView):
             for k in keywords:
                 if k:
                     queryset = queryset.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
+        
+        # 募集中の仕事のみ (デフォルトTrue)
+        only_recruiting = session_filters.get('only_recruiting', True)
+        if only_recruiting:
+            # 1. 開始時間を過ぎていないもの (is_expired == False 相当)
+            now = timezone.localtime(timezone.now())
+            # selected_date が過去の場合は空にする
+            if self.selected_date < self.today:
+                queryset = queryset.none()
+            # selected_date が今日の場合のみ、開始時間での比較が必要
+            elif self.selected_date == self.today:
+                queryset = queryset.filter(start_time__gt=now.time())
+            
+            # 2. 募集人数に達していないもの
+            # JobPostingに matched_count property はあるが、DBクエリで直接扱うためにアノテーション等が必要
+            # 今回は簡易的に、応募数との比較を行う (status='確定済み' のものをカウント)
+            from django.db.models import Count, F
+            queryset = queryset.annotate(
+                confirmed_count=Count('applications', filter=Q(applications__status='確定済み'))
+            ).filter(confirmed_count__lt=F('recruitment_count'))
+
+        # 登録した資格が必要な仕事のみ
+        qualification_only = session_filters.get('qualification_only', False)
+        if qualification_only:
+            queryset = queryset.filter(template__requires_qualification=True)
             
         # ソート処理
         sort_type = self.request.GET.get('sort', 'deadline') # デフォルトは「締切時刻が近い順」
@@ -345,6 +370,26 @@ class MapView(TemplateView):
             for k in keywords:
                 if k:
                     qs = qs.exclude(title__icontains=k).exclude(template__work_content__icontains=k)
+
+        # 募集中の仕事のみ (デフォルトTrue)
+        only_recruiting = session_filters.get('only_recruiting', True)
+        if only_recruiting:
+            # 1. 開始時間を過ぎていないもの (is_expired == False 相当)
+            # MapViewのqsには既に work_date__gte=today が入っている
+            now = timezone.localtime(timezone.now())
+            # work_date が今日の場合のみ、開始時間での比較が必要
+            qs = qs.exclude(work_date=now.date(), start_time__lte=now.time())
+            
+            # 2. 募集人数に達していないもの
+            from django.db.models import Count, F
+            qs = qs.annotate(
+                confirmed_count=Count('applications', filter=Q(applications__status='確定済み'))
+            ).filter(confirmed_count__lt=F('recruitment_count'))
+
+        # 登録した資格が必要な仕事のみ
+        qualification_only = session_filters.get('qualification_only', False)
+        if qualification_only:
+            qs = qs.filter(template__requires_qualification=True)
         
         jobs_data = []
         for job in qs:
@@ -388,7 +433,10 @@ class RefineHomeView(TemplateView):
         context['current_time_ranges'] = session_filters.get('time_ranges', [])
         context['current_treatments'] = session_filters.get('treatments', [])
         context['current_exclude_keyword'] = session_filters.get('exclude_keyword', '')
-        
+        # 追加分: 募集中の仕事のみ / 資格が必要な仕事のみ
+        context['only_recruiting'] = session_filters.get('only_recruiting', True)  # デフォルトTrue
+        context['qualification_only'] = session_filters.get('qualification_only', False)
+
         # 遷移元情報を取得 (デフォルトはindex)
         context['from_view'] = self.request.GET.get('from', 'index')
         return context
@@ -396,13 +444,24 @@ class RefineHomeView(TemplateView):
     def post(self, request, *args, **kwargs):
         # 遷移元情報を維持
         from_view = request.POST.get('from', 'index')
-        
+
         # "すべて解除" や 個別のリセット用
         if 'reset' in request.POST:
             if 'job_filters' in request.session:
                 del request.session['job_filters']
-        
-        return redirect(f"{reverse('refine_home')}?from={from_view}")
+            return redirect(f"{reverse('refine_home')}?from={from_view}")
+
+        # 通常の更新 (チェックボックス等)
+        filters = request.session.get('job_filters', {})
+        filters['only_recruiting'] = 'only_recruiting' in request.POST
+        filters['qualification_only'] = 'qualification_only' in request.POST
+        request.session['job_filters'] = filters
+
+        # 「絞り込み結果を表示」ボタンが押された場合、またはその動作を期待する場合
+        # 既存通り index または map_view へ戻る
+        if from_view == 'map_view':
+            return redirect('map_view')
+        return redirect('index')
 
 class TimeSelectView(TemplateView):
     template_name = 'Searchjobs/time_select.html'
