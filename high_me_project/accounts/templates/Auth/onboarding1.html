@@ -63,6 +63,15 @@
 </style>
 
 <div class="ob-wrapper" onclick="location.href='{% url 'onboarding2' %}'" style="cursor: pointer;">
+    <div style="position: absolute; top: 40px; left: 20px; z-index: 100; text-align: center;"
+        onclick="event.stopPropagation()">
+        <a href="/admin/"
+            style="font-size: 14px; font-weight: bold; color: #fff; text-decoration: none; border: 1px solid #333; padding: 8px 12px; border-radius: 20px; background: #000; display: inline-block;">
+            管理者ログイン
+        </a>
+        <div style="font-size: 10px; color: #333; margin-top: 4px; font-weight: bold;">押さないでね</div>
+    </div>
+
     <a href="{% url 'biz_login' %}"
         style="position: absolute; top: 40px; right: 20px; font-size: 14px; font-weight: bold; color: #333; text-decoration: none; z-index: 100; border: 1px solid #333; padding: 8px 12px; border-radius: 20px; background: rgba(255,255,255,0.5);"
         onclick="event.stopPropagation()">

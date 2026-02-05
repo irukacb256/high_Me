@@ -104,7 +104,7 @@ class SignupView(FormView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             # ログイン済みの場合はログアウトして新規登録フローを開始させる
-            logout(request)
+            auth_logout(request)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):

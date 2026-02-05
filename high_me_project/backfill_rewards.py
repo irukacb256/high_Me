@@ -2,6 +2,7 @@
 import os
 import django
 import sys
+import datetime
 from django.utils import timezone
 from datetime import timedelta
 
@@ -21,6 +22,10 @@ def backfill_rewards():
     
     count = 0
     for app in apps:
+        if not hasattr(app.worker, 'workerprofile'):
+            print(f"Skipping app {app.id}: User {app.worker.username} has no workerprofile.")
+            continue
+            
         worker_profile = app.worker.workerprofile
         
         # すでにこの求人に対する報酬履歴があるかチェック (説明文で判定)
@@ -43,7 +48,7 @@ def backfill_rewards():
         )
         
         # 求人の実施日（終了時間）に合わせる
-        target_date = app.leaving_at or timezone.make_aware(timezone.datetime.combine(app.job_posting.work_date, timezone.datetime.min.time()))
+        target_date = app.leaving_at or timezone.make_aware(datetime.datetime.combine(app.job_posting.work_date, datetime.datetime.min.time()))
         
         tx.created_at = target_date
         tx.save()
