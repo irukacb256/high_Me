@@ -78,10 +78,10 @@
     <div class="confirm-icon">
         <i class="fa-solid fa-triangle-exclamation"></i>
     </div>
-    <h1 class="confirm-title">求人のひな形繧貞炎髯､します°）</h1>
+    <h1 class="confirm-title">求人のひな形を削除しますか？</h1>
     <p style="color: #666; margin-bottom: 25px; font-size: 14px;">
-        このひな形繧貞炎髯､する、ｨ。∝。の蜍滄寔内ｮｹ繧貞ｾｩ蜈。☆繧九ことはで、阪∪、帙ｓ〜br>
-        譌｢に蜃ｺされ、ｦいる求人は蜑企勁されます帙ｓ〜
+        このひな形を削除すると、その求人内容を復元することはできません。<br>
+        既に公開されている求人は削除されません。
     </p>
 
     <div class="target-box">
@@ -92,7 +92,7 @@
     <form method="POST">
         {% csrf_token %}
         <div class="btn-row">
-            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">う＞え∵綾繧翫∪う</a>
+            <a href="{% url 'biz_template_list' store.id %}" class="btn-cancel">いいえ、戻ります</a>
             <button type="submit" class="btn-delete">削除する</button>
         </div>
     </form>
