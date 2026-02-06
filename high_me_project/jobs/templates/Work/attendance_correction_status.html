@@ -156,6 +156,10 @@
         <p style="font-size:12px; color:#ff3b30; margin-top:10px;">
             ※チェックアウト完了後に修正依頼が可能になります
         </p>
+        <a href="{% url 'attendance_step2' application.id %}" class="btn-action"
+            style="background: #666; margin-top: 10px;">
+            QRを読み込まなかった場合
+        </a>
         {% endif %}
         {% endif %}
     </div>

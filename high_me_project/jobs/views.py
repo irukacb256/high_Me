@@ -1162,19 +1162,26 @@ class RewardConfirmView(AttendanceStepBaseView):
 
     def get(self, request, application_id):
         application = self.get_application(application_id)
-        
         posting = application.job_posting
         
-        # モデルに実装した報酬計算メソッドを使用
-        total_amount = application.get_calculated_reward()
-        
-        # 表示用に内訳を計算 (get_calculated_reward の中身と合わせる)
-        duration_seconds = (application.leaving_at - application.attendance_at).total_seconds()
+        # 打刻がない場合のフォールバック（予定時間を使用）
+        from datetime import datetime, timedelta
+        scheduled_start = timezone.make_aware(datetime.combine(posting.work_date, posting.start_time))
+        scheduled_end = timezone.make_aware(datetime.combine(posting.work_date, posting.end_time))
+        if scheduled_end <= scheduled_start:
+            scheduled_end += timedelta(days=1)
+
+        att_at = application.attendance_at or scheduled_start
+        leave_at = application.leaving_at or scheduled_end
+
+        # 表示用に内訳を計算
+        duration_seconds = (leave_at - att_at).total_seconds()
         break_minutes = application.actual_break_duration if application.actual_break_duration > 0 else posting.break_duration
         work_minutes = max(0, (duration_seconds / 60) - break_minutes)
         
         base_reward = int((work_minutes / 60) * posting.hourly_wage)
         transportation = posting.transportation_fee
+        total_amount = base_reward + transportation
         
         context = {
             'application': application,
@@ -1187,7 +1194,19 @@ class RewardConfirmView(AttendanceStepBaseView):
 
     def post(self, request, application_id):
         application = self.get_application(application_id)
+        posting = application.job_posting
         
+        if not application.attendance_at or not application.leaving_at:
+            scheduled_start = timezone.make_aware(datetime.combine(posting.work_date, posting.start_time))
+            scheduled_end = timezone.make_aware(datetime.combine(posting.work_date, posting.end_time))
+            if scheduled_end <= scheduled_start:
+                scheduled_end += timedelta(days=1)
+            
+            if not application.attendance_at:
+                application.attendance_at = scheduled_start
+            if not application.leaving_at:
+                application.leaving_at = scheduled_end
+
         # 報酬計算
         reward_amount = application.get_calculated_reward()
         

@@ -315,6 +315,10 @@
         <a href="{% url 'job_qr_reader' app.job_posting.pk %}" class="btn-qr" style="text-decoration:none;">
             <i class="fa-solid fa-qrcode"></i> QRを読み込む
         </a>
+        <a href="{% url 'attendance_step2' app.id %}" class="btn-cant-check"
+            style="text-decoration:none; margin-top:10px;">
+            <i class="fa-solid fa-circle-question"></i> QRを読み込まなかった場合
+        </a>
 
         {% else %}
         <div style="text-align:center; padding: 20px; background:#f9f9f9; border-radius:12px; margin-bottom:15px;">
