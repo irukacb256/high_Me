@@ -156,7 +156,7 @@
         font-size: 18px;
         cursor: pointer;
     }
-    
+
     .empty-state {
         text-align: center;
         padding: 40px 20px;
@@ -201,8 +201,8 @@
             <div class="fav-meta">{{ fav.job_posting.template.address|truncatechars:12 }}</div>
             <span class="fav-price">¥{{ fav.job_posting.total_payment|intcomma }}</span>
         </div>
-        <i class="fa-solid fa-heart heart-icon"
-            onclick="event.stopPropagation(); removeJobFav({{ fav.job_posting.id }}, this.closest('.fav-card'))"></i>
+        <i class="fa-solid fa-heart heart-icon" style="{% if fav.is_from_store_fav %}color: #ccc;{% endif %}"
+            onclick="event.stopPropagation(); {% if fav.is_from_store_fav %}alert('店舗をお気に入りしているため表示されています。店舗のお気に入りを解除すると非表示になります。');{% else %}removeJobFav({{ fav.job_posting.id }}, this.closest('.fav-card'));{% endif %}"></i>
     </div>
     {% empty %}
     <div class="empty-state">お気に入りに登録した募集はありません</div>
@@ -224,5 +224,24 @@
                 }
             });
     }
+
+    // 募集中の仕事のみフィルタリング
+    document.getElementById('toggle-active-jobs').addEventListener('change', function () {
+        const showOnlyActive = this.checked;
+        const url = new URL(window.location.href);
+        if (showOnlyActive) {
+            url.searchParams.set('only_recruiting', '1');
+        } else {
+            url.searchParams.delete('only_recruiting');
+        }
+        window.location.href = url.toString();
+    });
+
+    // ページロード時にトグル状態を設定
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const onlyRecruiting = urlParams.get('only_recruiting');
+        document.getElementById('toggle-active-jobs').checked = onlyRecruiting === '1';
+    });
 </script>
 {% endblock %}

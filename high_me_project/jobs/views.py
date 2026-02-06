@@ -620,6 +620,7 @@ class JobDetailView(DetailView):
         
         # 遷移元情報を取得
         context['from_view'] = self.request.GET.get('from', 'index')
+        context['selected_prefs'] = self.request.GET.get('pref', '')
         return context
 
 
@@ -629,9 +630,48 @@ class FavoriteJobsView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # お気に入り求人
+        # 1. 個別にお気に入りした求人
         favorite_jobs = FavoriteJob.objects.filter(user=self.request.user).select_related('job_posting', 'job_posting__template__store').order_by('-created_at')
-        context['favorite_jobs'] = favorite_jobs
+        
+        # 2. お気に入り店舗の求人
+        favorite_store_ids = FavoriteStore.objects.filter(user=self.request.user).values_list('store_id', flat=True)
+        store_jobs = JobPosting.objects.filter(
+            template__store_id__in=favorite_store_ids,
+            work_date__gte=timezone.now().date(),
+            is_published=True,
+            visibility='public'
+        ).select_related('template__store')
+
+        # 募集中の仕事のみ表示する場合のフィルタ
+        only_recruiting = self.request.GET.get('only_recruiting') == '1'
+        if only_recruiting:
+            from django.db.models import Count, F, Q
+            store_jobs = store_jobs.annotate(
+                confirmed_count=Count('applications', filter=Q(applications__status='確定済み'))
+            ).filter(confirmed_count__lt=F('recruitment_count'))
+
+            # 個別お気に入りの方もフィルタリングが必要
+            favorite_jobs = favorite_jobs.annotate(
+                confirmed_count=Count('job_posting__applications', filter=Q(job_posting__applications__status='確定済み'))
+            ).filter(confirmed_count__lt=F('job_posting__recruitment_count'))
+
+        # 既に個別にお気に入りされている求人のIDを取得して重複を避ける
+        explicit_fav_job_ids = set(favorite_jobs.values_list('job_posting_id', flat=True))
+        
+        # テンプレート側で `fav.job_posting` という形式でアクセスしているため、
+        # お気に入り店舗の求人も同じ形式に合わせる
+        combined_jobs = list(favorite_jobs)
+        for job in store_jobs:
+            if job.id not in explicit_fav_job_ids:
+                # ダミーの FavoriteJob オブジェクトのようなものを作成
+                # (DBには保存しない。テンプレートでの属性アクセス用)
+                class JobWrapper:
+                    def __init__(self, job_posting):
+                        self.job_posting = job_posting
+                        self.is_from_store_fav = True
+                combined_jobs.append(JobWrapper(job))
+
+        context['favorite_jobs'] = combined_jobs
         context['tab'] = 'jobs'
         return context
 
@@ -1250,31 +1290,7 @@ class AttendanceStep4BreakView(AttendanceStepBaseView):
         break_time = request.POST.get('break_time')
         self.update_session_data(application_id, {'break_time': break_time})
         
-        # 遅刻判定
-        application = self.get_application(application_id)
-        session_data = self.get_session_data(application_id)
-        
-        # 入力された開始日時を構築
-        try:
-            att_date = session_data.get('attendance_date')
-            att_time = session_data.get('attendance_time')
-            input_start_dt = datetime.strptime(f"{att_date} {att_time}", '%Y-%m-%d %H:%M')
-            # タイムゾーン考慮が必要であれば make_aware するが、比較元の scheduled_start_dt と合わせる
-            input_start_dt = timezone.make_aware(input_start_dt)
-            
-            # 予定開始日時
-            # job_posting.work_date は date型、start_time は time型
-            scheduled_start_dt = timezone.make_aware(datetime.combine(application.job_posting.work_date, application.job_posting.start_time))
-            
-            # 1分以上の遅刻とみなすか
-            if input_start_dt > scheduled_start_dt:
-                return redirect('attendance_step5', application_id=application_id)
-            else:
-                return redirect('attendance_step6', application_id=application_id)
-
-        except ValueError:
-            # 日時パースエラー等の場合はとりあえず進むか戻るか...ここではStep6へ
-            return redirect('attendance_step6', application_id=application_id)
+        return redirect('attendance_step5', application_id=application_id)
 
 
 class AttendanceStep5LatenessView(AttendanceStepBaseView):

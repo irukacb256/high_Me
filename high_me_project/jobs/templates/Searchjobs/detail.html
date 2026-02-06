@@ -508,7 +508,7 @@
         {% if from_view == 'favorites' %}
         <a href="{% url 'favorites' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
         {% else %}
-        <a href="{% url 'index' %}{% if request.GET.date %}?date={{ request.GET.date }}{% endif %}" class="back-btn"><i
+        <a href="{% url 'index' %}?date={{ request.GET.date|default:'' }}&pref={{ selected_prefs }}" class="back-btn"><i
                 class="fa-solid fa-chevron-left"></i></a>
         {% endif %}
 

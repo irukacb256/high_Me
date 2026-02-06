@@ -401,7 +401,8 @@
     <!-- 5. 求人グリッド -->
     <div class="job-grid">
         {% for job in main_jobs %}
-        <a href="{% url 'job_detail' job.pk %}?date={{ selected_date|date:'Y-m-d' }}" class="job-card-grid">
+        <a href="{% url 'job_detail' job.pk %}?date={{ selected_date|date:'Y-m-d' }}&pref={{ selected_prefs|join:',' }}"
+            class="job-card-grid">
             <div class="card-img-area">
                 {% if job.template.photos.first %}
                 <img src="{{ job.template.photos.first.image.url }}" class="card-img">

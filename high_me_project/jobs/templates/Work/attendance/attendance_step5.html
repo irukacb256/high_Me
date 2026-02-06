@@ -19,7 +19,8 @@
     <form method="post">
         {% csrf_token %}
         <textarea name="lateness_reason_detail" rows="5" placeholder=""
-            style="width: 100%; padding: 15px; border: 2px solid #ff5252; border-radius: 8px; font-size: 16px; margin-bottom: 40px; resize: none;"></textarea>
+            style="width: 100%; border: 2px solid #ff5252; border-radius: 8px; font-size: 16px; margin-bottom: 40px; resize: none;"
+            required></textarea>
 
         <div style="text-align: right;">
             <button type="submit"
