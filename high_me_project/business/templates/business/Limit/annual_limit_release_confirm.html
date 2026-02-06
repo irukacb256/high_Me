@@ -2,15 +2,19 @@
 
 {% block content %}
 <div style="padding: 20px; background: white; border-radius: 8px;">
-    <h2>リクエスト確認画面</h2>
-    <p>以下の内容で制限解除をリクエストします。</p>
+    <h2>依頼内容の確認</h2>
+    <p>以下のワーカーに制限解除の依頼を送信します。</p>
+
+    <div style="background: #f8f8f8; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <strong>ワーカー名:</strong> {{ worker.last_name_kanji }} {{ worker.first_name_kanji }}
+    </div>
 
     <div style="margin-top: 30px; text-align: center;">
-        <form method="post" action="{% url 'biz_limit_release_finish' %}">
+        <form method="post" action="{% url 'biz_limit_release_finish' store.id worker.id %}">
             {% csrf_token %}
             <button type="submit"
                 style="background: #007AFF; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-                確定する
+                依頼を送信する
             </button>
         </form>
     </div>

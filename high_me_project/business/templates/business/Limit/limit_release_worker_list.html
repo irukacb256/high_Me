@@ -1,0 +1,132 @@
+{% extends 'business/Common/dashboard_base.html' %}
+
+{% block content %}
+<style>
+    .selection-container {
+        padding: 20px;
+        background: #F9F9F9;
+        min-height: 100vh;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .page-desc {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .worker-list-card {
+        background: white;
+        border-radius: 8px;
+        padding: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .worker-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        transition: background 0.2s;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .worker-item:last-child {
+        border-bottom: none;
+    }
+
+    .worker-item:hover {
+        background: #F0F7FF;
+    }
+
+    .worker-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .worker-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #eee;
+        object-fit: cover;
+    }
+
+    .worker-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .worker-meta {
+        font-size: 12px;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    .action-btn {
+        background: #007AFF;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        border: none;
+    }
+
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        color: #999;
+    }
+</style>
+
+<div class="selection-container">
+    <div class="page-title">年間報酬の制限解除：ワーカー選択</div>
+    <p class="page-desc">制限解除を依頼したいワーカーを選択してください。</p>
+
+    <div class="worker-list-card">
+        {% for worker in workers %}
+        <a href="{% url 'biz_limit_release' store.id worker.workerprofile.id %}" class="worker-item">
+            <div class="worker-info">
+                {% if worker.workerprofile.face_photo %}
+                <img src="{{ worker.workerprofile.face_photo.url }}" class="worker-avatar">
+                {% else %}
+                <div class="worker-avatar"
+                    style="display:flex; align-items:center; justify-content:center; color:#ccc; font-size:20px;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <div class="worker-name">
+                        {% if worker.workerprofile %}
+                        {{ worker.workerprofile.last_name_kanji }} {{ worker.workerprofile.first_name_kanji }}
+                        {% else %}
+                        {{ worker.username }}
+                        {% endif %}
+                    </div>
+                    <div class="worker-meta">
+                        {{ worker.workerprofile.get_gender_display|default:"" }} / {{
+                        worker.workerprofile.age|default:"-" }}歳
+                    </div>
+                </div>
+            </div>
+            <div class="action-btn">選択する</div>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa-solid fa-users-slash" style="font-size: 48px; margin-bottom: 15px;"></i>
+            <p>対象となるワーカーが見つかりません。</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

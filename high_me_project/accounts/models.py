@@ -67,6 +67,14 @@ class WorkerProfile(models.Model):
         is_date_over = self.suspension_end_date and self.suspension_end_date > timezone.now()
         return is_points_over or is_date_over
 
+    @property
+    def age(self):
+        if not self.birth_date:
+            return None
+        from django.utils import timezone
+        today = timezone.now().date()
+        return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
+
 class PenaltyHistory(models.Model):
     """ペナルティ付与履歴"""
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='penalty_histories')

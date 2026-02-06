@@ -111,9 +111,17 @@ urlpatterns = [
     path('mypage/withdraw/warning/', account_views.AccountWithdrawalWarningView.as_view(), name='account_withdrawal_warning'),
     path('mypage/withdraw/complete/', account_views.AccountWithdrawalCompleteView.as_view(), name='account_withdrawal_complete'),
     # お問い合わせ
-    path('support/inquiry/', account_views.InquiryView.as_view(), name='inquiry_form'),
+    path('support/inquiry/', account_views.InquiryOverviewView.as_view(), name='inquiry_overview'),
+    path('support/inquiry/form/', account_views.InquiryView.as_view(), name='inquiry_form'),
     path('support/inquiry/complete/', account_views.InquiryCompleteView.as_view(), name='inquiry_complete'),
     path('support/faq/', account_views.FAQView.as_view(), name='faq'), # ★追加
+    
+    # 年間報酬制限解除 (ワーカー側)
+    path('mypage/rewards/limit-release/', account_views.WorkerAnnualLimitReleaseListView.as_view(), name='worker_limit_release_list'),
+    path('mypage/rewards/limit-release/<int:pk>/approve/', account_views.WorkerAnnualLimitReleaseApproveView.as_view(), name='worker_limit_release_approve'),
+    path('mypage/rewards/limit-release/verify/select/', account_views.worker_limit_release_verify_select, name='worker_limit_release_verify_select'),
+    path('mypage/rewards/limit-release/verify/upload/', account_views.worker_limit_release_verify_upload, name='worker_limit_release_verify_upload'),
+    path('mypage/rewards/limit-release/finish/', account_views.WorkerAnnualLimitReleaseFinishView.as_view(), name='worker_limit_release_finish'),
 
     path('achievements/', account_views.AchievementsView.as_view(), name='achievements'), # ★実績画面追加
     path('past-jobs/', account_views.PastJobsView.as_view(), name='past_jobs'),   # ★これまでの仕事画面
@@ -250,9 +258,10 @@ urlpatterns = [
     path('biz/store/<int:store_id>/corrections/<int:pk>/', biz_views.AttendanceCorrectionDetailView.as_view(), name='biz_attendance_correction_detail'),
     
     # 年間報酬による制限の解除
-    path('biz/limit/release/', biz_views.AnnualLimitReleaseView.as_view(), name='biz_limit_release'),
-    path('biz/limit/release/confirm/', biz_views.AnnualLimitReleaseConfirmView.as_view(), name='biz_limit_release_confirm'),
-    path('biz/limit/release/finish/', biz_views.AnnualLimitReleaseFinishView.as_view(), name='biz_limit_release_finish'),
+    path('biz/limit/release/<int:store_id>/', biz_views.AnnualLimitReleaseWorkerListView.as_view(), name='biz_limit_release_worker_list'),
+    path('biz/limit/release/<int:store_id>/<int:worker_id>/', biz_views.AnnualLimitReleaseView.as_view(), name='biz_limit_release'),
+    path('biz/limit/release/<int:store_id>/<int:worker_id>/confirm/', biz_views.AnnualLimitReleaseConfirmView.as_view(), name='biz_limit_release_confirm'),
+    path('biz/limit/release/<int:store_id>/<int:worker_id>/finish/', biz_views.AnnualLimitReleaseFinishView.as_view(), name='biz_limit_release_finish'),
 
     # 店舗レビュー
     path('biz/store/<int:store_id>/store-reviews/', biz_views.StoreReviewListView.as_view(), name='biz_store_reviews'),

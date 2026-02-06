@@ -1,0 +1,179 @@
+{% extends 'base_main.html' %}
+
+{% block content %}
+<div class="overview-container">
+    <div class="header-bar">
+        <a href="{% url 'mypage' %}" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <h1 class="page-title">お問い合わせ</h1>
+    </div>
+
+    <div class="content-card">
+        <div class="illustration-box">
+            <i class="fa-solid fa-circle-question illustration-icon"></i>
+        </div>
+
+        <h2 class="section-title">お問い合わせの前に</h2>
+        <p class="description">
+            ご利用にあたってご不明な点がございましたら、まずは「よくある質問」をご確認ください。<br>
+            多くの方が解決されている内容をまとめております。
+        </p>
+
+        <a href="{% url 'faq' %}" class="faq-link-card">
+            <div class="faq-info">
+                <span class="faq-label">よくある質問を確認する</span>
+                <p class="faq-subtext">解決方法がすぐに見つかるかもしれません</p>
+            </div>
+            <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <div class="info-box">
+            <h3 class="info-title">回答までの目安</h3>
+            <ul class="info-list">
+                <li>通常3営業日以内に回答いたします。</li>
+                <li>内容によっては回答にお時間をいただく場合がございます。</li>
+                <li>「@example.com」からのメールを受信できるように設定をお願いいたします。</li>
+            </ul>
+        </div>
+
+        <div class="action-box">
+            <a href="{% url 'inquiry_form' %}" class="btn-primary">お問い合わせフォームへ</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .overview-container {
+        padding: 20px;
+        background: #F8F8F8;
+        min-height: 100vh;
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .content-card {
+        background: white;
+        padding: 40px 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .illustration-box {
+        margin-bottom: 24px;
+    }
+
+    .illustration-icon {
+        font-size: 64px;
+        color: #FFD700;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .description {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .faq-link-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #FFF9E6;
+        padding: 15px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: left;
+        border: 1px solid #FFEBB3;
+    }
+
+    .faq-label {
+        display: block;
+        font-weight: bold;
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .faq-subtext {
+        font-size: 12px;
+        color: #888;
+        margin: 0;
+    }
+
+    .info-box {
+        text-align: left;
+        background: #F2F2F2;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .info-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        color: #333;
+    }
+
+    .info-list {
+        padding-left: 20px;
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .info-list li {
+        margin-bottom: 8px;
+    }
+
+    .action-box {
+        margin-top: 10px;
+    }
+
+    .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 16px;
+        background: #FFD700;
+        color: #333;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}

@@ -465,3 +465,26 @@ class StoreMute(models.Model):
 
     def __str__(self):
         return f"{self.worker} muted {self.store}"
+
+class AnnualLimitReleaseRequest(models.Model):
+    """年間報酬による制限の解除依頼"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='limit_release_requests_sent')
+    worker = models.ForeignKey('accounts.WorkerProfile', on_delete=models.CASCADE, related_name='limit_release_requests')
+    
+    STATUS_CHOICES = [
+        ('pending', '申請中'),
+        ('approved', '承認済み'),
+        ('rejected', '却下'),
+    ]
+    status = models.CharField("ステータス", max_length=20, default='pending', choices=STATUS_CHOICES)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        # 重複依頼を防ぐ（未完了のリクエストがある場合は重複させないロジックはビューで制御するが、
+        # データベースレベルでもユニーク制約を検討するか。ここでは単純に作成可能とする）
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Limit release request for {self.worker} from {self.store}"

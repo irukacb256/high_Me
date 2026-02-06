@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect , get_object_or_404
+from django.contrib import messages
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from .models import WorkerProfile, WorkerBankAccount, WalletTransaction, QualificationCategory, QualificationItem, WorkerQualification, WorkerMembership, ExpHistory, Notification
-from business.models import JobApplication, ChatRoom
+from business.models import JobApplication, ChatRoom, AnnualLimitReleaseRequest
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db import IntegrityError, models
@@ -1137,27 +1139,85 @@ def verify_identity_select(request):
 def verify_identity_upload(request):
     """本人確認書類のアップロードと完了処理"""
     if request.method == 'POST':
+        release_id = request.session.get('pending_limit_release_id')
+        print(f"DEBUG: verify_identity_upload [POST] start. release_id={release_id}")
+        
         # サインアップフロー中なら、セッションに記録して確認画面へ
         if request.session.get('auth_flow') == 'signup':
-             # 実際にはここでファイルアップロード処理が必要かもしれないが
-             # 一旦「本人確認済み」フラグを立てるのみとする
-             # （もし書類画像が必要なら setup_photo と同様に一時保存が必要）
              signup_data = request.session.get('signup_data')
              if signup_data:
                  signup_data['is_identity_verified'] = True
                  request.session['signup_data'] = signup_data
-             return redirect('signup_confirm')
+             print("DEBUG: POST flow=signup. Rendering popup with next_url=signup_confirm")
+             return render(request, 'Auth/verify_identity_upload.html', {
+                 'show_popup': True,
+                 'next_url': reverse('signup_confirm')
+             })
 
         # 既存ユーザー用
         if request.user.is_authenticated:
             profile = request.user.workerprofile
             profile.is_identity_verified = True
             profile.save()
-            return redirect('mypage')
+
+            print("DEBUG: POST flow=default. Rendering popup with next_url=mypage")
+            return render(request, 'Auth/verify_identity_upload.html', {
+                'show_popup': True,
+                'next_url': reverse('mypage')
+            })
         else:
             return redirect('login')
             
-    return render(request, 'Auth/verify_identity_upload.html')
+    # GET
+    show_popup = request.GET.get('show_popup') == 'true'
+    release_id = request.session.get('pending_limit_release_id')
+    print(f"DEBUG: verify_identity_upload [GET] show_popup={show_popup}, release_id={release_id}")
+    return render(request, 'Auth/verify_identity_upload.html', {'show_popup': show_popup})
+
+@login_required
+def worker_limit_release_verify_select(request):
+    """制限解除専用: 本人確認書類の選択画面"""
+    return render(request, 'MyPage/Rewards/limit_release_verify_select.html')
+
+@login_required
+def worker_limit_release_verify_upload(request):
+    """制限解除専用: 本人確認書類のアップロードと承認処理"""
+    if request.method == 'POST':
+        release_id = request.session.get('pending_limit_release_id')
+        print(f"DEBUG: worker_limit_release_verify_upload [POST] start. release_id={release_id}")
+        
+        if request.user.is_authenticated:
+            profile = request.user.workerprofile
+            profile.is_identity_verified = True
+            profile.save()
+
+            if release_id:
+                try:
+                    limit_req = get_object_or_404(AnnualLimitReleaseRequest, id=release_id, worker=profile)
+                    limit_req.status = 'approved'
+                    limit_req.approved_at = timezone.now()
+                    limit_req.save()
+                    del request.session['pending_limit_release_id']
+                    request.session['limit_release_success'] = True
+                    request.session['limit_release_store_name'] = limit_req.store.store_name
+                    messages.success(request, "年間報酬の制限解除が承認されました。")
+                    print(f"DEBUG: POST dedicated flow. Rendering popup with next_url=worker_limit_release_finish")
+                    return render(request, 'MyPage/Rewards/limit_release_verify_upload.html', {
+                        'show_popup': True,
+                        'next_url': reverse('worker_limit_release_finish')
+                    })
+                except Exception as e:
+                    print(f"ERROR in limit_release approval: {e}")
+                    messages.error(request, f"承認処理中にエラーが発生しました: {e}")
+                    return redirect('mypage')
+
+            return redirect(reverse('mypage') + '?show_popup=true')
+        else:
+            return redirect('login')
+            
+    # GET
+    show_popup = request.GET.get('show_popup') == 'true'
+    return render(request, 'MyPage/Rewards/limit_release_verify_upload.html', {'show_popup': show_popup})
 
 
 # --- 報酬管理 (ウォレット) ---
@@ -1516,6 +1576,14 @@ def workstyle_edit(request):
 class AnnualTaxView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/Taxes/annual.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 自分が関係するリクエスト
+        context['requests'] = AnnualLimitReleaseRequest.objects.filter(
+            worker=self.request.user.workerprofile
+        ).select_related('store').order_by('-created_at')
+        return context
+
 class TaxSlipView(LoginRequiredMixin, TemplateView):
     template_name = 'MyPage/Taxes/slips.html'
 
@@ -1633,6 +1701,10 @@ def association_select(request):
     }
     return render(request, 'MyPage/Settings/association_select.html', context)
 
+class InquiryOverviewView(LoginRequiredMixin, TemplateView):
+    """お問い合わせオーバービュー（説明画面）"""
+    template_name = 'MyPage/Support/inquiry_overview.html'
+
 class InquiryView(LoginRequiredMixin, TemplateView):
     """お問い合わせフォーム"""
     template_name = 'MyPage/Support/inquiry_form.html'
@@ -1649,3 +1721,51 @@ class InquiryCompleteView(LoginRequiredMixin, TemplateView):
 class FAQView(LoginRequiredMixin, TemplateView):
     """よくある質問"""
     template_name = 'MyPage/Support/faq.html'
+
+class WorkerAnnualLimitReleaseFinishView(LoginRequiredMixin, TemplateView):
+    """ワーカー用：リクエスト承認完了画面"""
+    template_name = 'MyPage/Rewards/limit_release_finish.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # セッションから完了フラグを確認
+        context['success'] = self.request.session.pop('limit_release_success', False)
+        context['store_name'] = self.request.session.pop('limit_release_store_name', '')
+        return context
+
+class WorkerAnnualLimitReleaseListView(LoginRequiredMixin, ListView):
+    """ワーカー用：制限解除リクエスト一覧"""
+    template_name = 'MyPage/Rewards/limit_release_list.html'
+    context_object_name = 'requests'
+
+    def get_queryset(self):
+        # 直接モデルからクエリを発行するように変更（念のため）
+        return AnnualLimitReleaseRequest.objects.filter(worker=self.request.user.workerprofile).select_related('store')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # デバッグ用：DB全体の件数を確認
+        context['all_requests_count'] = AnnualLimitReleaseRequest.objects.count()
+        return context
+
+class WorkerAnnualLimitReleaseApproveView(LoginRequiredMixin, View):
+    """ワーカー用：リクエストの承認開始"""
+    def get(self, request, *args, **kwargs):
+        request_id = self.kwargs.get('pk')
+        print(f"DEBUG: WorkerAnnualLimitReleaseApproveView.get hit. ID: {request_id}")
+        limit_req = get_object_or_404(
+            AnnualLimitReleaseRequest, 
+            id=request_id, 
+            worker=request.user.workerprofile,
+            status='pending'
+        )
+        print(f"DEBUG: Found request: {limit_req.id} for store {limit_req.store.store_name}")
+        # セッションに「このリクエストの本人確認中である」ことを記録
+        request.session['pending_limit_release_id'] = limit_req.id
+        print(f"DEBUG: ApproveView set session pending_limit_release_id={limit_req.id}")
+        # 他のフロー（サインアップ等）のフラグがあればクリア
+        if 'auth_flow' in request.session:
+            del request.session['auth_flow']
+        
+        # 本人確認（書類アップロード）完了後に目的の画面へ進めるよう、専用フローへリダイレクト
+        return redirect('worker_limit_release_verify_select')

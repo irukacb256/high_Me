@@ -15,7 +15,8 @@ from datetime import datetime, date, timedelta
 from .models import (
     BusinessProfile, Store, JobTemplate, JobPosting, JobApplication,
     JobTemplatePhoto, QualificationMaster, StoreWorkerGroup, StoreWorkerMemo,
-    Message, ChatRoom, AttendanceCorrection, StoreReview, StoreGroupDefinition
+    Message, ChatRoom, AttendanceCorrection, StoreReview, StoreGroupDefinition,
+    AnnualLimitReleaseRequest
 )
 from accounts.models import WorkerProfile, WorkerBadge, WalletTransaction # WalletTransactionを追加
 from .mixins import BusinessLoginRequiredMixin
@@ -1730,16 +1731,43 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
         return redirect('biz_attendance_correction_list', store_id=store_id)
 
 
+class AnnualLimitReleaseWorkerListView(BusinessLoginRequiredMixin, ListView):
+    """年間報酬による制限の解除 - ワーカー選択画面"""
+    template_name = 'business/Limit/limit_release_worker_list.html'
+    context_object_name = 'workers'
+
+    def get_queryset(self):
+        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
+        self.store = get_object_or_404(Store, id=self.kwargs['store_id'], business=biz_profile)
+        
+        # この店舗に関連するワーカー（Worked or Grouped）
+        past_worker_ids = JobApplication.objects.filter(
+            job_posting__template__store=self.store
+        ).values_list('worker_id', flat=True)
+        group_worker_ids = StoreWorkerGroup.objects.filter(
+            store=self.store
+        ).values_list('worker_id', flat=True)
+        all_worker_ids = set(list(past_worker_ids) + list(group_worker_ids))
+        
+        return User.objects.filter(id__in=all_worker_ids, businessprofile__isnull=True).select_related('workerprofile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['store'] = self.store
+        return context
+
 class AnnualLimitReleaseView(BusinessLoginRequiredMixin, TemplateView):
     """年間報酬による制限の解除 - 説明画面"""
     template_name = 'business/Limit/annual_limit_release.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # 店舗情報をコンテキストに追加 (ヘッダー等で必要な場合)
-        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = Store.objects.filter(business=biz_profile).first()
+        store_id = self.kwargs.get('store_id')
+        worker_id = self.kwargs.get('worker_id')
+        store = get_object_or_404(Store, id=store_id)
+        worker = get_object_or_404(WorkerProfile, id=worker_id)
         context['store'] = store
+        context['worker'] = worker
         return context
 
 class AnnualLimitReleaseConfirmView(BusinessLoginRequiredMixin, TemplateView):
@@ -1748,13 +1776,15 @@ class AnnualLimitReleaseConfirmView(BusinessLoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = Store.objects.filter(business=biz_profile).first()
+        store_id = self.kwargs.get('store_id')
+        worker_id = self.kwargs.get('worker_id')
+        store = get_object_or_404(Store, id=store_id)
+        worker = get_object_or_404(WorkerProfile, id=worker_id)
         context['store'] = store
+        context['worker'] = worker
         return context
     
     def post(self, request, *args, **kwargs):
-        # フォーム送信で来るが、ここでは単純に表示のみ
         return self.get(request, *args, **kwargs)
 
 class AnnualLimitReleaseFinishView(BusinessLoginRequiredMixin, TemplateView):
@@ -1763,13 +1793,26 @@ class AnnualLimitReleaseFinishView(BusinessLoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = Store.objects.filter(business=biz_profile).first()
+        store_id = self.kwargs.get('store_id')
+        worker_id = self.kwargs.get('worker_id')
+        store = get_object_or_404(Store, id=store_id)
+        worker = get_object_or_404(WorkerProfile, id=worker_id)
         context['store'] = store
+        context['worker'] = worker
         return context
         
     def post(self, request, *args, **kwargs):
-        # 確定処理があればここに記述
+        store_id = self.kwargs.get('store_id')
+        worker_id = self.kwargs.get('worker_id')
+        store = get_object_or_404(Store, id=store_id)
+        worker = get_object_or_404(WorkerProfile, id=worker_id)
+        
+        # 依頼レコードの作成（重複チェックは簡易的に行う）
+        obj, created = AnnualLimitReleaseRequest.objects.get_or_create(
+            store=store,
+            worker=worker,
+            status='pending'
+        )
         return self.get(request, *args, **kwargs)
 
 

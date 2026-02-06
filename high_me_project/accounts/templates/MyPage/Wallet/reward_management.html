@@ -35,30 +35,6 @@
         margin-bottom: 20px;
     }
 
-    /* ボタン: 引き出す - 非活性ならグレー */
-        {
-        % if balance <=0 or not bank_account %
-    }
-
-    .btn-withdraw {
-        background: #ccc;
-        pointer-events: none;
-    }
-
-        {
-        % else %
-    }
-
-    .btn-withdraw {
-        background: #ccc;
-        /* 画像ではグレーのようです (残高0のため？)。残高あればアクティブ色？一旦グレーベースで */
-        /* もし残高ありなら赤にする？画像2は0円でグレー */
-    }
-
-        {
-        % endif %
-    }
-
     .btn-withdraw-style {
         display: block;
         text-align: center;
@@ -68,19 +44,15 @@
         color: white;
         text-decoration: none;
         background: #ddd;
-        /* デフォルト */
     }
 
-        {
-        % if balance>0 and bank_account %
-    }
-
-    .btn-withdraw-style {
+    .btn-withdraw-style.active {
         background: #007AFF;
     }
 
-        {
-        % endif %
+    .btn-withdraw-style.disabled {
+        background: #ccc;
+        pointer-events: none;
     }
 
     .alert-box {
@@ -212,9 +184,9 @@
 
         <!-- 振込申請ボタン -->
         {% if balance > 0 and bank_account %}
-        <a href="{% url 'withdraw_application' %}" class="btn-withdraw-style">振り込み申請</a>
+        <a href="{% url 'withdraw_application' %}" class="btn-withdraw-style active">振り込み申請</a>
         {% else %}
-        <div class="btn-withdraw-style" style="background:#ddd; cursor:not-allowed;">振り込み申請</div>
+        <div class="btn-withdraw-style disabled">振り込み申請</div>
         {% endif %}
     </div>
 
@@ -249,6 +221,11 @@
             <span class="menu-val">未登録</span>
         </a>
         {% endif %}
+
+        <a href="{% url 'annual_tax_list' %}" class="menu-item">
+            <span><i class="fa-solid fa-unlock-keyhole" style="margin-right:10px;"></i> 年間報酬の制限解除</span>
+            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+        </a>
 
         <a href="{% url 'wallet_history' %}" class="menu-item">
             <span><i class="fa-solid fa-clock-rotate-left" style="margin-right:10px;"></i> 入出金履歴</span>
