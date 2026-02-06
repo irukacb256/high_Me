@@ -247,11 +247,11 @@ urlpatterns = [
     path('biz/messages/<int:room_id>/', biz_views.BizMessageDetailView.as_view(), name='biz_message_detail'),
     
     # チェックイン/アウト管理 (店舗QR表示)
-    path('biz/checkin-management/', biz_views.BizCheckinManagementView.as_view(), name='biz_checkin_management'), 
+    path('biz/store/<int:store_id>/checkin-management/', biz_views.BizCheckinManagementView.as_view(), name='biz_checkin_management'), 
 
     # お問い合わせ
-    path('biz/support/inquiry/', biz_views.BizInquiryView.as_view(), name='biz_inquiry'),
-    path('biz/support/inquiry/complete/', biz_views.BizInquiryCompleteView.as_view(), name='biz_inquiry_complete'), 
+    path('biz/store/<int:store_id>/support/inquiry/', biz_views.BizInquiryView.as_view(), name='biz_inquiry'),
+    path('biz/store/<int:store_id>/support/inquiry/complete/', biz_views.BizInquiryCompleteView.as_view(), name='biz_inquiry_complete'), 
 
     # 勤怠修正依頼 (店舗承認フロー)
     path('biz/store/<int:store_id>/corrections/', biz_views.AttendanceCorrectionListView.as_view(), name='biz_attendance_correction_list'),

@@ -241,7 +241,7 @@
     <a href="{% url 'biz_template_list' store.id %}" class="action-btn primary">
         <i class="fa-solid fa-circle-plus"></i>新規募集
     </a>
-    <a href="{% url 'biz_checkin_management' %}" class="action-btn">
+    <a href="{% url 'biz_checkin_management' store.id %}" class="action-btn">
         <i class="fa-solid fa-qrcode"></i>チェックイン/アウト
     </a>
     <a href="{% url 'biz_attendance_correction_list' store.id %}" class="action-btn">

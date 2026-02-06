@@ -1467,15 +1467,14 @@ class BizWorkerReviewSubmitView(BusinessLoginRequiredMixin, View):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 class BizInquiryCompleteView(BusinessLoginRequiredMixin, TemplateView):
+    """事業者用お問い合わせ完了（自動返信表示）"""
     template_name = 'business/Support/inquiry_complete.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # どの画面からも store_id が取れるわけではないので、
-        # いったんログインユーザーの最初の店舗をコンテキストに入れる
+        store_id = self.kwargs.get('store_id')
         biz_profile = BusinessProfile.objects.filter(user=self.request.user).first()
-        if biz_profile:
-            context['store'] = Store.objects.filter(business=biz_profile).first()
+        context['store'] = get_object_or_404(Store, id=store_id, business=biz_profile)
         return context
 
 class BizAccountInfoView(BusinessLoginRequiredMixin, TemplateView):
@@ -1623,9 +1622,9 @@ class BizCheckinManagementView(BusinessLoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # サイドバー表示用
+        store_id = self.kwargs.get('store_id')
         biz_profile = get_object_or_404(BusinessProfile, user=self.request.user)
-        store = Store.objects.filter(business=biz_profile).first()
-        context['store'] = store
+        context['store'] = get_object_or_404(Store, id=store_id, business=biz_profile)
         return context
 
 # -----------------------------
@@ -1979,22 +1978,18 @@ class BizInquiryView(BusinessLoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['store'] = get_biz_context(self.request.user)
+        store_id = self.kwargs.get('store_id')
+        biz_profile = BusinessProfile.objects.filter(user=self.request.user).first()
+        context['store'] = get_object_or_404(Store, id=store_id, business=biz_profile)
         return context
 
     def post(self, request, *args, **kwargs):
         # ここでメール送信処理などを行う（今回はモックなので何もしない）
+        store_id = self.kwargs.get('store_id')
         # ユーザーに自動返信テンプレートを表示するために完了画面へ
-        return redirect('biz_inquiry_complete')
+        return redirect('biz_inquiry_complete', store_id=store_id)
 
-class BizInquiryCompleteView(BusinessLoginRequiredMixin, TemplateView):
-    """事業者用お問い合わせ完了（自動返信表示）"""
-    template_name = 'business/Support/inquiry_complete.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['store'] = get_biz_context(self.request.user)
-        return context
+# BizInquiryCompleteView は上部で定義済みのため削除
 
 class BizLogoutView(BusinessLoginRequiredMixin, View):
     """事業者用ログアウト確認 & 実行"""

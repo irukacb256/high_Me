@@ -201,7 +201,7 @@
             </a>
 
             <!-- チェックイン/アウト管理 -->
-            <a href="{% url 'biz_checkin_management' %}" class="nav-item">
+            <a href="{% url 'biz_checkin_management' store.id %}" class="nav-item">
                 <i class="fa-solid fa-qrcode"></i> チェックイン/アウト管理
             </a>
 
@@ -248,7 +248,7 @@
             </a>
 
             <!-- ご質問。お問い合わせ -->
-            <a href="{% url 'biz_inquiry' %}" class="nav-item">
+            <a href="{% url 'biz_inquiry' store.id %}" class="nav-item">
                 <i class="fa-solid fa-question-circle"></i> ご質問。お問い合わせ
             </a>
         </nav>
@@ -264,7 +264,7 @@
     <div class="main-wrapper">
         <div class="top-header">
             {% block header_actions %}
-            <a href="{% url 'biz_checkin_management' %}" class="btn-header-white">
+            <a href="{% url 'biz_checkin_management' store.id %}" class="btn-header-white">
                 <i class="fa-solid fa-qrcode"></i> チェックイン/アウト
             </a>
             <a href="{% url 'biz_template_list' store.id %}" class="btn-header-blue">
