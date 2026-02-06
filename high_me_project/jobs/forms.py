@@ -26,12 +26,15 @@ class StoreReviewStep1Form(forms.ModelForm):
         }
 
 class StoreReviewStep2Form(forms.ModelForm):
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 6, 'placeholder': '皆さんとても親切でした！', 'class': 'form-control'}),
+        min_length=5,
+        error_messages={
+            'min_length': 'レビューの入力は5文字以上で記入してください',
+        },
+        label='コメント'
+    )
+
     class Meta:
         model = StoreReview
         fields = ['comment']
-        widgets = {
-            'comment': forms.Textarea(attrs={'rows': 6, 'placeholder': '皆さんとても親切でした！', 'class': 'form-control'}),
-        }
-        labels = {
-            'comment': 'コメント',
-        }
