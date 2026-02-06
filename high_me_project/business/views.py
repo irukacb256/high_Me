@@ -1723,8 +1723,8 @@ class AttendanceCorrectionDetailView(BusinessLoginRequiredMixin, DetailView):
             
         elif action == 'reject':
             self.object.status = 'rejected'
-            correction.reject_reason = request.POST.get('reject_reason', '') # 理由を保存
-            correction.save()
+            self.object.reject_reason = request.POST.get('reject_reason', '') # 理由を保存
+            self.object.save()
             messages.success(request, '修正依頼の拒否をワーカーに送信しました。')
 
         return redirect('biz_attendance_correction_list', store_id=store_id)
