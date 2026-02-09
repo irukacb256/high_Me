@@ -25,7 +25,6 @@ boundary さがす画面 as wdv11
 
 control 処理 as co2
 control 処理 as co3
-control 処理 as co4
 
 entity ワーカー as ac1
 boundary さがす画面 as sc1
@@ -83,7 +82,7 @@ else パスワードが未入力の場合
             wo1 -> wdv10 : ユーザーは\n選択し「次へ」ボタンを押下する
             wdv10 -> wdv11 : システムは\n画面を表示する
 
-            wdv1 -> co3 : 起動:method_POST()
+            wdv11 -> co3 : 起動:method_POST()
             co3 -> ac1 : 登録する()
             co3 <-- ac1
             co3 -> wdv11 : システムは\n画面を表示する
