@@ -1282,14 +1282,12 @@ class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
             {'name': '洗い場', 'icon': 'fa-soap'},
             {'name': '調理', 'icon': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C13.1 2 14 2.9 14 4V8H10V4C10 2.9 10.9 2 12 2ZM18 10H6C4.9 10 4 10.9 4 12V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V12C20 10.9 19.1 10 18 10ZM8 19H6V12H8V19ZM13 19H11V12H13V19ZM18 19H16V12H18V19Z" fill="white"/></svg>', 'is_svg': True},
             {'name': '清掃', 'icon': 'fa-broom'},
-            {'name': '接客', 'icon': 'fa-smile'},
             {'name': '宴会スタッフ', 'icon': 'fa-wine-glass'},
         ]
         
         BADGES_RETAIL = [
             {'name': '品出し', 'icon': 'fa-tags'},
             {'name': 'レジ', 'icon': 'fa-cash-register'},
-            {'name': '接客', 'icon': 'fa-smile'},
             {'name': '清掃', 'icon': 'fa-broom'},
             {'name': '搬入出', 'icon': 'fa-truck-loading'},
             {'name': 'フロント', 'icon': 'fa-bell'},
@@ -1301,34 +1299,37 @@ class BizWorkerReviewListView(BusinessLoginRequiredMixin, ListView):
              {'name': '検品', 'icon': 'fa-clipboard-check'},
              {'name': '仕分け', 'icon': 'fa-boxes-stacked'},
              {'name': '搬入出', 'icon': 'fa-truck-loading'},
-             {'name': 'ラベル貼り', 'icon': 'fa-tags'},
              {'name': '配達', 'icon': 'fa-truck'},
         ]
 
         INDUSTRY_BADGES = {
             # 飲食系
             '飲食・フード': BADGES_FOOD,
+            '中華': BADGES_FOOD,
+            '居酒屋': BADGES_FOOD,
+            'レストラン': BADGES_FOOD,
+            'ラーメン': BADGES_FOOD,
+            'カフェ': BADGES_FOOD,
             
             # 小売・接客系
             '販売・接客': BADGES_RETAIL,
+            'コンビニ': BADGES_RETAIL,
+            'スーパーマーケット': BADGES_RETAIL,
+            'サービス': BADGES_RETAIL,
+            'ホテル': BADGES_RETAIL,
             
             # 物流系
             '物流・軽作業': BADGES_LOGISTICS,
-            '物流・倉庫': BADGES_LOGISTICS, # 念のため残すか迷うが、基本はStoreSetupForm準拠
+            '物流・倉庫': BADGES_LOGISTICS,
+            '物流倉庫': BADGES_LOGISTICS,
             
             'オフィス': [
-                {'name': '事務', 'icon': 'fa-laptop'},
-                {'name': '電話対応', 'icon': 'fa-phone'},
-                {'name': 'データ入力', 'icon': 'fa-keyboard'},
-                {'name': '雑務', 'icon': 'fa-stapler'},
+                {'name': 'フロント', 'icon': 'fa-bell'},
+                {'name': '清掃', 'icon': 'fa-broom'},
             ],
-            # その他 or マッチしない場合
+            # その他 or マッチしない場合（DBにある汎用的なバッジを表示）
             'default': [
-                 {'name': '元気', 'icon': 'fa-face-laugh-beam'},
-                 {'name': '体力', 'icon': 'fa-person-running'},
-                 {'name': '笑顔', 'icon': 'fa-face-smile'},
-                 {'name': 'テキパキ', 'icon': 'fa-bolt'},
-                 {'name': '丁寧', 'icon': 'fa-hand-sparkles'},
+                {'name': '清掃', 'icon': 'fa-broom'},
             ]
         }
 
