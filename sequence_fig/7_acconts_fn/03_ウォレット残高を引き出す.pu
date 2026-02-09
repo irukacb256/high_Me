@@ -11,6 +11,7 @@ boundary 報酬確認 as bo4
 boundary 報酬確定 as bo5
 boundary 入出金履歴 as bo6
 boundary 振込先口座登録 as bo7
+boundary 振込先口座編集 as bo8
 
 control 処理 as co2
 control 処理 as co3
@@ -51,6 +52,13 @@ alt ユーザーが「入出金履歴」を押下した場合
     co2 -> en1 : ワーカーを参照()
     en1 --> co2
     co2 -> bo7 : 画面を表示
+
+  else 振込先口座を編集を押下した場合
+    wo1 -> bo2 : 「振込先口座を編集」を押下する
+    bo2 -> co2 : 起動()method=POST()
+    co2 -> en1 : ワーカーを参照()
+    en1 --> co2
+    co2 -> bo8 : 画面を表示
 
 
 
