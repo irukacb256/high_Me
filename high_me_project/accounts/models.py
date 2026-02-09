@@ -75,6 +75,9 @@ class WorkerProfile(models.Model):
         today = timezone.now().date()
         return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
 
+    def __str__(self):
+        return f"{self.user.username} のプロフィール"
+
 class PenaltyHistory(models.Model):
     """ペナルティ付与履歴"""
     worker = models.ForeignKey(WorkerProfile, on_delete=models.CASCADE, related_name='penalty_histories')
@@ -85,9 +88,6 @@ class PenaltyHistory(models.Model):
 
     def __str__(self):
         return f"{self.worker.user.username} +{self.points}pt ({self.reason})"
-
-    def __str__(self):
-        return f"{self.user.username} のプロフィール"
 
 class WorkerBadge(models.Model):
     """ワーカーごとのバッジ獲得状況"""
