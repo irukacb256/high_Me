@@ -8,8 +8,6 @@ entity 求人 as en1
 boundary 本人確認書類選択画面 as iv1
 boundary 業務確認画面 as bc1
 control 処理 as co2
-boundary 質問画面 as qu1
-control 処理 as co3
 
 entity 求人 as ml1
 
@@ -42,24 +40,10 @@ alt 求人が締切済みの場合
         wo1 -> bc1 : 「同意して申し込みを確定」ボタンを押下する
         bc1 -> co2 : 起動:method_POST()
 
-        alt 質問項目がない場合
-            co2 -> ml1 : 申し込みを送信する
-            co2 <-- ml1
-            co2 -> ac1 : 表示する
+        co2 -> ml1 : 申し込みを送信する
+        co2 <-- ml1
+        co2 -> ac1 : 表示する
         
-        else 質問項目がある場合
-            bc1 -> qu1 : 表示する:method_GET()
-            wo1 -> qu1 : 質問に回答し「送信」ボタンを押下する
-            qu1 -> co3 : 起動:method_POST()
-
-            alt 未入力箇所がある場合
-                co3 -> qu1 : 「回答していない質問があります」\nと表示する
-            else (全て入力済みの場合)
-                co3 -> ml1 : メールを送信する()
-                co3 <-- ml1
-                co3 -> ac1 : 表示する
-            end
-        end
     end
 end
 

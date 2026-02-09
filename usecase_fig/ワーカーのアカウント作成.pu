@@ -1,0 +1,25 @@
+@startuml
+actor "ワーカー" as Worker
+
+rectangle "ワーカーアカウント作成" {
+    usecase "アカウントを作成する" as CreateAccount
+    usecase "電話番号とパスワードを入力" as InputAuth
+    usecase "本人確認" as VerifyIdentity
+    usecase "詳細情報登録" as RegisterDetails
+    
+    Worker --> CreateAccount
+    CreateAccount ..> InputAuth : <<include>>
+    InputAuth ..> VerifyIdentity : <<include>>
+    VerifyIdentity ..> RegisterDetails : <<include>>
+
+    note right of InputAuth
+      電話番号未入力チェック
+      パスワード未入力チェック
+      電話番号重複チェック
+    end note
+
+    note right of RegisterDetails
+      必須項目未入力チェック
+    end note
+}
+@enduml

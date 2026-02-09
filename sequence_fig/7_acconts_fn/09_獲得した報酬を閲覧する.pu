@@ -26,22 +26,6 @@ else 獲得した報酬がある場合
     en1 --> co2
     co2 -> bo2:画面を表示する:method=GET()
 
-    wo1 -> bo2:ユーザーは働いた月のグラフを押下する
-    bo2 -> co3:起動:method=POST()
-    co3 -> en1:その月のグラフを参照する()
-    co3 <-- en1
-    co3 -> en2:求人を参照する()
-    co3 <-- en2
-    co3 -> bo2:画面を表示する:method_GET()
-
-    wo1 -> bo2:ユーザーは働いた日付を押下する
-    bo2 -> co4:起動:method=POST()
-    co4 -> en1:日付を参照する()
-    en1 --> co4
-    co4 -> en2:求人を参照する()
-    co4 <-- en2
-    co4 -> bo3:画面を表示する:method=GET()
-
 end
 
 @enduml

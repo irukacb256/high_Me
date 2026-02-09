@@ -7,8 +7,22 @@ boundary ログイン画面 as log1
 control 表示 as co1
 
 boundary ワーカーアカウント作成画面 as wav1
-boundary 本人確認画面 as ivv1
-boundary ワーカー詳細登録画面 as wdv1
+boundary 生年月日入力画面 as bdy1
+boundary 氏名漢字入力画面 as wdv1
+boundary 氏名フリガナ入力画面 as wdv2
+boundary 性別入力画面 as wdv3
+boundary プロフィール画像選択画面 as wdv4
+boundary 顔写真選択画面 as wdv4_1
+boundary 住所入力画面 as wdv5
+boundary 所属入力画面 as wdv6
+boundary 働き方登録画面 as wdv7
+boundary 本人確認画面 as wdv8
+boundary 本人確認書類選択画面 as wdv8_1
+boundary 本人確認書類アップロード画面 as wdv8_2
+boundary 入力内容確認画面 as wdv9
+boundary 都道府県選択画面 as wdv10
+boundary さがす画面 as wdv11
+
 control 処理 as co2
 control 処理 as co3
 control 処理 as co4
@@ -18,8 +32,8 @@ boundary さがす画面 as sc1
 
 ' 2
 co1 -> log1 : システムは\n画面を表示する
-wo1 -> log1 : アカウント作成ボタン\nを押下する
-log1 -> wav1 : ワーカーアカウント作成画面を表示する
+wo1 -> log1 : ユーザーは「はじめる」ボタン\nを押下する
+log1 -> wav1 : システムは\n電話番号とパスワード入力画面を表示する
 wo1 -> wav1 : ユーザーは電話番号とパスワードを入力し\n「次へ」ボタンを押下する
 wav1 -> co2 : 起動method_POST()
 
@@ -39,22 +53,41 @@ else パスワードが未入力の場合
         else 電話番号が重複していない場合
             co2 -> ac1 : 登録する()
             co2 <-- ac1
-            co2 -> ivv1 : システムは\n本人確認画面を表示する
-            wo1 -> ivv1 : ユーザーは\n「本人確認」ボタンを押下する
-            ivv1 -> wdv1 : システムは\nワーカー詳細登録画面を表示する
-            wo1 -> wdv1 : ユーザーは\n氏名、フリガナ、性別、プロフィール画像\n住所、所属、働き方、都道府県、\n通知・位置情報の選択、入力をして「登録」ボタンを押下する
-            wdv1 -> co3 : 起動:method_POST()
-            
-'3
-            alt 未入力や未選択がある場合
-                co3 -> wdv1 : システムは\n「未入力・未選択の箇所があります」と表示する
+            co2 -> bdy1 : システムは\n画面を表示する
+            wo1 -> bdy1 : ユーザーは\n入力し「確認する」ボタンを押下する
+            bdy1 -> wdv1 : システムは\n画面を表示する
+            wo1 -> wdv1 : ユーザーは\n入力し「次へ」ボタンを押下する
+            wdv1 -> wdv2 : システムは\n画面を表示する
+            wo1 -> wdv2 : ユーザーは\n入力し「次へ」ボタンを押下する
+            wdv2 -> wdv3 : システムは\n画面を表示する
+            wo1 -> wdv3 : ユーザーは\n入力する
+            wdv3 -> wdv4 : システムは\n画面を表示する
+            wo1 -> wdv4 : ユーザーは\n「顔写真を登録」ボタンを押下する
+            wdv4 -> wdv4_1 : システムは\n画面を表示する
+            wo1 -> wdv4_1 : ユーザーは\n「顔写真を登録」ボタンを押下する
+            wdv4_1 -> wdv5 : システムは\n画面を表示する
+            wo1 -> wdv5 : ユーザーは\n入力し「次へ」ボタンを押下する
+            wdv5 -> wdv6 : システムは\n画面を表示する
+            wo1 -> wdv6 : ユーザーは\n入力し「次へ」ボタンを押下する
+            wdv6 -> wdv7 : システムは\n画面を表示する
+            wo1 -> wdv7 : ユーザーは\n入力し「次へ」ボタンを押下する
+            wdv7 -> wdv8 : システムは\n画面を表示する
+            wo1 -> wdv8 : ユーザーは\n入力し「本人確認」ボタンを押下する
+            wdv8 -> wdv8_1 : システムは\n画面を表示する
+            wo1 -> wdv8_1 : ユーザーは\n各ボタンを押下する
+            wdv8_1 -> wdv8_2 : システムは\n画面を表示する
+            wo1 -> wdv8_2 : ユーザーは\n「本人確認を完了する」ボタンを押下する
+            wdv8_2 -> wdv9 : システムは\n画面を表示する
+            wo1 -> wdv9 : ユーザーは\n「この内容で登録する」ボタンを押下する
+            wdv9 -> wdv10 : システムは\n画面を表示する
+            wo1 -> wdv10 : ユーザーは\n選択し「次へ」ボタンを押下する
+            wdv10 -> wdv11 : システムは\n画面を表示する
 
-    
-            else 必要情報をすべて入力された場合
-                co3 -> ac1 : 登録する
-                co3 <-- ac1
-                co3 -> sc1 : さがす画面に移動する
-            end
+            wdv1 -> co3 : 起動:method_POST()
+            co3 -> ac1 : 登録する()
+            co3 <-- ac1
+            co3 -> wdv11 : システムは\n画面を表示する
+          
         end
     end
 
