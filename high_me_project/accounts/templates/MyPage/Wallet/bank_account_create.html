@@ -172,6 +172,21 @@
         /* Or dark gray? */
         width: 100%;
     }
+
+    /* Error highlighting */
+    .has-error .edit-label {
+        color: #ff3b30 !important;
+    }
+
+    .has-error .edit-input,
+    .has-error .edit-input-select {
+        color: #ff3b30 !important;
+    }
+
+    .has-error .edit-input::placeholder {
+        color: #ff3b30 !important;
+        opacity: 0.6;
+    }
 </style>
 
 <div style="background: #f8f8f8; min-height: 100vh; padding-bottom: 80px;">
@@ -182,52 +197,64 @@
 
     <form method="post">
         {% csrf_token %}
+
+        {% if error_message %}
+        <div
+            style="color: #ff3b30; padding: 10px 20px; font-size: 14px; background: #fff; margin-top: 10px; border-bottom: 1px solid #eee;">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ error_message }}
+        </div>
+        {% endif %}
+
         <div class="edit-list">
             <!-- 銀行 -->
-            <div class="edit-item">
+            <div class="edit-item {% if 'bank_name' in error_fields %}has-error{% endif %}">
                 <div class="edit-label">銀行</div>
                 <div class="edit-value-container">
-                    <input type="text" name="bank_name" class="edit-input" placeholder="未入力" required>
+                    <input type="text" name="bank_name" class="edit-input" placeholder="未入力"
+                        value="{{ posted_data.bank_name|default:'' }}" required>
                     <i class="fa-solid fa-chevron-right arrow-icon"></i>
                 </div>
             </div>
 
             <!-- 口座種別 -->
-            <div class="edit-item">
+            <div class="edit-item {% if 'account_type' in error_fields %}has-error{% endif %}">
                 <div class="edit-label">口座種別</div>
                 <div class="edit-value-container">
-                    <select name="account_type" class="edit-input-select">
-                        <option value="" disabled selected>未入力</option>
-                        <option value="普通">普通</option>
-                        <option value="当座">当座</option>
+                    <select name="account_type" class="edit-input-select" required>
+                        <option value="" {% if not posted_data.account_type %}selected{% endif %}>未入力</option>
+                        <option value="普通" {% if posted_data.account_type=='普通' %}selected{% endif %}>普通</option>
+                        <option value="当座" {% if posted_data.account_type=='当座' %}selected{% endif %}>当座</option>
                     </select>
                     <i class="fa-solid fa-chevron-right arrow-icon"></i>
                 </div>
             </div>
 
             <!-- 支店 -->
-            <div class="edit-item">
+            <div class="edit-item {% if 'branch_name' in error_fields %}has-error{% endif %}">
                 <div class="edit-label">支店</div>
                 <div class="edit-value-container">
-                    <input type="text" name="branch_name" class="edit-input" placeholder="未入力" required>
+                    <input type="text" name="branch_name" class="edit-input" placeholder="未入力"
+                        value="{{ posted_data.branch_name|default:'' }}" required>
                     <i class="fa-solid fa-chevron-right arrow-icon"></i>
                 </div>
             </div>
 
             <!-- 口座番号 -->
-            <div class="edit-item">
+            <div class="edit-item {% if 'account_number' in error_fields %}has-error{% endif %}">
                 <div class="edit-label">口座番号</div>
                 <div class="edit-value-container">
-                    <input type="text" name="account_number" class="edit-input" placeholder="未入力" required>
+                    <input type="text" name="account_number" class="edit-input" placeholder="未入力"
+                        value="{{ posted_data.account_number|default:'' }}" required>
                     <i class="fa-solid fa-chevron-right arrow-icon"></i>
                 </div>
             </div>
 
             <!-- 口座名義 -->
-            <div class="edit-item">
+            <div class="edit-item {% if 'account_holder_name' in error_fields %}has-error{% endif %}">
                 <div class="edit-label">口座名義</div>
                 <div class="edit-value-container">
-                    <input type="text" name="account_holder_name" class="edit-input" placeholder="未入力" required>
+                    <input type="text" name="account_holder_name" class="edit-input" placeholder="未入力"
+                        value="{{ posted_data.account_holder_name|default:'' }}" required>
                     <i class="fa-solid fa-chevron-right arrow-icon"></i>
                 </div>
             </div>

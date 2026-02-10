@@ -1266,6 +1266,28 @@ def bank_account_edit(request):
         account_number = request.POST.get('account_number')
         account_holder_name = request.POST.get('account_holder_name')
         
+        # バリデーション
+        error_fields = []
+        if not bank_name: error_fields.append('bank_name')
+        if not account_type: error_fields.append('account_type')
+        if not branch_name: error_fields.append('branch_name')
+        if not account_number: error_fields.append('account_number')
+        if not account_holder_name: error_fields.append('account_holder_name')
+
+        if error_fields:
+            error_message = "未入力の項目があります。"
+            return render(request, 'MyPage/Wallet/bank_account_edit.html', {
+                'account': {
+                    'bank_name': bank_name,
+                    'account_type': account_type,
+                    'branch_name': branch_name,
+                    'account_number': account_number,
+                    'account_holder_name': account_holder_name,
+                },
+                'error_message': error_message,
+                'error_fields': error_fields
+            })
+
         WorkerBankAccount.objects.update_or_create(
             worker=profile,
             defaults={
@@ -1297,6 +1319,22 @@ def bank_account_create(request):
         branch_name = request.POST.get('branch_name')
         account_number = request.POST.get('account_number')
         account_holder_name = request.POST.get('account_holder_name')
+
+        # バリデーション
+        error_fields = []
+        if not bank_name: error_fields.append('bank_name')
+        if not account_type: error_fields.append('account_type')
+        if not branch_name: error_fields.append('branch_name')
+        if not account_number: error_fields.append('account_number')
+        if not account_holder_name: error_fields.append('account_holder_name')
+
+        if error_fields:
+            error_message = "未入力の項目があります。"
+            return render(request, 'MyPage/Wallet/bank_account_create.html', {
+                'posted_data': request.POST,
+                'error_message': error_message,
+                'error_fields': error_fields
+            })
 
         WorkerBankAccount.objects.create(
             worker=profile,
