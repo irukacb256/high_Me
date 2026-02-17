@@ -3,33 +3,38 @@
 actor    ワーカー as wo1
 boundary 評価選択画面 as rsc1
 control  表示     as co1
-entity   ワーカーからのレビュー as rv1
+entity   求人 as rv1
 boundary レビュー入力画面 as ric1
+control  処理 as co2
 boundary 投稿完了画面 as rcc1
+control 処理 as co3
+entity レビュー as rv2
 
-co1 -> rv1 : レビューを参照する
+co1 -> rv1 : 求人を参照する()
 rv1 --> co1 
 
-co1 -> rsc1 : 表示する
+co1 -> rsc1 : 画面を表示する
 
 wo1 -> rsc1 :評価を選択し、\n「次へ」ボタンを押下する
 
-    rsc1 -> ric1:表示する
+    rsc1 -> ric1:画面を表示する:method_GET()
     wo1 -> ric1:レビューを入力し、\n「投稿する（確認）」ボタンを押下する
+    ric1 -> co2:起動:method_POST()
 
     alt レビューが未入力の場合
-        ric1 -> ric1 :「コメントは日本語５文字以上入力してください」と表示する
+        co2 -> ric1 :「コメントは日本語５文字以上入力してください」\nと表示する
     else レビューが5文字以下の場合
-        ric1 -> ric1 :「コメントは日本語５文字以上入力してください」と表示する
+        co2 -> ric1 :「コメントは日本語５文字以上入力してください」\nと表示する
     else 入力内容が正しい場合
-        ric1 -> ric1 :「この内容で投稿しますか」と表示する
+        co2 -> ric1 :「この内容で投稿しますか」と表示する
         wo1 -> ric1 : ボタンを押下する
         alt 「キャンセル」ボタンを押下した場合
-            ric1 -> ric1 :表示する
+            ric1 -> ric1 : 画面を表示する:method_GET()
         else 「投稿する」ボタンを押下した場合
-            ric1 -> ric1 :「コメントは日本語５文字以上記入してください」と表示する
-            wo1 -> ric1 : 「OK」ボタンを押下する
-            ric1 -> rcc1 : 表示する
+            ric1 -> co3 : 起動:method_POST()
+            co3 -> rv2 : レビューを投稿する()
+            rv2 --> co3
+            co3 -> rcc1 : 画面を表示する:method_GET()
         end
     end 
 

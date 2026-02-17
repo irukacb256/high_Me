@@ -1,17 +1,24 @@
 @startuml QRの読み取りをする（退勤）
 
 actor ワーカー as wo1
+boundary お仕事画面 as wk2
 boundary QR読み取り画面 as ch2
-boundary QR読み取り後画面 as ch1
+boundary チェックアウト画面 as ch1
 control 表示 as co1
+
+control 処理 as co3
+control 処理 as co4
 entity 今後の予定 as en1
-boundary 報酬確定修正依頼画面 as rc1
+entity 報酬データ as en2
+entity QRコード as en3
+entity チェックアウト時間 as en4
+
+boundary 報酬の確定修正選択画面 as rc1
 boundary 報酬の最終確認画面 as rl1
-boundary 報酬確定画面 as rc2
+boundary レビュー画面 as rc2
 
 control 処理 as co2
 entity 報酬データ as en2
-
 
 boundary 修正依頼_流れ確認画面 as mr1
 boundary 修正依頼_業務時間入力画面 as mr2
@@ -20,56 +27,55 @@ boundary 修正依頼_理由入力画面 as mr4
 boundary 修正依頼_内容確認画面 as mr5
 boundary 修正依頼_送信完了画面 as mr6
 
-control 処理 as co3
-
-
-
+control 処理 as co5
 
 entity 修正依頼データ as md1
 
-co1 -> en1 : 参照する
+co1 -> en1 : 参照する()
 en1 --> co1
 
-co1 -> ch1 : 「本当にチェックアウトしますか？」と\nメッセージを画面に表示する
-wo1 -> ch1 :ボタンを押下する
+co1 -> wk2 : お仕事画面を表示する
+wo1 -> wk2 : 「QR読み込み」ボタンを押下する
+wk2 -> co3 : 起動:method_POST()
+co3 -> en3 : 参照する()
+co3 <-- en3
+co3 -> ch2 : 画面を表示する:method_GET()
+wo1 -> ch2 : QRコードを読み取る
+ch2 -> co4 : 起動:method_POST()
+co4 -> en4 : 登録する()
+co4 <-- en4
+co4 -> ch1 : 画面を表示する:method_GET()
+
 alt 「もどる」ボタンを押下した場合
-    ch1 -> ch2 : 表示する
+    ch1 -> wk2 : 表示する:method_GET()
 else 「OK」ボタンを押下した場合
-
-
-    ch1 -> rc1 : 表示する
-    wo1 -> rc1 :ボタンを押下する
+    wo1 -> ch1 : 「OK」ボタンを押下する
+    ch1 -> rc1 : 画面を表示する:method_GET()
     alt このまま報酬確定を選択した場合
-        wo1 -> rc1 : 「報酬を受け取る」を選択する
-        rc1 -> rl1 : 表示する
-
-        rl1 -> rl1 : 確定/キャンセルボタンを表示する
-        alt 「もどる」ボタンを押下した場合
-            rl1 -> rc1 : 表示する
-        else 「確定」ボタンを押下した場合
-            rl1 -> co2 : 処理する()
-            co2 -> en2
-            co2 <-- en2
-            rc2 <- co2 :画面を表示する
-        end
+        wo1 -> rc1 : 「予定通りだった」ボタンを押下する
+        rc1 -> rl1 : 画面を表示する\n:method_GET()
+        wo1 -> rl1 : 「報酬を受け取る」ボタンを押下する
+        rl1 -> co2 : 起動\n:method_POST()
+        co2 -> en2 : 報酬データを参照し報酬を確定する()
+        co2 <-- en2
+        rc2 <- co2 :画面を表示する\n:method_GET()
 
     else 残業時間の修正依頼を提出を選択した場合
-        rc1 -> mr1 :表示する
-        rc1 -> mr1 :「次へ」ボタンを押下する
-        mr1 -> mr2 :表示する
-        rc1 -> mr2 :業務時間を入力し、「次へ」ボタンを押下する
-        mr2 -> mr3 :表示する
-        rc1 -> mr3 :休憩時間を入力し、「次へ」ボタンを押下する
-        mr3 -> mr3 :遅刻の理由ポップを表示する
-        rc1 -> mr3 :遅刻、早上がりの理由を押下する
-        mr3 -> mr4 :表示する
-        rc1 -> mr4 :修正依頼の理由を入力し、「次へ」ボタンを押下する
-        mr4 -> mr5 :表示する
-        rc1 -> mr5 :「修正依頼内容を確認しました」にチェックを入れ、\n「修正依頼を送信」を選択する
-        mr5 -> co3 :起動()
-        co3 -> md1 :送信()
-        co3 <-- md1
-        mr6 <- co3 :画面を表示する
+        wo1 -> rc1 : 「変更があった」ボタンを押下する
+        rc1 -> mr1 :画面を表示する\n:method_GET()
+        wo1 -> mr1 :「次へ」ボタンを押下する
+        mr1 -> mr2 :画面を表示する\n:method_GET()
+        wo1 -> mr2 :正しい業務時間を入力し、「次へ」ボタンを押下する
+        mr2 -> mr3 :画面を表示する\n:method_GET()
+        wo1 -> mr3 :休憩時間を入力し、「次へ」ボタンを押下する
+        mr3 -> mr4 :画面を表示する\n:method_GET()
+        wo1 -> mr4 :修正依頼の理由を入力しする
+        mr4 -> mr5 :表示する\n:method_GET()
+        wo1 -> mr5 :「修正依頼内容を確認しました」にチェックを入れ、\n「修正依頼を送信」を選択する
+        mr5 -> co5 : 起動\n:method_POST()
+        co5 -> md1 :修正依頼を送信する()
+        co5 <-- md1
+        mr6 <- co5 :画面を表示する\n:method_GET()
 
     end
 

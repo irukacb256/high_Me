@@ -37,28 +37,28 @@ wo1 -> wav1 : ユーザーは電話番号とパスワードを入力し\n「次�
 wav1 -> co2 : 起動:method_POST()
 
 alt 電話番号が未入力の場合
-    co2 -> wav1 : システムは\n「電話番号を入力してください」\nと表示する
+    co2 -> wav1 : システムは\n「電話番号を入力してください」\nと表示する:method_GET()
 
 else パスワードが未入力の場合
-    co2 -> wav1 : システムは\n「パスワードを入力してください」\nと表示する
+    co2 -> wav1 : システムは\n「パスワードを入力してください」\nと表示する:method_GET()
 
     alt 電話番号とパスワードが入力された場合
-        co2 -> ac1 : 電話番号とパスワードを参照する
+        co2 -> ac1 : 電話番号とパスワードを参照する()
         co2 <-- ac1
 
         alt 電話番号が重複している場合
-            co2 -> wav1 : システムは「この電話番号は使えません」\nと表示する
+            co2 -> wav1 : システムは「この電話番号は使えません」\nと表示する:method_GET()
 
         else 電話番号が重複していない場合
             co2 -> ac1 : 登録する
             co2 <-- ac1
-            co2 -> bdy1 : システムは\n画面を表示する:GET_method()
+            co2 -> bdy1 : システムは\n画面を表示する:method_GET()
             wo1 -> bdy1 : ユーザーは\n入力し「確認する」ボタンを押下する
-            bdy1 -> wdv1 : システムは\n画面を表示する:GET_method()
+            bdy1 -> wdv1 : システムは\n画面を表示する:method_GET()
             wo1 -> wdv1 : ユーザーは\n入力し「次へ」ボタンを押下する
-            wdv1 -> wdv2 : システムは\n画面を表示する:GET_method()
+            wdv1 -> wdv2 : システムは\n画面を表示する:method_GET()
             wo1 -> wdv2 : ユーザーは\n入力し「次へ」ボタンを押下する
-            wdv2 -> wdv3 : システムは\n画面を表示する:GET_method()
+            wdv2 -> wdv3 : システムは\n画面を表示する:method_GET()
             wo1 -> wdv3 : ユーザーは\n入力する
             wdv3 -> wdv4 : システムは\n画面を表示する:GET_method()
             wo1 -> wdv4 : ユーザーは\n「顔写真を登録」ボタンを押下する
@@ -85,7 +85,7 @@ else パスワードが未入力の場合
             wdv11 -> co3 : 起動:method_POST()
             co3 -> ac1 : 登録する
             co3 <-- ac1
-            co3 -> wdv11 : システムは\n画面を表示する
+            co3 -> wdv11 : システムは\n画面を表示する:method_GET()
           
         end
     end

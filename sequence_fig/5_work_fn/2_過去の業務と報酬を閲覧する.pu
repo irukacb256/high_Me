@@ -11,19 +11,19 @@ control 処理 as co3
 entity これまでの仕事 as aj1
 entity 求人 as jb1
 ' 2
-co1 -> wk1 : 画面を表示する()
+co1 -> wk1 : 画面を表示する
 wo1 -> wk1 : ユーザーは\n「これまでの仕事」ボタンを押下する
 wk1 -> co2 : 起動:method=POST()
 
 alt これまでの仕事がない場合
-    co2 -> ks1 : システムは\n「これまでの仕事はありません」と表示する
+    co2 -> ks1 : システムは\n「これまでの仕事はありません」と表示する:method=GET()
 else 仕事がある場合
     co2 -> aj1 : これまでの仕事を参照する()
     co2 <-- aj1
     co2 -> ks1 : 画面を表示する:method=GET()
     wo1 -> ks1 : ユーザーは過去の業務を選択する
     ks1 -> co3 : 起動:method=POST()
-    co3 -> jb1 :　求人の詳細を参照する()
+    co3 -> jb1 : 求人の詳細を参照する()
     co3 <-- jb1
     co3 -> jd1 : 画面を表示する:method=GET()
 end
