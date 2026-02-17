@@ -14,6 +14,7 @@ control 処理 as co2
 control 削除 as co3
 
 entity ワーカー as en1
+entity 求人 as en3
 
 
 co1 -> bo1:画面を表示する()
