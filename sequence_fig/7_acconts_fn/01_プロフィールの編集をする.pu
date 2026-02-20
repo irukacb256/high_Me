@@ -5,14 +5,14 @@ actor ワーカー as wo1
 
 boundary マイページ画面 as bo1
 control 表示 as co1
-control 処理 as co2
 boundary プロフィール画面 as bo2
+control 処理 as co2
 
 control 処理 as co3
 
 entity ワーカー as ac1
 
-co1 -> bo1 : 画面を表示する:method_GET()
+co1 -> bo1 : 画面を表示する
 
 wo1 -> bo1:ユーザーは\n「アイコン」ボタンを押下する
 bo1 -> co2:起動:method=POST()
@@ -23,16 +23,16 @@ wo1 -> bo2:ユーザーは\n「変更を保存」ボタンを押下する
 bo2 -> co3:起動:method=POST()
 
 alt 姓名が未入力の場合
-    bo2 <-- co3 :「姓名が入力されていません」と表示する
+    bo2 <-- co3 :「姓名が入力されていません」と表示する:method_GET()
 
     else フリガナが未入力の場合
-    bo2 <-- co3 :「フリガナが入力されていません」と表示する
+    bo2 <-- co3 :「フリガナが入力されていません」と表示する:method_GET()
 
     else 生年月日が未入力の場合
-    bo2 <-- co3 :「生年月日が入力されていません」と表示する
+    bo2 <-- co3 :「生年月日が入力されていません」と表示する:method_GET()
 
     else 住所が未入力の場合
-    bo2 <-- co3 :「住所が入力されていません」と表示する
+    bo2 <-- co3 :「住所が入力されていません」と表示する:method_GET()
     
 
     else すべて入力されている場合

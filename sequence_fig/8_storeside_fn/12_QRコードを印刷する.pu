@@ -7,12 +7,12 @@ control 処理 as co2
 
 entity 店舗 as ac1
 
-co1 -> ac1 : 店舗情報を参照しQRコードを取得
+co1 -> ac1 : 店舗情報を参照しQRコードを取得()
 co1 <-- ac1
 b1 <- co1 : システムは画面を表示する
 cp1 -> b1 : ユーザーは「QRコードを印刷する」ボタンを押下する
 b1 -> co2 : 起動:method=POST()
-co2 -> ac1 : QRコードを印刷
+co2 -> ac1 : QRコードを印刷()
 co2 <-- ac1 
 co2 -> b1 : システムはQRをダウンロードする:method=GET()
 

@@ -7,7 +7,7 @@ control 表示 as co1
 boundary お知らせ画面 as bo2
 
 
-co1 -> bo1: 画面を表示する()
+co1 -> bo1: 画面を表示する
 wo1 -> bo1:「ベル」ボタンを押下する
 bo1 -> bo2: 画面を表示する:method=GET()
 

@@ -1,1 +1,45 @@
+@startuml
 
+actor 店舗 as st
+boundary 求人ひな形画面 as bo1
+control 表示 as co1
+boundary 求人作成画面 as bo2
+control 処理 as co2
+boundary 求人確認画面 as bo3
+control 処理 as co3
+entity 求人 as en1
+
+boundary 求人詳細画面 as bo4
+
+co1 -> en1 : 求人のひな形を参照する()
+co1 -> bo1 : 画面を表示する()
+
+st -> bo1 : 「このひな形を元に求人を作成」ボタンを押下する
+bo1 -> bo2 : 画面を表示する:method=GET()
+
+st -> bo2 : 必要情報を入力し「入力した求人内容を確認」ボタンを押下する
+bo2 -> co2 : 画面を表示する:method=POST()
+
+alt 「ひな形内容の個別設定」を押下した場合
+    bo2 -> bo1 : 画面を表示する:method=GET()
+else 「必要項目が未入力の場合」
+    co2 -> bo2 : 「（未入力項目）が未入力です」と\n画面に表示する:method=GET()
+else 「すべて入力済みの場合」
+    bo2 -> bo3 : 画面を表示する:method=GET()
+
+    alt 「求人内容を変更する場合」
+        bo3 -> bo2 : 画面を表示する:method=GET()
+    else 「求人内容に変更がない場合」
+        st -> bo3 :「休業手当に関する事項を確認しました」に\nチェックし、「求人公開」ボタンを押下する
+        bo3 -> co3 : 起動:method=POST()
+
+        alt 「チェックが押下されていない場合」
+            co3 -> bo3 : 「チェック項目にチェックされていません」と\n画面に表示する:method=GET()
+        else 「チェックが押下されている場合」
+            co3 -> en1 : 求人を登録する()
+            co3 -> bo4 : 画面を表示する:method=GET()
+        end
+    end
+end
+
+@enduml

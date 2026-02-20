@@ -14,25 +14,25 @@ control 処理 as co3
 entity 求人 as en1
 entity 獲得報酬 as en2
 
-co1 -> bo1:画面を表示する:method=GET()
-wo1 -> bo1:ユーザーは「源泉徴収票の確認と印刷」\nボタンを押下する
+co1 -> bo1:画面を表示する
+wo1 -> bo1:「源泉徴収票の確認と印刷」\nボタンを押下する
 bo1 -> co2:起動:method=POST()
 
 alt 源泉徴収票がない場合
-    co2 -> bo2:システムは\n「まだ表示できる源泉徴収票がありません」と表示する
+    co2 -> bo2:「まだ表示できる源泉徴収票がありません」と\n表示する:method=GET()
 
 else 源泉徴収票がある場合
     co2 -> en1:源泉徴収票を参照する()
     en1 --> co2
     co2 -> bo2:画面を表示する:method=GET()
 
-    wo1 -> bo2:ユーザーは源泉徴収票の年を選択する
+    wo1 -> bo2:源泉徴収票の年を選択する
     bo2 -> co3:起動:method=POST()
     co3 -> en2:獲得報酬を参照する()
     co3 <-- en2
     co3 -> bo3:画面を表示する:method=GET()
 
-    wo1 -> bo3:ユーザーは源泉徴収票のファイルを押下する
+    wo1 -> bo3:源泉徴収票のファイルを押下する
     bo3 -> bo4:画面を表示する:method=GET()
 
 end

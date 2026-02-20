@@ -23,9 +23,9 @@ entity 銀行口座 as en2
 entity 企業 as en3
 
 
-co1 -> bo1 : 画面を表示する()
+co1 -> bo1 : 画面を表示する
 wo1 -> bo1 :「引き出す」ボタンを押下する
-bo1 -> co2 : 起動()method=POST()
+bo1 -> co2 : 起動:method=POST()
 co2 -> en1 : ワーカーを参照()
 en1 --> co2
 co2 -> en2 : 残高を参照する()
@@ -34,31 +34,31 @@ co2 -> bo2 : 画面を表示する:method_GET()
 
 alt ユーザーが「入出金履歴」を押下した場合
   wo1 -> bo2 :「入出金履歴」ボタンを押下する
-  bo2 -> co2 : 起動()method=POST()
+  bo2 -> co2 : 起動:method=POST()
 
   alt 入出金履歴がない場合
-    co5 -> bo6 : システムは「履歴がありません」と表示する
+    co5 -> bo6 : 「履歴がありません」と表示する:method_GET()
   
   else 入出金履歴がある場合
-    co5 -> en1 : 入出金履歴を参照する
+    co5 -> en1 : 入出金履歴を参照する()
     co5 <-- en1
-    co5 -> bo6 : システムは画面を表示する
+    co5 -> bo6 : 画面を表示する:method_GET()
 
   end
 
   else 振込先口座を登録を押下した場合
     wo1 -> bo2 : 「振込先口座を登録」を押下する
-    bo2 -> co2 : 起動()method=POST()
+    bo2 -> co2 : 起動:method=POST()
     co2 -> en1 : ワーカーを参照()
     en1 --> co2
-    co2 -> bo7 : 画面を表示
+    co2 -> bo7 : 画面を表示:method_GET()
 
   else 振込先口座を編集を押下した場合
     wo1 -> bo2 : 「振込先口座を編集」を押下する
-    bo2 -> co2 : 起動()method=POST()
+    bo2 -> co2 : 起動:method=POST()
     co2 -> en1 : ワーカーを参照()
     en1 --> co2
-    co2 -> bo8 : 画面を表示
+    co2 -> bo8 : 画面を表示:method_GET()
 
 
 
@@ -72,7 +72,7 @@ else  「振り込み申請」ボタンを押下した場合
   bo3 -> bo4 : 画面を表示する:method=GET()
   wo1 -> bo4 : 「OK」ボタンを押下する
   bo4 -> co5 : 起動:method_POST()
-  co5 -> en3 : 企業に申請する
+  co5 -> en3 : 企業に申請する()
   co5 <-- en3
   co5 -> bo5 : 画面を表示する:method_GET()
 

@@ -6,27 +6,27 @@ control 表示 as co1
 control 処理 as co2
 entity ワーカー as en1
 
-b1 <- co1 :画面を表示する()
+b1 <- co1 :画面を表示する
 cp1 -> b1 :ユーザーは「検索」ボタンを押下する
 b1 -> co2 :起動する:method=POST()
 
 
 alt 条件に合致するワーカーがいない場合
-    b1 <- co2 :システムは「ワーカーがいません」と画面に表示する
+    b1 <- co2 :システムは「ワーカーがいません」と画面に表示する:method=GET()
 
 else 条件に合致するワーカーがいる場合
 
     alt 検索条件から絞り込む場合
         co2 -> en1 :参照()
         co2 <-- en1
-        co2 -> b1 :画面を表示する
+        co2 -> b1 :画面を表示する:method=GET()
 
     else 名前のフリガナで絞り込む場合
         cp1 -> b1 : ユーザーはフリガナを入力し\n「検索」ボタンを押下する
         b1 -> co2 : 起動する:method=POST()
         co2 -> en1 :参照()
         co2 <-- en1
-        co2 -> b1 : 画面を表示する
+        co2 -> b1 : 画面を表示する:method=GET()
 
     end
 

@@ -5,15 +5,15 @@ boundary 画面 as b1
 control 表示 as co1
 entity 店舗からのレビュー as en1
 
-co1 -> en1 : レビューを参照
+co1 -> en1 : レビューを参照()
 co1 <-- en1
 co1 -> b1 : 画面を表示する:method_GET()
 
 alt レビューがない場合
-b1 <- co1 : 「レビューがありません」と画面に表示する
+b1 <- co1 : 「レビューがありません」と画面に表示する:method=GET()
 
 else レビューがある場合
-b1 <- co1 : レビューを画面に表示する
+b1 <- co1 : レビューを画面に表示する:method=GET()
 
 end
 
